@@ -18,7 +18,7 @@ def test_db_path():
     """
     # Create temporary directory for test database
     temp_dir = tempfile.mkdtemp()
-    db_path = os.path.join(temp_dir, "test_full_stack_testing.db")
+    db_path = os.path.join(temp_dir, "test_full_stack_qa.db")
     
     yield db_path
     

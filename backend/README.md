@@ -8,7 +8,7 @@ This backend provides REST endpoints for managing job applications, companies, c
 
 **Technology Stack**:
 - **Framework**: FastAPI
-- **Database**: SQLite (`Data/Core/full_stack_testing.db`)
+- **Database**: SQLite (`Data/Core/full_stack_qa.db`)
 - **Validation**: Pydantic
 - **API Version**: v1 (`/api/v1/*`)
 
@@ -17,7 +17,7 @@ This backend provides REST endpoints for managing job applications, companies, c
 ### Prerequisites
 
 - Python 3.12+
-- Database file: `Data/Core/full_stack_testing.db` (already created)
+- Database file: `Data/Core/full_stack_qa.db` (already created)
 
 ### Installation
 
@@ -102,7 +102,7 @@ backend/
 
 Configuration is managed through environment variables (see `.env.example`):
 
-- `DATABASE_PATH`: Path to SQLite database (default: `../Data/Core/full_stack_testing.db`)
+- `DATABASE_PATH`: Path to SQLite database (default: `../Data/Core/full_stack_qa.db`)
 - `API_HOST`: API host (default: `localhost`)
 - `API_PORT`: API port (default: `8008`)
 - `CORS_ORIGINS`: Comma-separated list of allowed origins

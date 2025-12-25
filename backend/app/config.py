@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     )
     
     # Database Configuration
-    database_path: str = "../Data/Core/full_stack_testing.db"
+    database_path: str = "../Data/Core/full_stack_qa.db"
     
     # API Configuration
     api_host: str = "localhost"
