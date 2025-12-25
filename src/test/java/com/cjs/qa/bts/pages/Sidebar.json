@@ -1,0 +1,16 @@
+{
+  "locators": [
+    {
+      "name": " Sidebar Left",
+      "type": "xpath",
+      "value": "\".//div[@class='ng-scope']//button[@data-sidebar='left']/i\"",
+      "variableName": "sidebarLeft"
+    },
+    {
+      "name": " Sidebar Right",
+      "type": "xpath",
+      "value": "\".//div[@class='ng-scope']//button[@data-sidebar='right']/i\"",
+      "variableName": "sidebarRight"
+    }
+  ]
+}

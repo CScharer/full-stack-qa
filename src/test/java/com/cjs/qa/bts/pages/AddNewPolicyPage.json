@@ -1,0 +1,100 @@
+{
+  "locators": [
+    {
+      "name": " Checkbox Renewal Policy",
+      "type": "id",
+      "value": "\"form1:policy:renewalPolicyBI\"",
+      "variableName": "checkboxRenewalPolicy"
+    },
+    {
+      "name": " Edit Effective Date",
+      "type": "id",
+      "value": "\"form1:policy:effectiveDtBI\"",
+      "variableName": "editEffectiveDate"
+    },
+    {
+      "name": " Dropdown Term",
+      "type": "id",
+      "value": "\"form1:policy:termBI\"",
+      "variableName": "dropdownTerm"
+    },
+    {
+      "name": " Dropdown Renewal Term",
+      "type": "id",
+      "value": "\"form1:policy:renewalTermBI\"",
+      "variableName": "dropdownRenewalTerm"
+    },
+    {
+      "name": " Edit Expiration Date",
+      "type": "id",
+      "value": "\"form1:policy:expirationDtBI\"",
+      "variableName": "editExpirationDate"
+    },
+    {
+      "name": " Dropdown Rating Company",
+      "type": "id",
+      "value": "\"form1:policy:policyCompanyBI\"",
+      "variableName": "dropdownRatingCompany"
+    },
+    {
+      "name": " Dropdown Issuing Company",
+      "type": "id",
+      "value": "\"form1:policy:policyProductBI\"",
+      "variableName": "dropdownIssuingCompany"
+    },
+    {
+      "name": " Dropdown Program",
+      "type": "id",
+      "value": "\"form1:policy:policyProgramBI\"",
+      "variableName": "dropdownProgram"
+    },
+    {
+      "name": " Dropdown Primary State",
+      "type": "id",
+      "value": "\"form1:policy:policyStateBI\"",
+      "variableName": "dropdownPrimaryState"
+    },
+    {
+      "name": " Edit Release Date",
+      "type": "id",
+      "value": "\"form1:policy:releaseDtBI\"",
+      "variableName": "editReleaseDate"
+    },
+    {
+      "name": " Checkbox User Entered Policy Num",
+      "type": "id",
+      "value": "\"form1:policy:userEnteredPolicyBI\"",
+      "variableName": "checkboxUserEnteredPolicyNum"
+    },
+    {
+      "name": " Edit Policy Num",
+      "type": "id",
+      "value": "\"form1:policy:policyNbrBI\"",
+      "variableName": "editPolicyNum"
+    },
+    {
+      "name": " Button Save",
+      "type": "id",
+      "value": "\"form1:policy:button1\"",
+      "variableName": "buttonSave"
+    },
+    {
+      "name": " Button Cancel",
+      "type": "id",
+      "value": "\"form1:policy:button2\"",
+      "variableName": "buttonCancel"
+    },
+    {
+      "name": " Click Off Date",
+      "type": "id",
+      "value": "\"form1:policy:buildPolicyGrp\"",
+      "variableName": "clickOffDate"
+    },
+    {
+      "name": " Edit Policy Num Seq",
+      "type": "id",
+      "value": "\"form1:policy:policyNbrSeqBI\"",
+      "variableName": "editPolicyNumSeq"
+    }
+  ]
+}

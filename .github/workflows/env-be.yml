@@ -1,0 +1,233 @@
+name: Test Single Environment (BE Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to Test (dev, test)'
+        required: true
+        type: string
+      be_test_type:
+        description: 'BE Test Type (all, smoke, gatling-only, jmeter-only, locust-only)'
+        required: true
+        type: string
+      base_url:
+        description: 'Base URL for the Environment'
+        required: true
+        type: string
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+jobs:
+  be-tests:
+    name: BE Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine Ports and URLs
+        id: ports
+        run: |
+          chmod +x scripts/ci/determine-ports.sh
+          ./scripts/ci/determine-ports.sh "${{ inputs.environment }}"
+
+      - name: Set up JDK 21
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only' || inputs.be_test_type == 'jmeter-only'
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Python
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only' || inputs.be_test_type == 'smoke'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Locust Dependencies
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only' || inputs.be_test_type == 'smoke'
+        run: |
+          if [ "${{ inputs.be_test_type }}" == "smoke" ]; then
+            pip install locust==2.20.0 requests==2.32.4
+          else
+            pip install -r requirements.txt
+          fi
+
+      - name: Start Services for BE Tests
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting services for be tests (${{ inputs.environment }})..."
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+          sleep 10
+
+      - name: Wait for Services
+        run: |
+          chmod +x scripts/ci/wait-for-services.sh
+          ./scripts/ci/wait-for-services.sh \
+            "${{ steps.ports.outputs.frontend_url }}" \
+            "${{ steps.ports.outputs.backend_url }}" \
+            "30" \
+            "${{ inputs.environment }}"
+
+      - name: Run Gatling Simulations
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only'
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "⚡ Running Gatling BE Tests (${{ inputs.environment }})..."
+          echo "Base URL: $BASE_URL"
+          echo "Using Gatling profile (Scala-only compilation)..."
+          ./mvnw -ntp gatling:test -Pgatling
+
+      - name: Upload Gatling Results
+        if: (success() || failure()) && (inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only')
+        uses: actions/upload-artifact@v4
+        with:
+          name: gatling-be-results-${{ inputs.environment }}
+          path: target/gatling/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Download and Install JMeter
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'jmeter-only'
+        run: |
+          echo "📥 Downloading Apache JMeter 5.6.3..."
+          wget -q https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
+          tar -xzf apache-jmeter-5.6.3.tgz
+          echo "✅ JMeter installed"
+          apache-jmeter-5.6.3/bin/jmeter --version
+
+      - name: Prepare Results Directories
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'jmeter-only'
+        run: |
+          mkdir -p target/jmeter/results
+          mkdir -p target/jmeter/reports
+
+      - name: Run API BE Test
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'jmeter-only'
+        continue-on-error: true
+        run: |
+          echo "🚀 Running API BE Test (${{ inputs.environment }})..."
+          BACKEND_URL="${{ steps.ports.outputs.backend_url }}"
+          echo "Backend URL: $BACKEND_URL"
+          apache-jmeter-5.6.3/bin/jmeter -n \
+            -JbaseUrl=$BACKEND_URL \
+            -t src/test/jmeter/API_BE_Test.jmx \
+            -l target/jmeter/results/api-results.jtl \
+            -e -o target/jmeter/reports/api \
+            -j target/jmeter/api-jmeter.log
+
+      - name: Run Web Load Test
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'jmeter-only'
+        continue-on-error: true
+        run: |
+          echo "🚀 Running Web Load Test (${{ inputs.environment }})..."
+          FRONTEND_URL="${{ steps.ports.outputs.frontend_url }}"
+          echo "Frontend URL: $FRONTEND_URL"
+          apache-jmeter-5.6.3/bin/jmeter -n \
+            -JbaseUrl=$FRONTEND_URL \
+            -t src/test/jmeter/Web_Load_Test.jmx \
+            -l target/jmeter/results/web-results.jtl \
+            -e -o target/jmeter/reports/web \
+            -j target/jmeter/web-jmeter.log
+
+      - name: Upload JMeter Results
+        if: (success() || failure()) && (inputs.be_test_type == 'all' || inputs.be_test_type == 'jmeter-only')
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-be-results-${{ inputs.environment }}
+          path: target/jmeter/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Run Locust API Load Test
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only'
+        run: |
+          echo "🐝 Running Locust API Load Test (${{ inputs.environment }})..."
+          BACKEND_URL="${{ steps.ports.outputs.backend_url }}"
+          echo "Backend URL: $BACKEND_URL"
+          mkdir -p target/locust
+          locust -f src/test/locust/api_load_test.py \
+                 --headless \
+                 --users 100 \
+                 --spawn-rate 10 \
+                 --run-time 3m \
+                 --host $BACKEND_URL \
+                 --html target/locust/api-load-report.html \
+                 --csv target/locust/api-load-stats
+
+      - name: Run Locust Comprehensive Test
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only'
+        run: |
+          echo "🐝 Running Locust Comprehensive Test (${{ inputs.environment }})..."
+          BACKEND_URL="${{ steps.ports.outputs.backend_url }}"
+          echo "Backend URL: $BACKEND_URL"
+          locust -f src/test/locust/comprehensive_load_test.py \
+                 --headless \
+                 --users 150 \
+                 --spawn-rate 15 \
+                 --run-time 3m \
+                 --host $BACKEND_URL \
+                 --html target/locust/comprehensive-report.html \
+                 --csv target/locust/comprehensive-stats
+
+      - name: Run Locust Web Load Test
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only'
+        run: |
+          echo "🐝 Running Locust Web Load Test (${{ inputs.environment }})..."
+          FRONTEND_URL="${{ steps.ports.outputs.frontend_url }}"
+          echo "Frontend URL: $FRONTEND_URL"
+          mkdir -p target/locust
+          locust -f src/test/locust/web_load_test.py \
+                 --headless \
+                 --users 50 \
+                 --spawn-rate 5 \
+                 --run-time 3m \
+                 --host $FRONTEND_URL \
+                 --html target/locust/web-load-report.html \
+                 --csv target/locust/web-load-stats
+
+      - name: Upload Locust Results
+        if: (success() || failure()) && (inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only')
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-be-results-${{ inputs.environment }}
+          path: target/locust/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Quick API BE Test (30 seconds)
+        if: inputs.be_test_type == 'smoke'
+        run: |
+          echo "🚀 Running quick be smoke check (${{ inputs.environment }})..."
+          BACKEND_URL="${{ steps.ports.outputs.backend_url }}"
+          echo "Backend URL: $BACKEND_URL"
+          echo "Duration: 30 seconds"
+          echo "Users: 10 concurrent"
+          echo ""
+          mkdir -p target/locust
+          locust -f src/test/locust/api_load_test.py \
+                 --headless \
+                 --users 10 \
+                 --spawn-rate 2 \
+                 --run-time 30s \
+                 --host $BACKEND_URL \
+                 --html target/locust/quick-smoke.html \
+                 --csv target/locust/quick-smoke
+
+      - name: Upload Smoke Results
+        if: (success() || failure()) && inputs.be_test_type == 'smoke'
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-be-results-${{ inputs.environment }}
+          path: target/locust/
+          retention-days: 3
+          if-no-files-found: ignore

@@ -1,0 +1,94 @@
+{
+  "locators": [
+    {
+      "name": " Checkbox Renewal Policy",
+      "type": "id",
+      "value": "\"renewalPolicyBI\"",
+      "variableName": "checkboxRenewalPolicy"
+    },
+    {
+      "name": " Edit Effective Date",
+      "type": "id",
+      "value": "\"policyBuildTitleTxtId\"",
+      "variableName": "editEffectiveDate"
+    },
+    {
+      "name": " Dropdown Term",
+      "type": "id",
+      "value": "\"termBI\"",
+      "variableName": "dropdownTerm"
+    },
+    {
+      "name": " Dropdown Renewal Term",
+      "type": "id",
+      "value": "\"renewalTermBI\"",
+      "variableName": "dropdownRenewalTerm"
+    },
+    {
+      "name": " Edit Expiration Date",
+      "type": "id",
+      "value": "\"expirationDtBI\"",
+      "variableName": "editExpirationDate"
+    },
+    {
+      "name": " Dropdown Rating Company",
+      "type": "id",
+      "value": "\"policyCompanyBI\"",
+      "variableName": "dropdownRatingCompany"
+    },
+    {
+      "name": " Dropdown Issuing Company",
+      "type": "id",
+      "value": "\"policyProductBI\"",
+      "variableName": "dropdownIssuingCompany"
+    },
+    {
+      "name": " Dropdown Program",
+      "type": "id",
+      "value": "\"policyProgramBI\"",
+      "variableName": "dropdownProgram"
+    },
+    {
+      "name": " Dropdown Primary State",
+      "type": "id",
+      "value": "\"policyStateBI\"",
+      "variableName": "dropdownPrimaryState"
+    },
+    {
+      "name": " Edit Release Date",
+      "type": "id",
+      "value": "\"releaseDtBI\"",
+      "variableName": "editReleaseDate"
+    },
+    {
+      "name": " Checkbox User Entered Policy Number",
+      "type": "id",
+      "value": "\"userEnteredPolicyBI\"",
+      "variableName": "checkboxUserEnteredPolicyNumber"
+    },
+    {
+      "name": " Edit Policy Number",
+      "type": "id",
+      "value": "\"policyNbrBI\"",
+      "variableName": "editPolicyNumber"
+    },
+    {
+      "name": " Edit Sequence Number",
+      "type": "id",
+      "value": "\"policyNbrSeqBI\"",
+      "variableName": "editSequenceNumber"
+    },
+    {
+      "name": " Button Save",
+      "type": "id",
+      "value": "\"button1\"",
+      "variableName": "buttonSave"
+    },
+    {
+      "name": " Button Cancel",
+      "type": "id",
+      "value": "\"button2\"",
+      "variableName": "buttonCancel"
+    }
+  ]
+}

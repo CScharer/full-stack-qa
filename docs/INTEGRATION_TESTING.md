@@ -1,0 +1,292 @@
+# Integration Testing Guide
+
+**Last Updated**: 2025-12-14  
+**Purpose**: Guide for running full-stack integration tests
+
+---
+
+## 📋 Overview
+
+Integration tests verify that the entire application stack works together:
+- **Frontend** (Next.js/React)
+- **Backend** (FastAPI)
+- **Database** (SQLite)
+
+These tests use **Playwright** to simulate real user interactions with the application running end-to-end.
+
+---
+
+## 🎯 What Gets Tested
+
+### Applications Integration Tests
+- ✅ Navigation from home page to applications
+- ✅ Creating a new application
+- ✅ Viewing application details
+- ✅ Editing an existing application
+- ✅ Deleting an application
+- ✅ Listing applications
+- ✅ Handling empty state
+
+### Companies Integration Tests
+- ✅ Navigation from home page to companies
+- ✅ Loading companies list page
+
+---
+
+## 🚀 Quick Start
+
+### Run All Integration Tests
+
+```bash
+./scripts/run-integration-tests.sh
+```
+
+This script will:
+1. Check prerequisites (Node.js, Python, database)
+2. Install dependencies if needed
+3. Start backend server (port 8008)
+4. Start frontend dev server (port 3003)
+5. Run Playwright integration tests
+6. Clean up servers after tests
+
+---
+
+## 📝 Manual Setup
+
+If you prefer to run tests manually:
+
+### 1. Ensure Database Exists
+
+```bash
+# Database should exist at:
+Data/Core/full_stack_testing.db
+
+# If not, create it:
+mkdir -p Data/Core
+sqlite3 Data/Core/full_stack_testing.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 Data/Core/full_stack_testing.db < docs/new_app/DELETE_TRIGGERS.sql
+```
+
+### 2. Start Backend Server
+
+```bash
+cd backend
+source venv/bin/activate
+export DATABASE_PATH=../Data/Core/full_stack_testing.db
+export API_HOST=0.0.0.0
+export API_PORT=8008
+export CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8008
+```
+
+### 3. Start Frontend Server
+
+```bash
+cd frontend
+export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+PORT=3003 npm run dev
+```
+
+### 4. Run Integration Tests
+
+```bash
+cd playwright
+npm run test:integration
+```
+
+---
+
+## 🧪 Running Specific Tests
+
+### Run with UI (Interactive)
+
+```bash
+cd playwright
+npm run test:integration:ui
+```
+
+### Run in Headed Mode (See Browser)
+
+```bash
+cd playwright
+npm run test:integration:headed
+```
+
+### Run Specific Test File
+
+```bash
+cd playwright
+npx playwright test --config=playwright.integration.config.ts tests/integration/applications.spec.ts
+```
+
+---
+
+## 📁 Test Structure
+
+```
+playwright/
+├── playwright.integration.config.ts    # Integration test configuration
+├── tests/
+│   └── integration/
+│       ├── applications.spec.ts        # Applications CRUD tests
+│       ├── companies.spec.ts          # Companies navigation tests
+│       └── pages/                     # Page Object Models
+│           ├── HomePage.ts
+│           ├── ApplicationsPage.ts
+│           ├── ApplicationFormPage.ts
+│           └── ApplicationDetailPage.ts
+```
+
+---
+
+## 🔧 Configuration
+
+### Playwright Integration Config
+
+The integration test configuration (`playwright.integration.config.ts`) automatically:
+- Starts backend server on port 8008
+- Starts frontend dev server on port 3003
+- Waits for both servers to be ready
+- Runs tests against the running application
+- Cleans up servers after tests
+
+### Environment Variables
+
+You can override defaults:
+
+```bash
+# Frontend URL
+export FRONTEND_URL=http://127.0.0.1:3003
+
+# Backend URL (used by frontend)
+export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+
+# Database path (used by backend)
+export DATABASE_PATH=../Data/Core/full_stack_testing.db
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Issue: Backend server fails to start
+
+**Solution:**
+```bash
+# Check if port 8008 is in use
+lsof -ti:8008 | xargs kill -9
+
+# Verify database exists
+ls -la Data/Core/full_stack_testing.db
+
+# Check backend dependencies
+cd backend
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Issue: Frontend server fails to start
+
+**Solution:**
+```bash
+# Check if port 3003 is in use
+lsof -ti:3003 | xargs kill -9
+
+# Verify frontend dependencies
+cd frontend
+npm install --legacy-peer-deps
+```
+
+### Issue: Tests fail with connection errors
+
+**Solution:**
+- Ensure both servers are running
+- Check that `NEXT_PUBLIC_API_URL` is set correctly
+- Verify CORS is configured in backend (should allow `http://127.0.0.1:3003` and `http://localhost:3003`)
+
+### Issue: Database locked errors
+
+**Solution:**
+- Ensure only one test process is running at a time
+- Integration tests run sequentially (not in parallel) to avoid conflicts
+- Close any database connections from other processes
+
+---
+
+## 📊 Test Reports
+
+After running tests, view the HTML report:
+
+```bash
+cd playwright
+npx playwright show-report playwright-report-integration
+```
+
+---
+
+## 🎯 Adding New Integration Tests
+
+### 1. Create Page Object Model
+
+Create a new file in `playwright/tests/integration/pages/`:
+
+```typescript
+import { Page, Locator } from '@playwright/test';
+
+export class MyPage {
+  readonly page: Page;
+  readonly title: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.title = page.locator('h1');
+  }
+
+  async navigate() {
+    await this.page.goto('/my-page');
+  }
+}
+```
+
+### 2. Create Test File
+
+Create a new file in `playwright/tests/integration/`:
+
+```typescript
+import { test, expect } from '@playwright/test';
+import { MyPage } from './pages/MyPage';
+
+test.describe('My Feature Integration Tests', () => {
+  test('should do something', async ({ page }) => {
+    const myPage = new MyPage(page);
+    await myPage.navigate();
+    await expect(myPage.title).toBeVisible();
+  });
+});
+```
+
+### 3. Run Your Tests
+
+```bash
+cd playwright
+npx playwright test --config=playwright.integration.config.ts tests/integration/my-feature.spec.ts
+```
+
+---
+
+## ✅ Best Practices
+
+1. **Use Page Object Models**: Encapsulate page interactions in reusable classes
+2. **Test Real User Flows**: Test complete workflows, not just individual actions
+3. **Clean Up**: Tests should clean up created data (or use test database)
+4. **Wait for Elements**: Use Playwright's auto-waiting, but add explicit waits when needed
+5. **Isolate Tests**: Each test should be independent and not rely on other tests
+6. **Use Descriptive Names**: Test names should clearly describe what they're testing
+
+---
+
+## 📚 Related Documentation
+
+- [Local Development Guide](./LOCAL_DEVELOPMENT.md) - How to run the application locally
+- [Backend API Tests](../backend/tests/) - Unit tests for backend API
+- [Frontend Unit Tests](../frontend/__tests__/) - Unit tests for frontend components

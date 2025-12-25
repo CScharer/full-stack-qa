@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "GoToWebinar OAuth Token Response",
+  "description": "Schema for GoToWebinar OAuth access token response",
+  "required": ["access_token", "token_type", "expires_in"],
+  "properties": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token for API authentication",
+      "minLength": 1
+    },
+    "token_type": {
+      "type": "string",
+      "description": "Type of token (typically 'bearer')",
+      "enum": ["bearer", "Bearer"]
+    },
+    "expires_in": {
+      "type": "integer",
+      "description": "Token expiration time in seconds",
+      "minimum": 0
+    },
+    "refresh_token": {
+      "type": "string",
+      "description": "Token used to refresh the access token (optional)"
+    },
+    "organizer_key": {
+      "type": "string",
+      "description": "Organizer key associated with the account (optional)"
+    },
+    "account_key": {
+      "type": "string",
+      "description": "Account key for the GoToWebinar account (optional)"
+    },
+    "account_type": {
+      "type": "string",
+      "description": "Type of account (optional)"
+    }
+  },
+  "additionalProperties": false
+}
+

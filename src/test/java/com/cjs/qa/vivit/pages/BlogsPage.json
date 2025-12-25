@@ -1,0 +1,10 @@
+{
+  "locators": [
+    {
+      "name": " By Table Blogs",
+      "type": "xpath",
+      "value": "\".//*[@id='SpContent_Container']/form/table/tbody/tr\"",
+      "variableName": "byTableBlogs"
+    }
+  ]
+}

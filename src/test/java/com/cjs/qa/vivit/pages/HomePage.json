@@ -1,0 +1,46 @@
+{
+  "locators": [
+    {
+      "name": " By Logo",
+      "type": "xpath",
+      "value": "\".//*[@id='logo']/img\"",
+      "variableName": "byLogo"
+    },
+    {
+      "name": " Checkbox Remember Me",
+      "type": "xpath",
+      "value": "\".//*[@id='rememberme']\"",
+      "variableName": "checkboxRememberMe"
+    },
+    {
+      "name": " Button Sign In",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_PageContent_MainLogin']//input[@value='Sign In']\"",
+      "variableName": "buttonSignIn"
+    },
+    {
+      "name": " Button Sign Out",
+      "type": "xpath",
+      "value": "\".//*[@id='itoolbar']/a[.='Sign Out']\"",
+      "variableName": "buttonSignOut"
+    },
+    {
+      "name": " Edit Email",
+      "type": "xpath",
+      "value": "\".//*[@id='u']\"",
+      "variableName": "editEmail"
+    },
+    {
+      "name": " Edit Password",
+      "type": "xpath",
+      "value": "\".//*[@id='p']\"",
+      "variableName": "editPassword"
+    },
+    {
+      "name": " Link Sign In",
+      "type": "xpath",
+      "value": "\".//*[@id='itoolbar']/a[.='Sign In']\"",
+      "variableName": "linkSignIn"
+    }
+  ]
+}

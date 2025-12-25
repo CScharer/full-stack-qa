@@ -1,0 +1,10 @@
+{
+  "locators": [
+    {
+      "name": " Link See All Claims",
+      "type": "xpath",
+      "value": "\".//*[@id='linkToSeeAllClaims']\"",
+      "variableName": "linkSeeAllClaims"
+    }
+  ]
+}

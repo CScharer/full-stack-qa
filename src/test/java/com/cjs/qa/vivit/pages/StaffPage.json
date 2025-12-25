@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Label Name Title",
+      "type": "id",
+      "value": "\"Name-Title\"",
+      "variableName": "labelNameTitle"
+    },
+    {
+      "name": " Linke Mail",
+      "type": "id",
+      "value": "\"eMail\"",
+      "variableName": "linkeMail"
+    },
+    {
+      "name": " Label Phone",
+      "type": "id",
+      "value": "\"Phone\"",
+      "variableName": "labelPhone"
+    }
+  ]
+}

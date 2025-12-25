@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Edit User Name",
+      "type": "id",
+      "value": "\"username\"",
+      "variableName": "editUserName"
+    },
+    {
+      "name": " Edit Password",
+      "type": "id",
+      "value": "\"password\"",
+      "variableName": "editPassword"
+    },
+    {
+      "name": " Button Submit",
+      "type": "id",
+      "value": "\"//button[.='Submit']\"",
+      "variableName": "buttonSubmit"
+    }
+  ]
+}

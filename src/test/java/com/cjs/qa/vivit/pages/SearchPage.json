@@ -1,0 +1,10 @@
+{
+  "locators": [
+    {
+      "name": " Links Groups",
+      "type": "xpath",
+      "value": "\"//*[@id='CustomPageBody']//a[text()!='contact us today!']\"",
+      "variableName": "linksGroups"
+    }
+  ]
+}

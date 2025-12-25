@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Headings By",
+      "type": "xpath",
+      "value": "\".//*[@id='content']//div/div[2]/div[2]//b\"",
+      "variableName": "headingsBy"
+    },
+    {
+      "name": " Previous Payment Records By",
+      "type": "xpath",
+      "value": "\".//*[@id='content']//div[2]/section/div\"",
+      "variableName": "previousPaymentRecordsBy"
+    },
+    {
+      "name": " Last Payment By",
+      "type": "xpath",
+      "value": "\".//*[@id='content']//div[2]/section/div[2]//a[2]\"",
+      "variableName": "lastPaymentBy"
+    }
+  ]
+}

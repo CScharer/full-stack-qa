@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="API Test Suite" verbose="1" parallel="tests" thread-count="3">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+        <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
+    </listeners>
+    
+    <test name="Basic API Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.api.tests.BasicApiTests"/>
+        </classes>
+    </test>
+    
+    <test name="CRUD API Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.api.tests.CrudApiTests"/>
+        </classes>
+    </test>
+    
+    <test name="Data-Driven API Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.api.tests.ApiDataDrivenTests"/>
+        </classes>
+    </test>
+    
+    <test name="JSON Validation Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.api.tests.JsonValidationTests"/>
+        </classes>
+    </test>
+</suite>
+

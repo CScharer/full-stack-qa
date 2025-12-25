@@ -1,0 +1,34 @@
+{
+  "locators": [
+    {
+      "name": " Checkbox Pull Print",
+      "type": "id",
+      "value": "nodeForm1PrintPolicy + \"pullPrint\"",
+      "variableName": "checkboxPullPrint"
+    },
+    {
+      "name": " Checkbox Print Worksheets",
+      "type": "id",
+      "value": "nodeForm1PrintPolicy + \"printWorksheet\"",
+      "variableName": "checkboxPrintWorksheets"
+    },
+    {
+      "name": " Dropdown Printer",
+      "type": "id",
+      "value": "nodeForm1PrintPolicy + \"printer\"",
+      "variableName": "dropdownPrinter"
+    },
+    {
+      "name": " Button Issue Now",
+      "type": "xpath",
+      "value": "\".//input[@value='Issue Now']\"",
+      "variableName": "buttonIssueNow"
+    },
+    {
+      "name": " Button Issue Later",
+      "type": "id",
+      "value": "nodeForm1ProcessedResults + \"buttonLater\"",
+      "variableName": "buttonIssueLater"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Link Territory Information",
+      "type": "id",
+      "value": "\"terrInfoLink\"",
+      "variableName": "linkTerritoryInformation"
+    },
+    {
+      "name": " Link Client Information",
+      "type": "id",
+      "value": "\"clientViewLink\"",
+      "variableName": "linkClientInformation"
+    },
+    {
+      "name": " Link Payor Details",
+      "type": "id",
+      "value": "\"payorViewLink\"",
+      "variableName": "linkPayorDetails"
+    }
+  ]
+}

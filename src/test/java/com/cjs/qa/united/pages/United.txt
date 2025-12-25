@@ -1,0 +1,17 @@
+results
+https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=DSM&t=CEB&d=2017-12-13&r=2017-12-22&at=1&sc=7,7&px=1&taxng=1&idx=1
+CALENDAR_RANGE_DESCRIPTION
+.//*[@id='cal-container']//span[@class='calendar-range-description']
+.//*[@id='cal-container']//table/tbody/tr/td/a/div
+div[@class='date']
+div[@class='price-point fare-value']
+div[@class='price-point tax-value']
+div[@class='price-point sub-text']
+VIEW_30_DAY_CALENDAR
+.//*[@id='cal-container']/a
+
+.//*[@id='flight-result-list-revised']/li
+/div[@class='flight-block-summary-container']
+.//*[@id='flight-result-list-revised']/li/div[@class='flight-block-summary-container']//div/text()
+/div[@class='flight-block-fares-container columns_5']
+.//*[@id='flight-result-list-revised']/li/div[@class='flight-block-fares-container columns_5']//div/text()

@@ -1,0 +1,1332 @@
+name: Test Single Environment (FE Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to test (dev, test, prod)'
+        required: true
+        type: string
+      test_suite:
+        description: 'Test suite to run (smoke, ci, extended, all)'
+        required: false
+        type: string
+        default: 'smoke'
+      browser:
+        description: 'Browser to run tests on'
+        required: false
+        type: string
+        default: 'chrome'
+      base_url:
+        description: 'Base URL for the environment'
+        required: true
+        type: string
+      # Selenium Grid Configurations
+      se_hub_host:
+        description: 'Selenium Hub Host'
+        type: string
+        default: 'selenium-hub'
+      se_hub_port:
+        description: 'Selenium Hub Port'
+        type: string
+        default: '4444'
+      se_pub_port:
+        description: 'Selenium Event Bus Publish Port'
+        type: string
+        default: '4442'
+      se_sub_port:
+        description: 'Selenium Event Bus Subscribe Port'
+        type: string
+        default: '4443'
+      se_max_sessions:
+        description: 'Maximum Selenium Sessions per Node'
+        type: string
+        default: '5'
+      selenium_version:
+        description: 'Selenium Grid Docker image version (hub and nodes)'
+        type: string
+        default: '4.39.0'
+      # Test execution controls - Set to true to enable, false to disable
+      enable_smoke_tests:
+        description: 'Enable Smoke Tests'
+        type: boolean
+        default: true
+      enable_grid_tests:
+        description: 'Enable Grid Tests'
+        type: boolean
+        default: true
+      enable_mobile_tests:
+        description: 'Enable Mobile Browser Tests'
+        type: boolean
+        default: true
+      enable_responsive_tests:
+        description: 'Enable Responsive Design Tests'
+        type: boolean
+        default: true
+      enable_stop_services:
+        # SKIPPED: Services automatically stop when job completes (runner is destroyed)
+        description: 'Enable Stop Backend and Frontend Services'
+        type: boolean
+        default: false
+      enable_cypress_tests:
+        description: 'Enable Cypress Tests'
+        type: boolean
+        default: true
+      enable_playwright_tests:
+        description: 'Enable Playwright Tests'
+        type: boolean
+        default: true
+      enable_robot_tests:
+        description: 'Enable Robot Framework Tests'
+        type: boolean
+        default: false
+      enable_selenide_tests:
+        description: 'Enable Selenide Tests'
+        type: boolean
+        default: true
+      enable_vibium_tests:
+        description: 'Enable Vibium Tests'
+        type: boolean
+        default: true
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  # Default Selenium Grid hub URL for CI runs
+  SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+
+jobs:
+  # DISABLED: All test jobs temporarily disabled
+  # tests-disabled:
+  #   name: Tests Disabled (${{ inputs.environment }})
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Tests Disabled Notice
+  #       run: |
+  #         echo "⚠️  All test jobs are temporarily disabled"
+  #         echo "This is intentional while development work is in progress"
+
+  smoke-tests:
+    name: Smoke Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_smoke_tests == true
+
+    services:
+      selenium-hub:
+        image: selenium/hub:${{ inputs.selenium_version }}
+        ports:
+          - ${{ inputs.se_hub_port }}:${{ inputs.se_hub_port }}
+          - ${{ inputs.se_pub_port }}:${{ inputs.se_pub_port }}
+          - ${{ inputs.se_sub_port }}:${{ inputs.se_sub_port }}
+
+      chrome-node:
+        image: selenium/node-chrome:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
+        options: --shm-size=2gb
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Wait for Selenium Grid
+        run: |
+          chmod +x scripts/ci/wait-for-grid.sh
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "60"
+
+      - name: Run Smoke Tests
+        timeout-minutes: 5
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🔥 Smoke Tests - ${{ inputs.environment }} Environment"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "URL: ${{ inputs.base_url }}"
+          echo ""
+          ./mvnw -ntp test \
+            -Dtest.environment=${{ inputs.environment }} \
+            -Dtest.retry.max.count=1 \
+            -DsuiteXmlFile=testng-smoke-suite.xml
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Smoke Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-results-${{ inputs.environment }}
+          path: |
+            target/surefire-reports/
+            target/allure-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  grid-tests:
+    name: Grid Tests - ${{ matrix.browser }} (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_grid_tests == true
+    # No dependencies - runs in PARALLEL with smoke, mobile, and responsive
+
+    strategy:
+      matrix:
+        browser: [chrome, firefox, edge]
+      fail-fast: false
+
+    services:
+      selenium-hub:
+        image: selenium/hub:${{ inputs.selenium_version }}
+        ports:
+          - ${{ inputs.se_hub_port }}:${{ inputs.se_hub_port }}
+          - ${{ inputs.se_pub_port }}:${{ inputs.se_pub_port }}
+          - ${{ inputs.se_sub_port }}:${{ inputs.se_sub_port }}
+
+      chrome-node:
+        image: selenium/node-chrome:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
+        options: --shm-size=2gb
+
+      firefox-node:
+        image: selenium/node-firefox:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
+        options: --shm-size=2gb
+
+      edge-node:
+        image: selenium/node-edge:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
+        options: --shm-size=2gb
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Wait for Selenium Grid
+        run: |
+          echo "⏳ Waiting for Grid..."
+          timeout 60 bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
+          sleep 10
+          echo "✅ Grid ready!"
+
+      - name: Run Grid Tests
+        timeout-minutes: 15
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+          BROWSER: ${{ matrix.browser }}
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🌐 Grid Tests - ${{ matrix.browser }} - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Browser: ${{ matrix.browser }}"
+          echo "URL: ${{ inputs.base_url }}"
+          echo "Suite: ${{ inputs.test_suite }}"
+          echo ""
+
+          # Create Allure environment properties file
+          mkdir -p target/allure-results
+          cat > target/allure-results/environment.properties << EOF
+          Environment=${{ inputs.environment }}
+          Test.Suite=${{ inputs.test_suite }}
+          Base.URL=${{ inputs.base_url }}
+          Browser=${{ matrix.browser }}
+          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
+          Execution.Type=CI/CD
+          Grid.Type=Selenium Grid
+          EOF
+
+          ./mvnw -ntp test \
+            -Dtest.environment=${{ inputs.environment }} \
+            -Dbrowser=${{ matrix.browser }} \
+            -Dtest.retry.max.count=1 \
+            -DsuiteXmlFile=testng-${{ inputs.test_suite }}-suite.xml
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Grid Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grid-results-${{ matrix.browser }}-${{ inputs.environment }}
+          path: |
+            target/surefire-reports/
+            target/allure-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  mobile-browser-tests:
+    name: Mobile Browser Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_mobile_tests == true
+    # No dependencies - runs in PARALLEL with smoke, grid, and responsive
+
+    services:
+      selenium-hub:
+        image: selenium/hub:${{ inputs.selenium_version }}
+        ports:
+          - ${{ inputs.se_hub_port }}:${{ inputs.se_hub_port }}
+
+      chrome-node:
+        image: selenium/node-chrome:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: 2
+        options: --shm-size=2gb
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Wait for Selenium Grid
+        run: |
+          timeout 60 bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
+          sleep 5
+          echo "✅ Grid ready!"
+
+      - name: Run Mobile Browser Tests
+        timeout-minutes: 10
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "📱 Mobile Browser Tests - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "URL: ${{ inputs.base_url }}"
+          echo ""
+
+          # Create Allure environment properties file
+          mkdir -p target/allure-results
+          cat > target/allure-results/environment.properties << EOF
+          Environment=${{ inputs.environment }}
+          Test.Suite=mobile-browser
+          Base.URL=${{ inputs.base_url }}
+          Browser=Chrome Mobile
+          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
+          Execution.Type=CI/CD
+          Device.Type=Mobile Viewport
+          EOF
+
+          ./mvnw -ntp test \
+            -Dtest.environment=${{ inputs.environment }} \
+            -Dtest.retry.max.count=1 \
+            -DsuiteXmlFile=testng-mobile-browser-suite.xml
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Mobile Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-results-${{ inputs.environment }}
+          path: |
+            target/surefire-reports/
+            target/allure-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  responsive-design-tests:
+    name: Responsive Design Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_responsive_tests == true
+    # No dependencies - runs in PARALLEL with smoke, grid, and mobile
+
+    services:
+      selenium-hub:
+        image: selenium/hub:${{ inputs.selenium_version }}
+        ports:
+          - ${{ inputs.se_hub_port }}:${{ inputs.se_hub_port }}
+
+      chrome-node:
+        image: selenium/node-chrome:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: 2
+        options: --shm-size=2gb
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Wait for Selenium Grid
+        run: |
+          timeout 60 bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
+          sleep 5
+          echo "✅ Grid ready!"
+
+      - name: Run Responsive Design Tests
+        timeout-minutes: 10
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "📐 Responsive Design Tests - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "URL: ${{ inputs.base_url }}"
+          echo ""
+
+          # Create Allure environment properties file
+          mkdir -p target/allure-results
+          cat > target/allure-results/environment.properties << EOF
+          Environment=${{ inputs.environment }}
+          Test.Suite=responsive
+          Base.URL=${{ inputs.base_url }}
+          Browser=Chrome
+          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
+          Execution.Type=CI/CD
+          Screen.Sizes=Desktop, Tablet, Mobile
+          EOF
+
+          ./mvnw -ntp test \
+            -Dtest.environment=${{ inputs.environment }} \
+            -Dtest.retry.max.count=1 \
+            -DsuiteXmlFile=testng-responsive-suite.xml
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Responsive Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-results-${{ inputs.environment }}
+          path: |
+            target/surefire-reports/
+            target/allure-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  cypress-tests:
+    name: Cypress Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_cypress_tests == true
+    # No dependencies - runs in PARALLEL with smoke, grid, mobile, responsive, and playwright
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: cypress/package-lock.json
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Install Cypress dependencies
+        working-directory: ./cypress
+        run: npm ci
+
+      - name: Install system dependencies for Cypress
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 || sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2
+
+      - name: Run Cypress Tests
+        timeout-minutes: 10
+        working-directory: ./cypress
+        env:
+          CYPRESS_BASE_URL: ${{ inputs.base_url }}
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🎬 Cypress Tests - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          BASE_URL="${{ inputs.base_url }}"
+          if [ -z "$BASE_URL" ]; then
+            BASE_URL="https://www.google.com"
+          fi
+          echo "Base URL: $BASE_URL"
+          export CYPRESS_BASE_URL="$BASE_URL"
+          echo ""
+          xvfb-run -a npm run cypress:run
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Cypress Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-results-${{ inputs.environment }}
+          path: |
+            cypress/cypress/videos/
+            cypress/cypress/screenshots/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  playwright-tests:
+    name: Playwright Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_playwright_tests == true
+    # No dependencies - runs in PARALLEL with smoke, grid, mobile, responsive, and cypress
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: playwright/package-lock.json
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Install Playwright dependencies
+        working-directory: ./playwright
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ./playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright Tests
+        timeout-minutes: 10
+        working-directory: ./playwright
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          CI: true
+          # Playwright doesn't use Selenium Grid - unset to avoid conflicts
+          SELENIUM_REMOTE_URL: ''
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🎭 Playwright Tests - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          BASE_URL="${{ inputs.base_url }}"
+          if [ -z "$BASE_URL" ]; then
+            BASE_URL="https://www.google.com"
+          fi
+          echo "Base URL: $BASE_URL"
+          export BASE_URL="$BASE_URL"
+          echo ""
+          npm test
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Playwright Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ inputs.environment }}
+          path: |
+            playwright/test-results/
+            playwright/playwright-report/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  robot-tests:
+    name: Robot Framework Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_robot_tests == true
+    # No dependencies - runs in PARALLEL with smoke, grid, mobile, responsive, cypress, playwright, and selenide
+
+    services:
+      selenium-hub:
+        image: selenium/hub:${{ inputs.selenium_version }}
+        ports:
+          - ${{ inputs.se_hub_port }}:${{ inputs.se_hub_port }}
+          - ${{ inputs.se_pub_port }}:${{ inputs.se_pub_port }}
+          - ${{ inputs.se_sub_port }}:${{ inputs.se_sub_port }}
+
+      chrome-node:
+        image: selenium/node-chrome:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
+        options: --shm-size=2gb
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          echo "🔍 Verifying services are running..."
+          
+          # Extract port from base_url
+          BASE_URL="${{ inputs.base_url }}"
+          if [[ "$BASE_URL" == *":3003"* ]]; then
+            FRONTEND_PORT=3003
+            API_PORT=8003
+          elif [[ "$BASE_URL" == *":3004"* ]]; then
+            FRONTEND_PORT=3004
+            API_PORT=8004
+          elif [[ "$BASE_URL" == *":3005"* ]]; then
+            FRONTEND_PORT=3005
+            API_PORT=8005
+          else
+            FRONTEND_PORT=3003
+            API_PORT=8003
+          fi
+          
+          echo "Checking Frontend on port $FRONTEND_PORT..."
+          timeout 30 bash -c 'until curl -sf http://localhost:'"$FRONTEND_PORT"' > /dev/null; do echo "  Waiting for frontend..."; sleep 2; done' || {
+            echo "❌ Frontend not responding on port $FRONTEND_PORT"
+            echo "Checking if process is running:"
+            lsof -i :"$FRONTEND_PORT" || echo "No process found on port $FRONTEND_PORT"
+            exit 1
+          }
+          echo "✅ Frontend is responding on port $FRONTEND_PORT"
+          
+          echo "Checking Backend on port $API_PORT..."
+          timeout 30 bash -c 'until curl -sf http://localhost:'"$API_PORT"'/docs > /dev/null; do echo "  Waiting for backend..."; sleep 2; done' || {
+            echo "❌ Backend not responding on port $API_PORT"
+            echo "Checking if process is running:"
+            lsof -i :"$API_PORT" || echo "No process found on port $API_PORT"
+            exit 1
+          }
+          echo "✅ Backend is responding on port $API_PORT"
+          
+          echo "✅ All services verified and ready!"
+
+      - name: Install Robot Framework dependencies
+        run: |
+          # Get Python executable path
+          PYTHON_EXE=$(which python3 || which python)
+          echo "Using Python: $PYTHON_EXE"
+          "$PYTHON_EXE" --version
+          
+          # Install Robot Framework and libraries
+          "$PYTHON_EXE" -m pip install --upgrade pip
+          "$PYTHON_EXE" -m pip install robotframework
+          "$PYTHON_EXE" -m pip install robotframework-seleniumlibrary
+          "$PYTHON_EXE" -m pip install robotframework-requests
+          
+          # Verify installation
+          echo "Installed Robot Framework packages:"
+          "$PYTHON_EXE" -m pip list | grep -i robot || echo "⚠️ Robot Framework packages not found"
+          
+          # Test import
+          "$PYTHON_EXE" -c "from robot.libraries.BuiltIn import BuiltIn; from SeleniumLibrary import SeleniumLibrary; print('✅ SeleniumLibrary imported successfully')" || {
+            echo "❌ Failed to import SeleniumLibrary"
+            echo "Python path: $("$PYTHON_EXE" -c 'import sys; print(\"\\n\".join(sys.path))')"
+            exit 1
+          }
+          
+          # Set Python path for Maven plugin (if needed)
+          echo "PYTHON_EXE=$PYTHON_EXE" >> "$GITHUB_ENV"
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Wait for Selenium Grid
+        run: |
+          chmod +x scripts/ci/wait-for-grid.sh
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "60"
+
+      - name: Run Robot Framework Tests
+        timeout-minutes: 10
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          BASE_URL: ${{ inputs.base_url }}
+          PYTHON_EXE: ${{ env.PYTHON_EXE || 'python3' }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🤖 Robot Framework Tests - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          BASE_URL="${{ inputs.base_url }}"
+          
+          # When using Selenium Grid (container), localhost points to the container itself.
+          # Use host.docker.internal so the browser inside the grid can reach the services.
+          if [[ "$BASE_URL" == http://localhost:* ]]; then
+            BASE_URL="${BASE_URL/localhost/host.docker.internal}"
+          fi
+          
+          if [ -z "$BASE_URL" ]; then
+            BASE_URL="https://www.google.com"
+          fi
+          echo "Base URL: $BASE_URL"
+          echo "Python executable: $PYTHON_EXE"
+          echo ""
+          
+          # Run Robot Framework tests directly using Python (not Maven plugin)
+          # The Maven plugin uses Jython which doesn't have access to pip-installed libraries
+          # So we run tests directly with the Python executable that has the libraries
+          # Global retry: Run tests, and if they fail, retry once
+          "$PYTHON_EXE" -m robot.run \
+            --outputdir target/robot-reports \
+            --log log.html \
+            --report report.html \
+            --variable BASE_URL:"$BASE_URL" \
+            --variable SELENIUM_REMOTE_URL:"$SELENIUM_REMOTE_URL" \
+            src/test/robot/ || {
+            echo "⚠️ First run failed, retrying once..."
+            "$PYTHON_EXE" -m robot.run \
+              --outputdir target/robot-reports \
+              --log log.html \
+              --report report.html \
+              --variable BASE_URL:"$BASE_URL" \
+              --variable SELENIUM_REMOTE_URL:"$SELENIUM_REMOTE_URL" \
+              src/test/robot/
+          }
+          
+          # Convert Robot Framework output to Maven surefire format for CI reporting
+          if [ -f target/robot-reports/output.xml ]; then
+            echo "✅ Robot Framework tests completed"
+            echo "Results: target/robot-reports/"
+          else
+            echo "⚠️ Robot Framework output not found"
+            exit 1
+          fi
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Robot Framework Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-results-${{ inputs.environment }}
+          path: |
+            target/robot-reports/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  selenide-tests:
+    name: Selenide Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_selenide_tests == true
+    # No dependencies - runs in PARALLEL with smoke, grid, mobile, responsive, cypress, and playwright
+
+    services:
+      selenium-hub:
+        image: selenium/hub:${{ inputs.selenium_version }}
+        ports:
+          - ${{ inputs.se_hub_port }}:${{ inputs.se_hub_port }}
+          - ${{ inputs.se_pub_port }}:${{ inputs.se_pub_port }}
+          - ${{ inputs.se_sub_port }}:${{ inputs.se_sub_port }}
+
+      chrome-node:
+        image: selenium/node-chrome:${{ inputs.selenium_version }}
+        env:
+          SE_EVENT_BUS_HOST: ${{ inputs.se_hub_host }}
+          SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
+          SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
+          SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
+        options: --shm-size=2gb
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Wait for Selenium Grid
+        run: |
+          chmod +x scripts/ci/wait-for-grid.sh
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "60"
+
+      - name: Run Selenide Tests
+        timeout-minutes: 15
+        env:
+          SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🔍 Selenide Tests - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "URL: ${{ inputs.base_url }}"
+          echo ""
+
+          # Create Allure environment properties file
+          mkdir -p target/allure-results
+          cat > target/allure-results/environment.properties << EOF
+          Environment=${{ inputs.environment }}
+          Test.Suite=selenide
+          Base.URL=${{ inputs.base_url }}
+          Browser=Chrome
+          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
+          Execution.Type=CI/CD
+          Framework=Selenide
+          EOF
+
+          ./mvnw -ntp test \
+            -Dtest.environment=${{ inputs.environment }} \
+            -Dtest.retry.max.count=1 \
+            -DsuiteXmlFile=testng-selenide-suite.xml
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Selenide Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenide-results-${{ inputs.environment }}
+          path: |
+            target/surefire-reports/
+            target/allure-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  vibium-tests:
+    name: Vibium Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    if: inputs.enable_vibium_tests == true
+    # No dependencies - runs in PARALLEL with smoke, grid, mobile, responsive, cypress, playwright, robot, and selenide
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: vibium/package-lock.json
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+
+      - name: Install Vibium dependencies
+        working-directory: ./vibium
+        run: |
+          echo "📦 Installing Vibium dependencies..."
+          # Use npm install instead of npm ci to allow optional dependencies to install based on platform
+          # Optional dependencies will automatically install the correct platform package:
+          # - @vibium/darwin-arm64 on macOS ARM64
+          # - @vibium/linux-x64 on Linux x64
+          npm install --no-audit --no-fund
+          # Verify core package is installed
+          echo "✅ Verifying installation..."
+          npm list vibium || {
+            echo "❌ Core vibium package not installed!"
+            exit 1
+          }
+          echo "✅ Vibium dependencies installed successfully"
+
+      - name: Run Vibium Tests
+        timeout-minutes: 10
+        env:
+          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🔍 Vibium Tests - ${{ inputs.environment }}"
+          echo "════════════════════════════════════════"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "URL: ${{ inputs.base_url }}"
+          echo ""
+          chmod +x scripts/run-vibium-tests.sh
+          ./scripts/run-vibium-tests.sh
+
+      - name: Stop Backend and Frontend Services
+        if: inputs.enable_stop_services == true
+        run: |
+          chmod +x scripts/stop-services.sh
+          ./scripts/stop-services.sh || true
+
+      - name: Upload Vibium Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vibium-results-${{ inputs.environment }}
+          path: |
+            vibium/test-results/
+            vibium/coverage/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  environment-allure-report:
+    name: Allure Report (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    needs: [smoke-tests, grid-tests, mobile-browser-tests, responsive-design-tests, cypress-tests, playwright-tests, robot-tests, selenide-tests, vibium-tests]  # Wait for ALL tests
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: List available artifacts (debug)
+        if: always()
+        run: |
+          echo "🔍 Checking for artifacts matching pattern: *-results-${{ inputs.environment }} and *-report-${{ inputs.environment }}"
+          echo "Expected artifact patterns:"
+          echo "  - smoke-results-${{ inputs.environment }}"
+          echo "  - grid-results-*-${{ inputs.environment }}"
+          echo "  - mobile-results-${{ inputs.environment }}"
+          echo "  - responsive-results-${{ inputs.environment }}"
+          echo "  - cypress-results-${{ inputs.environment }}"
+          echo "  - playwright-results-${{ inputs.environment }}"
+          echo "  - robot-results-${{ inputs.environment }}"
+          echo "  - selenide-results-${{ inputs.environment }}"
+          echo "  - vibium-results-${{ inputs.environment }}"
+          echo "  - allure-report-${{ inputs.environment }}"
+
+      - name: Download all test results for this environment
+        id: download-results
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          pattern: |
+            *-results-${{ inputs.environment }}
+            allure-report-${{ inputs.environment }}
+          path: test-results
+          merge-multiple: true
+
+      - name: Prepare Allure results
+        if: always()
+        run: |
+          echo "📊 Merging Allure results for ${{ inputs.environment }} environment..."
+          mkdir -p allure-results
+
+          # Copy test results from this environment (handle missing directories gracefully)
+          if [ -d "test-results" ]; then
+            find test-results -name "*-result.json" -exec cp {} allure-results/ \; 2>&1 || true
+            find test-results -name "*-container.json" -exec cp {} allure-results/ \; 2>&1 || true
+            find test-results -name "*-attachment.*" -exec cp {} allure-results/ \; 2>&1 || true
+          else
+            echo "⚠️  test-results directory not found, creating empty directory"
+            mkdir -p test-results
+          fi
+
+          echo "✅ Merge complete for ${{ inputs.environment }}!"
+          echo "  Results: $(find allure-results -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')"
+          echo "  Screenshots: $(find allure-results -name "*.png" 2>/dev/null | wc -l | tr -d ' ')"
+
+      - name: Install Allure CLI
+        if: always()
+        run: |
+          chmod +x scripts/ci/install-allure-cli.sh
+          ./scripts/ci/install-allure-cli.sh "2.25.0"
+
+      - name: Generate Allure Report
+        if: always()
+        run: |
+          echo "Generating Allure report for ${{ inputs.environment }}..."
+          allure generate allure-results --clean -o allure-report-${{ inputs.environment }}
+          echo "✅ Report generated!"
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-report-${{ inputs.environment }}
+          path: allure-report-${{ inputs.environment }}/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  environment-test-summary:
+    name: Test Summary (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    needs: [smoke-tests, grid-tests, mobile-browser-tests, responsive-design-tests, selenide-tests, vibium-tests]  # Wait for ALL tests
+    if: always()
+
+    steps:
+      - name: List available artifacts (debug)
+        if: always()
+        run: |
+          echo "🔍 Checking for artifacts matching pattern: *-results-${{ inputs.environment }}"
+          echo "Expected artifact patterns:"
+          echo "  - smoke-results-${{ inputs.environment }}"
+          echo "  - grid-results-*-${{ inputs.environment }}"
+          echo "  - mobile-results-${{ inputs.environment }}"
+          echo "  - responsive-results-${{ inputs.environment }}"
+          echo "  - selenide-results-${{ inputs.environment }}"
+          echo "  - vibium-results-${{ inputs.environment }}"
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-results-${{ inputs.environment }}"
+          path: test-results
+          merge-multiple: true
+
+      - name: Create test summary
+        run: |
+          {
+            echo "## 🧪 Test Results - ${{ inputs.environment }} Environment"
+            echo ""
+            echo "**Environment**: ${{ inputs.environment }}"
+            echo "**Base URL**: ${{ inputs.base_url }}"
+            echo "**Test Suite**: ${{ inputs.test_suite }}"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Debug: Show what files were downloaded
+          echo "🔍 Debug: Checking downloaded artifacts..."
+          echo "Test results directory structure:" >> "$GITHUB_STEP_SUMMARY"
+          if [ -d "test-results" ]; then
+            find test-results -type f -name "*.xml" -o -name "*.json" 2>/dev/null | head -20 | while IFS= read -r file; do
+              echo "  - $file" >> "$GITHUB_STEP_SUMMARY"
+            done || echo "  No test result files found" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "  ⚠️ test-results directory not found (artifacts may not have been uploaded)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          {
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Parse test results from multiple formats
+          TOTAL_TESTS=0
+          TOTAL_FAILURES=0
+          TOTAL_ERRORS=0
+          TOTAL_PASSED=0
+
+          # Check if test-results directory exists before parsing
+          if [ ! -d "test-results" ]; then
+            echo "⚠️  test-results directory not found, no test results to parse"
+            {
+              echo "### Results:"
+              echo "- Total Tests: 0"
+              echo "- Passed: 0"
+              echo "- Failed: 0"
+              echo "- Errors: 0"
+              echo ""
+              echo "⚠️ **Status**: NO TEST RESULTS FOUND (artifacts may not have been uploaded)"
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # 1. Parse Maven Surefire XML files (TEST-*.xml)
+          echo "📊 Parsing Maven Surefire XML results..."
+          while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+              tests=$(grep -oP 'tests="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              failures=$(grep -oP 'failures="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              errors=$(grep -oP 'errors="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              
+              TOTAL_TESTS=$((TOTAL_TESTS + ${tests:-0}))
+              TOTAL_FAILURES=$((TOTAL_FAILURES + ${failures:-0}))
+              TOTAL_ERRORS=$((TOTAL_ERRORS + ${errors:-0}))
+            fi
+          done < <(find test-results -type f -name "TEST-*.xml" 2>/dev/null || true)
+
+          # 2. Parse Allure result JSON files (*-result.json)
+          echo "📊 Parsing Allure JSON results..."
+          while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+              # Allure result JSON structure: { "status": "passed|failed|broken", ... }
+              status=$(grep -oP '"status"\s*:\s*"\K[^"]+' "$json_file" | head -1 || echo "")
+              if [ -n "$status" ]; then
+                TOTAL_TESTS=$((TOTAL_TESTS + 1))
+                if [ "$status" = "failed" ] || [ "$status" = "broken" ]; then
+                  TOTAL_FAILURES=$((TOTAL_FAILURES + 1))
+                else
+                  TOTAL_PASSED=$((TOTAL_PASSED + 1))
+                fi
+              fi
+            fi
+          done < <(find test-results -type f -name "*-result.json" 2>/dev/null || true)
+
+          # 3. Parse Playwright result JSON files (results.json)
+          echo "📊 Parsing Playwright JSON results..."
+          while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+              # Playwright results structure: { "stats": { "total": N, "expected": M, ... } }
+              total=$(grep -oP '"total"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+              expected=$(grep -oP '"expected"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+              if [ -n "$total" ] && [ "$total" != "0" ]; then
+                TOTAL_TESTS=$((TOTAL_TESTS + ${total:-0}))
+                failed=$((total - expected))
+                if [ "$failed" -gt 0 ]; then
+                  TOTAL_FAILURES=$((TOTAL_FAILURES + failed))
+                else
+                  TOTAL_PASSED=$((TOTAL_PASSED + expected))
+                fi
+              fi
+            fi
+          done < <(find test-results -type f -name "results.json" 2>/dev/null || true)
+
+          # 4. Parse Cypress result JSON files (mochawesome.json or similar)
+          echo "📊 Parsing Cypress JSON results..."
+          while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+              # Cypress results structure varies, try to extract stats
+              tests=$(grep -oP '"tests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+              failures=$(grep -oP '"failures"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+              if [ -n "$tests" ] && [ "$tests" != "0" ]; then
+                TOTAL_TESTS=$((TOTAL_TESTS + ${tests:-0}))
+                TOTAL_FAILURES=$((TOTAL_FAILURES + ${failures:-0}))
+              fi
+            fi
+          done < <(find test-results -type f \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null || true)
+
+          # Calculate passed tests if not already calculated
+          if [ "$TOTAL_PASSED" -eq 0 ] && [ "$TOTAL_TESTS" -gt 0 ]; then
+            TOTAL_PASSED=$((TOTAL_TESTS - TOTAL_FAILURES - TOTAL_ERRORS))
+          fi
+
+          {
+            echo "### Results:"
+            echo "- Total Tests: $TOTAL_TESTS"
+            echo "- Passed: $TOTAL_PASSED"
+            echo "- Failed: $TOTAL_FAILURES"
+            echo "- Errors: $TOTAL_ERRORS"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$TOTAL_FAILURES" -gt "0" ] || [ "$TOTAL_ERRORS" -gt "0" ]; then
+            echo "❌ **Status**: FAILED" >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$TOTAL_TESTS" -eq "0" ]; then
+            echo "⚠️ **Status**: NO TESTS FOUND" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "✅ **Status**: PASSED" >> "$GITHUB_STEP_SUMMARY"
+          fi

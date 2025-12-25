@@ -1,0 +1,33 @@
+{
+  "queries": [
+    {
+      "searchTerm": "Selenium WebDriver",
+      "shouldSucceed": true
+    },
+    {
+      "searchTerm": "TestNG Framework",
+      "shouldSucceed": true
+    },
+    {
+      "searchTerm": "Docker Containers",
+      "shouldSucceed": true
+    },
+    {
+      "searchTerm": "Java Programming",
+      "shouldSucceed": true
+    },
+    {
+      "searchTerm": "CI/CD Pipeline",
+      "shouldSucceed": true
+    },
+    {
+      "searchTerm": "",
+      "shouldSucceed": false
+    },
+    {
+      "searchTerm": "   ",
+      "shouldSucceed": false
+    }
+  ]
+}
+

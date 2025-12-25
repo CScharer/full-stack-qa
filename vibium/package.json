@@ -1,0 +1,32 @@
+{
+  "name": "full-stack-qa-vibium",
+  "version": "1.0.0",
+  "description": "Vibium tests for full-stack-qa framework",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "npx vitest run",
+    "test:watch": "npx vitest",
+    "test:ui": "npx vitest --ui",
+    "vibe": "tsx helpers/example.ts",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist coverage test-results .vitest"
+  },
+  "dependencies": {
+    "vibium": "^0.1.2"
+  },
+  "optionalDependencies": {
+    "@vibium/darwin-arm64": "^0.1.2",
+    "@vibium/linux-x64": "^0.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

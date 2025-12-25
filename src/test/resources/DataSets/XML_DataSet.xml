@@ -1,0 +1,58 @@
+<!DOCTYPE dataset SYSTEM "dataset.dtd">
+<dataset>
+    <table name="OrderSourceEntity">
+        <column>id</column>
+        <column>code</column>
+        <column>description</column>
+        <column>lastModifiedBy</column>
+        <column>lastModifiedOn</column>
+        <row>
+            <value>1</value>
+            <value>so</value>
+            <value>Store Order</value>
+            <value>cbrown</value>
+            <value>2012-12-31 12:34:56.001</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>wo</value>
+            <value>Web Order</value>
+            <value>cbrown</value>
+            <value>2012-12-31 12:34:56.001</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>un</value>
+            <null />
+            <value>lvanpelt</value>
+            <value>2013-12-23 00:00:00</value>
+        </row>
+    </table>
+    <table>
+        <column>id</column>
+        <column>orderLabel</column>
+        <column>orderNumber</column>
+        <column>orderSourceEntity_id</column>
+        <column>customerId</column>
+        <column>completionDate</column>
+        <column>fulfillmentDate</column>
+        <row>
+            <value>1</value>
+            <value>Cust 1 Order 1</value>
+            <value>ORD1</value>
+            <value>2</value>
+            <value>250000</value>
+            <value>2013-12-23 00:00:00</value>
+            <null />
+        </row>
+        <row>
+            <value>2</value>
+            <value>Cust 1 Order 2</value>
+            <value>ORD2</value>
+            <value>1</value>
+            <value>250000</value>
+            <value>2013-12-23 00:00:00</value>
+            <value>2013-12-26 00:00:00</value>
+        </row>
+    </table>
+</dataset>

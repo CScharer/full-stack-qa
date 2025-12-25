@@ -1,0 +1,52 @@
+{
+  "locators": [
+    {
+      "name": " Button3 Dollars Off A Carton",
+      "type": "xpath",
+      "value": "\".//span[contains(text(),'$3 Off a Carton')]\"",
+      "variableName": "button3DollarsOffACarton"
+    },
+    {
+      "name": " Button Get Yours By Mail",
+      "type": "xpath",
+      "value": "\".//div[@class='image-cta-link']//div[@class='inner-content']/button/i[contains(@class,'btn-ctaIcon')]/../..\"",
+      "variableName": "buttonGetYoursByMail"
+    },
+    {
+      "name": " Button C O U P O N S",
+      "type": "xpath",
+      "value": "\".//li[contains(@class,'menu-list-desk')]/a[@data-dtmtext='COUPONS']\"",
+      "variableName": "buttonCOUPONS"
+    },
+    {
+      "name": " Button Submit",
+      "type": "xpath",
+      "value": "\".//*[@id='cpn-submit']\"",
+      "variableName": "buttonSubmit"
+    },
+    {
+      "name": " Button Log Out",
+      "type": "xpath",
+      "value": "\".//*[@id='logout']/span\"",
+      "variableName": "buttonLogOut"
+    },
+    {
+      "name": " Label Message",
+      "type": "xpath",
+      "value": "\".//div[@class='coupon-heading']/h6\"",
+      "variableName": "labelMessage"
+    },
+    {
+      "name": " Label Thanks",
+      "type": "xpath",
+      "value": "\".//div[@class='coupon-heading']/h6[.='THANK YOU FOR YOUR REQUEST.']\"",
+      "variableName": "labelThanks"
+    },
+    {
+      "name": " Label Coupon In The Mail",
+      "type": "xpath",
+      "value": "\".//div[@class='coupon-heading']/h6[.='LOOKS LIKE YOUR MONTHLY COUPON IS ALREADY IN THE MAIL.']\"",
+      "variableName": "labelCouponInTheMail"
+    }
+  ]
+}

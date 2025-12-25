@@ -1,0 +1,52 @@
+{
+  "locators": [
+    {
+      "name": " Edit Billing Account Number",
+      "type": "id",
+      "value": "\"billingAccountNumber\"",
+      "variableName": "editBillingAccountNumber"
+    },
+    {
+      "name": " Dropdown Bill Type",
+      "type": "id",
+      "value": "\"billType\"",
+      "variableName": "dropdownBillType"
+    },
+    {
+      "name": " Dropdown Pay Plan",
+      "type": "id",
+      "value": "\"payPlan\"",
+      "variableName": "dropdownPayPlan"
+    },
+    {
+      "name": " Dropdown Amendment Distribution",
+      "type": "id",
+      "value": "\"amendmentDistribution\"",
+      "variableName": "dropdownAmendmentDistribution"
+    },
+    {
+      "name": " Edit Deposit Amount",
+      "type": "id",
+      "value": "\"depositAmount\"",
+      "variableName": "editDepositAmount"
+    },
+    {
+      "name": " Dropdown Deposit Type",
+      "type": "id",
+      "value": "\"depositType\"",
+      "variableName": "dropdownDepositType"
+    },
+    {
+      "name": " Edit Deposit Percent",
+      "type": "id",
+      "value": "\"depositPercent\"",
+      "variableName": "editDepositPercent"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"billingInformation-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "locators": [
+    {
+      "name": " By Title Bar",
+      "type": "xpath",
+      "value": "\".//*[@id='SpTitleBar']\"",
+      "variableName": "byTitleBar"
+    },
+    {
+      "name": " By Links Groups",
+      "type": "xpath",
+      "value": "\"//*[@id='CustomPageBody']//a[text()!='contact us today!']\"",
+      "variableName": "byLinksGroups"
+    }
+  ]
+}

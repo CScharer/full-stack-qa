@@ -1,0 +1,130 @@
+{
+  "locators": [
+    {
+      "name": " Edit Effective Date",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"effectiveDtBI\"",
+      "variableName": "editEffectiveDate"
+    },
+    {
+      "name": " Dropdown Term",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"termBI\"",
+      "variableName": "dropdownTerm"
+    },
+    {
+      "name": " Dropdown Renewal Term",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"renewalTermBI\"",
+      "variableName": "dropdownRenewalTerm"
+    },
+    {
+      "name": " Edit Expiration Date",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"expirationDtBI\"",
+      "variableName": "editExpirationDate"
+    },
+    {
+      "name": " Edit Release Date",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"releaseDtBI\"",
+      "variableName": "editReleaseDate"
+    },
+    {
+      "name": " Dropdown Corporation",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"corporationBI\"",
+      "variableName": "dropdownCorporation"
+    },
+    {
+      "name": " Dropdown Company",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"policyCompanyBI\"",
+      "variableName": "dropdownCompany"
+    },
+    {
+      "name": " Dropdown Policy Type",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"policyProductBI\"",
+      "variableName": "dropdownPolicyType"
+    },
+    {
+      "name": " Dropdown Program",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"policyProgramBI\"",
+      "variableName": "dropdownProgram"
+    },
+    {
+      "name": " Dropdown Policy State",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"policyStateBI\"",
+      "variableName": "dropdownPolicyState"
+    },
+    {
+      "name": " Checkbox Renewal Policy",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"targetRenewalPolicy\"",
+      "variableName": "checkboxRenewalPolicy"
+    },
+    {
+      "name": " Checkbox Use Current Rate Rules",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"currentRules\"",
+      "variableName": "checkboxUseCurrentRateRules"
+    },
+    {
+      "name": " Checkbox Retain Base Number",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"retainBaseNbrBI\"",
+      "variableName": "checkboxRetainBaseNumber"
+    },
+    {
+      "name": " Checkbox User Entered Policy Number",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"userEnteredPolNbrBI\"",
+      "variableName": "checkboxUserEnteredPolicyNumber"
+    },
+    {
+      "name": " Edit Copy From Policy Number",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"sourcePolicyNbrId\"",
+      "variableName": "editCopyFromPolicyNumber"
+    },
+    {
+      "name": " Edit Copy To Policy Number",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"targetPolicyNbrId\"",
+      "variableName": "editCopyToPolicyNumber"
+    },
+    {
+      "name": " Button Delete",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"DelBtn\"",
+      "variableName": "buttonDelete"
+    },
+    {
+      "name": " Button Copy",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"copyBtn\"",
+      "variableName": "buttonCopy"
+    },
+    {
+      "name": " Button Cancel",
+      "type": "id",
+      "value": "nodeCopyPolicy + \"cancelBtn\"",
+      "variableName": "buttonCancel"
+    },
+    {
+      "name": " Button Copy Success",
+      "type": "xpath",
+      "value": "\"*//button[@type='button']//span[.='OK']\"",
+      "variableName": "buttonCopySuccess"
+    },
+    {
+      "name": " Button Pending Changes O K",
+      "type": "xpath",
+      "value": "\".//*/span[.='OK']\"",
+      "variableName": "buttonPendingChangesOK"
+    }
+  ]
+}

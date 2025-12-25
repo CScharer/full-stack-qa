@@ -1,0 +1,58 @@
+{
+  "locators": [
+    {
+      "name": " By Search Edit",
+      "type": "xpath",
+      "value": "\".//input[@name='q']\"",
+      "variableName": "bySearchEdit"
+    },
+    {
+      "name": " By Points Available Label",
+      "type": "xpath",
+      "value": "\".//*[@id='quizWelcomeContainer']//span[@class='rqWcCredits']\"",
+      "variableName": "byPointsAvailableLabel"
+    },
+    {
+      "name": " By Points Earned Label",
+      "type": "xpath",
+      "value": "\".//*[@id='btoHeadPanel']//span[@class='rqECredits']\"",
+      "variableName": "byPointsEarnedLabel"
+    },
+    {
+      "name": " By Welcome Label",
+      "type": "xpath",
+      "value": "\".//*[@id='quizWelcomeContainer']/div[@class='rqText']\"",
+      "variableName": "byWelcomeLabel"
+    },
+    {
+      "name": " By Start Playing Button",
+      "type": "xpath",
+      "value": "\".//*[@id='rqStartQuiz']\"",
+      "variableName": "byStartPlayingButton"
+    },
+    {
+      "name": " By Question I D",
+      "type": "xpath",
+      "value": "\".//*[@id='questionId']\"",
+      "variableName": "byQuestionID"
+    },
+    {
+      "name": " By Quiz Complete",
+      "type": "xpath",
+      "value": "\".//*[@id='quizCompleteContainer']/div\"",
+      "variableName": "byQuizComplete"
+    },
+    {
+      "name": " By Answer Correct Message Label",
+      "type": "xpath",
+      "value": "\".//*[@id='rqcorrectAns']\"",
+      "variableName": "byAnswerCorrectMessageLabel"
+    },
+    {
+      "name": " By Answer Wrong Message Label",
+      "type": "xpath",
+      "value": "\".//*[@id='wrongAnswerMessage']\"",
+      "variableName": "byAnswerWrongMessageLabel"
+    }
+  ]
+}

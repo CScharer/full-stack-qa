@@ -1,0 +1,10 @@
+{
+  "locators": [
+    {
+      "name": " Link Manage Products",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"5:navigationMenuItem:menuLinkSubmittable']/span\"",
+      "variableName": "linkManageProducts"
+    }
+  ]
+}

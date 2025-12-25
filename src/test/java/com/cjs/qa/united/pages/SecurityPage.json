@@ -1,0 +1,16 @@
+{
+  "locators": [
+    {
+      "name": " Option Dont Remember This Device",
+      "type": "xpath",
+      "value": "\".//*[@id='authQuestionsForm']/div/div/label[@for='IsRememberDevice_False']\"",
+      "variableName": "optionDontRememberThisDevice"
+    },
+    {
+      "name": " Button Next",
+      "type": "xpath",
+      "value": "\".//*[@id='btnNext']\"",
+      "variableName": "buttonNext"
+    }
+  ]
+}

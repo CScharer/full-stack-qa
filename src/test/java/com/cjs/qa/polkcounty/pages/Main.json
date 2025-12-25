@@ -1,0 +1,10 @@
+{
+  "locators": [
+    {
+      "name": " By No Results",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_ContentPlaceHolder1_noResults']\"",
+      "variableName": "byNoResults"
+    }
+  ]
+}

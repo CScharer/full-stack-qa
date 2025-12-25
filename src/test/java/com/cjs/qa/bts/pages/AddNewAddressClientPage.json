@@ -1,0 +1,148 @@
+{
+  "locators": [
+    {
+      "name": " Dropdown Type",
+      "type": "id",
+      "value": "\"form1:availableList:clientBusinessTypeOneMenu\"",
+      "variableName": "dropdownType"
+    },
+    {
+      "name": " Dropdown Owner",
+      "type": "id",
+      "value": "\"form1:availableList:ownerTypeMenu\"",
+      "variableName": "dropdownOwner"
+    },
+    {
+      "name": " Edit Name1",
+      "type": "id",
+      "value": "\"form1:availableList:businessNameAddCli\"",
+      "variableName": "editName1"
+    },
+    {
+      "name": " Dropdown Name1 Type",
+      "type": "id",
+      "value": "\"form1:availableList:nameType1\"",
+      "variableName": "dropdownName1Type"
+    },
+    {
+      "name": " Edit Name2",
+      "type": "id",
+      "value": "\"form1:availableList:businessName2AddCli\"",
+      "variableName": "editName2"
+    },
+    {
+      "name": " Dropdown Name2 Type",
+      "type": "id",
+      "value": "\"form1:availableList:nameType2\"",
+      "variableName": "dropdownName2Type"
+    },
+    {
+      "name": " Option Primary",
+      "type": "id",
+      "value": "\"form1:availableList:radio1\"",
+      "variableName": "optionPrimary"
+    },
+    {
+      "name": " Edit First Name",
+      "type": "id",
+      "value": "\"form1:availableList:firstNameAddCli\"",
+      "variableName": "editFirstName"
+    },
+    {
+      "name": " Edit Last Name",
+      "type": "id",
+      "value": "\"form1:availableList:lastNameAddCli\"",
+      "variableName": "editLastName"
+    },
+    {
+      "name": " Edit Addr No",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:houseNumberId\"",
+      "variableName": "editAddrNo"
+    },
+    {
+      "name": " Edit Addr Line1",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:addrLine1Id\"",
+      "variableName": "editAddrLine1"
+    },
+    {
+      "name": " Edit Addr Line2",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:addrLine2Id\"",
+      "variableName": "editAddrLine2"
+    },
+    {
+      "name": " Edit Addr Line3",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:addrLine3Id\"",
+      "variableName": "editAddrLine3"
+    },
+    {
+      "name": " Edit Addr Line4",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:addrLine4Id\"",
+      "variableName": "editAddrLine4"
+    },
+    {
+      "name": " Dropdown Country",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:countryId\"",
+      "variableName": "dropdownCountry"
+    },
+    {
+      "name": " Dropdown State",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:stateId\"",
+      "variableName": "dropdownState"
+    },
+    {
+      "name": " Edit City",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:cityDisplay\"",
+      "variableName": "editCity"
+    },
+    {
+      "name": " Edit County",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:countyDisplay\"",
+      "variableName": "editCounty"
+    },
+    {
+      "name": " Edit Postal Code",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:postalCodeId\"",
+      "variableName": "editPostalCode"
+    },
+    {
+      "name": " Button Clear Address",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:clearAddressBtnId\"",
+      "variableName": "buttonClearAddress"
+    },
+    {
+      "name": " Button Lookup",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:lookupPostalCdButton\"",
+      "variableName": "buttonLookup"
+    },
+    {
+      "name": " Button Add",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:btnAdd\"",
+      "variableName": "buttonAdd"
+    },
+    {
+      "name": " Button Delete",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:btnDelete\"",
+      "variableName": "buttonDelete"
+    },
+    {
+      "name": " Button Save",
+      "type": "id",
+      "value": "\"form1:availableList:addressPanelId:btnSave\"",
+      "variableName": "buttonSave"
+    }
+  ]
+}

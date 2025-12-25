@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-sources>
+	<data-source id="msaccess_ucanaccess-15d1abe5aee-22cb436b64060a8b" provider="generic" driver="msaccess_ucanaccess" name="MS Access - CScharer.mdb" save-password="true" show-system-objects="true" show-util-objects="true" read-only="false">
+		<connection server="" database="C:\Users\CHRIS\Desktop\CScharer.mdb" url="jdbc:ucanaccess://C:\Users\CHRIS\Desktop\CScharer.mdb" type="dev"/>
+	</data-source>
+	<data-source id="msaccess_ucanaccess-15d1abf490c-36faab123b1729c5" provider="generic" driver="msaccess_ucanaccess" name="MS Access - Vivit-Operating_Budget.accdb" save-password="true" show-system-objects="true" show-util-objects="true" read-only="false">
+		<connection server="" database="C:\Users\CHRIS\Desktop\Desktop\Vivit\Directors\Treasurer\Vivit-Operating_Budget.accdb" url="jdbc:ucanaccess://C:\Users\CHRIS\Desktop\Desktop\Vivit\Directors\Treasurer\Vivit-Operating_Budget.accdb" type="dev"/>
+	</data-source>
+	<data-source id="sqlite_jdbc-15d1ac00b56-7b7e9d9be49de6b9" provider="generic" driver="sqlite_jdbc" name="SQLite - qadb.sqlite" save-password="true" show-system-objects="true" show-util-objects="true" read-only="false">
+		<connection server="" database="C:\Workspace\Github\cjs-app\cjs-app-gui\Data\qadb.sqlite" url="jdbc:sqlite:C:\Workspace\Github\cjs-app\cjs-app-gui\Data\qadb.sqlite" type="dev"/>
+		<custom-property name="database.editor.connect.on.execute" value="true"/>
+		<custom-property name="database.editor.connect.on.activate" value="false"/>
+	</data-source>
+</data-sources>

@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Checkbox Cigarettes",
+      "type": "xpath",
+      "value": "\".//span[.='Cigarettes']/../div/span\"",
+      "variableName": "checkboxCigarettes"
+    },
+    {
+      "name": " Dropdown Regular Brand",
+      "type": "xpath",
+      "value": "\"//div[@data-orgtext][contains(text(),'What is your regular brand of cigarettes, that is, the brand you buy most often?')]/../span/select\"",
+      "variableName": "dropdownRegularBrand"
+    },
+    {
+      "name": " Button Next",
+      "type": "xpath",
+      "value": "\".//*[@id='verifyinfoInterruptnxtBtn']\"",
+      "variableName": "buttonNext"
+    }
+  ]
+}

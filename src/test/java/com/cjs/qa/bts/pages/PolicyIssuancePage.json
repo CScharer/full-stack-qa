@@ -1,0 +1,40 @@
+{
+  "locators": [
+    {
+      "name": " Button Edit",
+      "type": "id",
+      "value": "\"EditEdit\"",
+      "variableName": "buttonEdit"
+    },
+    {
+      "name": " Button Validate",
+      "type": "id",
+      "value": "\"ValidateValidate\"",
+      "variableName": "buttonValidate"
+    },
+    {
+      "name": " Button Rate",
+      "type": "id",
+      "value": "\"RateRate\"",
+      "variableName": "buttonRate"
+    },
+    {
+      "name": " Button Bind",
+      "type": "id",
+      "value": "\"BindBind\"",
+      "variableName": "buttonBind"
+    },
+    {
+      "name": " Button Issue",
+      "type": "id",
+      "value": "\"form1:cplProcessedResults:buttonRate\"",
+      "variableName": "buttonIssue"
+    },
+    {
+      "name": " Button Request Print",
+      "type": "id",
+      "value": "\"requestPrintLink\"",
+      "variableName": "buttonRequestPrint"
+    }
+  ]
+}

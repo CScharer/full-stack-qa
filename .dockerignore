@@ -1,0 +1,55 @@
+# Git
+.git/
+.github/
+.gitignore
+
+# Build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+logs/
+
+# Documentation
+*.md
+docs/
+
+# Test output
+videos/
+screenshots/
+allure-results/
+allure-report/
+test-output/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Docker
+docker-compose*.yml
+
+# CI/CD
+.github/
+
+# Other
+node_modules/
+.npm/

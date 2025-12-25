@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd" version="6.55.0" timestamp="2025-11-13T01:20:18.693">
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/bts/CompanyEnvironmentSetupTests.java">
+<violation beginline="58" endline="65" begincolumn="12" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.bts" class="CompanyEnvironmentSetupTests" method="setCompanyEnvironmentData" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty if statement
+</violation>
+<violation beginline="68" endline="72" begincolumn="12" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.bts" class="CompanyEnvironmentSetupTests" method="setCompanyEnvironmentData" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty if statement
+</violation>
+<violation beginline="76" endline="80" begincolumn="12" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.bts" class="CompanyEnvironmentSetupTests" method="setCompanyEnvironmentData" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty if statement
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/bts/pages/AbstractPage.java">
+<violation beginline="38" endline="38" begincolumn="18" endcolumn="25" rule="LocalVariableNamingConventions" ruleset="Code Style" package="com.cjs.qa.bts.pages" class="AbstractPage" method="selectDropdown" variable="Dropdown" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#localvariablenamingconventions" priority="1">
+The final local variable name 'Dropdown' doesn't match '[a-z][a-zA-Z0-9]*'
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/bts/pages/BiBasicInfoPage.java">
+<violation beginline="51" endline="53" begincolumn="5" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.bts.pages" class="BiBasicInfoPage" method="getBasicInformation" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty while statement
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/bts/pages/FormsRightNav.java">
+<violation beginline="34" endline="34" begincolumn="11" endcolumn="40" rule="SingularField" ruleset="Design" package="com.cjs.qa.bts.pages" class="FormsRightNav" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'sidebarIsOpen' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/bts/pages/IssuePage.java">
+<violation beginline="43" endline="45" begincolumn="5" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.bts.pages" class="IssuePage" method="clickButtonIssueNow" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty while statement
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/bts/pages/IssuePageLeftNav.java">
+<violation beginline="20" endline="22" begincolumn="5" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.bts.pages" class="IssuePageLeftNav" method="clickLinkPremiumSummary" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty while statement
+</violation>
+<violation beginline="27" endline="29" begincolumn="5" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.bts.pages" class="IssuePageLeftNav" method="clickLinkPolicyActivity" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty while statement
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/gt/GTWebinarDataTests.java">
+<violation beginline="57" endline="57" begincolumn="48" endcolumn="59" rule="UnusedFormalParameter" ruleset="Best Practices" package="com.cjs.qa.gt" class="GTWebinarDataTests" method="pullFromGTWebinar" variable="dateTimeFrom" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'dateTimeFrom'.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/iadhs/objects/Payment.java">
+<violation beginline="248" endline="375" begincolumn="5" endcolumn="5" rule="ForLoopCanBeForeach" ruleset="Best Practices" package="com.cjs.qa.iadhs.objects" class="Payment" method="getPaymentTable" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#forloopcanbeforeach" priority="3">
+This for loop can be replaced by a foreach loop
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/jdbc/SQLite.java">
+<violation beginline="41" endline="41" begincolumn="22" endcolumn="31" rule="CloseResource" ruleset="Error Prone" package="com.cjs.qa.jdbc" class="SQLite" method="createProductSummaryTableAndViews" variable="connection" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#closeresource" priority="3">
+Ensure that resources like this Connection object are closed after use
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/dataset/BaseDBUnitTestForJPADao.java">
+<violation beginline="54" endline="54" begincolumn="24" endcolumn="33" rule="CloseResource" ruleset="Error Prone" package="com.cjs.qa.junit.dataset" class="BaseDBUnitTestForJPADao" method="setupTestClass" variable="connection" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#closeresource" priority="3">
+Ensure that resources like this Connection object are closed after use
+</violation>
+<violation beginline="80" endline="85" begincolumn="7" endcolumn="7" rule="NonThreadSafeSingleton" ruleset="Multithreading" package="com.cjs.qa.junit.dataset" class="BaseDBUnitTestForJPADao" method="teardownTestClass" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_multithreading.html#nonthreadsafesingleton" priority="3">
+Singleton is not thread safe
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/dbunit/BaseDBUnitTestForJPADao.java">
+<violation beginline="54" endline="54" begincolumn="24" endcolumn="33" rule="CloseResource" ruleset="Error Prone" package="com.cjs.qa.junit.dbunit" class="BaseDBUnitTestForJPADao" method="setupTestClass" variable="connection" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#closeresource" priority="3">
+Ensure that resources like this Connection object are closed after use
+</violation>
+<violation beginline="80" endline="85" begincolumn="7" endcolumn="7" rule="NonThreadSafeSingleton" ruleset="Multithreading" package="com.cjs.qa.junit.dbunit" class="BaseDBUnitTestForJPADao" method="teardownTestClass" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_multithreading.html#nonthreadsafesingleton" priority="3">
+Singleton is not thread safe
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/AdvancedFeaturesTests.java">
+<violation beginline="29" endline="29" begincolumn="11" endcolumn="25" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="AdvancedFeaturesTests" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'gridUrl' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/DataDrivenTests.java">
+<violation beginline="33" endline="33" begincolumn="11" endcolumn="25" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="DataDrivenTests" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'gridUrl' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/EnhancedGridTests.java">
+<violation beginline="30" endline="30" begincolumn="11" endcolumn="25" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="EnhancedGridTests" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'gridUrl' could be replaced by a local variable.
+</violation>
+<violation beginline="223" endline="223" begincolumn="5" endcolumn="52" rule="GuardLogStatement" ruleset="Best Practices" package="com.cjs.qa.junit.tests" class="EnhancedGridTests" method="testBrowserCapabilities" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+Logger calls should be surrounded by log level guards.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/GridConnectionTest.java">
+<violation beginline="17" endline="17" begincolumn="11" endcolumn="25" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="GridConnectionTest" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'gridUrl' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/NegativeTests.java">
+<violation beginline="33" endline="33" begincolumn="11" endcolumn="25" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="NegativeTests" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'gridUrl' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/ScenariosTests.java">
+<violation beginline="83" endline="84" begincolumn="11" endcolumn="78" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="ScenariosTests" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'mavenCommand' could be replaced by a local variable.
+</violation>
+<violation beginline="265" endline="269" begincolumn="5" endcolumn="5" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.junit.tests" class="ScenariosTests" method="afterTestTeardown" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty try body
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/SimpleGridTest.java">
+<violation beginline="22" endline="22" begincolumn="11" endcolumn="25" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="SimpleGridTest" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'gridUrl' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/junit/tests/SmokeTests.java">
+<violation beginline="35" endline="35" begincolumn="11" endcolumn="25" rule="SingularField" ruleset="Design" package="com.cjs.qa.junit.tests" class="SmokeTests" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'gridUrl' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/linkedin/pages/ContactInfoPage.java">
+<violation beginline="32" endline="32" begincolumn="11" endcolumn="23" rule="AvoidStringBufferField" ruleset="Best Practices" package="com.cjs.qa.linkedin.pages" class="ContactInfoPage" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#avoidstringbufferfield" priority="3">
+StringBuffers can grow quite a lot, and so may become a source of memory leak (if the owning class has a long life time).
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/marlboro/pages/VerifyInformationInterruptPage.java">
+<violation beginline="21" endline="21" begincolumn="14" endcolumn="31" rule="UnusedPrivateField" ruleset="Best Practices" package="com.cjs.qa.marlboro.pages" class="VerifyInformationInterruptPage" variable="optionRegularBrand" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'optionRegularBrand'.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/microsoft/pages/DailyPollQuizPages.java">
+<violation beginline="31" endline="31" begincolumn="15" endcolumn="27" rule="UnusedPrivateField" ruleset="Best Practices" package="com.cjs.qa.microsoft.pages" class="DailyPollQuizPages" variable="answersNeeded" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'answersNeeded'.
+</violation>
+<violation beginline="31" endline="31" begincolumn="11" endcolumn="28" rule="SingularField" ruleset="Design" package="com.cjs.qa.microsoft.pages" class="DailyPollQuizPages" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'answersNeeded' could be replaced by a local variable.
+</violation>
+<violation beginline="69" endline="71" begincolumn="7" endcolumn="7" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.microsoft.pages" class="DailyPollQuizPages" method="clickStartPlayingButton" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty if statement
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/selenium/ISelenium.java">
+<violation beginline="602" endline="616" begincolumn="7" endcolumn="7" rule="ForLoopCanBeForeach" ruleset="Best Practices" package="com.cjs.qa.selenium" class="ISelenium" method="webCheckboxSelect" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#forloopcanbeforeach" priority="3">
+This for loop can be replaced by a foreach loop
+</violation>
+<violation beginline="782" endline="782" begincolumn="30" endcolumn="36" rule="CloseResource" ruleset="Error Prone" package="com.cjs.qa.selenium" class="ISelenium" method="browserProfiling" variable="service" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#closeresource" priority="3">
+Ensure that resources like this GeckoDriverService object are closed after use
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/selenium/SeleniumWebDriver.java">
+<violation beginline="403" endline="405" begincolumn="7" endcolumn="5" rule="AvoidCatchingThrowable" ruleset="Error Prone" package="com.cjs.qa.selenium" class="SeleniumWebDriver" method="getWebDriverInfo" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#avoidcatchingthrowable" priority="3">
+A catch statement should never catch throwable since it includes errors.
+</violation>
+<violation beginline="504" endline="504" begincolumn="32" endcolumn="38" rule="CloseResource" ruleset="Error Prone" package="com.cjs.qa.selenium" class="SeleniumWebDriver" method="initializeWebDriver" variable="service" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#closeresource" priority="3">
+Ensure that resources like this GeckoDriverService object are closed after use
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/utilities/AllureHelper.java">
+<violation beginline="36" endline="36" begincolumn="9" endcolumn="76" rule="GuardLogStatement" ruleset="Best Practices" package="com.cjs.qa.utilities" class="AllureHelper" method="captureScreenshot" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+Logger calls should be surrounded by log level guards.
+</violation>
+<violation beginline="62" endline="62" begincolumn="9" endcolumn="76" rule="GuardLogStatement" ruleset="Best Practices" package="com.cjs.qa.utilities" class="AllureHelper" method="takeScreenshot" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+Logger calls should be surrounded by log level guards.
+</violation>
+<violation beginline="118" endline="118" begincolumn="9" endcolumn="74" rule="GuardLogStatement" ruleset="Best Practices" package="com.cjs.qa.utilities" class="AllureHelper" method="logBrowserInfo" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+Logger calls should be surrounded by log level guards.
+</violation>
+<violation beginline="135" endline="135" begincolumn="9" endcolumn="76" rule="GuardLogStatement" ruleset="Best Practices" package="com.cjs.qa.utilities" class="AllureHelper" method="attachPageSource" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#guardlogstatement" priority="2">
+Logger calls should be surrounded by log level guards.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/utilities/HTML.java">
+<violation beginline="15" endline="15" begincolumn="11" endcolumn="33" rule="SingularField" ruleset="Design" package="com.cjs.qa.utilities" class="HTML" variable="VariableDeclaratorId" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#singularfield" priority="3">
+Perhaps 'fileName' could be replaced by a local variable.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/utilities/ODBCMSAccess.java">
+<violation beginline="48" endline="48" begincolumn="26" endcolumn="41" rule="CloseResource" ruleset="Error Prone" package="com.cjs.qa.utilities" class="ODBCMSAccess" method="main" variable="connectionSQLite" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_errorprone.html#closeresource" priority="3">
+Ensure that resources like this Connection object are closed after use
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/utilities/XML.java">
+<violation beginline="71" endline="71" begincolumn="21" endcolumn="23" rule="UnusedFormalParameter" ruleset="Best Practices" package="com.cjs.qa.utilities" class="XML" method="XML" variable="xml" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused constructor parameters such as 'xml'.
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/wellmark/pages/LogInPage.java">
+<violation beginline="58" endline="60" begincolumn="5" endcolumn="45" rule="EmptyControlStatement" ruleset="Code Style" package="com.cjs.qa.wellmark.pages" class="LogInPage" method="waitPageLoad" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_codestyle.html#emptycontrolstatement" priority="3">
+Empty do..while statement
+</violation>
+</file>
+<file name="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/ym/api/dataobjects/UnmarshallYourMembershipResponse.java">
+<violation beginline="42" endline="75" begincolumn="7" endcolumn="7" rule="ForLoopCanBeForeach" ruleset="Best Practices" package="com.cjs.qa.ym.api.dataobjects" class="UnmarshallYourMembershipResponse" method="get" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#forloopcanbeforeach" priority="3">
+This for loop can be replaced by a foreach loop
+</violation>
+<violation beginline="46" endline="74" begincolumn="9" endcolumn="9" rule="ForLoopCanBeForeach" ruleset="Best Practices" package="com.cjs.qa.ym.api.dataobjects" class="UnmarshallYourMembershipResponse" method="get" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_bestpractices.html#forloopcanbeforeach" priority="3">
+This for loop can be replaced by a foreach loop
+</violation>
+</file>
+<suppressedviolation filename="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/core/QAException.java" suppressiontype="annotation" msg="Exceptions should not extend java.lang.Throwable" usermsg=""></suppressedviolation>
+<suppressedviolation filename="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/core/QAException.java" suppressiontype="nopmd" msg="Possible unsafe assignment to a non-final static field in a constructor." usermsg=" - Intentional static state for last error message
+"></suppressedviolation>
+<suppressedviolation filename="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/core/QAException.java" suppressiontype="nopmd" msg="Possible unsafe assignment to a non-final static field in a constructor." usermsg=" - Intentional static state for last error message
+"></suppressedviolation>
+<suppressedviolation filename="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/gt/api/services/GTWebinarServiceTests.java" suppressiontype="nopmd" msg="Possible unsafe assignment to a non-final static field in a constructor." usermsg=" - Constructor sets service availability state
+"></suppressedviolation>
+<suppressedviolation filename="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/soap/SOAP.java" suppressiontype="annotation" msg="Avoid unused local variables such as 'soapMessageString'." usermsg=""></suppressedviolation>
+<suppressedviolation filename="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/utilities/QALogger.java" suppressiontype="annotation" msg="Exceptions should not extend java.lang.Throwable" usermsg=""></suppressedviolation>
+<suppressedviolation filename="/home/runner/work/full-stack-qa/full-stack-qa/src/test/java/com/cjs/qa/ym/api/services/YMService.java" suppressiontype="nopmd" msg="Possible unsafe assignment to a non-final static field in a constructor." usermsg=" - Constructor sets service availability state
+"></suppressedviolation>
+</pmd>

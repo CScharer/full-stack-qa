@@ -1,0 +1,63 @@
+version: 2
+updates:
+  # Maven dependencies
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "CScharer"
+    labels:
+      - "dependencies"
+      - "java"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    ignore:
+      # Ignore major Selenium updates (test carefully before upgrading)
+      - dependency-name: "org.seleniumhq.selenium:*"
+        update-types: ["version-update:semver-major"]
+    
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "CScharer"
+    labels:
+      - "dependencies"
+      - "ci/cd"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "CScharer"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    ignore:
+      # Stay on Java 21 (ignore Java 11, 17, 22, 23, 24, 25, etc.)
+      - dependency-name: "eclipse-temurin"
+        versions: ["11-*", "18-*", "19-*", "20-*", "21-*", "25-*"]
+      - dependency-name: "maven"
+        versions: ["*-eclipse-temurin-11"]
+

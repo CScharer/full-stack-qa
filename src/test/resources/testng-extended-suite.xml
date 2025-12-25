@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Extended Test Coverage Suite" verbose="1" parallel="tests" thread-count="3">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+        <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
+    </listeners>
+    
+    <test name="Data-Driven Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.junit.tests.DataDrivenTests"/>
+        </classes>
+    </test>
+    
+    <test name="Negative Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.junit.tests.NegativeTests"/>
+        </classes>
+    </test>
+    
+    <test name="Advanced Features Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.junit.tests.AdvancedFeaturesTests"/>
+        </classes>
+    </test>
+    
+    <test name="Mobile Browser Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.junit.tests.mobile.MobileBrowserTests"/>
+        </classes>
+    </test>
+    
+    <test name="Responsive Design Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests"/>
+        </classes>
+    </test>
+</suite>
+

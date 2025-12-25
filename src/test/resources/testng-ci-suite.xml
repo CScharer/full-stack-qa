@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="CI Test Suite" verbose="1">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+        <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
+    </listeners>
+    
+    <test name="Grid Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.junit.tests.SimpleGridTest"/>
+            <class name="com.cjs.qa.junit.tests.EnhancedGridTests"/>
+        </classes>
+    </test>
+</suite>
+

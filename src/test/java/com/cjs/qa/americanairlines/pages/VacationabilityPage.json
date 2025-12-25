@@ -1,0 +1,52 @@
+{
+  "locators": [
+    {
+      "name": " Label Loading",
+      "type": "xpath",
+      "value": "\".//*[@id='cphBody_divLoader']//div[@class='loader-text']\"",
+      "variableName": "labelLoading"
+    },
+    {
+      "name": " Edit First Name",
+      "type": "xpath",
+      "value": "\".//*[@id='txtFirst']\"",
+      "variableName": "editFirstName"
+    },
+    {
+      "name": " Edit Last Name",
+      "type": "xpath",
+      "value": "\".//*[@id='txtLast']\"",
+      "variableName": "editLastName"
+    },
+    {
+      "name": " Edit Email",
+      "type": "xpath",
+      "value": "\".//*[@id='txtEmail']\"",
+      "variableName": "editEmail"
+    },
+    {
+      "name": " Edit A A Number",
+      "type": "xpath",
+      "value": "\".//*[@id='txtAANumber']\"",
+      "variableName": "editAANumber"
+    },
+    {
+      "name": " Checkbox Agree",
+      "type": "xpath",
+      "value": "\".//*[@id='divRegistration']//label[@for='chkAgree']/span\"",
+      "variableName": "checkboxAgree"
+    },
+    {
+      "name": " Button Register",
+      "type": "xpath",
+      "value": "\".//*[@id='btnRegister']\"",
+      "variableName": "buttonRegister"
+    },
+    {
+      "name": " Label Thank You",
+      "type": "xpath",
+      "value": "\".//*[@id='cphBody_divStaticPage']//div[@class='box-title-copy']\"",
+      "variableName": "labelThankYou"
+    }
+  ]
+}

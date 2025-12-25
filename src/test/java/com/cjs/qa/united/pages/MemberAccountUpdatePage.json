@@ -1,0 +1,34 @@
+{
+  "locators": [
+    {
+      "name": " Label Address",
+      "type": "xpath",
+      "value": "\"./\" + nodeLabel + \"/h3[.='Address']/../div\"",
+      "variableName": "labelAddress"
+    },
+    {
+      "name": " Label Email Address",
+      "type": "xpath",
+      "value": "\"./\" + nodeLabel + \"/h3[.='Email address']/../div\"",
+      "variableName": "labelEmailAddress"
+    },
+    {
+      "name": " Label Phone Number",
+      "type": "xpath",
+      "value": "\"./\" + nodeLabel + \"/h3[.='Phone number']/../div\"",
+      "variableName": "labelPhoneNumber"
+    },
+    {
+      "name": " Button Accept And Submit",
+      "type": "xpath",
+      "value": "\".//*[@id='btnAccept']\"",
+      "variableName": "buttonAcceptAndSubmit"
+    },
+    {
+      "name": " Button Accept And Update Later",
+      "type": "xpath",
+      "value": "\".//*[@id='btnUpdateLater']\"",
+      "variableName": "buttonAcceptAndUpdateLater"
+    }
+  ]
+}

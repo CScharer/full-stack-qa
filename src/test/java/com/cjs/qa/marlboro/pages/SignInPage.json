@@ -1,0 +1,58 @@
+{
+  "locators": [
+    {
+      "name": " Edit User Name",
+      "type": "xpath",
+      "value": "\".//*[@id='UserName']\"",
+      "variableName": "editUserName"
+    },
+    {
+      "name": " Edit Password",
+      "type": "xpath",
+      "value": "\".//*[@id='Password']\"",
+      "variableName": "editPassword"
+    },
+    {
+      "name": " Edit Date Of Birth Month",
+      "type": "xpath",
+      "value": "\".//*[@id='DateOfBirthMonth']\"",
+      "variableName": "editDateOfBirthMonth"
+    },
+    {
+      "name": " Edit Date Of Birth Day",
+      "type": "xpath",
+      "value": "\".//*[@id='DateOfBirthDay']\"",
+      "variableName": "editDateOfBirthDay"
+    },
+    {
+      "name": " Edit Date Of Birth Year",
+      "type": "xpath",
+      "value": "\".//*[@id='DateOfBirthYear']\"",
+      "variableName": "editDateOfBirthYear"
+    },
+    {
+      "name": " Checkbox Remember Username",
+      "type": "xpath",
+      "value": "\".//*[@id='rememberUsername']\"",
+      "variableName": "checkboxRememberUsername"
+    },
+    {
+      "name": " Button Enter",
+      "type": "xpath",
+      "value": "\".//*[@id='loginBtn']\"",
+      "variableName": "buttonEnter"
+    },
+    {
+      "name": " Image Account",
+      "type": "xpath",
+      "value": "\".//a[@data-dtmtext='Account Logo']\"",
+      "variableName": "imageAccount"
+    },
+    {
+      "name": " Link Log Out",
+      "type": "xpath",
+      "value": "\".//a[contains(text(),'LOG OUT')]\"",
+      "variableName": "linkLogOut"
+    }
+  ]
+}

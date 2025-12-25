@@ -1,0 +1,1217 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cjs.gui.app</groupId>
+	<artifactId>cjs-app-gui</artifactId>
+	<packaging>jar</packaging>
+	<name>cjs-app-gui</name>
+	<description>CJS Quality Software Delivery Team (QSD)
+builds quality solutions (CJS QA Solutions)
+for Application Program Interface (API),
+Graphical User Interface(GUI)
+and Database testing through the use of
+Java, Cucumber/Gherkin, APIs and Selenium.</description>
+	<version>1.0.0</version>
+	<url>http://maven.apache.org</url>
+	<inceptionYear>2025</inceptionYear>
+
+	<properties>
+		<!-- Maven Dependencies-->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>21</java.version>
+		<meminitial>128m</meminitial>
+		<maxmem>512m</maxmem>
+		<maven.version>3.9.11</maven.version>
+		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+		<maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+		<!-- Cucumber Dependencies-->
+		<cucumber.features>src/test/resources</cucumber.features>
+		<cucumber.glue>com.cjs.qa.cucumber.steps</cucumber.glue>
+		<cucumber.plugin>json:target/cucumber-reports/cucumber.json,html:target/cucumber-reports/cucumber.html</cucumber.plugin>
+		<cucumber.parallel.threads>5</cucumber.parallel.threads>
+		<!-- Jar Dependencies-->
+		<activation.version>1.1.1</activation.version>
+		<asm.version>9.9.1</asm.version>
+		<byte-buddy.version>1.18.3</byte-buddy.version>
+		<byte-buddy-agent.version>${byte-buddy.version}</byte-buddy-agent.version>
+		<commons-collections.version>3.2.2</commons-collections.version>
+		<commons-csv.version>1.14.1</commons-csv.version>
+		<commons-io.version>2.21.0</commons-io.version>
+		<commons-lang3.version>3.20.0</commons-lang3.version>
+		<commons-logging.version>1.3.5</commons-logging.version>
+		<commons-beanutils.version>1.11.0</commons-beanutils.version>
+		<netty-codec-http.version>4.2.8.Final</netty-codec-http.version>
+		<rhino.version>1.7.14.1</rhino.version>
+		<cucumber.version>7.33.0</cucumber.version>
+		<cucumber-core.version>${cucumber.version}</cucumber-core.version>
+		<cucumber-java.version>${cucumber.version}</cucumber-java.version>
+		<cucumber-junit.version>${cucumber.version}</cucumber-junit.version>
+		<cucumber-jvm.version>${cucumber.version}</cucumber-jvm.version>
+		<cucumber-jvm-deps.version>1.0.6</cucumber-jvm-deps.version>
+		<cucumber-picocontainer.version>${cucumber.version}</cucumber-picocontainer.version>
+		<cucumber-reporting.version>5.10.1</cucumber-reporting.version>
+		<cucumber-runner.version>1.3</cucumber-runner.version>
+		<db2jcc4.version>11.5.9.0</db2jcc4.version>
+		<dbunit.version>2.8.0</dbunit.version>
+		<databinding.version>1.3.0</databinding.version>
+		<eclipse-version>4.6.1</eclipse-version>
+		<fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
+		<prettier-maven-plugin.version>0.22</prettier-maven-plugin.version>
+		<prettier-java.version>2.7.4</prettier-java.version>
+		<gson.version>2.13.2</gson.version>
+		<guava.version>33.5.0-jre</guava.version>
+		<hsqldb.version>2.7.4</hsqldb.version>
+		<htmlunit.version>4.20.0</htmlunit.version>
+		<htmlunit-driver.version>4.39.0</htmlunit-driver.version>
+		<httpclient.version>4.5.14</httpclient.version>
+		<httpmime.version>4.5.14</httpmime.version>
+		<ipp-v3-java.version>6.7.0</ipp-v3-java.version>
+		<jackcess.version>4.0.10</jackcess.version>
+		<javax.mail-api.version>1.6.2</javax.mail-api.version>
+		<javax.persistence-api>2.2</javax.persistence-api>
+		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+		<jface.version>3.5.2</jface.version>
+		<joda-time.version>2.14.0</joda-time.version>
+		<h2.version>2.4.240</h2.version>
+		<eclipse-jface.version>3.5.2</eclipse-jface.version>
+		<jfreechart.version>1.5.6</jfreechart.version>
+		<json.version>20250517</json.version>
+		<jsoup.version>1.21.2</jsoup.version>
+		<junit.version>4.13.2</junit.version>
+		<jxl.version>2.6.12</jxl.version>
+		<lazy.version>1.0.1</lazy.version>
+		<mail.version>1.4.7</mail.version>
+		<mockito-core.version>5.21.0</mockito-core.version>
+		<mssql-jdbc.version>13.2.1.jre11</mssql-jdbc.version>
+		<objenesis.version>3.4</objenesis.version>
+		<pdfbox.version>3.0.6</pdfbox.version>
+		<plexus-utils.version>4.0.2</plexus-utils.version>
+		<poi.version>5.5.1</poi.version>
+		<poi-ooxml-schemas.version>${poi.version}</poi-ooxml-schemas.version>
+		<sauce_junit.version>2.1.25</sauce_junit.version>
+		<saucerest.version>2.5.3</saucerest.version>
+        <secretmanager.version>2.81.0</secretmanager.version>
+		<selenide.version>7.13.0</selenide.version>
+		<selenium.version>4.39.0</selenium.version>
+		<webdrivermanager.version>6.3.3</webdrivermanager.version>
+		<appium.version>10.0.0</appium.version>
+		<allure.version>2.32.0</allure.version>
+		<aspectj.version>1.9.25.1</aspectj.version>
+
+		<!-- Code Quality Tools -->
+		<checkstyle.version>12.3.0</checkstyle.version>
+		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+		<spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
+		<spotbugs.version>4.9.8</spotbugs.version>
+		<maven-pmd-plugin.version>3.27.0</maven-pmd-plugin.version>
+		<spotless-maven-plugin.version>2.40.0</spotless-maven-plugin.version>
+
+		<!-- Logging -->
+		<log4j2.version>2.25.3</log4j2.version>
+
+		<!-- API Testing -->
+		<rest-assured.version>6.0.0</rest-assured.version>
+		<json-path.version>6.0.0</json-path.version>
+		<json-schema-validator.version>6.0.0</json-schema-validator.version>
+		<!-- Jackson 3 for REST Assured 6.0.0 (REST Assured 6.0.0 uses Jackson 3 with new package structure) -->
+		<jackson.version>3.0.3</jackson.version>
+
+		<!-- Performance Testing -->
+		<gatling.version>3.14.9</gatling.version>
+		<gatling-maven-plugin.version>4.3.6</gatling-maven-plugin.version>
+		<scala.version>2.13.18</scala.version>
+		<scala-maven-plugin.version>4.8.1</scala-maven-plugin.version>
+		<jmeter.version>5.6.3</jmeter.version>
+		<jmeter-maven-plugin.version>3.7.0</jmeter-maven-plugin.version>
+
+		<!-- Additional Testing Frameworks -->
+		<robotframework-maven-plugin.version>2.1.0</robotframework-maven-plugin.version>
+
+		<selenium-api.version>${selenium.version}</selenium-api.version>
+		<selenium-chrome-driver.version>${selenium.version}</selenium-chrome-driver.version>
+		<selenium-edge-driver.version>${selenium.version}</selenium-edge-driver.version>
+		<selenium-firefox-driver.version>${selenium.version}</selenium-firefox-driver.version>
+		<selenium-ie-driver.version>${selenium.version}</selenium-ie-driver.version>
+		<selenium-java.version>${selenium.version}</selenium-java.version>
+		<selenium-leg-rc.version>${selenium.version}</selenium-leg-rc.version>
+		<selenium-opera-driver.version>${selenium.version}</selenium-opera-driver.version>
+		<selenium-remote-driver.version>${selenium.version}</selenium-remote-driver.version>
+		<selenium-safari-driver.version>${selenium.version}</selenium-safari-driver.version>
+		<selenium-server.version>${selenium.version}</selenium-server.version>
+		<selenium-support.version>${selenium.version}</selenium-support.version>
+		<selenium-grid-core.version>1.0.5</selenium-grid-core.version>
+		<selenium-grid-hub.version>1.0.5</selenium-grid-hub.version>
+		<selenium-server-coreless.version>1.0.3</selenium-server-coreless.version>
+		<selenium-server-standalone.version>4.26.0</selenium-server-standalone.version>
+		<sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
+		<sqljdbc4.version>4.0</sqljdbc4.version>
+		<swt.version>4.6.1</swt.version>
+		<swt-win32.version>4.6.1</swt-win32.version>
+		<ucanaccess.version>5.0.1</ucanaccess.version>
+		<xml-apis.version>1.4.01</xml-apis.version>
+		<xmlsec.version>4.0.4</xmlsec.version>
+		<xmlunit.version>1.6</xmlunit.version>
+	</properties>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/<groupId></groupId>/<artifactId></artifactId> -->
+		<!-- https://mvnrepository.com/artifact/com.codeborne/selenide -->
+		<dependency>
+			<groupId>com.codeborne</groupId>
+			<artifactId>selenide</artifactId>
+			<version>${selenide.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-secretmanager</artifactId>
+            <version>${secretmanager.version}</version> <!-- Use the latest version -->
+        </dependency>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>${webdrivermanager.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+		</dependency>
+   		<dependency>
+			<groupId>com.healthmarketscience.jackcess</groupId>
+			<artifactId>jackcess</artifactId>
+			<version>${jackcess.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.saucelabs</groupId>
+			<artifactId>sauce_junit</artifactId>
+			<version>${sauce_junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.saucelabs</groupId>
+			<artifactId>saucerest</artifactId>
+			<version>${saucerest.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.intuit.quickbooks-online</groupId>
+		    <artifactId>ipp-v3-java-data</artifactId>
+		    <version>${ipp-v3-java.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.intuit.quickbooks-online</groupId>
+		    <artifactId>ipp-v3-java-devkit</artifactId>
+		    <version>${ipp-v3-java.version}</version>
+		    <exclusions>
+		        <exclusion>
+		            <groupId>asm</groupId>
+		            <artifactId>asm</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>asm</groupId>
+		            <artifactId>asm-commons</artifactId>
+		        </exclusion>
+		        <!-- Exclude vulnerable commons-configuration:1.6 (LOW severity) -->
+		        <exclusion>
+		            <groupId>commons-configuration</groupId>
+		            <artifactId>commons-configuration</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>asm</groupId>
+		            <artifactId>asm-tree</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+		<!-- ASM for bytecode manipulation (explicitly added after excluding old asm:asm:3.3.1) -->
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>${asm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-tree</artifactId>
+			<version>${asm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>${mssql-jdbc.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable owasp-java-html-sanitizer 20240325.1 (HIGH) -->
+				<exclusion>
+					<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+					<artifactId>owasp-java-html-sanitizer</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Explicitly add postgresql 42.7.8 to override vulnerable 42.3.1 from transitive dependencies -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.8</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>${commons-collections.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>${commons-io.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-logging</groupId>
+		    <artifactId>commons-logging</artifactId>
+		    <version>${commons-logging.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.cucumber</groupId>
+		    <artifactId>cucumber-core</artifactId>
+		    <version>${cucumber-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${cucumber-java.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${cucumber-junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-picocontainer</artifactId>
+			<version>${cucumber-picocontainer.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-testng</artifactId>
+			<version>${cucumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>${activation.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.messaging.saaj</groupId>
+			<artifactId>saaj-impl</artifactId>
+			<version>3.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.xml.soap</groupId>
+			<artifactId>jakarta.xml.soap-api</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>${mail.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable transitive dependencies -->
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-configuration</groupId>
+					<artifactId>commons-configuration</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>${javax.mail-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>${javax.persistence-api}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>net.bytebuddy</groupId>
+		    <artifactId>byte-buddy</artifactId>
+		    <version>${byte-buddy.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>net.bytebuddy</groupId>
+		    <artifactId>byte-buddy-agent</artifactId>
+		    <version>${byte-buddy-agent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.masterthought</groupId>
+			<artifactId>cucumber-reporting</artifactId>
+			<version>${cucumber-reporting.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable commons-lang 2.4 - we use commons-lang3 -->
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+				<!-- Exclude vulnerable owasp-java-html-sanitizer 20240325.1 (HIGH) -->
+				<exclusion>
+					<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+					<artifactId>owasp-java-html-sanitizer</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ucanaccess</groupId>
+			<artifactId>ucanaccess</artifactId>
+			<version>${ucanaccess.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<version>${htmlunit.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable owasp-java-html-sanitizer 20240325.1 (HIGH) from salvation2 -->
+				<exclusion>
+					<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+					<artifactId>owasp-java-html-sanitizer</artifactId>
+				</exclusion>
+				<!-- Exclude salvation2 which brings in owasp-java-html-sanitizer -->
+				<exclusion>
+					<groupId>com.shapesecurity</groupId>
+					<artifactId>salvation2</artifactId>
+				</exclusion>
+				<!-- Exclude vulnerable jetty-http 9.4.50 (MEDIUM) from websocket-client -->
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-http</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty.websocket</groupId>
+					<artifactId>websocket-client</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<version>${jxl.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable log4j 1.2.14 - we use log4j2 -->
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>${commons-csv.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
+		</dependency>
+		<!-- Explicitly add commons-beanutils 1.11.0 to override vulnerable 1.9.4 from transitive dependencies -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${commons-beanutils.version}</version>
+		</dependency>
+		<!-- Explicitly add netty-codec-http 4.2.8.Final to override vulnerable 4.2.7.Final from transitive dependencies -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http</artifactId>
+			<version>${netty-codec-http.version}</version>
+		</dependency>
+		<!-- Explicitly add rhino 1.7.14.1 to override vulnerable 1.7.7.2 from transitive dependencies -->
+		<dependency>
+			<groupId>org.mozilla</groupId>
+			<artifactId>rhino</artifactId>
+			<version>${rhino.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>${httpmime.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpcore</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>${plexus-utils.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>${dbunit.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable transitive dependencies -->
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-configuration</groupId>
+					<artifactId>commons-configuration</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>org.mod4j.org.eclipse.jface</groupId>
+		    <artifactId>databinding</artifactId>
+		    <version>${databinding.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hsqldb</groupId>
+		    <artifactId>hsqldb</artifactId>
+		    <version>${hsqldb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>${jfreechart.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>${jsoup.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <version>${mockito-core.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.objenesis</groupId>
+		    <artifactId>objenesis</artifactId>
+		    <version>${objenesis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-api</artifactId>
+			<version>${selenium-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-chrome-driver</artifactId>
+			<version>${selenium-chrome-driver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-edge-driver</artifactId>
+			<version>${selenium-edge-driver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-firefox-driver</artifactId>
+			<version>${selenium-firefox-driver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-ie-driver</artifactId>
+			<version>${selenium-ie-driver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-remote-driver</artifactId>
+			<version>${selenium-remote-driver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-safari-driver</artifactId>
+			<version>${selenium-safari-driver.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium.grid</groupId>
+			<artifactId>selenium-grid-core</artifactId>
+			<version>${selenium-grid-core.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable transitive dependencies -->
+				<exclusion>
+					<groupId>org.jyaml</groupId>
+					<artifactId>jyaml</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-httpclient</groupId>
+					<artifactId>commons-httpclient</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium.grid</groupId>
+			<artifactId>selenium-grid-hub</artifactId>
+			<version>${selenium-grid-hub.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable transitive dependencies -->
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jetty</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-httpclient</groupId>
+					<artifactId>commons-httpclient</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>htmlunit3-driver</artifactId>
+			<version>${htmlunit-driver.version}</version>
+			<exclusions>
+				<!-- Exclude vulnerable transitive dependencies -->
+				<exclusion>
+					<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+					<artifactId>owasp-java-html-sanitizer</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-http</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${selenium-java.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-grid</artifactId>
+			<version>${selenium-server.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium.server</groupId>
+			<artifactId>selenium-server-coreless</artifactId>
+			<version>${selenium-server-coreless.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-support</artifactId>
+			<version>${selenium-support.version}</version>
+		</dependency>
+		<!-- Appium for Mobile Testing -->
+		<dependency>
+			<groupId>io.appium</groupId>
+			<artifactId>java-client</artifactId>
+			<version>${appium.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>${sqlite-jdbc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>${xml-apis.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>xmlunit</groupId>
+		    <artifactId>xmlunit</artifactId>
+		    <version>${xmlunit.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.santuario</groupId>
+		    <artifactId>xmlsec</artifactId>
+		    <version>${xmlsec.version}</version>
+		</dependency>
+		<!-- Allure Reporting -->
+		<dependency>
+			<groupId>io.qameta.allure</groupId>
+			<artifactId>allure-testng</artifactId>
+			<version>${allure.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.qameta.allure</groupId>
+			<artifactId>allure-java-commons</artifactId>
+			<version>${allure.version}</version>
+		</dependency>
+
+		<!-- Log4j 2 for structured logging -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j2-impl</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+
+		<!-- REST Assured for API Testing -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${rest-assured.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-path</artifactId>
+			<version>${json-path.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>${json-schema-validator.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Jackson 3 dependencies required for REST Assured 6.0.0 -->
+		<!-- Jackson 3.0.0 uses tools.jackson.core groupId for core and databind -->
+		<dependency>
+			<groupId>tools.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<!-- jackson-annotations: Jackson 3.0.0 does NOT include jackson-annotations 3.0.0 -->
+		<!-- It remains at com.fasterxml.jackson.core with version 2.20 (latest 2.x, NOT 2.20.0) -->
+		<!-- REST Assured 6.0.0 works with jackson-annotations 2.20 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.20</version>
+		</dependency>
+
+		<!-- Gatling for Performance Testing -->
+		<dependency>
+			<groupId>io.gatling.highcharts</groupId>
+			<artifactId>gatling-charts-highcharts</artifactId>
+			<version>${gatling.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Scala Library (required for Gatling) -->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugin</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<release>${java.version}</release>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<meminitial>${meminitial}</meminitial>
+					<maxmem>${maxmem}</maxmem>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugin</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<parallel>methods</parallel>
+					<threadCount>5</threadCount>
+					<perCoreThreadCount>true</perCoreThreadCount>
+					<systemPropertyVariables>
+						<cucumber.execution.parallel.enabled>true</cucumber.execution.parallel.enabled>
+						<cucumber.execution.parallel.config.strategy>fixed</cucumber.execution.parallel.config.strategy>
+						<cucumber.execution.parallel.config.fixed.parallelism>5</cucumber.execution.parallel.config.fixed.parallelism>
+						<allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+					</systemPropertyVariables>
+					<properties>
+						<property>
+							<name>listener</name>
+							<value>io.qameta.allure.testng.AllureTestNg</value>
+						</property>
+					</properties>
+					<argLine>
+						-javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+					</argLine>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.aspectj</groupId>
+						<artifactId>aspectjweaver</artifactId>
+						<version>${aspectj.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.qameta.allure</groupId>
+				<artifactId>allure-maven</artifactId>
+				<version>2.16.1</version>
+				<configuration>
+					<reportVersion>${allure.version}</reportVersion>
+					<resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
+					<reportDirectory>${project.build.directory}/allure-report</reportDirectory>
+				</configuration>
+			</plugin>
+
+			<!-- Code Quality: Checkstyle -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven-checkstyle-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>${checkstyle.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<configLocation>checkstyle-custom.xml</configLocation>
+					<consoleOutput>true</consoleOutput>
+					<failsOnError>false</failsOnError>
+					<failOnViolation>false</failOnViolation>
+					<violationSeverity>warning</violationSeverity>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Code Quality: SpotBugs (formerly FindBugs) -->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>${spotbugs-maven-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs</artifactId>
+						<version>${spotbugs.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>Medium</threshold>
+					<failOnError>false</failOnError>
+					<includeTests>true</includeTests>
+					<xmlOutput>true</xmlOutput>
+				</configuration>
+			</plugin>
+
+			<!-- Code Quality: PMD -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${maven-pmd-plugin.version}</version>
+				<configuration>
+					<failOnViolation>false</failOnViolation>
+					<printFailingErrors>true</printFailingErrors>
+					<rulesets>
+						<!-- Custom ruleset excludes GuardLogStatement since all logging goes through GuardedLogger -->
+						<ruleset>${project.basedir}/pmd-ruleset.xml</ruleset>
+					</rulesets>
+					<includeTests>true</includeTests>
+				</configuration>
+			</plugin>
+
+			<!-- Prettier Maven Plugin for Java formatting and import sorting -->
+			<!-- Step 1: Prettier formats code and sorts imports -->
+			<plugin>
+				<groupId>com.hubspot.maven.plugins</groupId>
+				<artifactId>prettier-maven-plugin</artifactId>
+				<version>${prettier-maven-plugin.version}</version>
+				<configuration>
+					<prettierJavaVersion>${prettier-java.version}</prettierJavaVersion>
+					<printWidth>120</printWidth>
+					<tabWidth>2</tabWidth>
+					<useTabs>false</useTabs>
+					<ignoreConfigFile>false</ignoreConfigFile>
+					<ignoreEditorConfig>false</ignoreEditorConfig>
+					<inputGlobs>
+						<inputGlob>src/main/java/**/*.java</inputGlob>
+						<inputGlob>src/test/java/**/*.java</inputGlob>
+					</inputGlobs>
+				</configuration>
+			</plugin>
+
+			<!-- Google Java Format Plugin -->
+			<!-- Step 2: Google Java Format fixes line length and aligns with Checkstyle rules -->
+			<!-- Note: Google Java Format enforces 100-char limit (not configurable) -->
+			<!-- This will help align formatting with Checkstyle expectations -->
+			<plugin>
+				<groupId>com.spotify.fmt</groupId>
+				<artifactId>fmt-maven-plugin</artifactId>
+				<version>${fmt-maven-plugin.version}</version>
+				<configuration>
+					<skip>false</skip>
+					<!-- Skip import sorting - Spotless handles import ordering (java,javax,org,com) -->
+					<skipSortingImports>true</skipSortingImports>
+					<!-- Skip removing unused imports - Spotless handles this -->
+					<skipRemovingUnusedImports>true</skipRemovingUnusedImports>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Spotless Maven Plugin for removing unused imports and organizing imports -->
+			<!-- Step 1.5: Spotless reorders imports (java,javax,org,com) and removes unused/duplicate imports -->
+			<!-- This runs AFTER Prettier to ensure final import order matches Spotless config -->
+			<!-- Note: We don't use Google Java Format here since we already have fmt-maven-plugin -->
+			<plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>${spotless-maven-plugin.version}</version>
+				<configuration>
+					<java>
+						<includes>
+							<include>src/main/java/**/*.java</include>
+							<include>src/test/java/**/*.java</include>
+						</includes>
+						<!-- Remove unused imports -->
+						<removeUnusedImports />
+						<!-- Import ordering (matches Google Java Style) -->
+						<importOrder>
+							<order>java,javax,org,com</order>
+						</importOrder>
+						<!-- Note: We skip Google Java Format here since fmt-maven-plugin handles formatting -->
+					</java>
+				</configuration>
+			</plugin>
+
+			<!-- Performance Testing: Gatling -->
+			<plugin>
+				<groupId>io.gatling</groupId>
+				<artifactId>gatling-maven-plugin</artifactId>
+				<version>${gatling-maven-plugin.version}</version>
+				<configuration>
+					<!-- Enable running multiple simulations (ApiLoadSimulation + WebLoadSimulation) -->
+					<runMultipleSimulations>true</runMultipleSimulations>
+					<!-- Java 21 compatibility: Open java.base/java.lang module for Gatling -->
+					<jvmArgs>
+						<jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+						<jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+					</jvmArgs>
+				</configuration>
+			</plugin>
+
+			<!-- Performance Testing: JMeter -->
+			<plugin>
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-maven-plugin</artifactId>
+				<version>${jmeter-maven-plugin.version}</version>
+				<configuration>
+					<testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
+					<resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
+					<generateReports>true</generateReports>
+					<ignoreResultFailures>true</ignoreResultFailures>
+					<testFilesIncluded>
+						<jMeterTestFile>API_Performance_Test.jmx</jMeterTestFile>
+						<jMeterTestFile>Web_Load_Test.jmx</jMeterTestFile>
+					</testFilesIncluded>
+				</configuration>
+				<executions>
+					<execution>
+						<id>configuration</id>
+						<goals>
+							<goal>configure</goal>
+						</goals>
+						<configuration>
+							<testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
+							<resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
+							<testFilesIncluded>
+								<jMeterTestFile>API_Performance_Test.jmx</jMeterTestFile>
+								<jMeterTestFile>Web_Load_Test.jmx</jMeterTestFile>
+							</testFilesIncluded>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Scala Compiler for Gatling (disabled by default, enable with -Pgatling) -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>${scala-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>scala-compile</id>
+						<phase>none</phase>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Robot Framework Maven Plugin -->
+			<!-- Disabled by default - only runs with -Probot profile -->
+			<plugin>
+				<groupId>org.robotframework</groupId>
+				<artifactId>robotframework-maven-plugin</artifactId>
+				<version>${robotframework-maven-plugin.version}</version>
+				<configuration>
+					<skip>true</skip>
+					<testCasesDirectory>${project.basedir}/src/test/robot</testCasesDirectory>
+					<outputDirectory>${project.build.directory}/robot-reports</outputDirectory>
+					<logLevel>INFO</logLevel>
+				</configuration>
+				<executions>
+					<execution>
+						<id>robot-tests</id>
+						<phase>none</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<!-- Eclipse M2E lifecycle mapping configuration -->
+		<pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<lifecycleMappingMetadata>
+						<pluginExecutions>
+							<!-- Ignore fmt-maven-plugin format goal -->
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>com.spotify.fmt</groupId>
+									<artifactId>fmt-maven-plugin</artifactId>
+									<versionRange>[0,)</versionRange>
+									<goals>
+										<goal>format</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore />
+								</action>
+							</pluginExecution>
+							<!-- Ignore jmeter-maven-plugin configure goal -->
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>com.lazerycode.jmeter</groupId>
+									<artifactId>jmeter-maven-plugin</artifactId>
+									<versionRange>[0,)</versionRange>
+									<goals>
+										<goal>configure</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore />
+								</action>
+							</pluginExecution>
+							<!-- Ignore scala-maven-plugin when phase is none -->
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>net.alchim31.maven</groupId>
+									<artifactId>scala-maven-plugin</artifactId>
+									<versionRange>[0,)</versionRange>
+									<goals>
+										<goal>compile</goal>
+										<goal>testCompile</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore />
+								</action>
+							</pluginExecution>
+							<!-- Execute maven-checkstyle-plugin check goal -->
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-checkstyle-plugin</artifactId>
+									<versionRange>[0,)</versionRange>
+									<goals>
+										<goal>check</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<execute>
+										<runOnIncremental>false</runOnIncremental>
+										<runOnConfiguration>false</runOnConfiguration>
+									</execute>
+								</action>
+							</pluginExecution>
+						</pluginExecutions>
+					</lifecycleMappingMetadata>
+				</configuration>
+			</plugin>
+		</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<!-- Profile to enable Gatling/Scala compilation -->
+		<profile>
+			<id>gatling</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>scala-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>scala-compile</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+								<configuration>
+									<!-- Only compile Scala sources, don't touch Java sources -->
+									<sendJavaToScalac>false</sendJavaToScalac>
+									<includes>
+										<include>**/*.scala</include>
+									</includes>
+									<excludes>
+										<exclude>**/*.java</exclude>
+									</excludes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Profile to run Robot Framework tests only -->
+		<profile>
+			<id>robot</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.robotframework</groupId>
+						<artifactId>robotframework-maven-plugin</artifactId>
+						<configuration>
+							<skip>false</skip>
+							<testCasesDirectory>${project.basedir}/src/test/robot</testCasesDirectory>
+							<outputDirectory>${project.build.directory}/robot-reports</outputDirectory>
+							<logLevel>INFO</logLevel>
+						</configuration>
+						<executions>
+							<execution>
+								<id>robot-tests</id>
+								<phase>test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Profile to run Selenium tests only (default) -->
+		<profile>
+			<id>selenium</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+	</profiles>
+
+
+	<organization>
+		<name>CJS Consulting, L.L.C</name>
+		<url>http://www.cjsconsulting.com</url>
+	</organization>
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://cscharer-laptop:8080/</url>
+	</ciManagement>
+</project>

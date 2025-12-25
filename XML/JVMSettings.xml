@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ⚠️ SECURITY REVIEW NEEDED: This file contains potential credentials -->
+<!-- Line 17: Password "CScharerTest" - REVIEW: Is this a real password? -->
+<!-- This was only a password for local testing and you would have to be logged into my computer to have it work so this is not an issue.-->
+<Settings>
+	<MavenExample>
+		<tst>
+			mvn clean install test -Dtest=com.cjs.qa.bts.CompanyEnvironmentSetup#testCompanyEnvironmentData -Dtag.ids="@" -DforkCount="1" -DidleTimeout="1000" -DuserName"" -DuserPassword"" -DbrowserName="" -DbrowserVersion="" -DhostPlatform="" -DhostPlatform="" -DhostHost="" -DhostPort="" -DhostUserName="" -DhostUserAccessKey=""
+			mvn clean install test -Dtag.ids="@Debug" -DforkCount="1" -DidleTimeout="1000" -DuserName"" -DuserPassword"" -DbrowserName="Chrome" -DbrowserVersion="70" -DhostPlatform="Windows 10" -DhostHost="sauceconnect.berkley-bts.com" -DhostPort="4445" -DhostUserName="AUTO_SAUCELABS_USERNAME" -AccessKey="AUTO_SAUCELABS_ACCESS_KEY"
+		</tst>
+		<prod>
+			mvn clean install test -Dtag.ids="@Debug" -DforkCount="1" -DidleTimeout="1000" -DuserName"" -DuserPassword"" -DbrowserName="Chrome" -DbrowserVersion="70" -DhostPlatform="Windows 10" -DhostHost="sauceconnect.berkley-bts.com" -DhostPort="4445" -DhostUserName="AUTO_SAUCELABS_USERNAME" -AccessKey="AUTO_SAUCELABS_ACCESS_KEY"
+		</prod>
+	</MavenExample>
+	<User>
+		<name>CScharerTest</name>
+		<password>CScharerTest</password>
+	</User>
+	<Browser>
+		<name>IE</name>
+		<version></version>
+		<platform></platform>
+	</Browser>
+	<Hub>
+		<host>sauceconnect.berkley-bts.com</host>
+		<port>4445</port>
+		<userName>AUTO_SAUCELABS_USERNAME</userName>
+		<userAccessKey>AUTO_SAUCELABS_ACCESS_KEY</userAccessKey>
+		<parentTunnel>berkley-technology-services</parentTunnel>
+		<tunnelIdentifier>prodSLTunnel</tunnelIdentifier>
+	</Hub>
+</Settings>

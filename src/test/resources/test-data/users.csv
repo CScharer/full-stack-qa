@@ -1,0 +1,7 @@
+email,password,expectedResult,description
+user1@test.com,password1,success,Valid user 1
+user2@test.com,password2,success,Valid user 2
+invalid@test.com,wrongpassword,failure,Invalid credentials
+,password1,failure,Empty email
+user1@test.com,,failure,Empty password
+

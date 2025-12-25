@@ -1,0 +1,42 @@
+# Prettier configuration for multi-language formatting
+# Unified configuration for Java, JavaScript, TypeScript, JSON, YAML, Markdown
+
+# Global settings
+printWidth: 120
+tabWidth: 2
+useTabs: false
+semi: true
+singleQuote: false
+trailingComma: "es5"
+bracketSpacing: true
+arrowParens: "always"
+endOfLine: "lf"
+
+# Language-specific overrides
+overrides:
+  # Java files
+  - files: "*.java"
+    options:
+      printWidth: 120
+      tabWidth: 4
+      useTabs: false
+
+  # JavaScript and TypeScript files
+  - files: "*.{js,jsx,ts,tsx}"
+    options:
+      printWidth: 120
+      singleQuote: true
+      trailingComma: "es5"
+
+  # JSON files
+  - files: "*.json"
+    options:
+      printWidth: 120
+      tabWidth: 2
+
+  # YAML files
+  - files: "*.{yml,yaml}"
+    options:
+      printWidth: 120
+      tabWidth: 2
+      singleQuote: false

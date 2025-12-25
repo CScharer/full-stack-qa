@@ -1,0 +1,118 @@
+{
+  "locators": [
+    {
+      "name": " Label Policy Number",
+      "type": "xpath",
+      "value": "\"//li[@ng-bind='policy.formattedPolicyNumber']\"",
+      "variableName": "labelPolicyNumber"
+    },
+    {
+      "name": " Edit Effective Date",
+      "type": "id",
+      "value": "\"effectiveDate\"",
+      "variableName": "editEffectiveDate"
+    },
+    {
+      "name": " Edit Expiration Date",
+      "type": "id",
+      "value": "\"expirationDate\"",
+      "variableName": "editExpirationDate"
+    },
+    {
+      "name": " Edit Original Effective Date",
+      "type": "id",
+      "value": "\"originalEffectiveDate\"",
+      "variableName": "editOriginalEffectiveDate"
+    },
+    {
+      "name": " Dropdown Renewal Term",
+      "type": "id",
+      "value": "\"renewalTerm\"",
+      "variableName": "dropdownRenewalTerm"
+    },
+    {
+      "name": " Edit Prior Policy Number",
+      "type": "id",
+      "value": "\"priorPolicyNumber\"",
+      "variableName": "editPriorPolicyNumber"
+    },
+    {
+      "name": " Checkbox Renewal Policy",
+      "type": "id",
+      "value": "\"renewalPolicy\"",
+      "variableName": "checkboxRenewalPolicy"
+    },
+    {
+      "name": " Edit Prior Carrier",
+      "type": "id",
+      "value": "\"priorCarrier\"",
+      "variableName": "editPriorCarrier"
+    },
+    {
+      "name": " Edit Guaranteed On",
+      "type": "id",
+      "value": "\"guaranteedOn\"",
+      "variableName": "editGuaranteedOn"
+    },
+    {
+      "name": " Edit Rating Company",
+      "type": "id",
+      "value": "\"ratingCompany\"",
+      "variableName": "editRatingCompany"
+    },
+    {
+      "name": " Edit Policy Description",
+      "type": "id",
+      "value": "\"policyDescription\"",
+      "variableName": "editPolicyDescription"
+    },
+    {
+      "name": " Edit Primary State",
+      "type": "id",
+      "value": "\"primaryState\"",
+      "variableName": "editPrimaryState"
+    },
+    {
+      "name": " Edit Combined Quote1",
+      "type": "id",
+      "value": "\"combinedQuote1\"",
+      "variableName": "editCombinedQuote1"
+    },
+    {
+      "name": " Edit Combined Quote2",
+      "type": "id",
+      "value": "\"combinedQuote2\"",
+      "variableName": "editCombinedQuote2"
+    },
+    {
+      "name": " Edit Submission Number",
+      "type": "id",
+      "value": "\"submissionNumber\"",
+      "variableName": "editSubmissionNumber"
+    },
+    {
+      "name": " Edit Internal Description",
+      "type": "id",
+      "value": "\"policyDescription\"",
+      "variableName": "editInternalDescription"
+    },
+    {
+      "name": " Checkbox Multi Policy",
+      "type": "id",
+      "value": "\"multiPolicy\"",
+      "variableName": "checkboxMultiPolicy"
+    },
+    {
+      "name": " Edit Multi Policy Discount",
+      "type": "id",
+      "value": "\"multiPolicyDiscount\"",
+      "variableName": "editMultiPolicyDiscount"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"basicInformation-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}

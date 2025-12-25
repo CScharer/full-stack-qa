@@ -1,0 +1,16 @@
+{
+  "locators": [
+    {
+      "name": " Link Premium Summary",
+      "type": "linkText",
+      "value": "\"Premium Summary\"",
+      "variableName": "linkPremiumSummary"
+    },
+    {
+      "name": " Link Policy Activity",
+      "type": "linkText",
+      "value": "\"Policy Activity\"",
+      "variableName": "linkPolicyActivity"
+    }
+  ]
+}

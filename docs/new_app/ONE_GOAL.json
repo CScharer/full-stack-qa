@@ -1,0 +1,41 @@
+{
+  "DATA": {
+    "TABLES": [
+      {
+        "NAME": "application_sync",
+        "FIELDS": [
+          {
+            "Name": "application_sync_id",
+            "Type": "STRING",
+            "PK": true,
+            "NN": null,
+            "AI": null,
+            "U": null,
+            "Default": null,
+            "Check": null,
+            "Collation": null,
+            "Foreign_Key": {
+              "Table_Name": "application_sync_id",
+              "Column_Name": "application_id"
+            }
+          },
+          {
+            "Name": "application_sync_id",
+            "Type": "STRING",
+            "PK": null,
+            "NN": null,
+            "AI": null,
+            "U": null,
+            "Default": null,
+            "Check": null,
+            "Collation": "BINARY",
+            "Foreign_Key": {
+              "Table_Name": "application",
+              "Column_Name": "application_id"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

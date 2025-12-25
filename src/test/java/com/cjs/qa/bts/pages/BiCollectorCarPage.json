@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Checkbox Policy Manually Entered",
+      "type": "id",
+      "value": "\"SRC_BUS\"",
+      "variableName": "checkboxPolicyManuallyEntered"
+    },
+    {
+      "name": " Edit Referral",
+      "type": "id",
+      "value": "\"REFRL\"",
+      "variableName": "editReferral"
+    },
+    {
+      "name": " Dropdown Exception",
+      "type": "id",
+      "value": "\"EXCPTN\"",
+      "variableName": "dropdownException"
+    }
+  ]
+}

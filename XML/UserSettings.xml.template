@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Settings>
+	<MavenExample>
+		<tst>
+			mvn clean install test -Dtest=com.cjs.qa.bts.CompanyEnvironmentSetup#testCompanyEnvironmentData -Dtag.ids="@" -DforkCount="1" -DidleTimeout="1000" -DuserName"" -DuserPassword"" -DbrowserName="" -DbrowserVersion="" -DhostPlatform="" -DhostPlatform="" -DhostHost="" -DhostPort="" -DhostUserName="" -DhostUserAccessKey=""
+			mvn clean install test -Dtag.ids="@Debug" -DforkCount="1" -DidleTimeout="1000" -DuserName"" -DuserPassword"" -DbrowserName="Chrome" -DbrowserVersion="70" -DhostPlatform="Windows 10" -DhostHost="sauceconnect.berkley-bts.com" -DhostPort="4445" -DhostUserName="${SAUCELABS_USERNAME}" -AccessKey="${SAUCELABS_ACCESS_KEY}"
+		</tst>
+		<prod>
+			mvn clean install test -Dtag.ids="@Debug" -DforkCount="1" -DidleTimeout="1000" -DuserName"" -DuserPassword"" -DbrowserName="Chrome" -DbrowserVersion="70" -DhostPlatform="Windows 10" -DhostHost="sauceconnect.berkley-bts.com" -DhostPort="4445" -DhostUserName="${SAUCELABS_USERNAME}" -AccessKey="${SAUCELABS_ACCESS_KEY}"
+		</prod>
+	</MavenExample>
+	<User>
+		<name>CScharerTest</name>
+		<password>${SECRET_PASSWORD}</password>
+	</User>
+	<Browser>
+		<name>Chrome</name>
+		<version>70.0.3538</version>
+		<platform>Windows 10</platform>
+	</Browser>
+	<Hub>
+		<host>sauceconnect.berkley-bts.com</host>
+		<port>4445</port>
+		<userName>${SAUCELABS_USERNAME}</userName>
+		<userAccessKey>${SAUCELABS_ACCESS_KEY}</userAccessKey>
+		<parentTunnel>berkley-technology-services</parentTunnel>
+		<tunnelIdentifier>prodSLTunnel</tunnelIdentifier>
+	</Hub>
+</Settings>

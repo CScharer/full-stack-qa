@@ -1,0 +1,224 @@
+# Lock files
+*.lck
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# =========================
+# Build & Dependencies
+# =========================
+
+/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# =========================
+# SENSITIVE FILES - DO NOT COMMIT
+# =========================
+
+# Password and credential files
+ANALYSIS_PASS.md
+*_PASS.md
+*.credentials
+*.secrets
+
+# Sensitive configuration files
+Configurations/Environments.xml
+
+# Google Cloud service account keys
+*-key.json
+*-sa-key.json
+test-automation-key.json
+service-account*.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Secret directories
+secrets/
+credentials/
+
+# PRIVATE folder - contains sensitive documentation
+PRIVATE/
+
+# =========================
+# WebDriver Binaries
+# =========================
+
+# Driver executables (use WebDriverManager instead)
+src/test/resources/Drivers/*.exe
+src/test/resources/Drivers/chromedriver
+src/test/resources/Drivers/geckodriver
+src/test/resources/Drivers/msedgedriver
+src/test/resources/Drivers/operadriver
+
+# Keep README for drivers
+!src/test/resources/Drivers/ReadMe.txt
+!src/test/resources/Drivers/README.md
+
+# =========================
+# Test Data & Results
+# =========================
+
+# Database files that might contain sensitive data
+Data/*.db
+Data/*.sqlite
+Data/*.sqlite3
+Data/RESULTS.xls
+Data/RESULTS.xlsx
+
+# SQL scripts with data
+Data/Scripts/*.backup
+Data/Scripts/*.bak
+
+# Lock files
+Data/*.lck
+
+# =========================
+# IDE Specific
+# =========================
+
+# IntelliJ IDEA
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/httpRequests/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+
+# Eclipse
+.classpath
+.settings/
+.settings/org.eclipse.core.resources.prefs
+.settings/org.eclipse.jdt.core.prefs
+
+# VS Code
+.vscode/settings.json
+
+# =========================
+# Logs & Temporary Files
+# =========================
+
+# Log files
+*.log
+logs/
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Migration scripts (cleanup after use)
+migrate-passwords*.sh
+migration_results.txt
+*_secrets_*.txt
+
+# =========================
+# Reports (keep in .gitignore for local testing)
+# =========================
+
+# Test reports can be regenerated
+target/
+target/surefire-reports/
+target/cucumber-reports/
+target/allure-results/
+target/test-reports/
+checkstyle-current.xml
+checkstyle-result.xml
+pmd-*.xml
+build/
+DatabaseSchema.xlsx
+# Python cache files and directories
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+backend/venv/
+venv-perf/
+*.egg-info/
+src/*.egg-info/
+apache-jmeter-*/
+backend/.coverage
+backend/htmlcov/
+backend/.pytest_cache/
+useless-parens-violations.txt
+
+# Robot Framework test output files
+log.html
+output.xml
+report.html
+.service-pids
+
+# =========================
+# Test Framework Output
+# =========================
+
+# Vibium test output
+vibium/test-results/
+vibium/coverage/
+vibium/.vitest/
+vibium/dist/
+vibium/*.tsbuildinfo
+
+# Pipeline results (keep RESULTS.md, ignore large zip files)
+results/*.zip
+results/*.tar.gz
+results/*.tar
+# Version validation reports (keep directory, ignore report files)
+results/version-validation-report.json
+results/version-validation-report.csv

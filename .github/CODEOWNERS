@@ -1,0 +1,34 @@
+# CODEOWNERS file
+# These owners will be the default owners for everything in the repo
+# Unless a later match takes precedence, @CScharer will be requested for review
+# when someone opens a pull request.
+
+# Default owner for everything
+* @CScharer
+
+# CI/CD and GitHub workflows
+/.github/ @CScharer
+/.github/workflows/ @CScharer
+/.github/dependabot.yml @CScharer
+
+# Docker configuration
+/docker-compose*.yml @CScharer
+/Dockerfile @CScharer
+/.dockerignore @CScharer
+
+# Core framework
+/src/test/java/com/cjs/qa/core/ @CScharer
+
+# Configuration files
+/pom.xml @CScharer
+/.editorconfig @CScharer
+/.gitignore @CScharer
+/.pre-commit-config.yaml @CScharer
+
+# Documentation
+/docs/ @CScharer
+/README.md @CScharer
+
+# Test suites configuration
+/Configurations/ @CScharer
+/XML/ @CScharer

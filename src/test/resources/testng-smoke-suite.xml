@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Smoke Test Suite" verbose="1">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+        <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
+    </listeners>
+
+    <test name="Critical Path Smoke Tests" preserve-order="true">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.cjs.qa.junit.tests.SmokeTests"/>
+            <class name="com.cjs.qa.junit.tests.SecretManagerSmokeTest"/>
+            <class name="com.cjs.qa.utilities.PageObjectGeneratorBrowserTest"/>
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,64 @@
+{
+  "locators": [
+    {
+      "name": " Edit C N1",
+      "type": "xpath",
+      "value": "\".//*[@id='CN1']\"",
+      "variableName": "editCN1"
+    },
+    {
+      "name": " Edit C N2",
+      "type": "xpath",
+      "value": "\".//*[@id='CN2']\"",
+      "variableName": "editCN2"
+    },
+    {
+      "name": " Edit C N3",
+      "type": "xpath",
+      "value": "\".//*[@id='CN3']\"",
+      "variableName": "editCN3"
+    },
+    {
+      "name": " Edit C N4",
+      "type": "xpath",
+      "value": "\".//*[@id='CN4']\"",
+      "variableName": "editCN4"
+    },
+    {
+      "name": " Edit C N5",
+      "type": "xpath",
+      "value": "\".//*[@id='CN5']\"",
+      "variableName": "editCN5"
+    },
+    {
+      "name": " Edit C N6",
+      "type": "xpath",
+      "value": "\".//*[@id='CN6']\"",
+      "variableName": "editCN6"
+    },
+    {
+      "name": " Button Start",
+      "type": "xpath",
+      "value": "\".//*[@id='NextButton']\"",
+      "variableName": "buttonStart"
+    },
+    {
+      "name": " Button Next",
+      "type": "xpath",
+      "value": "\".//*[@id='NextButton']\"",
+      "variableName": "buttonNext"
+    },
+    {
+      "name": " Checkbox Agree",
+      "type": "name",
+      "value": "\"checkboxAgree\"",
+      "variableName": "checkboxAgree"
+    },
+    {
+      "name": " Label Thank You",
+      "type": "name",
+      "value": "\"labelThankYou\"",
+      "variableName": "labelThankYou"
+    }
+  ]
+}

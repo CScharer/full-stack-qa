@@ -1,0 +1,118 @@
+{
+  "locators": [
+    {
+      "name": " Edit Policy Effective Date",
+      "type": "id",
+      "value": "\"amendForm:policyOriginalEfftDt\"",
+      "variableName": "editPolicyEffectiveDate"
+    },
+    {
+      "name": " Edit Policy Expiration Date",
+      "type": "id",
+      "value": "\"amendForm:policyExpDtDisp\"",
+      "variableName": "editPolicyExpirationDate"
+    },
+    {
+      "name": " Option Amendment Type",
+      "type": "id",
+      "value": "\"amendForm:amendOpt\"",
+      "variableName": "optionAmendmentType"
+    },
+    {
+      "name": " Dropdown Existing Amendment",
+      "type": "id",
+      "value": "\"amendForm:openAmendment\"",
+      "variableName": "dropdownExistingAmendment"
+    },
+    {
+      "name": " Edit Amend Description",
+      "type": "id",
+      "value": "\"amendForm:amendmentDesc\"",
+      "variableName": "editAmendDescription"
+    },
+    {
+      "name": " Edit Amend Effective Date",
+      "type": "id",
+      "value": "\"amendForm:effectiveDt\"",
+      "variableName": "editAmendEffectiveDate"
+    },
+    {
+      "name": " Edit Amend Expiration Date",
+      "type": "id",
+      "value": "\"amendForm:expirationDt\"",
+      "variableName": "editAmendExpirationDate"
+    },
+    {
+      "name": " Dropdown Available",
+      "type": "id",
+      "value": "\"amendForm:avlAmendReasons\"",
+      "variableName": "dropdownAvailable"
+    },
+    {
+      "name": " Dropdown Selected",
+      "type": "id",
+      "value": "\"amendForm:amendReasons\"",
+      "variableName": "dropdownSelected"
+    },
+    {
+      "name": " Edit Amend Reason Text",
+      "type": "id",
+      "value": "\"amendForm:amendReasonText\"",
+      "variableName": "editAmendReasonText"
+    },
+    {
+      "name": " Dropdown Print Copies",
+      "type": "id",
+      "value": "\"amendForm:printCopies\"",
+      "variableName": "dropdownPrintCopies"
+    },
+    {
+      "name": " Checkbox Apply To Renewal",
+      "type": "id",
+      "value": "\"amendForm:applyToRenewal']/..\"",
+      "variableName": "checkboxApplyToRenewal"
+    },
+    {
+      "name": " Checkbox Auto Delete Unissued Amendment",
+      "type": "id",
+      "value": "\"amendForm:autoDeleteUnissuedAmend']/..\"",
+      "variableName": "checkboxAutoDeleteUnissuedAmendment"
+    },
+    {
+      "name": " Option Apply Type",
+      "type": "id",
+      "value": "\"amendForm:applyWaiveRule\"",
+      "variableName": "optionApplyType"
+    },
+    {
+      "name": " Button Add",
+      "type": "id",
+      "value": "\"amendForm:btnRight\"",
+      "variableName": "buttonAdd"
+    },
+    {
+      "name": " Button Remove",
+      "type": "id",
+      "value": "\"amendForm:btnLeft\"",
+      "variableName": "buttonRemove"
+    },
+    {
+      "name": " Button O K",
+      "type": "id",
+      "value": "\"amendForm:buttonOk\"",
+      "variableName": "buttonOK"
+    },
+    {
+      "name": " Button Cancel",
+      "type": "id",
+      "value": "\"amendForm:cancelBtn\"",
+      "variableName": "buttonCancel"
+    },
+    {
+      "name": " I Frame",
+      "type": "xpath",
+      "value": "\".//*/iframe\"",
+      "variableName": "iFrame"
+    }
+  ]
+}

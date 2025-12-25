@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Edit User Name",
+      "type": "xpath",
+      "value": "\".//*[@id='userId']\"",
+      "variableName": "editUserName"
+    },
+    {
+      "name": " Edit Password",
+      "type": "xpath",
+      "value": "\".//*[@id='xyz']\"",
+      "variableName": "editPassword"
+    },
+    {
+      "name": " Button Sign In",
+      "type": "xpath",
+      "value": "\".//*[@id='signInBtn']\"",
+      "variableName": "buttonSignIn"
+    }
+  ]
+}

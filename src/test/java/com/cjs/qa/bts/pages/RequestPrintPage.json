@@ -1,0 +1,70 @@
+{
+  "locators": [
+    {
+      "name": " Dropdown Reports",
+      "type": "id",
+      "value": "nodeRequestPrint + \"reportId\"",
+      "variableName": "dropdownReports"
+    },
+    {
+      "name": " Dropdown Effective Date",
+      "type": "id",
+      "value": "nodeRequestPrint + \"effectiveDtId\"",
+      "variableName": "dropdownEffectiveDate"
+    },
+    {
+      "name": " Dropdown Processed Date",
+      "type": "id",
+      "value": "nodeRequestPrint + \"processedDt\"",
+      "variableName": "dropdownProcessedDate"
+    },
+    {
+      "name": " Checkbox Pull Print",
+      "type": "id",
+      "value": "nodeRequestPrint + \"printPolicyId:pullPrint\"",
+      "variableName": "checkboxPullPrint"
+    },
+    {
+      "name": " Checkbox Print Work Sheets",
+      "type": "id",
+      "value": "nodeRequestPrint + \"printPolicyId:printWorksheet\"",
+      "variableName": "checkboxPrintWorkSheets"
+    },
+    {
+      "name": " Dropdown Printer",
+      "type": "id",
+      "value": "nodeRequestPrint + \"printPolicyId:printer\"",
+      "variableName": "dropdownPrinter"
+    },
+    {
+      "name": " Checkbox S P L Print",
+      "type": "id",
+      "value": "nodeRequestPrint + \"printPolicyId:splPrint\"",
+      "variableName": "checkboxSPLPrint"
+    },
+    {
+      "name": " Button Print",
+      "type": "id",
+      "value": "nodeRequestPrint + \"buttonOk\"",
+      "variableName": "buttonPrint"
+    },
+    {
+      "name": " Button Cancel",
+      "type": "id",
+      "value": "nodeRequestPrint + \"cancelBtn\"",
+      "variableName": "buttonCancel"
+    },
+    {
+      "name": " Button Minimize Transaction Information",
+      "type": "id",
+      "value": "nodeRequestPrint + \"heading3form1:requestPrint:heading3\"",
+      "variableName": "buttonMinimizeTransactionInformation"
+    },
+    {
+      "name": " Button Minimize Print Options",
+      "type": "id",
+      "value": "nodeRequestPrint + \"printPolicyId:printheading\"",
+      "variableName": "buttonMinimizePrintOptions"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+repos:
+  # Test Data JSON Validation
+  - repo: local
+    hooks:
+      - id: validate-test-data-json
+        name: Validate Test Data JSON
+        entry: bash test-data/scripts/pre-commit-validate.sh
+        language: system
+        types: [json]
+        files: ^test-data/.*\.json$
+        pass_filenames: false
+        always_run: false
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # General checks
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+      - id: end-of-file-fixer
+        name: Fix end of files
+      - id: check-yaml
+        name: Check YAML files
+      - id: check-xml
+        name: Check XML files
+      - id: check-json
+        name: Check JSON files
+      - id: check-added-large-files
+        name: Check for large files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+      - id: check-case-conflict
+        name: Check for case conflicts
+      - id: mixed-line-ending
+        name: Check mixed line endings
+
+      # Security checks
+      - id: detect-private-key
+        name: Detect private keys
+
+      # Java specific
+      - id: check-symlinks
+        name: Check for broken symlinks
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.4
+    hooks:
+      - id: forbid-crlf
+        name: Forbid CRLF line endings (except .bat files)
+        exclude: '\.bat$'
+      - id: remove-crlf
+        name: Remove CRLF line endings
+        exclude: '\.bat$'
+
+  - repo: local
+    hooks:
+      # Custom hook to prevent secrets
+      - id: check-secrets
+        name: Check for hardcoded secrets
+        entry: bash
+        language: system
+        pass_filenames: false
+        args:
+          - -c
+          - 'if grep -r "password.*=.*\"[^$]" src/ 2>/dev/null | grep -v "SECRET\|AUTO_"; then echo "Possible hardcoded password found!"; exit 1; fi'
+
+      # Check for sensitive files
+      - id: check-sensitive-files
+        name: Check for sensitive files
+        entry: bash
+        language: system
+        pass_filenames: false
+        args:
+          - -c
+          - 'for f in XML/Companies.xml XML/UserSettings.xml ANALYSIS_PASS.md; do if git diff --cached --name-only | grep -q "$f"; then echo "ERROR: Attempting to commit sensitive file: $f"; exit 1; fi; done'
+
+      # Validate test data JSON files
+      - id: validate-test-data-json
+        name: Validate Test Data JSON
+        entry: bash test-data/scripts/pre-commit-validate.sh
+        language: system
+        types: [json]
+        files: ^test-data/.*\.json$
+        pass_filenames: false
+        always_run: false

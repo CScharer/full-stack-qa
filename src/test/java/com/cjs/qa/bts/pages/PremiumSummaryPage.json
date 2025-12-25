@@ -1,0 +1,58 @@
+{
+  "locators": [
+    {
+      "name": " Text Premium",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[1]/div[1]/div[2]/div[1]/div/div[2]/span\"",
+      "variableName": "textPremium"
+    },
+    {
+      "name": " Text Minimum Adjustment",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[1]/div[1]/div[2]/div[1]/div/div[5]/span\"",
+      "variableName": "textMinimumAdjustment"
+    },
+    {
+      "name": " Text Taxes",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[1]/div[1]/div[2]/div[1]/div/div[8]/span\"",
+      "variableName": "textTaxes"
+    },
+    {
+      "name": " Text Fees",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[1]/div[1]/div[2]/div[1]/div/div[11]/span\"",
+      "variableName": "textFees"
+    },
+    {
+      "name": " Text Surcharge",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[1]/div[1]/div[2]/div[1]/div/div[14]/span\"",
+      "variableName": "textSurcharge"
+    },
+    {
+      "name": " Text Policy Total",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[1]/div[1]/div[2]/div[1]/div/div[17]/span\"",
+      "variableName": "textPolicyTotal"
+    },
+    {
+      "name": " Text Total Manual Premium",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[1]/div[1]/div[2]/div[1]/div/div[20]/span\"",
+      "variableName": "textTotalManualPremium"
+    },
+    {
+      "name": " Button Export Excel",
+      "type": "xpath",
+      "value": "\".//*[@id='viewport']/div[2]/div/a/span\"",
+      "variableName": "buttonExportExcel"
+    },
+    {
+      "name": " Sub Headers",
+      "type": "xpath",
+      "value": "\".//*[@id='productsPanel']/div[5]/div/div[@class='table']/div/..\"",
+      "variableName": "subHeaders"
+    }
+  ]
+}

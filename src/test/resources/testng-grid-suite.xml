@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Selenium Grid Test Suite" parallel="tests" thread-count="3" verbose="1">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+        <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
+    </listeners>
+    
+    <test name="Chrome Browser Tests" preserve-order="true">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="com.cjs.qa.junit.tests.EnhancedGridTests"/>
+        </classes>
+    </test>
+
+    <!-- Firefox tests disabled until framework changes are complete -->
+    <!--
+    <test name="Firefox Browser Tests" preserve-order="true">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="com.cjs.qa.junit.tests.EnhancedGridTests"/>
+        </classes>
+    </test>
+    -->
+
+    <test name="Simple Grid Tests" preserve-order="true">
+        <classes>
+            <class name="com.cjs.qa.junit.tests.SimpleGridTest"/>
+        </classes>
+    </test>
+</suite>
+

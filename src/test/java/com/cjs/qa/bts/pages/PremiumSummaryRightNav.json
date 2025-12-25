@@ -1,0 +1,64 @@
+{
+  "locators": [
+    {
+      "name": " Sidebar Right Open",
+      "type": "xpath",
+      "value": "\".//*[@id='outer-east-open-btn']\"",
+      "variableName": "sidebarRightOpen"
+    },
+    {
+      "name": " Sidebar Right Close",
+      "type": "xpath",
+      "value": "\".//*[@'outer-east-close-btn']\"",
+      "variableName": "sidebarRightClose"
+    },
+    {
+      "name": " Link Exit Policy Search",
+      "type": "xpath",
+      "value": "\".//*[@id='requestLinkSearch1']\"",
+      "variableName": "linkExitPolicySearch"
+    },
+    {
+      "name": " Link Change Dates",
+      "type": "xpath",
+      "value": "\".//*[@id='changeDateLink']\"",
+      "variableName": "linkChangeDates"
+    },
+    {
+      "name": " Link Policy Errors",
+      "type": "xpath",
+      "value": "\".//*[@id='policyErrorsLink']\"",
+      "variableName": "linkPolicyErrors"
+    },
+    {
+      "name": " Link Policy Views",
+      "type": "xpath",
+      "value": "\".//*[@id='policyViewsLink']\"",
+      "variableName": "linkPolicyViews"
+    },
+    {
+      "name": " Link Request Print",
+      "type": "xpath",
+      "value": "\".//*[@id='requestPrintLink']\"",
+      "variableName": "linkRequestPrint"
+    },
+    {
+      "name": " Link Territory Information",
+      "type": "xpath",
+      "value": "\".//*[@id='terrInfoLink']\"",
+      "variableName": "linkTerritoryInformation"
+    },
+    {
+      "name": " Link Client Information",
+      "type": "xpath",
+      "value": "\".//*[@id='clientViewLink']\"",
+      "variableName": "linkClientInformation"
+    },
+    {
+      "name": " Link Payor Details",
+      "type": "xpath",
+      "value": "\".//*[@id='payorViewLink']\"",
+      "variableName": "linkPayorDetails"
+    }
+  ]
+}

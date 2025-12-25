@@ -1,0 +1,16 @@
+{
+  "locators": [
+    {
+      "name": " Button Sign In",
+      "type": "xpath",
+      "value": "\".//*[@id='loginButton']\"",
+      "variableName": "buttonSignIn"
+    },
+    {
+      "name": " Button Sign Out",
+      "type": "xpath",
+      "value": "\"//button/span[.='Sign out']\"",
+      "variableName": "buttonSignOut"
+    }
+  ]
+}

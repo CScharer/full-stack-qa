@@ -1,0 +1,10 @@
+{
+  "locators": [
+    {
+      "name": " Edit Search",
+      "type": "name",
+      "value": "\"q\"",
+      "variableName": "editSearch"
+    }
+  ]
+}

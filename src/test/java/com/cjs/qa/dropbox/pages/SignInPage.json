@@ -1,0 +1,46 @@
+{
+  "locators": [
+    {
+      "name": " Checkbox Remember Me",
+      "type": "xpath",
+      "value": "\".//*[@name='remember_me']/..\"",
+      "variableName": "checkboxRememberMe"
+    },
+    {
+      "name": " Edit Email",
+      "type": "xpath",
+      "value": "\".//*[@name='login_email']\"",
+      "variableName": "editEmail"
+    },
+    {
+      "name": " Edit Password",
+      "type": "xpath",
+      "value": "\".//*[@name='login_password']\"",
+      "variableName": "editPassword"
+    },
+    {
+      "name": " Button Next",
+      "type": "xpath",
+      "value": "\".//input[@value='Next']\"",
+      "variableName": "buttonNext"
+    },
+    {
+      "name": " Button Sign In",
+      "type": "xpath",
+      "value": "\".//button[@id='sign-up-in']\"",
+      "variableName": "buttonSignIn"
+    },
+    {
+      "name": " Button Sign In Regular",
+      "type": "xpath",
+      "value": "\".//button[contains(@class,'signin-button')][@type='submit']\"",
+      "variableName": "buttonSignInRegular"
+    },
+    {
+      "name": " Button Sign In With Google",
+      "type": "xpath",
+      "value": "\".//button[contains(@class,'auth-google')][@type='button']\"",
+      "variableName": "buttonSignInWithGoogle"
+    }
+  ]
+}

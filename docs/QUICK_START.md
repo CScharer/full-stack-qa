@@ -1,0 +1,118 @@
+# Quick Start Guide
+
+**Last Updated**: 2025-12-14  
+**Purpose**: Quick reference for starting the application
+
+---
+
+## 🚀 Quick Start (2 Terminals)
+
+### Terminal 1: Start Backend
+
+```bash
+cd /path/to/full-stack-qa
+./scripts/start-backend.sh
+```
+
+**OR manually:**
+```bash
+cd backend
+source venv/bin/activate
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8008
+```
+
+**Backend will be available at:**
+- API: http://localhost:8008
+- Docs: http://localhost:8008/docs
+
+---
+
+### Terminal 2: Start Frontend
+
+```bash
+cd /path/to/full-stack-qa
+./scripts/start-frontend.sh
+```
+
+**OR manually:**
+```bash
+cd frontend
+export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+PORT=3003 npm run dev
+```
+
+**Frontend will be available at:**
+- App: http://127.0.0.1:3003
+
+---
+
+## ⚠️ Common Mistakes
+
+### ❌ Wrong Directory
+```bash
+# DON'T run this in backend directory:
+cd backend
+npm run dev  # ❌ This won't work - backend doesn't have npm scripts
+```
+
+### ✅ Correct Approach
+```bash
+# For frontend, go to frontend directory:
+cd frontend
+npm run dev  # ✅ This works
+```
+
+---
+
+## 📝 Environment Variables
+
+### Backend (.env file in `backend/` directory)
+```bash
+DATABASE_PATH=../Data/Core/full_stack_testing.db
+API_HOST=0.0.0.0
+API_PORT=8008
+CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
+```
+
+### Frontend (.env.local file in `frontend/` directory)
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+```
+
+**Note:** Environment variables set in terminal (like `export NEXT_PUBLIC_API_URL=...`) only work for that terminal session. For persistence, use `.env.local` file.
+
+---
+
+## ✅ Verification
+
+### Check Backend
+```bash
+curl http://localhost:8008/health
+# Should return: {"status":"healthy"}
+```
+
+### Check Frontend
+Open browser: http://127.0.0.1:3003
+
+---
+
+## 🔧 Troubleshooting
+
+### Backend won't start
+- Check if port 8008 is in use: `lsof -ti:8008 | xargs kill -9`
+- Verify database exists: `ls -la Data/Core/full_stack_testing.db`
+- Check virtual environment: `source backend/venv/bin/activate`
+
+### Frontend won't start
+- Check if port 3003 is in use: `lsof -ti:3003 | xargs kill -9`
+- Verify .env.local exists: `ls -la frontend/.env.local`
+- Check dependencies: `cd frontend && npm install --legacy-peer-deps`
+
+### Frontend can't connect to backend
+- Verify backend is running: `curl http://localhost:8008/health`
+- Check .env.local has correct URL: `cat frontend/.env.local`
+- Check CORS settings in backend config
+
+---
+
+**For detailed instructions, see:** [LOCAL_DEVELOPMENT.md](./LOCAL_DEVELOPMENT.md)

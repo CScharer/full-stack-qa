@@ -1,0 +1,28 @@
+{
+  "locators": [
+    {
+      "name": " Button Add",
+      "type": "id",
+      "value": "nodeForm1 + \"addInsIntBtn\"",
+      "variableName": "buttonAdd"
+    },
+    {
+      "name": " Button Delete",
+      "type": "id",
+      "value": "nodeForm1 + \"deleteNamedInsBtn\"",
+      "variableName": "buttonDelete"
+    },
+    {
+      "name": " Button Create New Name Seq",
+      "type": "id",
+      "value": "nodeForm1 + \"crteNameSeqButton\"",
+      "variableName": "buttonCreateNewNameSeq"
+    },
+    {
+      "name": " Button Add Exist Name Seq",
+      "type": "id",
+      "value": "nodeForm1 + \"addExistNSeqButton\"",
+      "variableName": "buttonAddExistNameSeq"
+    }
+  ]
+}

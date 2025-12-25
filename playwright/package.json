@@ -1,0 +1,28 @@
+{
+  "name": "full-stack-qa-playwright",
+  "version": "1.0.0",
+  "description": "Playwright tests for full-stack-qa framework",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:chrome": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:integration": "playwright test --config=playwright.integration.config.ts",
+    "test:integration:ui": "playwright test --config=playwright.integration.config.ts --ui",
+    "test:integration:headed": "playwright test --config=playwright.integration.config.ts --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
+

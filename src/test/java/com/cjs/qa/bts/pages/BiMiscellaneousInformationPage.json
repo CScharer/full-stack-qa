@@ -1,0 +1,88 @@
+{
+  "locators": [
+    {
+      "name": " Checkbox Package Modification",
+      "type": "id",
+      "value": "\"packageModification\"",
+      "variableName": "checkboxPackageModification"
+    },
+    {
+      "name": " Checkbox Auditable",
+      "type": "id",
+      "value": "\"auditable\"",
+      "variableName": "checkboxAuditable"
+    },
+    {
+      "name": " Dropdown Legal Entity",
+      "type": "id",
+      "value": "\"legalEntity\"",
+      "variableName": "dropdownLegalEntity"
+    },
+    {
+      "name": " Dropdown Audit Basis",
+      "type": "id",
+      "value": "\"auditBasis\"",
+      "variableName": "dropdownAuditBasis"
+    },
+    {
+      "name": " Dropdown Type Of Policy",
+      "type": "id",
+      "value": "\"typeOfPolicy\"",
+      "variableName": "dropdownTypeOfPolicy"
+    },
+    {
+      "name": " Dropdown External Audit Indicator",
+      "type": "id",
+      "value": "\"externalAuditIndicator\"",
+      "variableName": "dropdownExternalAuditIndicator"
+    },
+    {
+      "name": " Dropdown Policy Symbol",
+      "type": "id",
+      "value": "\"policySymbol\"",
+      "variableName": "dropdownPolicySymbol"
+    },
+    {
+      "name": " Edit Naics Code",
+      "type": "id",
+      "value": "\"naicsCode\"",
+      "variableName": "editNaicsCode"
+    },
+    {
+      "name": " Edit Business Description",
+      "type": "id",
+      "value": "\"businessDescription\"",
+      "variableName": "editBusinessDescription"
+    },
+    {
+      "name": " Edit Owners Legal Name",
+      "type": "id",
+      "value": "\"ownersLegalName\"",
+      "variableName": "editOwnersLegalName"
+    },
+    {
+      "name": " Edit Financial Reliability Code",
+      "type": "id",
+      "value": "\"financialReliabilityCode\"",
+      "variableName": "editFinancialReliabilityCode"
+    },
+    {
+      "name": " Edit National Account Indicator",
+      "type": "id",
+      "value": "\"nationalAccountIndicator\"",
+      "variableName": "editNationalAccountIndicator"
+    },
+    {
+      "name": " Dropdown Reporting Company",
+      "type": "id",
+      "value": "\"reportingCompany\"",
+      "variableName": "dropdownReportingCompany"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"miscInformation-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}

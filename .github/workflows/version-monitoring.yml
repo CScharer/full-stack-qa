@@ -1,0 +1,77 @@
+name: Version Monitoring (Scheduled)
+
+on:
+  schedule:
+    # Nightly: Every day at 9 AM UTC (3 AM Central Time)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  monitor-versions:
+    name: Monitor Dependency Versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Dependency Versions
+        id: validate
+        run: |
+          chmod +x scripts/validate-dependency-versions.sh
+          mkdir -p results
+          ./scripts/validate-dependency-versions.sh --report-json --report-file results/version-validation-report.json || true
+          
+      - name: Upload Version Validation Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: version-validation-report
+          path: results/version-validation-report.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Check for Version Mismatches
+        run: |
+          if [ -f results/version-validation-report.json ]; then
+            STATUS=$(jq -r '.status' results/version-validation-report.json)
+            ERRORS=$(jq -r '.errors' results/version-validation-report.json)
+            
+            if [ "$STATUS" = "failed" ] || [ "$ERRORS" -gt 0 ]; then
+              echo "❌ Version validation failed with $ERRORS error(s)"
+              echo "::error::Version mismatches detected! Please review the report."
+              jq '.' results/version-validation-report.json
+              exit 1
+            else
+              echo "✅ All version checks passed"
+            fi
+          else
+            echo "⚠️ Report file not found"
+            exit 1
+          fi
+
+      - name: Comment on Issues (if mismatches found)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('results/version-validation-report.json', 'utf8'));
+            
+            if (report.status === 'failed' || report.errors > 0) {
+              const body = `## ⚠️ Version Mismatch Detected
+              
+              **Timestamp**: ${report.timestamp}
+              **Status**: ${report.status}
+              **Errors**: ${report.errors}
+              **Warnings**: ${report.warnings}
+              
+              ### Mismatches:
+              ${report.mismatches.map(m => `- ${m}`).join('\n')}
+              
+              Please review and fix version alignments. See the [version validation report](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.
+              `;
+              
+              // Note: This would require additional setup to create issues
+              // For now, we'll just log the information
+              console.log('Version mismatch detected. Report:', body);
+            }

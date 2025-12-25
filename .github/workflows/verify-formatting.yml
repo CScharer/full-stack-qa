@@ -1,0 +1,81 @@
+name: Verify Code Formatting
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  verify-formatting:
+    name: Verify Code is Formatted
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Check formatting with Spotless
+        run: |
+          # Suppress Maven Progress lines
+          if [ -n "${MAVEN_OPTS:-}" ]; then
+            export MAVEN_OPTS="${MAVEN_OPTS} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+          else
+            export MAVEN_OPTS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+          fi
+          echo "🔍 Checking code formatting..."
+          if mvn spotless:check 2>&1 | grep -vE "^Progress"; then
+            echo "✅ Code formatting verified"
+          else
+            echo "::error::Code formatting required. Please run: ./scripts/format-code.sh"
+            echo ""
+            echo "To fix locally, run:"
+            echo "  ./scripts/format-code.sh"
+            exit 1
+          fi
+
+      - name: Check for unused imports
+        run: |
+          # Suppress Maven Progress lines
+          if [ -n "${MAVEN_OPTS:-}" ]; then
+            export MAVEN_OPTS="${MAVEN_OPTS} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+          else
+            export MAVEN_OPTS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+          fi
+          echo "🔍 Checking for unused imports..."
+          if mvn checkstyle:check 2>&1 | grep -vE "^Progress" > /tmp/checkstyle-output.log 2>&1; then
+            # Checkstyle passed, but check specifically for unused imports
+            if grep -q "UnusedImports" /tmp/checkstyle-output.log; then
+              echo "::error::Unused imports detected. Please run: ./scripts/format-code.sh"
+              echo ""
+              echo "To fix locally, run:"
+              echo "  ./scripts/format-code.sh"
+              exit 1
+            else
+              echo "✅ No unused imports found"
+            fi
+          else
+            # Checkstyle failed - show summary
+            echo "::error::Code quality issues detected. Please run: ./scripts/format-code.sh"
+            echo ""
+            echo "Summary:"
+            grep -E "(You have|violation)" /tmp/checkstyle-output.log | head -10 || true
+            echo ""
+            echo "To fix locally, run:"
+            echo "  ./scripts/format-code.sh"
+            exit 1
+          fi
+
+      - name: Verify PMD code quality
+        run: |
+          chmod +x scripts/ci/verify-pmd.sh
+          ./scripts/ci/verify-pmd.sh

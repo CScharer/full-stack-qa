@@ -1,0 +1,34 @@
+{
+  "locators": [
+    {
+      "name": " Button Save",
+      "type": "id",
+      "value": "\"save\"",
+      "variableName": "buttonSave"
+    },
+    {
+      "name": " Button Save Products",
+      "type": "id",
+      "value": "\"saveProducts\"",
+      "variableName": "buttonSaveProducts"
+    },
+    {
+      "name": " Button Cancel",
+      "type": "id",
+      "value": "\"cancel\"",
+      "variableName": "buttonCancel"
+    },
+    {
+      "name": " Button Quick Scroll",
+      "type": "id",
+      "value": "\"quickScroll\"",
+      "variableName": "buttonQuickScroll"
+    },
+    {
+      "name": " Button Open Close Left Nav",
+      "type": "xpath",
+      "value": "\"html/body/div[1]/nav/div/div[1]/div[1]/button\"",
+      "variableName": "buttonOpenCloseLeftNav"
+    }
+  ]
+}

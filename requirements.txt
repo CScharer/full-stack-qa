@@ -1,0 +1,14 @@
+# Python Dependencies for Performance Testing
+# Install: pip install -r requirements.txt
+
+# Locust - Performance Testing Framework
+locust==2.42.6
+
+# Additional utilities
+requests==2.32.4
+python-dotenv==1.2.1
+
+# Reporting and visualization
+matplotlib==3.10.8
+pandas==2.3.3
+

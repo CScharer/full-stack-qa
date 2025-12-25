@@ -1,0 +1,124 @@
+{
+  "locators": [
+    {
+      "name": " Edit Policy Number",
+      "type": "id",
+      "value": "\"policyNumber\"",
+      "variableName": "editPolicyNumber"
+    },
+    {
+      "name": " Edit Sequence Number",
+      "type": "id",
+      "value": "\"sequenceNumber\"",
+      "variableName": "editSequenceNumber"
+    },
+    {
+      "name": " Checkbox Include All Policies",
+      "type": "id",
+      "value": "\"includeAllPolicies\"",
+      "variableName": "checkboxIncludeAllPolicies"
+    },
+    {
+      "name": " Edit First Name",
+      "type": "id",
+      "value": "\"firstName\"",
+      "variableName": "editFirstName"
+    },
+    {
+      "name": " Edit Last Name",
+      "type": "id",
+      "value": "\"lastName\"",
+      "variableName": "editLastName"
+    },
+    {
+      "name": " Edit Business Name",
+      "type": "id",
+      "value": "\"businessName\"",
+      "variableName": "editBusinessName"
+    },
+    {
+      "name": " Edit Client I D",
+      "type": "id",
+      "value": "\"clientId\"",
+      "variableName": "editClientID"
+    },
+    {
+      "name": " Edit F E I N",
+      "type": "id",
+      "value": "\"fein\"",
+      "variableName": "editFEIN"
+    },
+    {
+      "name": " Button Add Client And Policy",
+      "type": "id",
+      "value": "\"addClientAndPolicy\"",
+      "variableName": "buttonAddClientAndPolicy"
+    },
+    {
+      "name": " Button Add Client And Quote",
+      "type": "id",
+      "value": "\"addClientAndQuote\"",
+      "variableName": "buttonAddClientAndQuote"
+    },
+    {
+      "name": " Button Nav Left",
+      "type": "xpath",
+      "value": "\"//button[contains(@data-sidebar,'left')]\"",
+      "variableName": "buttonNavLeft"
+    },
+    {
+      "name": " Button Nav Right",
+      "type": "xpath",
+      "value": "\"//button[contains(@data-sidebar,'right')]\"",
+      "variableName": "buttonNavRight"
+    },
+    {
+      "name": " Link Add New Policy",
+      "type": "linkText",
+      "value": "\"Add New Policy\"",
+      "variableName": "linkAddNewPolicy"
+    },
+    {
+      "name": " Link Add New Quote",
+      "type": "linkText",
+      "value": "\"Add New Quote\"",
+      "variableName": "linkAddNewQuote"
+    },
+    {
+      "name": " Link Client Information",
+      "type": "linkText",
+      "value": "\"Client Information\"",
+      "variableName": "linkClientInformation"
+    },
+    {
+      "name": " Link Transfer Ownership",
+      "type": "linkText",
+      "value": "\"Transfer Ownership\"",
+      "variableName": "linkTransferOwnership"
+    },
+    {
+      "name": " Image Primary Logo",
+      "type": "xpath",
+      "value": "\"//div[@class='primary-logo']\"",
+      "variableName": "imagePrimaryLogo"
+    },
+    {
+      "name": " Button Search",
+      "type": "id",
+      "value": "\"searchButton\"",
+      "variableName": "buttonSearch"
+    },
+    {
+      "name": " Button Clear",
+      "type": "id",
+      "value": "\"clearButton\"",
+      "variableName": "buttonClear"
+    },
+    {
+      "name": " Dropdown Login",
+      "type": "xpath",
+      "value": "\"//button[contains(@class,'btn-primary')][@data-toggle='Dropdown']\"",
+      "variableName": "dropdownLogin"
+    }
+  ]
+}

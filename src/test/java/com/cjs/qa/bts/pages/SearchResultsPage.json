@@ -1,0 +1,46 @@
+{
+  "locators": [
+    {
+      "name": " Edit Term",
+      "type": "xpath",
+      "value": "\"//label[.='Term']/../p\"",
+      "variableName": "editTerm"
+    },
+    {
+      "name": " Edit Status",
+      "type": "xpath",
+      "value": "\"//label[.='Status']/../p\"",
+      "variableName": "editStatus"
+    },
+    {
+      "name": " Button Client",
+      "type": "xpath",
+      "value": "\"//a[@ng-click='populateClientActions(client)']\"",
+      "variableName": "buttonClient"
+    },
+    {
+      "name": " Button Policy",
+      "type": "xpath",
+      "value": "\"//a[@ng-click='populatePolicyActions(policy)']/div[contains(@class,'ng-binding')]\"",
+      "variableName": "buttonPolicy"
+    },
+    {
+      "name": " Button Request Print =\n  //  By.xpath(\"html/body/div[4]/div[2]/div/div[1]/div[2]/div[1]/div[2]/ul/li/div/div[1]/ul/li[10]/a/div[2]\")\n  private static final  By button Inquire On Prompt",
+      "type": "xpath",
+      "value": "\".//*[@id='btn-ok']\"",
+      "variableName": "buttonRequestPrint =\n  // By.xpath(\"html/body/div[4]/div[2]/div/div[1]/div[2]/div[1]/div[2]/ul/li/div/div[1]/ul/li[10]/a/div[2]\")\n  private static final By buttonInquireOnPrompt"
+    },
+    {
+      "name": " Policy To Policy",
+      "type": "linkText",
+      "value": "\"Policy To Policy\"",
+      "variableName": "PolicyToPolicy"
+    },
+    {
+      "name": " Release Lock",
+      "type": "xpath",
+      "value": "\"html/body/div[4]/div[2]/div/div[1]/div[2]/div[1]/div[2]/ul/li/div/div[3]/a[1]/i[2]\"",
+      "variableName": "releaseLock"
+    }
+  ]
+}

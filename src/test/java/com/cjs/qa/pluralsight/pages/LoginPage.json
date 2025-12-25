@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " Edit User Name",
+      "type": "id",
+      "value": "\"Username\"",
+      "variableName": "editUserName"
+    },
+    {
+      "name": " Edit Password",
+      "type": "id",
+      "value": "\"Password\"",
+      "variableName": "editPassword"
+    },
+    {
+      "name": " Button Sign In",
+      "type": "id",
+      "value": "\"login\"",
+      "variableName": "buttonSignIn"
+    }
+  ]
+}

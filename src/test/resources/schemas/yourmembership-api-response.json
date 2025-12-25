@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "YourMembership API Response",
+  "description": "Schema for YourMembership API XML/JSON response structure",
+  "required": ["Response"],
+  "properties": {
+    "Response": {
+      "type": "object",
+      "description": "Main response object",
+      "required": ["Status"],
+      "properties": {
+        "Status": {
+          "type": "object",
+          "description": "Response status information",
+          "required": ["Code"],
+          "properties": {
+            "Code": {
+              "type": "integer",
+              "description": "Status code (0 = success, non-zero = error)",
+              "minimum": 0
+            },
+            "Message": {
+              "type": "string",
+              "description": "Status message"
+            }
+          }
+        },
+        "Data": {
+          "type": "object",
+          "description": "Response data (structure varies by API call)"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

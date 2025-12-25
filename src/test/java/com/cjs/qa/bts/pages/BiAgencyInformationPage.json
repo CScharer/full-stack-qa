@@ -1,0 +1,52 @@
+{
+  "locators": [
+    {
+      "name": " Dropdown Branch",
+      "type": "id",
+      "value": "\"branch\"",
+      "variableName": "dropdownBranch"
+    },
+    {
+      "name": " Dropdown Underwriter",
+      "type": "id",
+      "value": "\"underwriter\"",
+      "variableName": "dropdownUnderwriter"
+    },
+    {
+      "name": " Edit Agency Code",
+      "type": "id",
+      "value": "\"agencyCode\"",
+      "variableName": "editAgencyCode"
+    },
+    {
+      "name": " Edit Agency Name",
+      "type": "id",
+      "value": "\"agencyName\"",
+      "variableName": "editAgencyName"
+    },
+    {
+      "name": " Button Search Agency Name",
+      "type": "id",
+      "value": "\"agencyName-lookup\"",
+      "variableName": "buttonSearchAgencyName"
+    },
+    {
+      "name": " Edit Producer Code",
+      "type": "id",
+      "value": "\"producerCode\"",
+      "variableName": "editProducerCode"
+    },
+    {
+      "name": " Dropdown Producer Name",
+      "type": "id",
+      "value": "\"producerName\"",
+      "variableName": "dropdownProducerName"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"agencyInformation-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}

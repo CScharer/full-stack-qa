@@ -1,0 +1,29 @@
+# FastAPI Backend Dependencies
+# ONE GOAL Project
+
+# Core Framework
+fastapi>=0.124.4  # Latest stable (0.125.0 does not exist)
+uvicorn[standard]>=0.38.0
+starlette>=0.50.0  # Updated for httpx 0.28+ compatibility
+
+# Database
+aiosqlite>=0.22.0  # Async SQLite support (optional, can use sqlite3)
+
+# Data Validation
+pydantic>=2.12.5
+pydantic-settings>=2.12.0
+
+# Environment Variables
+python-dotenv>=1.2.1
+
+# HTTP Client (for testing)
+httpx>=0.28.1  # Compatible with updated FastAPI/Starlette
+
+# Testing
+pytest>=9.0.2
+pytest-asyncio>=1.3.0
+pytest-cov>=7.0.0
+
+# Development
+black>=25.12.0
+ruff>=0.14.10

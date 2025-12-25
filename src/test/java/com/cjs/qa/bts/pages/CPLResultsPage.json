@@ -1,0 +1,10 @@
+{
+  "locators": [
+    {
+      "name": " Button Close",
+      "type": "xpath",
+      "value": "\"html/body/div[8]/div[1]/a/span\"",
+      "variableName": "buttonClose"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="LOG_DIR">target/logs</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <!-- File Appender - All Logs -->
+        <RollingFile name="FileAll" fileName="${LOG_DIR}/application.log"
+                     filePattern="${LOG_DIR}/application-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <!-- File Appender - Test Results Only -->
+        <RollingFile name="TestResults" fileName="${LOG_DIR}/test-results.log"
+                     filePattern="${LOG_DIR}/test-results-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+        </RollingFile>
+
+        <!-- File Appender - Debug Logs -->
+        <RollingFile name="DebugFile" fileName="${LOG_DIR}/debug.log"
+                     filePattern="${LOG_DIR}/debug-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+        </RollingFile>
+
+        <!-- File Appender - Errors Only -->
+        <RollingFile name="ErrorFile" fileName="${LOG_DIR}/error.log"
+                     filePattern="${LOG_DIR}/error-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Test Classes Logger -->
+        <Logger name="com.cjs.qa.junit.tests" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAll"/>
+            <AppenderRef ref="TestResults"/>
+            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Logger>
+
+        <!-- Utility Classes Logger -->
+        <Logger name="com.cjs.qa.utilities" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAll"/>
+            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Logger>
+
+        <!-- Selenium WebDriver - Less verbose -->
+        <Logger name="org.openqa.selenium" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAll"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Logger>
+
+        <!-- Allure - Info level -->
+        <Logger name="io.qameta.allure" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAll"/>
+        </Logger>
+
+        <!-- TestNG - Info level -->
+        <Logger name="org.testng" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAll"/>
+        </Logger>
+
+        <!-- Root Logger -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAll"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
+

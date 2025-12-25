@@ -1,0 +1,37 @@
+# Prometheus Configuration for Selenium Grid Monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'selenium-grid-monitor'
+    environment: 'development'
+
+# Scrape configurations
+scrape_configs:
+  # Selenium Hub metrics
+  - job_name: 'selenium-hub'
+    static_configs:
+      - targets: ['selenium-hub:4444']
+    metrics_path: '/status'
+    scheme: 'http'
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Docker containers (if docker socket is mounted)
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['host.docker.internal:9323']
+    scrape_interval: 30s
+
+# Alerting rules
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Rule files
+rule_files:
+  # - "alerts.yml"

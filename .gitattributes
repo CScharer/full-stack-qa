@@ -1,0 +1,57 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Java sources
+*.java text diff=java
+*.gradle text diff=java
+
+# XML files
+*.xml text
+
+# Configuration files
+*.properties text
+*.yml text
+*.yaml text
+*.json text
+
+# Shell scripts (always use LF)
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Batch scripts (always use CRLF)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Markdown
+*.md text diff=markdown
+
+# These files are binary and should not be modified
+*.jar binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.class binary
+*.war binary
+*.ear binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.tgz binary
+
+# Office documents
+*.xls binary
+*.xlsx binary
+*.doc binary
+*.docx binary
+*.pdf binary

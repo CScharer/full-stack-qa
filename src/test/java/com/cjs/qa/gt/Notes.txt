@@ -1,0 +1,71 @@
+/*
+ * NOTE: All credentials (passwords, consumer keys, consumer secrets, usernames) have been migrated
+ * to Google Cloud Secret Manager. Do not add hardcoded credentials to this file.
+ *
+ * For active credentials, see:
+ * - EAPIKeys enum: src/test/java/com/cjs/qa/core/security/EAPIKeys.java
+ * - EPasswords enum: src/test/java/com/cjs/qa/core/security/EPasswords.java
+ *
+ * Secret names in Google Cloud Secret Manager use AUTO_ prefix:
+ * - AUTO_VIVIT_GT_WEBINAR_USER_ID
+ * - AUTO_VIVIT_GT_WEBINAR_PASSWORD
+ * - AUTO_VIVIT_GT_WEBINAR_CONSUMER_KEY
+ * - AUTO_VIVIT_GT_WEBINAR_CONSUMER_SECRET
+ * - AUTO_VIVIT_YM_API_KEY
+ * - AUTO_VIVIT_YM_API_SA_PASSCODE
+ *
+ * Migration Guide: docs/guides/setup/API_KEYS_MIGRATION_GUIDE.md
+ * Security Rules: docs/process/AI_WORKFLOW_RULES.md (Rule 2.6)
+ */
+
+•	Vivit Website Registration Page:  https://www.vivit-worldwide.org/events/EventDetails.aspx?id=1209865&group= 
+•	Go To Webinar Event:  https://global.gotowebinar.com/manageWebinar.tmpl?webinar=4085145690110151939 
+•	Go To Webinar Registration Page:  https://attendee.gotowebinar.com/register/4085145690110151939 
+
+https://www.gotomeeting.com/ 
+Username:  [USERNAME] (See EAPIKeys.VIVIT_GT_WEBINAR_USER_ID)
+Password:  [PASSWORD] (See EPasswords.VIVIT_GT_WEBINAR_PASSWORD)
+
+curl -X POST -H "Accept:application/json" -H "Content-Type: application/x-www-form-urlencoded" "https://api.getgo.com/oauth/access_token" -d 'grant_type=password&user_id=[USERNAME]&password=[PASSWORD]&client_id=[CONSUMER_KEY]'
+curl -X POST -H "Accept:application/json" -H "Content-Type: application/x-www-form-urlencoded" "https://api.getgo.com/oauth/access_token" -d "grant_type="password"&user_id="[USERNAME]"&password="[PASSWORD]"&client_id="[CONSUMER_KEY]"
+
+Application Name: YM Seamless Registration 
+Consumer Key: [CONSUMER_KEY] (See EAPIKeys.VIVIT_GT_WEBINAR_CONSUMER_KEY)
+Consumer Secret: [CONSUMER_SECRET] (See EAPIKeys.VIVIT_GT_WEBINAR_CONSUMER_SECRET)
+https://api.getgo.com/oauth/v2/authorize?response_type=code&client_id={consumerKey}
+https://api.getgo.com/oauth/v2/authorize?response_type=code&client_id={[CONSUMER_KEY]}
+
+Application Name: GoToWebinar API 
+Consumer Key: [CONSUMER_KEY] (See Google Cloud Secret Manager for additional credentials)
+Consumer Secret: [CONSUMER_SECRET] (See Google Cloud Secret Manager for additional credentials)
+https://api.getgo.com/oauth/v2/authorize?response_type=code&client_id={[CONSUMER_KEY]}
+
+CSCharer
+Application Name: GoToWebinar API 
+Consumer Key: [CONSUMER_KEY] (See Google Cloud Secret Manager for additional credentials)
+Consumer Secret: [CONSUMER_SECRET] (See Google Cloud Secret Manager for additional credentials)
+https://api.getgo.com/oauth/v2/authorize?response_type=code&client_id={[CONSUMER_KEY]}
+
+https://api.getgo.com/gotoid/verify?action=resend&id=db78044d-3ac5-48e4-9355-9ba3c381e854
+
+API instructions can be found at:
+Go To Developer Center:  https://goto-developer.logmeininc.com
+The instructions on how to reach the helpdesk if needed are found under the support tab.
+
+More information for other integrations that may be helpful can be found at:
+https://www.gotomeeting.com/integration-marketplace
+
+Per Mark Ford:
+I see the process working like this:
+1.	Staff will create the YM event and the corresponding GTW event.
+2.	Staff will tag the YM event with the GTW event id.  This might be in an event field or in the description as a tag.  We may need Julanne to help with that unless Stephanie has an idea.
+3.	Your process will run once a day and do the following:
+a.	Query YM to get all active events that haven't occurred yet
+b.	Check each of those events for the GTW event id
+c.	For those active YM events with a GTW id that haven't yet occurred:
+i.	Get the list of registrants for the YM event
+ii.	Get the list of registrants for the corresponding GTW event
+iii.	If any are in the YM event but not the GTW event, add them to the GTW event
+I've done a lot with JSON at work lately so if you need any help with that, just let me know.
+Thanks again for working on this.
+I have not had time and this will be a huge help to Stephanie, Rhonda, and team.

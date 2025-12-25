@@ -1,0 +1,46 @@
+{
+  "locators": [
+    {
+      "name": " Button Continue",
+      "type": "xpath",
+      "value": "\".//input[@value='Continue']\"",
+      "variableName": "buttonContinue"
+    },
+    {
+      "name": " Button Check",
+      "type": "xpath",
+      "value": "\".//*[@id='game']/div[1]/div/div/span[.='Check']\"",
+      "variableName": "buttonCheck"
+    },
+    {
+      "name": " Button Save",
+      "type": "xpath",
+      "value": "\".//*[@id='game']/div[1]/div/div/span[.='Save']\"",
+      "variableName": "buttonSave"
+    },
+    {
+      "name": " Button Submit",
+      "type": "xpath",
+      "value": "\".//*[@id='game']/div[1]/div/div/span[.='Submit']\"",
+      "variableName": "buttonSubmit"
+    },
+    {
+      "name": " Edit Name",
+      "type": "xpath",
+      "value": "\"html/body/div[1]/form/div/table/tbody/tr[1]/td[2]/input\"",
+      "variableName": "editName"
+    },
+    {
+      "name": " Edit Email",
+      "type": "xpath",
+      "value": "\"html/body/div[1]/form/div/table/tbody/tr[2]/td[2]/input\"",
+      "variableName": "editEmail"
+    },
+    {
+      "name": " Button O K",
+      "type": "xpath",
+      "value": "\"html/body/div[1]/form/div/table/tbody/tr[3]/td/input\"",
+      "variableName": "buttonOK"
+    }
+  ]
+}

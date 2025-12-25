@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " By Session Title",
+      "type": "xpath",
+      "value": "\"//h1[@class='course-hero__title']\"",
+      "variableName": "bySessionTitle"
+    },
+    {
+      "name": " By Session Instructor",
+      "type": "xpath",
+      "value": "\".//*[@id='ps-main']//p[@class='course-hero__byline']\"",
+      "variableName": "bySessionInstructor"
+    },
+    {
+      "name": " By Session Synopsis",
+      "type": "xpath",
+      "value": "\".//*[@id='ps-main']//p[@class='course-hero__excerpt']\"",
+      "variableName": "bySessionSynopsis"
+    }
+  ]
+}

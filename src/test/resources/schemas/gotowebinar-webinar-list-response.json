@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "GoToWebinar Webinar List Response",
+  "description": "Schema for GoToWebinar list of webinars response",
+  "required": [],
+  "properties": {
+    "webinars": {
+      "type": "array",
+      "description": "List of webinars",
+      "items": {
+        "type": "object",
+        "required": ["webinarKey"],
+        "properties": {
+          "webinarKey": {
+            "type": "string",
+            "description": "Unique identifier for the webinar",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "description": "Webinar subject/title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Webinar description"
+          },
+          "times": {
+            "type": "array",
+            "description": "List of webinar times",
+            "items": {
+              "type": "object",
+              "properties": {
+                "startTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Webinar start time"
+                },
+                "endTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Webinar end time"
+                }
+              }
+            }
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "Time zone for the webinar"
+          },
+          "registrationUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL for webinar registration"
+          }
+        }
+      }
+    },
+    "totalResults": {
+      "type": "integer",
+      "description": "Total number of webinars",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
+

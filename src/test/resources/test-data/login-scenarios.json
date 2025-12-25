@@ -1,0 +1,30 @@
+{
+  "loginScenarios": [
+    {
+      "email": "user1@test.com",
+      "password": "password1",
+      "expectedResult": "success"
+    },
+    {
+      "email": "user2@test.com",
+      "password": "password2",
+      "expectedResult": "success"
+    },
+    {
+      "email": "invalid@test.com",
+      "password": "wrongpassword",
+      "expectedResult": "failure"
+    },
+    {
+      "email": "",
+      "password": "password1",
+      "expectedResult": "failure"
+    },
+    {
+      "email": "user1@test.com",
+      "password": "",
+      "expectedResult": "failure"
+    }
+  ]
+}
+

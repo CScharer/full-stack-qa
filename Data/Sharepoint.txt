@@ -1,0 +1,141 @@
+		final String classMethodName = JavaHelpers.getCurrentClassMethodName();
+		if (VivitData.successFileExists(classMethodName))
+		{
+			return;
+		}
+		VivitData.createSuccessFile(classMethodName);
+
+
+This is done by POSTing the following XML as the request body to:
+https://login.microsoftonline.com/extSTS.srf
+Christopher.Scharer@Vivit-Worldwide.org
+AUTO_EMAIL_GMAIL_PASSWORD
+yourdomain = vivitworldwide
+https://yourdomain.sharepoint.com/SitePages/Home.aspx
+https://vivitworldwide.sharepoint.com/SitePages/Home.aspx
+
+POST:
+headers =  Content-Type application/xml
+application/json; odata=verbose
+
+<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+      xmlns:a="http://www.w3.org/2005/08/addressing"
+      xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+  <s:Header>
+    <a:Action s:mustUnderstand="1">http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue</a:Action>
+    <a:ReplyTo>
+      <a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>
+    </a:ReplyTo>
+    <a:To s:mustUnderstand="1">https://login.microsoftonline.com/extSTS.srf</a:To>
+    <o:Security s:mustUnderstand="1"
+       xmlns:o="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      <o:UsernameToken>
+        <o:Username>Christopher.Scharer@Vivit-Worldwide.org</o:Username>
+        <o:Password>AUTO_EMAIL_GMAIL_PASSWORD</o:Password>
+      </o:UsernameToken>
+    </o:Security>
+  </s:Header>
+  <s:Body>
+    <t:RequestSecurityToken xmlns:t="http://schemas.xmlsoap.org/ws/2005/02/trust">
+      <wsp:AppliesTo xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+        <a:EndpointReference>
+          <a:Address>https://vivitworldwide.sharepoint.com/SitePages/Home.aspx</a:Address>
+        </a:EndpointReference>
+      </wsp:AppliesTo>
+      <t:KeyType>http://schemas.xmlsoap.org/ws/2005/05/identity/NoProofKey</t:KeyType>
+      <t:RequestType>http://schemas.xmlsoap.org/ws/2005/02/trust/Issue</t:RequestType>
+      <t:TokenType>urn:oasis:names:tc:SAML:1.0:assertion</t:TokenType>
+    </t:RequestSecurityToken>
+  </s:Body>
+</s:Envelope>
+
+RESPONSE:
+<?xml version="1.0" encoding="utf-8" ?>
+<S:Envelopexmlns:wsa="http://www.w3.org/2005/08/addressing"xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"xmlns:wst="http://schemas.xmlsoap.org/ws/2005/02/trust"xmlns:S="http://www.w3.org/2003/05/soap-envelope">
+<S:Header>
+<wsa:ActionS:mustUnderstand="1"wsu:Id="Action">http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Issue</wsa:Action>
+<wsa:ToS:mustUnderstand="1"wsu:Id="To">http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</wsa:To>
+<wsse:SecurityS:mustUnderstand="1">
+<wsu:Timestampwsu:Id="TS"xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+<wsu:Created>2019-03-05T09:12:28.6683484Z</wsu:Created>
+<wsu:Expires>2019-03-05T09:17:28.6683484Z</wsu:Expires>
+</wsu:Timestamp>
+</wsse:Security>
+</S:Header>
+<S:Bodyxmlns:S="http://www.w3.org/2003/05/soap-envelope">
+<wst:RequestSecurityTokenResponsexmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"xmlns:wst="http://schemas.xmlsoap.org/ws/2005/02/trust">
+<wst:TokenType>urn:passport:compact</wst:TokenType>
+<wsp:AppliesTo>
+<wsa:EndpointReferencexmlns:wsa="http://www.w3.org/2005/08/addressing">
+<wsa:Address>https://vivitworldwide.sharepoint.com/SitePages/Home.aspx</wsa:Address>
+</wsa:EndpointReference>
+</wsp:AppliesTo>
+<wst:Lifetime>
+<wsu:Created>2019-03-05T09:12:28Z</wsu:Created>
+<wsu:Expires>2019-03-06T09:12:28Z</wsu:Expires>
+</wst:Lifetime>
+<wst:RequestedSecurityToken>
+<wsse:BinarySecurityTokenId="Compact0"xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+t=EwDwAk6hBwAUamW55wMmWmxpdUrikyyDcCuRBpIAAQaUQb439CfkRuNpOdhf7llZLB8eB0XuHR0W0kavXLwHJL2lyfzj7bHyZZBD203FZAAkG/qdlXxoLSf4LflSDtWc0jMBfAJLwIiMd1jucdz82LmBzSRpi5IoKBrgo68qDNTEBqdhLyxiPKSggl3ljx2uvP8Uh31/KsYpDP0RIPWyJelKVQZlmdELMzLX2vmdO17SzL3nz3xLlaNJ1O149t2AXfUZ4aoxtiNrqM6Gcf9bXlWsAAI/L1bnj2zMPnAv8yNAprLg0/vJajMXaFGmDJ90WQvmeP5h5yBpRP8m7gf58zVpifvnrbN+pwmDELitF4TAPTuk8k1jAcybiD84E2YDZgAACLC5jThV2iBMwAFLCrAT80H+lIdA3EavuTYC/nwA8nrO6I0DNEHBMkNdX5MGgdbci+p/lsThtfYwowm0cUBayPzG/EeiCdDl0vGoiS1+ohWFOQZ+xTUx+yOMLPz9iZcRGrQ5I69+tHPSGvKVZlFpcAyvj/RzYuBkMwOziAQfuaaPjpwMbttzRSaaiLLtQTifS0GG2MWy7mIAu2TEoXX7EPn9d9yirScevwNiYA1mLLlWlBtpvxJXrl7uo/fh75OdqLLNh8rJ4ZbAc1mw2jimXU5cKOZAsNCEr3xIWXOHp9ZJhBXnfDIcQ1Nh5N7vFCt/4c/ulXIFjS+1NO3bShpn18eyV9QNZwXRZfyRYk+km0jPxgbHcd39QF/gCSAz/EdEwv3RN4I5g4p1U12XsF5Q9EOwtnOyAyw9aHwoX7I1PS5DXPBcMSdVGBNA+drx6pV0/+yIbMX75XfVLtLjqnhcd7KIDapeMZQl0uqG4PDzPj/6vuLePfur1yBAYpXFetpe1NQw/WkEm/dV8Bao2LPi2Ax2o+UaHJ7nl0GyrhSdY/CAdNrhZ2wJzW2XjCn09c3yuYmLYG+MREaVknpn84qsNFK5OTugXROlAs7QNwI=&amp;p=</wsse:BinarySecurityToken>
+</wst:RequestedSecurityToken>
+<wst:RequestedAttachedReference>
+<wsse:SecurityTokenReferencexmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+<wsse:ReferenceURI="ML5fAmlT7u8HjWhj5hWRu9b/3/I="/>
+</wsse:SecurityTokenReference>
+</wst:RequestedAttachedReference>
+<wst:RequestedUnattachedReference>
+<wsse:SecurityTokenReferencexmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+<wsse:ReferenceURI="ML5fAmlT7u8HjWhj5hWRu9b/3/I="/>
+</wsse:SecurityTokenReference>
+</wst:RequestedUnattachedReference>
+</wst:RequestSecurityTokenResponse>
+</S:Body>
+</S:Envelope>
+
+POST:
+Once the security token has been retrieved it must be used to fetch the access token. The can be done by POSTing to the following URL with the security token as the request body:
+https://yourdomain.sharepoint.com/_forms/default.aspx?wa=wsignin1.0
+https://vivitworldwide.sharepoint.com/_forms/default.aspx?wa=wsignin1.0
+headers =  Content-Type application/x-www-form-urlencoded
+
+RESPONSE:
+<html lang="en" class="" dir="ltr">
+   <head>
+      <meta content="HTML Tidy for Java (vers. 26 Sep 2004), see www.w3.org" name="generator"/>
+      <title>Sign in to your account</title>
+      <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+      <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+      <meta content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" name="viewport"/>
+      <meta content="no-cache" http-equiv="Pragma"/>
+      <meta content="-1" http-equiv="Expires"/>
+      <link crossorigin="crossorigin" href="https://aadcdn.msauth.net" rel="preconnect"/>
+      <meta content="on" http-equiv="x-dns-prefetch-control"/>
+      <link href="//aadcdn.msauth.net" rel="dns-prefetch"/>
+      <link href="//aadcdn.msftauth.net" rel="dns-prefetch"/>
+      <meta content="ConvergedSignIn" name="PageID"/>
+      <meta content="" name="SiteID"/>
+      <meta content="1033" name="ReqLC"/>
+      <meta content="en-US" name="LocLC"/>
+      <meta content="0; URL=https://login.microsoftonline.com/jsdisabled" http-equiv="Refresh"/>
+      <link href="https://aadcdn.msauth.net/ests/2.1.8677.17/content/images/favicon_a_eupayfgghqiai7k9sol6lg2.ico" rel="shortcut icon"/>
+      <meta content="none" name="robots"/>
+   </head>
+   <body style="display: none" class="cb" data-bind="defineGlobals: ServerData, bodyCssClass">
+      <script type="text/javascript">//&lt;![CDATA[
+$Config={"fShowPersistentCookiesWarning":false,"urlMsaLogout":"https://login.live.com/logout.srf?iframed_by=https%3a%2f%2flogin.microsoftonline.com","urlUxPreviewOptOut":"https://login.microsoftonline.com/common/uxpreview/optout","showCantAccessAccountLink":true,"fShowAsyncTileLoad":true,"urlFeatureAnnouncementBlogPost":"https://aka.ms/AA1edlw","fCollapseExcessLinks":true,"fShowLoginV2PreviewLink":true,"fEnableShowResendCode":true,"iShowResendCodeDelay":90000,"sSMSCtryPhoneData":"AF~Afghanistan~93!!!AX~Åland Islands~358!!!AL~Albania~355!!!DZ~Algeria~213!!!AS~American Samoa~1!!!AD~Andorra~376!!!AO~Angola~244!!!AI~Anguilla~1!!!AG~Antigua and Barbuda~1!!!AR~Argentina~54!!!AM~Armenia~374!!!AW~Aruba~297!!!AC~Ascension Island~247!!!AU~Australia~61!!!AT~Austria~43!!!AZ~Azerbaijan~994!!!BS~Bahamas~1!!!BH~Bahrain~973!!!BD~Bangladesh~880!!!BB~Barbados~1!!!BY~Belarus~375!!!BE~Belgium~32!!!BZ~Belize~501!!!BJ~Benin~229!!!BM~Bermuda~1!!!BT~Bhutan~975!!!BO~Bolivia~591!!!BQ~Bonaire~599!!!BA~Bosnia and Herzegovina~387!!!BW~Botswana~267!!!BR~Brazil~55!!!IO~British Indian Ocean Territory~246!!!VG~British Virgin Islands~1!!!BN~Brunei~673!!!BG~Bulgaria~359!!!BF~Burkina Faso~226!!!BI~Burundi~257!!!CV~Cabo Verde~238!!!KH~Cambodia~855!!!CM~Cameroon~237!!!CA~Canada~1!!!KY~Cayman Islands~1!!!CF~Central African Republic~236!!!TD~Chad~235!!!CL~Chile~56!!!CN~China~86!!!CX~Christmas Island~61!!!CC~Cocos (Keeling) Islands~61!!!CO~Colombia~57!!!KM~Comoros~269!!!CG~Congo~242!!!CD~Congo (DRC)~243!!!CK~Cook Islands~682!!!CR~Costa Rica~506!!!CI~Côte d\u0027Ivoire~225!!!HR~Croatia~385!!!CU~Cuba~53!!!CW~Curaçao~599!!!CY~Cyprus~357!!!CZ~Czechia~420!!!DK~Denmark~45!!!DJ~Djibouti~253!!!DM~Dominica~1!!!DO~Dominican Republic~1!!!EC~Ecuador~593!!!EG~Egypt~20!!!SV~El Salvador~503!!!GQ~Equatorial Guinea~240!!!ER~Eritrea~291!!!EE~Estonia~372!!!ET~Ethiopia~251!!!FK~Falkland Islands~500!!!FO~Faroe Islands~298!!!FJ~Fiji~679!!!FI~Finland~358!!!FR~France~33!!!GF~French Guiana~594!!!PF~French Polynesia~689!!!GA~Gabon~241!!!GM~Gambia~220!!!GE~Georgia~995!!!DE~Germany~49!!!GH~Ghana~233!!!GI~Gibraltar~350!!!GR~Greece~30!!!GL~Greenland~299!!!GD~Grenada~1!!!GP~Guadeloupe~590!!!GU~Guam~1!!!GT~Guatemala~502!!!GG~Guernsey~44!!!GN~Guinea~224!!!GW~Guinea-Bissau~245!!!GY~Guyana~592!!!HT~Haiti~509!!!HN~Honduras~504!!!HK~Hong Kong SAR~852!!!HU~Hungary~36!!!IS~Iceland~354!!!IN~India~91!!!ID~Indonesia~62!!!IR~Iran~98!!!IQ~Iraq~964!!!IE~Ireland~353!!!IM~Isle of Man~44!!!IL~Israel~972!!!IT~Italy~39!!!JM~Jamaica~1!!!JP~Japan~81!!!JE~Jersey~44!!!JO~Jordan~962!!!KZ~Kazakhstan~7!!!KE~Kenya~254!!!KI~Kiribati~686!!!KR~Korea~82!!!KW~Kuwait~965!!!KG~Kyrgyzstan~996!!!LA~Laos~856!!!LV~Latvia~371!!!LB~Lebanon~961!!!LS~Lesotho~266!!!LR~Liberia~231!!!LY~Libya~218!!!LI~Liechtenstein~423!!!LT~Lithuania~370!!!LU~Luxembourg~352!!!MO~Macao SAR~853!!!MK~Macedonia, Former Yugoslav Republic of~389!!!MG~Madagascar~261!!!MW~Malawi~265!!!MY~Malaysia~60!!!MV~Maldives~960!!!ML~Mali~223!!!MT~Malta~356!!!MH~Marshall Islands~692!!!MQ~Martinique~596!!!MR~Mauritania~222!!!MU~Mauritius~230!!!YT~Mayotte~262!!!MX~Mexico~52!!!FM~Micronesia~691!!!MD~Moldova~373!!!MC~Monaco~377!!!MN~Mongolia~976!!!ME~Montenegro~382!!!MS~Montserrat~1!!!MA~Morocco~212!!!MZ~Mozambique~258!!!MM~Myanmar~95!!!NA~Namibia~264!!!NR~Nauru~674!!!NP~Nepal~977!!!NL~Netherlands~31!!!NC~New Caledonia~687!!!NZ~New Zealand~64!!!NI~Nicaragua~505!!!NE~Niger~227!!!NG~Nigeria~234!!!NU~Niue~683!!!NF~Norfolk Island~672!!!KP~North Korea~850!!!MP~Northern Mariana Islands~1!!!NO~Norway~47!!!OM~Oman~968!!!PK~Pakistan~92!!!PW~Palau~680!!!PS~Palestinian Authority~970!!!PA~Panama~507!!!PG~Papua New Guinea~675!!!PY~Paraguay~595!!!PE~Peru~51!!!PH~Philippines~63!!!PL~Poland~48!!!PT~Portugal~351!!!PR~Puerto Rico~1!!!QA~Qatar~974!!!RE~Réunion~262!!!RO~Romania~40!!!RU~Russia~7!!!RW~Rwanda~250!!!BL~Saint Barthélemy~590!!!KN~Saint Kitts and Nevis~1!!!LC~Saint Lucia~1!!!MF~Saint Martin~590!!!PM~Saint Pierre and Miquelon~508!!!VC~Saint Vincent and the Grenadines~1!!!WS~Samoa~685!!!SM~San Marino~378!!!ST~São Tomé and Príncipe~239!!!SA~Saudi Arabia~966!!!SN~Senegal~221!!!RS~Serbia~381!!!SC~Seychelles~248!!!SL~Sierra Leone~232!!!SG~Singapore~65!!!SX~Sint Maarten~1!!!SK~Slovakia~421!!!SI~Slovenia~386!!!SB~Solomon Islands~677!!!SO~Somalia~252!!!ZA~South Africa~27!!!SS~South Sudan~211!!!ES~Spain~34!!!LK~Sri Lanka~94!!!SH~St Helena, Ascension, and Tristan da Cunha~290!!!SD~Sudan~249!!!SR~Suriname~597!!!SJ~Svalbard~47!!!SZ~Swaziland~268!!!SE~Sweden~46!!!CH~Switzerland~41!!!SY~Syria~963!!!TW~Taiwan~886!!!TJ~Tajikistan~992!!!TZ~Tanzania~255!!!TH~Thailand~66!!!TL~Timor-Leste~670!!!TG~Togo~228!!!TK~Tokelau~690!!!TO~Tonga~676!!!TT~Trinidad and Tobago~1!!!TA~Tristan da Cunha~290!!!TN~Tunisia~216!!!TR~Turkey~90!!!TM~Turkmenistan~993!!!TC~Turks and Caicos Islands~1!!!TV~Tuvalu~688!!!VI~U.S. Virgin Islands~1!!!UG~Uganda~256!!!UA~Ukraine~380!!!AE~United Arab Emirates~971!!!GB~United Kingdom~44!!!US~United States~1!!!UY~Uruguay~598!!!UZ~Uzbekistan~998!!!VU~Vanuatu~678!!!VA~Vatican City~39!!!VE~Venezuela~58!!!VN~Vietnam~84!!!WF~Wallis and Futuna~681!!!YE~Yemen~967!!!ZM~Zambia~260!!!ZW~Zimbabwe~263","fUseInlinePhoneNumber":true,"urlSessionState":"https://login.microsoftonline.com/common/DeviceCodeStatus","urlResetPassword":"https://passwordreset.microsoftonline.com/?ru=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2freprocess%3fctx%3drQIIAeNisNLPKCkpKLbS1y_LLMssKc8vykkpz0xJ1SvOSCxKLcjPzCvRS87P1csvSs9MAbGKhLgE3tjxvbkv9997YmNt1lcH64hVjJZEmaIfn5ZflFusn5KalliaU6KXWFxQcYGR8QUjYxcTi6GBsfEmJmZfJ88TTOcOyd1iEvQvSvdMCS92S01JLUosyczPu8Ai8IOFcREr0AnbV6VXq77e7bUvcesVsY0SDKdY9Y0TfZJSzFLczCojS5JTzXMCtHPSXdJMvfzLvPRzC9zCyk3Ltc3L_fQjXBxtTa0MJ7AJTWBjOsXG8IGNsYOdYRenPdl-sE8sKLI1BAA1\u0026mkt=en-US\u0026hosted=0","urlMsaResetPassword":"https://account.live.com/password/reset?wreply=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2freprocess%3fctx%3drQIIAeNisNLPKCkpKLbS1y_LLMssKc8vykkpz0xJ1SvOSCxKLcjPzCvRS87P1csvSs9MAbGKhLgE3tjxvbkv9997YmNt1lcH64hVjJZEmaIfn5ZflFusn5KalliaU6KXWFxQcYGR8QUjYxcTi6GBsfEmJmZfJ88TTOcOyd1iEvQvSvdMCS92S01JLUosyczPu8Ai8IOFcREr0AnbV6VXq77e7bUvcesVsY0SDKdY9Y0TfZJSzFLczCojS5JTzXMCtHPSXdJMvfzLvPRzC9zCyk3Ltc3L_fQjXBxtTa0MJ7AJTWBjOsXG8IGNsYOdYRenPdl-sE8sKLI1vMUlYmRgaKlrYKxrYKpgaGxlYG5lZBIFAA2\u0026mkt=en-US","urlLogin":"https://login.microsoftonline.com/common/reprocess?ctx=rQIIAeNisNLPKCkpKLbS1y_LLMssKc8vykkpz0xJ1SvOSCxKLcjPzCvRS87P1csvSs9MAbGKhLgE3tjxvbkv9997YmNt1lcH64hVjJZEmaIfn5ZflFusn5KalliaU6KXWFxQcYGR8QUjYxcTi6GBsfEmJmZfJ88TTOcOyd1iEvQvSvdMCS92S01JLUosyczPu8Ai8IOFcREr0AnbV6VXq77e7bUvcesVsY0SDKdY9Y0TfZJSzFLczCojS5JTzXMCtHPSXdJMvfzLvPRzC9zCyk3Ltc3L_fQjXBxtTa0MJ7AJTWBjOsXG8IGNsYOdYRenPdl-sE8sKLI1BAA1","urlSignUp":"https://login.live.com/oauth20_authorize.srf?response_type=code\u0026client_id=51483342-085c-4d86-bf88-cf50c7252078\u0026scope=openid+profile+email+offline_access\u0026response_mode=form_post\u0026redirect_uri=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2ffederation%2foauth2\u0026state=rQIIAeNisNLPKCkpKLbS1y_LLMssKc8vykkpz0xJ1SvOSCxKLcjPzCvRS87P1csvSs9MAbGKhLgE3tjxvbkv9997YmNt1lcH64hZjJzxOZllqSD5VYyWRJmoH5-WX5RbrJ-SmpZYmlOil1hcUHGBkfEFI2MXE4uhgbHxJiZmXyfPE0znDsndYhL0L0r3TAkvdktNSS1KLMnMz7vAIvCDhXERK9A521elV6u-3u21L3HrFbGNEgynWPWNE32SUsxS3MwqI0uSU81zArRz0l3STL38y7z0cwvcwspNy7XNy_30I1wcbU2tDCewCU1gYzrFxvCBjbGDnWEXpz3ZfrBPLCiyNbzFJWJkYGipa2Csa2CqYGhsZWBuZWQSBQA1\u0026estsfed=1\u0026uaid=ec0e3eec1edf4bff91817d6af5403b58\u0026signup=1\u0026lw=1\u0026fl=easi2\u0026cobrandid=11bd8083-87e0-41b5-bb78-0bc43c8a8e8a\u0026fci=https%3a%2f%2fvivitworldwide.sharepoint.com.orgid.com\u0026wsucxt=1\u0026lc=1033","urlGetCredentialType":"https://login.microsoftonline.com/common/GetCredentialType?mkt=en-US","urlGetOneTimeCode":"https://login.microsoftonline.com/common/GetOneTimeCode","urlLogout":"https://login.microsoftonline.com/common/uxlogout","urlForget":"https://login.microsoftonline.com/forgetuser","urlDisambigRename":"https://go.microsoft.com/fwlink/p/?LinkID=733247","urlGoToAADError":"https://login.live.com/oauth20_authorize.srf?response_type=code\u0026client_id=51483342-085c-4d86-bf88-cf50c7252078\u0026scope=openid+profile+email+offline_access\u0026response_mode=form_post\u0026redirect_uri=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2ffederation%2foauth2\u0026state=rQIIAeNisNLPKCkpKLbS1y_LLMssKc8vykkpz0xJ1SvOSCxKLcjPzCvRS87P1csvSs9MAbGKhLgE3tjxvbkv9997YmNt1lcH64hZjJzxOZllqSD5VYyWRJmoH5-WX5RbrJ-SmpZYmlOil1hcUHGBkfEFI2MXE4uhgbHxJiZmXyfPE0znDsndYhL0L0r3TAkvdktNSS1KLMnMz7vAIvCDhXERK9A521elV6u-3u21L3HrFbGNEgynWPWNE32SUsxS3MwqI0uSU81zArRz0l3STL38y7z0cwvcwspNy7XNy_30I1wcbU2tDCewCU1gYzrFxvCBjbGDnWEXpz3ZfrBPLCiyNbzFJWJkYGipa2Csa2CqYGhsZWBuZWQSBQA1\u0026estsfed=1\u0026uaid=ec0e3eec1edf4bff91817d6af5403b58\u0026cobrandid=11bd8083-87e0-41b5-bb78-0bc43c8a8e8a\u0026fci=https%3a%2f%2fvivitworldwide.sharepoint.com.orgid.com\u0026wsucxt=1\u0026lc=1033","urlDssoStatus":"https://login.microsoftonline.com/common/instrumentation/dssostatus","urlPIAEndAuth":"https://login.microsoftonline.com/common/PIA/EndAuth","fCBShowSignUp":true,"fKMSIEnabled":false,"iLoginMode":1,"fAllowPhoneSignIn":true,"fAllowPhoneInput":true,"fAllowSkypeNameLogin":true,"iMaxPollErrors":5,"iPollingTimeout":60,"srsSuccess":true,"fShowSwitchUser":true,"arrValErrs":["50058"],"sErrorCode":"50058","sErrTxt":"","sResetPasswordPrefillParam":"username","onPremPasswordValidationConfig":{"isUserRealmPrecheckEnabled":true},"fSwitchDisambig":true,"iAllowedIdentities":2,"iRemoteNgcPollingType":2,"isGlobalTenant":true,"fUseNewNoPasswordTypes":true,"iMaxStackForKnockoutAsyncComponents":10000,"strCopyrightTxt":"\u0026#169;2019 Microsoft","fShowButtons":true,"urlCdn":"https://aadcdn.msauth.net/ests/2.1.8677.17/","urlFooterTOU":"https://www.microsoft.com/en-US/servicesagreement/","urlFooterPrivacy":"https://privacy.microsoft.com/en-US/privacystatement","urlPost":"/common/login","urlRefresh":"https://login.microsoftonline.com/common/reprocess?ctx=rQIIAeNisNLPKCkpKLbS1y_LLMssKc8vykkpz0xJ1SvOSCxKLcjPzCvRS87P1csvSs9MAbGKhLgE3tjxvbkv9997YmNt1lcH64hVjJZEmaIfn5ZflFusn5KalliaU6KXWFxQcYGR8QUjYxcTi6GBsfEmJmZfJ88TTOcOyd1iEvQvSvdMCS92S01JLUosyczPu8Ai8IOFcREr0AnbV6VXq77e7bUvcesVsY0SDKdY9Y0TfZJSzFLczCojS5JTzXMCtHPSXdJMvfzLvPRzC9zCyk3Ltc3L_fQjXBxtTa0MJ7AJTWBjOsXG8IGNsYOdYRenPdl-sE8sKLI1vMUlYmRgaKlrYKxrYKpgaGxlYG5lZBIFAA2","urlCancel":"https://vivitworldwide.sharepoint.com/_forms/default.aspx?apr=1\u0026error=access_denied\u0026error_subcode=cancel\u0026add_account=","iPawnIcon":0,"iPollingInterval":1,"sPOST_Username":"","sFT":"AQABAAEAAACEfexXxjamQb3OeGQ4GugvwegKlzYBTnMR8BX_Jg1e0vQsYxYjaQ8Oj6VGFq31MgnaGC7RwP7jqbkDeutTJZbGdalN6cHz-Gqurd2ST_dyo9pyygIPR-GkKGJMI9cSfrY9TYFOVtudeJVrxJZmj0i09TE8sZjeNVf6H8FK5FrLeWlUom-C02ReDlQJymCmFY3IIh0Tt42oAASjzUJO3DCzrvisXUQcXJO_T6Ufi_K6F8vVDsdHbLD6x1O4_F9ri4CDEAG-V76JEWX8IzWisp7X5Ah8Uk-9D0bwNquBN9dA28jbsXgG-Zg6-HXHB5G-TcrJSxACEnhphB_bIQypb05jeJ5hcQxD-pJIj8M7oXe3qw-nGGcCdPsPih6kdyI0edggAA","sFTName":"flowToken","sSessionIdentifierName":"code","sCtx":"rQIIAeNisNLPKCkpKLbS1y_LLMssKc8vykkpz0xJ1SvOSCxKLcjPzCvRS87P1csvSs9MAbGKhLgE3tjxvbkv9997YmNt1lcH64hVjJZEmaIfn5ZflFusn5KalliaU6KXWFxQcYGR8QUjYxcTi6GBsfEmJmZfJ88TTOcOyd1iEvQvSvdMCS92S01JLUosyczPu8Ai8IOFcREr0AnbV6VXq77e7bUvcesVsY0SDKdY9Y0TfZJSzFLczCojS5JTzXMCtHPSXdJMvfzLvPRzC9zCyk3Ltc3L_fQjXBxtTa0MJ7AJTWBjOsXG8IGNsYOdYRenPdl-sE8sKLI1BAA1","iProductIcon":-1,"dynamicTenantBranding":null,"staticTenantBranding":null,"oAppCobranding":{"urlLegacyBackgroundLogo":"https://secure.aadcdn.microsoftonline-p.com/dbd5a2dd-uymyxxfhpwrbckvwvlxle8radh6vkzaj7cwkqpqixg/appbranding/fdi6qvmfnfbqmtfprunfwzrwtb5zjqhhv4thxlnndsu/0/bannerlogo?ts=635538653048705499"},"iBackgroundImage":0,"arrSessions":[],"fUseConstantPolling":true,"fUseFlowTokenAsCanary":true,"fApplicationInsightsEnabled":false,"iApplicationInsightsEnabledPercentage":0,"fRepositionFooterButtons":true,"fUseTextOnlyIdentityBannerWithBack":true,"fUseSigninSubtitle":true,"urlSetDebugMode":"https://login.microsoftonline.com/common/debugmode","fIsRemoteNGCSupported":true,"scid":2001,"hpgact":2101,"hpgid":1104,"pgid":"ConvergedSignIn","apiCanary":"AQABAAAAAACEfexXxjamQb3OeGQ4Gugvo5I_CxFZIxeqxFGDTgTwVkHuy9X7JaPqpXVwn46KqT5mlrlb2qBdTAvSY86-qaMISitW9KR0TQrVjOV9VZ1SaJfnrXU4b-cHvM7DgFRgIBwhP0vJn_r56n_WlisBazgIpCXJHqkudORG9LsY96HbQgPyog50-XVP2ih3L7qQhmjmrLBrOHj9BRIwrrW07ARQ7_G8QDNy00NYeHr4eeRxYiAA","canary":"3aLbd6dF6yYtce7lP+lgDf5JOvJ/mpFVw5w+7wN/XDA=5:1","correlationId":"ec0e3eec-1edf-4bff-9181-7d6af5403b58","sessionId":"7b67aab7-eb25-4abb-be61-b5d416b11800","locale":{"mkt":"en-US","lc":1033,"lcid":1033},"slMaxRetry":2,"slReportFailure":true,"strings":{"desktopsso":{"authenticatingmessage":"Trying to sign you in"}},"enums":{"ClientMetricsModes":{"None":0,"SubmitOnPost":1,"SubmitOnRedirect":2,"InstrumentPlt":4}},"urls":{"instr":{"pageload":"https://login.microsoftonline.com/common/instrumentation/reportpageload","dssostatus":"https://login.microsoftonline.com/common/instrumentation/dssostatus"}},"browser":{"ltr":1,"_Other":1,"Full":1,"RE_Other":1,"b":{"name":"Other","major":-1,"minor":-1},"os":{"name":"Unknown","version":""},"V":-1},"watson":{"url":"/common/handlers/watson","bundle":"https://aadcdn.msauth.net/ests/2.1.8677.17/content/cdnbundles/watson.min_teqbpcr8qfis0jfskwugdq2.js","sbundle":"https://aadcdn.msauth.net/ests/2.1.8677.17/content/cdnbundles/watsonsupport.min__amo-oemzzyr-n7ss4onkq2.js","fbundle":"https://aadcdn.msauth.net/ests/2.1.8677.17/content/cdnbundles/frameworksupport.min_tvpky4iaapvkoihdjd090q2.js","resetErrorPeriod":5,"maxCorsErrors":-1,"maxInjectErrors":5,"maxErrors":10,"maxTotalErrors":3,"expSrcs":["https://aadcdn.msauth.net/ests/","https://aadcdn.msftauth.net/ests/","https://login.microsoftonline.com",".login.microsoftonline.com"],"envErrorRedirect":true,"envErrorUrl":"/common/handlers/enverror"},"loader":{"cdnRoots":["https://aadcdn.msauth.net/ests/","https://aadcdn.msftauth.net/ests/"]},"serverDetails":{"slc":"ProXXXXes","dc":"CHI","ri":"ESTXXXX_0","ver":{"v":[2,1,8677,17]},"rt":"2019-03-05T13:07:24","et":135},"country":"US","fBreakBrandingSigninString":true,"bsso":{"type":"none","reason":"Chrome: Pull suppressed as UseAgent did not meet required criteria, Other: Pull suppressed due to POST request"},"urlNoCookies":"https://login.microsoftonline.com/cookiesdisabled","fTrimChromeBssoUrl":true};
+//]]&gt;</script>
+      <script type="text/javascript"><![CDATA[//<![CDATA[
+!function(){var e=window,r=e.$Debug=e.$Debug||{},n=e.$Config||{};if(!r.appendLog){var t=[],o=0;r.appendLog=function(e){var r=n.maxDebugLog||25,a=(new Date).toUTCString()+":"+e;t.push(o+":"+a),t.length>r&&t.shift(),o++},r.getLogs=function(){return t}}}(),function(){function e(e,r){function n(a){var i=e[a];return t-1>a?void(o.r[i]?n(a+1):o.when(i,function(){n(a+1)})):void r(i)}var t=e.length;n(0)}function r(e,r,a){function i(){var e=!!s.method,o=e?s.method:a[0],i=s.extraArgs||[],u=t.$WebWatson;try{var l=n(a,!e);if(i&&i.length>0)for(var c=i.length,d=0;c>d;d++)l.push(i[d]);o.apply(r,l)}catch(f){return void(u&&u.submitFromException&&u.submitFromException(f))}}var s=o.r&&o.r[e];return r=r?r:this,s&&(s.skipTimeout?i():t.setTimeout(i,0)),s}function n(e,r){return Array.prototype.slice.call(e,r?1:0)}var t=window;t.$Do||(t.$Do={q:[],r:[],removeItems:[],lock:0,o:[]});var o=t.$Do;o.when=function(n,t){function a(e){r(e,i,s)||o.q.push({id:e,c:i,a:s})}var i=0,s=[],u=1,l="function"==typeof t;l||(i=t,u=2);for(var c=u;c]]></script><![CDATA[
+      3){a.extraArgs=[];for(var i=3;i-1?r:e.length;return n>f&&e.substr(n-f,f).toLowerCase()===d}function o(e,r,n){var o=t(e)?a(e):i(e);return r&&(o.id=r),"function"==typeof o.setAttribute&&(o.setAttribute("crossorigin","anonymous"),n&&"string"==typeof n&&o.setAttribute("integrity",n)),o}function a(e){var r=c.createElement("link");return r.rel="stylesheet",r.type="text/css",r.href=e,r}function i(e){var r=c.createElement("script");return r.type="text/javascript",r.src=e,r.defer=!1,r.async=!1,r}function s(e){var r=!0,n=e.src||e.href||"";if(n){if(t(n))try{e.sheet&&e.sheet.cssRules&&!e.sheet.cssRules.length&&(r=!1)}catch(o){}}else r=!1;return r}function u(){function r(e){if(!(d&&d.length>1))return e;for(var r=0;r0&&(d.srcPath=r(d.srcPath),d.origId||(d.origId=d.id),d.id=d.origId+"_Retry_"+d.retry);var h=o(d.srcPath,d.id,d.integrity),v=function(){e("[$Loader]: "+(f.failMessage||"Failed"),h),d.retry
+      ]]><a void="void" e="new" cdn="cdn" fallback="fallback" from="from" reloading="reloading" resource="resource" external="external" load="load" to="to" failed="failed" t="r?" c="new" be="be" cannot="cannot" and="and" provided="provided" must="must" element="element" target="target" the="the" i="t.src||t.href||" success.="success." initial="initial" despite="despite" state.="state." d="new" l="window,c=l.document,d=" r="e.src||e.href||" loading="+(d.srcPath||" y="c.getElementsByTagName("><![CDATA[
+         0;){var e=b.shift();e&&v.$WebWatson[e.cmdName].apply(v.$WebWatson,e.args)}})}}function n(){var e=v.$WebWatson?v.$WebWatson.isProxy:!0;if(e){if(!w&&JSON){try{var r=new XMLHttpRequest;r.open("POST",y.url),r.setRequestHeader("Accept","application/json"),r.setRequestHeader("Content-Type","application/json; charset=UTF-8"),r.setRequestHeader("canary",p.apiCanary),r.setRequestHeader("client-request-id",p.correlationId),r.setRequestHeader("hpgid",p.hpgid||0),r.setRequestHeader("hpgact",p.hpgact||0);for(var n=-1,o=0;ot;t++){var a=e[t];a&&(r[a]=o(a))}}function i(e,r,n,t,o,a,i){var s=v.event;return a||(a=d(o||s,i?i+2:2)),v.$Debug&&v.$Debug.appendLog&&v.$Debug.appendLog("[WebWatson]:"+(e||"")+" in "+(r||"")+" @ "+(n||"??")),W.submit(e,r,n,t,o||s,a,i)}function s(e,r){return{signature:e,args:r,toString:function(){return this.signature}}}function u(e){for(var r=[],n=e.split("\n"),t=0;t0;)t=t?t.caller:t,r--;for(var o=0;t&&L>o;){var a="InvalidMethod()";try{a=t.toString()}catch(i){}var u=[],l=t.args||t.arguments;if(l)for(var d=0;d1?n[1]:""}catch(t){}return""}function g(e){if(e)try{if("string"!=typeof e&&JSON&&JSON.stringify){var r=f(e),n=JSON.stringify(e);return n&&"{}"!==n||(e.error&&(e=e.error,r=f(e)),n=JSON.stringify(e),n&&"{}"!==n||(n=e.toString())),r+":"+n}}catch(t){}return""+(e||"")}function h(e){var r=[];try{if(jQuery?(r.push("jQuery v:"+jQuery().jquery),r.push(jQuery.easing?"jQuery.easing:"+JSON.stringify(jQuery.easing):"jQuery.easing is not defined")):r.push("jQuery is not defined"),e&&e.expectedVersion&&r.push("Expected jQuery v:"+e.expectedVersion),m){var n,t="";for(n=0;n0&&(r=r.concat(o))}if(b)for(var a=0;ao&&null!==e&&void 0!==e;)e=e[n[o++]];return e}function r(r){var n=null;return null===u&&(u=e(a,"Constants")),null!==u&&r&&(n=e(u,r)),null===n||void 0===n?"":n.toString()}function n(n){var t=null;return null===i&&(i=e(a,"$Config.strings")),null!==i&&n&&(t=e(i,n.toLowerCase())),(null===t||void 0===t)&&(t=r(n)),null===t||void 0===t?"":t.toString()}function t(e,r){var t=null;return e&&r&&r[e]&&(t=n("errors."+r[e])),t||(t=n("errors."+e)),t||(t=n("errors."+l)),t||(t=n(l)),t}function o(n){var t=null;return null===s&&(s=e(a,"$Config.urls")),null!==s&&n&&(t=e(s,n.toLowerCase())),(null===t||void 0===t)&&(t=r(n)),null===t||void 0===t?"":t.toString()}var a=window,i=null,s=null,u=null,l="GENERIC_ERROR";a.GetString=n,a.GetErrorString=t,a.GetUrl=o}(),function(){var e=window,r=e.$Config||{};e.$B=r.browser||{}}(); //]]]]>><![CDATA[
+         ]]><script type="text/javascript">ServerData = $Config;</script>
+         <script integrity="sha384-lDgwF+38mnCnS4+Tu4fPIoaliu/ScPYOKPk9xNjISDLjqZ3TqGx2h7+nCO4qrVM2" onload="$Loader.On(this)" onerror="$Loader.On(this,true)" src="https://aadcdn.msauth.net/ests/2.1.8677.17/content/cdnbundles/oldconvergedlogin_pcore.min_lvly7vhopmbf0nvzu9uvta2.js" crossorigin="anonymous" type="text/javascript"/>
+         <script integrity="sha384-n6g47fRGOMaVwA/28r3Ztkr4ZGyBLzQLHjNqOZsgx/VEwYke+w8X4hMtUVn5ApzC" onload="$Loader.On(this)" onerror="$Loader.On(this,true)" src="https://aadcdn.msauth.net/ests/2.1.8677.17/content/cdnbundles/convergedloginpaginatedstrings-en.min_qcimdnv7oqpmsvmoshvu6g2.js" crossorigin="anonymous" type="text/javascript"/>
+      </a>
+      <script type="text/javascript"><![CDATA[//<![CDATA[
+!function(){var e=window,o=e.document,i=e.$Config||{};if(e.self===e.top)o&&o.body&&(o.body.style.display="block");else if(!i.allowFrame){var s=e.self.location.href,l=s.indexOf("#"),n=-1!==l,t=s.indexOf("?"),f=n?l:s.length,d=-1===t||n&&t>l?"?":"&";s=s.substr(0,f)+d+"iframe-request-id="+i.sessionId+s.substr(f),e.top.location=s}}();
+
+//]]]]>><![CDATA[]]></script>
+   </body>
+</html>

@@ -1,0 +1,262 @@
+{
+  "locators": [
+    {
+      "name": " Edit S I C Code",
+      "type": "id",
+      "value": "\"SIC_CD\"",
+      "variableName": "editSICCode"
+    },
+    {
+      "name": " Button S I C Code Lookup",
+      "type": "id",
+      "value": "\"SIC_CD-lookup\"",
+      "variableName": "buttonSICCodeLookup"
+    },
+    {
+      "name": " Dropdown Rating Tier",
+      "type": "id",
+      "value": "\"RTG_TIER\"",
+      "variableName": "dropdownRatingTier"
+    },
+    {
+      "name": " Dropdown Primary Class Code",
+      "type": "id",
+      "value": "\"PRIM_CLS\"",
+      "variableName": "dropdownPrimaryClassCode"
+    },
+    {
+      "name": " Edit Business Group",
+      "type": "id",
+      "value": "\"BUS_GRP\"",
+      "variableName": "editBusinessGroup"
+    },
+    {
+      "name": " Dropdown Business Group Lookup",
+      "type": "id",
+      "value": "\"BUS_GRP-lookup\"",
+      "variableName": "dropdownBusinessGroupLookup"
+    },
+    {
+      "name": " Dropdown Profit Center",
+      "type": "id",
+      "value": "\"PCC\"",
+      "variableName": "dropdownProfitCenter"
+    },
+    {
+      "name": " Dropdown National Accounts Policy Origination",
+      "type": "id",
+      "value": "\"NTNL_ACCT\"",
+      "variableName": "dropdownNationalAccountsPolicyOrigination"
+    },
+    {
+      "name": " Dropdown Special Underwriting Program",
+      "type": "id",
+      "value": "\"POL_PRG\"",
+      "variableName": "dropdownSpecialUnderwritingProgram"
+    },
+    {
+      "name": " Edit Duns Number",
+      "type": "id",
+      "value": "\"DUNS_NUM1\"",
+      "variableName": "editDunsNumber"
+    },
+    {
+      "name": " Dropdown Star Account",
+      "type": "id",
+      "value": "\"STAR_ACCT\"",
+      "variableName": "dropdownStarAccount"
+    },
+    {
+      "name": " Edit Other Legal Entity",
+      "type": "id",
+      "value": "\"ETY_OTH_DESC1\"",
+      "variableName": "editOtherLegalEntity"
+    },
+    {
+      "name": " Dropdown Source Of Business",
+      "type": "id",
+      "value": "\"SRC_BUS\"",
+      "variableName": "dropdownSourceOfBusiness"
+    },
+    {
+      "name": " Dropdown Primary Policy Symbol",
+      "type": "id",
+      "value": "\"PRIM_POL_SYM\"",
+      "variableName": "dropdownPrimaryPolicySymbol"
+    },
+    {
+      "name": " Checkbox Policy Minimum Bypassed",
+      "type": "id",
+      "value": "\"MIN_PREM\"",
+      "variableName": "checkboxPolicyMinimumBypassed"
+    },
+    {
+      "name": " Edit Policy Minimum Premium Bypassed Commercial Auto",
+      "type": "id",
+      "value": "\"AUTO_MIN_PREM\"",
+      "variableName": "editPolicyMinimumPremiumBypassedCommercialAuto"
+    },
+    {
+      "name": " Checkbox Public Utilities Commission Filing",
+      "type": "id",
+      "value": "\"PUB_UTIL_COMM_FIL\"",
+      "variableName": "checkboxPublicUtilitiesCommissionFiling"
+    },
+    {
+      "name": " Dropdown Safety Dividend Group",
+      "type": "id",
+      "value": "\"SAFE_GRP\"",
+      "variableName": "dropdownSafetyDividendGroup"
+    },
+    {
+      "name": " Edit Unemployment Number",
+      "type": "id",
+      "value": "\"UIAN\"",
+      "variableName": "editUnemploymentNumber"
+    },
+    {
+      "name": " Checkbox Facultive Reinsurance Applies",
+      "type": "id",
+      "value": "\"FAC_REINS_IND\"",
+      "variableName": "checkboxFacultiveReinsuranceApplies"
+    },
+    {
+      "name": " Checkbox Exempt Commercial Account",
+      "type": "id",
+      "value": "\"EXMPT_COM_ACCT\"",
+      "variableName": "checkboxExemptCommercialAccount"
+    },
+    {
+      "name": " Edit Agencys Insured Identification",
+      "type": "id",
+      "value": "\"AGCY_INSD_ID\"",
+      "variableName": "editAgencysInsuredIdentification"
+    },
+    {
+      "name": " Dropdown Number Of Days Quote Is Valid",
+      "type": "id",
+      "value": "\"NUM_DAYS1\"",
+      "variableName": "dropdownNumberOfDaysQuoteIsValid"
+    },
+    {
+      "name": " Checkbox Package Mod",
+      "type": "id",
+      "value": "\"ASSGN_PKG_MOD_POL_LVL\"",
+      "variableName": "checkboxPackageMod"
+    },
+    {
+      "name": " Edit Date Quote Received By Company",
+      "type": "id",
+      "value": "\"CO_RCVD_DT\"",
+      "variableName": "editDateQuoteReceivedByCompany"
+    },
+    {
+      "name": " Edit Date Underwriting Review Completed",
+      "type": "id",
+      "value": "\"UDWR_RVW_DT\"",
+      "variableName": "editDateUnderwritingReviewCompleted"
+    },
+    {
+      "name": " Dropdown Rollover Prior Carrier Code",
+      "type": "id",
+      "value": "\"ROLL_PRI_CARR_CD\"",
+      "variableName": "dropdownRolloverPriorCarrierCode"
+    },
+    {
+      "name": " Checkbox Mo Pep Non Cancel",
+      "type": "id",
+      "value": "\"NON_CANC_GUAR\"",
+      "variableName": "checkboxMoPepNonCancel"
+    },
+    {
+      "name": " Dropdown Policy Considered For Transfer To Small Business",
+      "type": "id",
+      "value": "\"SM_BUS_UNT_CONV\"",
+      "variableName": "dropdownPolicyConsideredForTransferToSmallBusiness"
+    },
+    {
+      "name": " Edit Policy Number For Audit Cross Reference",
+      "type": "id",
+      "value": "\"AUDT_CRS_REF_POL_NUM\"",
+      "variableName": "editPolicyNumberForAuditCrossReference"
+    },
+    {
+      "name": " Edit Original Agency Code",
+      "type": "id",
+      "value": "\"ORIG_AGCY_CD\"",
+      "variableName": "editOriginalAgencyCode"
+    },
+    {
+      "name": " Edit Premium From Aplus Converted Policy",
+      "type": "id",
+      "value": "\"APLUS_PREM\"",
+      "variableName": "editPremiumFromAplusConvertedPolicy"
+    },
+    {
+      "name": " Edit Renewal Of Policy Number",
+      "type": "id",
+      "value": "\"RNL_POL_NUM\"",
+      "variableName": "editRenewalOfPolicyNumber"
+    },
+    {
+      "name": " Dropdown Does Employment Practices Liability Insurance Apply",
+      "type": "id",
+      "value": "\"EPLI_IND\"",
+      "variableName": "dropdownDoesEmploymentPracticesLiabilityInsuranceApply"
+    },
+    {
+      "name": " Edit Enter Employment Practices Liability Retroactive Date",
+      "type": "id",
+      "value": "\"EPLI_RETRO_DT\"",
+      "variableName": "editEnterEmploymentPracticesLiabilityRetroactiveDate"
+    },
+    {
+      "name": " Checkbox Rerate Employment Practices Liability On Ammendment",
+      "type": "id",
+      "value": "\"EPLI_RRT_IND\"",
+      "variableName": "checkboxRerateEmploymentPracticesLiabilityOnAmmendment"
+    },
+    {
+      "name": " Edit Kentucky Collection Fee Total Policy Premium",
+      "type": "id",
+      "value": "\"KY_CLC_FEE_TOPREM\"",
+      "variableName": "editKentuckyCollectionFeeTotalPolicyPremium"
+    },
+    {
+      "name": " Edit Kentucky Tax Total Policy Premium",
+      "type": "id",
+      "value": "\"KY_TAX_TOPREM\"",
+      "variableName": "editKentuckyTaxTotalPolicyPremium"
+    },
+    {
+      "name": " Edit Total Employment Practices Liability Premium",
+      "type": "id",
+      "value": "\"EPLI_TOPREM\"",
+      "variableName": "editTotalEmploymentPracticesLiabilityPremium"
+    },
+    {
+      "name": " Edit Total E P L I Supplemental Extended Reporting Premium",
+      "type": "id",
+      "value": "\"EPLI_RPTNG_TOPREM\"",
+      "variableName": "editTotalEPLISupplementalExtendedReportingPremium"
+    },
+    {
+      "name": " Checkbox Rapid Renewal",
+      "type": "id",
+      "value": "\"RPD_RNL\"",
+      "variableName": "checkboxRapidRenewal"
+    },
+    {
+      "name": " Edit Supporting Policies",
+      "type": "id",
+      "value": "\"SUP_POL\"",
+      "variableName": "editSupportingPolicies"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"underwriting-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}

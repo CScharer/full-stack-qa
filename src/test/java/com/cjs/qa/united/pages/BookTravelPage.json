@@ -1,0 +1,34 @@
+{
+  "locators": [
+    {
+      "name": " Edit From",
+      "type": "xpath",
+      "value": "\".//*[@id='flightSearch']//input[@id='Origin']\"",
+      "variableName": "editFrom"
+    },
+    {
+      "name": " Edit To",
+      "type": "xpath",
+      "value": "\".//*[@id='flightSearch']//input[@id='Destination']\"",
+      "variableName": "editTo"
+    },
+    {
+      "name": " Edit Depart Date",
+      "type": "xpath",
+      "value": "\".//*[@id='flightSearch']//input[@id='DepartDate']\"",
+      "variableName": "editDepartDate"
+    },
+    {
+      "name": " Edit Return Date",
+      "type": "xpath",
+      "value": "\".//*[@id='flightSearch']//input[@id='ReturnDate']\"",
+      "variableName": "editReturnDate"
+    },
+    {
+      "name": " Button Search",
+      "type": "xpath",
+      "value": "\".//*[@id='flightBookingSubmit']\"",
+      "variableName": "buttonSearch"
+    }
+  ]
+}

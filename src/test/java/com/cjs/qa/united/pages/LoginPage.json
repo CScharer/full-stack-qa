@@ -1,0 +1,28 @@
+{
+  "locators": [
+    {
+      "name": " Edit Mileage Plus Number",
+      "type": "xpath",
+      "value": "\".//*[@id='loginFormModel.login']\"",
+      "variableName": "editMileagePlusNumber"
+    },
+    {
+      "name": " Edit Password",
+      "type": "xpath",
+      "value": "\".//*[@id='loginFormModel.password']\"",
+      "variableName": "editPassword"
+    },
+    {
+      "name": " Checkbox Remember Me",
+      "type": "xpath",
+      "value": "\".//*[@id='loginFormModel']//input[@id='saveCredentials']\"",
+      "variableName": "checkboxRememberMe"
+    },
+    {
+      "name": " Button Sign In",
+      "type": "xpath",
+      "value": "\".//*[@id='loginFormModel']/button\"",
+      "variableName": "buttonSignIn"
+    }
+  ]
+}

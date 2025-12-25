@@ -1,0 +1,52 @@
+{
+  "locators": [
+    {
+      "name": " Sidebar Right",
+      "type": "xpath",
+      "value": "\"html/body/div[1]/nav/div/div[1]/div[4]/button\"",
+      "variableName": "sidebarRight"
+    },
+    {
+      "name": " Link Exit Policy Search",
+      "type": "xpath",
+      "value": "\".//*[@id='requestLinkSearch1']\"",
+      "variableName": "linkExitPolicySearch"
+    },
+    {
+      "name": " Link Schedule Processes",
+      "type": "xpath",
+      "value": "\".//*[@id='requestLinkScheduleProcess']\"",
+      "variableName": "linkScheduleProcesses"
+    },
+    {
+      "name": " Link Web Services",
+      "type": "xpath",
+      "value": "\".//*[@id='requestLinkForWebServices']\"",
+      "variableName": "linkWebServices"
+    },
+    {
+      "name": " Link Mass Notes",
+      "type": "xpath",
+      "value": "\".//*[@id='requestLinkForMassNotes']\"",
+      "variableName": "linkMassNotes"
+    },
+    {
+      "name": " Link View Export Requests",
+      "type": "xpath",
+      "value": "\".//*[@id='requestLinkExportRequest']\"",
+      "variableName": "linkViewExportRequests"
+    },
+    {
+      "name": " Link Queries Tools",
+      "type": "xpath",
+      "value": "\".//*[@id='requestLinkQueriesTools']\"",
+      "variableName": "linkQueriesTools"
+    },
+    {
+      "name": " Dropdown Test Status",
+      "type": "xpath",
+      "value": "\".//*[@id='modeBI']\"",
+      "variableName": "dropdownTestStatus"
+    }
+  ]
+}

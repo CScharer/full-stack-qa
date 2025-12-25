@@ -1,0 +1,33 @@
+package com.cjs.qa.ym.xml.objects.dataset;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.cjs.qa.utilities.Constants;
+
+@XmlRootElement(name = "Custom_JobLevel")
+public class CustomJobLevel {
+
+  @XmlAttribute(name = "ExportValue")
+  private String exportValue;
+
+  public String getExportValue() {
+    return exportValue;
+  }
+
+  @XmlElement(name = "Value")
+  private String value;
+
+  public String getValue() {
+    return value;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("Export Value:" + getExportValue() + Constants.NEWLINE);
+    stringBuilder.append("Custom_JobLevel:" + getValue() + Constants.NEWLINE);
+    return stringBuilder.toString();
+  }
+}

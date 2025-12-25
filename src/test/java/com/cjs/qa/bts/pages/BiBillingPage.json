@@ -1,0 +1,16 @@
+{
+  "locators": [
+    {
+      "name": " Number Of Group Members",
+      "type": "id",
+      "value": "\"NUM_GRP_MBR\"",
+      "variableName": "numberOfGroupMembers"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"billing-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}

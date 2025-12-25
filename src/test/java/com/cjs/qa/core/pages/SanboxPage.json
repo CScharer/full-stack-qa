@@ -1,0 +1,46 @@
+{
+  "locators": [
+    {
+      "name": " Button Button",
+      "type": "id",
+      "value": "\"Button\"",
+      "variableName": "buttonButton"
+    },
+    {
+      "name": " Checkbox Checkbox",
+      "type": "id",
+      "value": "\"Checkbox\"",
+      "variableName": "checkboxCheckbox"
+    },
+    {
+      "name": " Dropdown Dropdown",
+      "type": "id",
+      "value": "\"Dropdown\"",
+      "variableName": "dropdownDropdown"
+    },
+    {
+      "name": " Edit Edit",
+      "type": "id",
+      "value": "\"Edit\"",
+      "variableName": "editEdit"
+    },
+    {
+      "name": " Label Label",
+      "type": "id",
+      "value": "\"Label\"",
+      "variableName": "labelLabel"
+    },
+    {
+      "name": " Link Link",
+      "type": "id",
+      "value": "\"Link\"",
+      "variableName": "linkLink"
+    },
+    {
+      "name": " Option Option",
+      "type": "id",
+      "value": "\"Option\"",
+      "variableName": "optionOption"
+    }
+  ]
+}

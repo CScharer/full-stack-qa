@@ -1,0 +1,58 @@
+{
+  "locators": [
+    {
+      "name": " Label Custom Status Msg",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"customStatusMsg']\"",
+      "variableName": "labelCustomStatusMsg"
+    },
+    {
+      "name": " Label Print Status",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"processTransactionStatus']\"",
+      "variableName": "labelPrintStatus"
+    },
+    {
+      "name": " Toggle Results",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"cplProcessedErrorsTable']/div[1]/span[1]/button\"",
+      "variableName": "toggleResults"
+    },
+    {
+      "name": " Label Policy Total",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"overviewTotM']\"",
+      "variableName": "labelPolicyTotal"
+    },
+    {
+      "name": " Label Commercial Auto",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"productsTableEx1:0:overviewTotM1']\"",
+      "variableName": "labelCommercialAuto"
+    },
+    {
+      "name": " Label Agricultural Output",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"productsTableEx1:1:overviewTotM1']\"",
+      "variableName": "labelAgriculturalOutput"
+    },
+    {
+      "name": " Label General Liability",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"productsTableEx1:2:overviewTotM1']\"",
+      "variableName": "labelGeneralLiability"
+    },
+    {
+      "name": " Label Policywide Coverages",
+      "type": "xpath",
+      "value": "nodeProcessedErrs + \"productsTableEx1:3:overviewTotM1']\"",
+      "variableName": "labelPolicywideCoverages"
+    },
+    {
+      "name": " Button Rate Now",
+      "type": "xpath",
+      "value": "\".//*[@id='form1:cplProcessedResults:flashScreenRateButton']\"",
+      "variableName": "buttonRateNow"
+    }
+  ]
+}

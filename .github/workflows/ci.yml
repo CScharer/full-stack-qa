@@ -1,0 +1,1232 @@
+name: Selenium Grid CI/CD Pipeline
+on:
+  push:
+    branches: [ main, develop ]  # Run full pipeline on merges to main/develop
+  pull_request:
+    branches: [ main, develop ]  # Run dev-only pipeline on PRs targeting main/develop
+  schedule:
+    # Nightly: Every day at 9 AM UTC (3 AM Central Time)
+    - cron: '0 9 * * *'
+    # Weekly: Every Sunday at 9 AM UTC (3 AM Central Time)
+    - cron: '0 9 * * 0'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all      # Run dev → test → prod sequentially
+          - dev      # Development environment only
+          - test     # Test environment only
+          - prod     # Production environment only
+
+      test_type:
+        description: 'Test Type'
+        required: true
+        default: 'fe-only'
+        type: choice
+        options:
+          - fe-only        # FE tests only (current behavior)
+          - be-only # BE tests only
+          - all            # Both FE and BE tests (run in parallel)
+
+      test_suite:
+        description: 'Test Suite'
+        required: false
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke          # Quick smoke tests
+          - ci             # CI test suite
+          - extended       # Extended test suite
+          - all            # All test suites
+
+      be_test_type:
+        description: 'BE Test Type (if test_type includes be)'
+        required: false
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke          # Quick smoke test (30 seconds, 10 users)
+          - all            # All be tests (Gatling + JMeter + Locust)
+          - gatling-only   # Gatling only
+          - jmeter-only    # JMeter only
+          - locust-only    # Locust only
+
+      be_environment:
+        description: 'BE Environment (if test_type includes be)'
+        required: false
+        default: 'dev'
+        type: choice
+        options:
+          - dev      # Development environment only
+          - test     # Test environment only
+          - dev-test # Both dev and test environments
+
+permissions:
+  contents: write  # Required for GitHub Pages deployment
+
+# Prevent redundant runs on the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  # Environment URLs - Default ports per ONE_GOAL.md
+  # APP: DEV=3003, TEST=3004, PROD=3005
+  # API: DEV=8003, TEST=8004, PROD=8005
+  BASE_URL_DEV: 'http://localhost:3003'
+  BASE_URL_TEST: 'http://localhost:3004'
+  BASE_URL_PROD: 'http://localhost:3005'
+
+jobs:
+  # ==================================================================================
+  # PIPELINE TEMPORARILY DISABLED
+  # All jobs disabled while development work is in progress
+  # ==================================================================================
+  
+  # DISABLED: All pipeline jobs temporarily disabled
+  # pipeline-disabled:
+  #   name: Pipeline Disabled
+  #   runs-on: ubuntu-latest
+  #   if: false
+  #   steps:
+  #     - name: Pipeline Disabled Notice
+  #       run: |
+  #         echo "⚠️  All pipeline jobs are temporarily disabled"
+  #         echo "This is intentional while development work is in progress"
+
+  # ==================================================================================
+  # STAGE 1: CHANGE DETECTION & ENVIRONMENT DETERMINATION
+  # ==================================================================================
+
+  detect-file-changes:
+    name: Detect File Changes
+    runs-on: ubuntu-latest
+    outputs:
+      code-changed: ${{ steps.filter.outputs.code-changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed files
+        id: filter
+        run: |
+          chmod +x scripts/ci/detect-changes.sh
+          # For scheduled runs, always return 'true' to run tests
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "⏰ Scheduled run detected - forcing code-changed=true"
+            echo "code-changed=true" >> "$GITHUB_OUTPUT"
+          else
+            # Run the script and capture its output
+            ./scripts/ci/detect-changes.sh "${{ github.event_name }}" "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}"
+          fi
+          # Verify output was set correctly
+          echo "🔍 Verifying code-changed output was set..."
+          if [ -f "$GITHUB_OUTPUT" ]; then
+            echo "GITHUB_OUTPUT file exists"
+            if grep -q "code-changed=" "$GITHUB_OUTPUT"; then
+              echo "✅ code-changed output found in GITHUB_OUTPUT:"
+              grep "code-changed=" "$GITHUB_OUTPUT" || true
+            else
+              echo "❌ ERROR: code-changed output NOT found in GITHUB_OUTPUT!"
+              echo "GITHUB_OUTPUT contents:"
+              cat "$GITHUB_OUTPUT" || true
+              # Fallback: set it manually if script didn't set it
+              echo "⚠️ Setting code-changed=true as fallback (code files were detected)"
+              echo "code-changed=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "❌ ERROR: GITHUB_OUTPUT file does not exist!"
+            # Fallback: set it manually
+            echo "⚠️ Setting code-changed=true as fallback"
+            echo "code-changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  determine-schedule-type:
+    name: Determine Schedule Type
+    runs-on: ubuntu-latest
+    needs: [detect-file-changes]
+    if: always() && needs.detect-file-changes.result == 'success'
+    outputs:
+      code-changed: ${{ needs.detect-file-changes.outputs.code-changed }}
+      is_weekly: ${{ steps.check-day.outputs.is_weekly }}
+      is_nightly: ${{ steps.check-day.outputs.is_nightly }}
+      be_test_type: ${{ steps.check-day.outputs.be_test_type }}
+    steps:
+      - name: Check day of week (for scheduled runs)
+        id: check-day
+        run: |
+          # For scheduled runs, determine if it's weekly (Sunday) or nightly (other days)
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            # Get day of week (0=Sunday, 1=Monday, ..., 6=Saturday)
+            DAY_OF_WEEK=$(date -u +%w)
+            if [ "$DAY_OF_WEEK" == "0" ]; then
+              echo "📅 Sunday detected - This is a WEEKLY scheduled run"
+              {
+                echo "is_weekly=true"
+                echo "is_nightly=false"
+                echo "be_test_type=all"
+              } >> "$GITHUB_OUTPUT"
+            else
+              echo "🌙 Not Sunday - This is a NIGHTLY scheduled run"
+              {
+                echo "is_weekly=false"
+                echo "is_nightly=true"
+                echo "be_test_type=smoke"
+              } >> "$GITHUB_OUTPUT"
+            fi
+          else
+            # Not a scheduled run - set defaults
+            echo "📦 Not a scheduled run - setting defaults"
+            {
+              echo "is_weekly=false"
+              echo "is_nightly=false"
+              echo "be_test_type=smoke"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+  setup-base-urls:
+    name: Setup Base URLs
+    runs-on: ubuntu-latest
+    outputs:
+      base_url_dev: ${{ steps.set-urls.outputs.base_url_dev }}
+      base_url_test: ${{ steps.set-urls.outputs.base_url_test }}
+      base_url_prod: ${{ steps.set-urls.outputs.base_url_prod }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Base URLs
+        id: set-urls
+        run: |
+          chmod +x scripts/ci/setup-base-urls.sh
+          ./scripts/ci/setup-base-urls.sh \
+            "${{ vars.BASE_URL_DEV }}" \
+            "${{ vars.BASE_URL_TEST }}" \
+            "${{ vars.BASE_URL_PROD }}"
+
+  determine-envs:
+    name: Determine Environments
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type]
+    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    outputs:
+      run_dev: ${{ steps.set-envs.outputs.run_dev }}
+      run_test: ${{ steps.set-envs.outputs.run_test }}
+      run_prod: ${{ steps.set-envs.outputs.run_prod }}
+      test_suite: ${{ steps.set-envs.outputs.test_suite }}
+      selected_env: ${{ steps.set-envs.outputs.selected_env }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine which environments to run
+        id: set-envs
+        run: |
+          chmod +x scripts/ci/determine-environments.sh
+          # For scheduled runs, always use 'dev' environment and 'all' test suites
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "⏰ Scheduled run - using dev environment with all test suites"
+            ENV_INPUT="dev"
+            SUITE_INPUT="all"
+          else
+            ENV_INPUT="${{ github.event.inputs.environment }}"
+            SUITE_INPUT="${{ github.event.inputs.test_suite }}"
+          fi
+          ./scripts/ci/determine-environments.sh \
+            "${{ github.event_name }}" \
+            "$ENV_INPUT" \
+            "$SUITE_INPUT"
+
+  determine-test-execution:
+    name: Determine Test Execution
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type]
+    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    outputs:
+      run_ui_tests: ${{ steps.set-execution.outputs.run_ui_tests }}
+      run_be_tests: ${{ steps.set-execution.outputs.run_be_tests }}
+      be_test_mode: ${{ steps.set-execution.outputs.be_test_mode }}
+      be_env_dev: ${{ steps.set-execution.outputs.be_env_dev }}
+      be_env_test: ${{ steps.set-execution.outputs.be_env_test }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine what tests to run
+        id: set-execution
+        run: |
+          chmod +x scripts/ci/determine-test-execution.sh
+          # For scheduled runs, always use 'all' test types and schedule-specific be test type
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "⏰ Scheduled run - using all test types"
+            TEST_TYPE_INPUT="all"
+            PERF_TYPE_INPUT="${{ needs.determine-schedule-type.outputs.be_test_type }}"
+            PERF_ENV_INPUT="dev"
+          else
+            TEST_TYPE_INPUT="${{ github.event.inputs.test_type }}"
+            PERF_TYPE_INPUT="${{ github.event.inputs.be_test_type }}"
+            PERF_ENV_INPUT="${{ github.event.inputs.be_environment }}"
+          fi
+          ./scripts/ci/determine-test-execution.sh \
+            "${{ github.event_name }}" \
+            "${{ github.ref }}" \
+            "$TEST_TYPE_INPUT" \
+            "$PERF_TYPE_INPUT" \
+            "$PERF_ENV_INPUT"
+
+  # ==================================================================================
+  # STAGE 2: SHARED SETUP (Run once for all environments)
+  # ==================================================================================
+  # Note: All jobs below run in parallel after determine-schedule-type completes.
+  # docker-build is listed first as it takes the longest.
+
+  docker-build-test:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type]
+    if: needs.determine-schedule-type.outputs.code-changed == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and load Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          tags: full-stack-qa-tests:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Verify container can run
+        run: |
+          chmod +x scripts/ci/verify-docker-image.sh
+          ./scripts/ci/verify-docker-image.sh "full-stack-qa-tests:latest"
+
+      - name: Extract compiled classes from Docker image
+        continue-on-error: true
+        run: |
+          chmod +x scripts/ci/extract-compiled-classes.sh
+          ./scripts/ci/extract-compiled-classes.sh "full-stack-qa-tests:latest" "docker-compiled-classes"
+
+      - name: Upload compiled classes from Docker build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-classes-from-docker
+          path: docker-compiled-classes/target/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  build-and-compile:
+    name: Build & Compile
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type, docker-build-test]
+    if: needs.determine-schedule-type.outputs.code-changed == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Download compiled classes from Docker build
+        id: download-docker-classes
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-classes-from-docker
+          path: docker-compiled-classes
+
+      - name: Use compiled classes or compile if needed
+        run: |
+          chmod +x scripts/ci/reuse-or-compile.sh
+          ./scripts/ci/reuse-or-compile.sh "docker-compiled-classes/target"
+
+      - name: Upload compiled classes
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-classes
+          path: target/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  code-quality-analysis:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    # Note: code-quality does NOT need build-and-compile because:
+    # - Checkstyle runs in Maven 'validate' phase (before compile) and analyzes source files only
+    # - PMD analyzes source code directly and doesn't require compiled classes
+    # - Both tools can run independently and in parallel with compilation
+    # Removed validate-test-data dependency - code quality tools don't use test data
+    needs: [determine-schedule-type]
+    if: needs.determine-schedule-type.outputs.code-changed == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Code Quality Checks
+        run: |
+          chmod +x scripts/ci/verify-code-quality.sh
+          ./scripts/ci/verify-code-quality.sh
+        continue-on-error: true
+      # DISABLED: Tests temporarily disabled while backend work is in progress
+
+      - name: Upload Analysis Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-quality-reports
+          path: |
+            target/checkstyle-result.xml
+            target/pmd.xml
+            target/site/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  validate-dependency-versions:
+    name: Validate Dependency Versions
+    runs-on: ubuntu-latest
+    # Note: validate-versions does NOT need build-and-compile because:
+    # - It only reads configuration files (pom.xml, package.json, requirements.txt, workflow files)
+    # - It doesn't require compiled classes or build artifacts
+    # - It can run in parallel with other jobs that only need source/configuration files
+    needs: [determine-schedule-type]
+    if: needs.determine-schedule-type.outputs.code-changed == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Dependency Versions
+        run: |
+          chmod +x scripts/validate-dependency-versions.sh
+          ./scripts/validate-dependency-versions.sh
+
+  validate-test-data-json:
+    name: Validate Test Data (JSON)
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type]
+    if: needs.determine-schedule-type.outputs.code-changed == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies (if needed)
+        run: |
+          if [ -f "package.json" ]; then
+            npm install ajv ajv-formats --no-save || true
+          fi
+
+      - name: Validate test data JSON files
+        run: |
+          chmod +x scripts/ci/validate-json-data.sh
+          ./scripts/ci/validate-json-data.sh
+
+      - name: Check for test data changes
+        run: |
+          chmod +x scripts/ci/check-test-data-changes.sh
+          ./scripts/ci/check-test-data-changes.sh "${{ github.event.before }}" "${{ github.sha }}"
+
+  gate-setup:
+    name: Gate (SETUP)
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type, determine-envs, validate-test-data-json, code-quality-analysis, docker-build-test, build-and-compile, validate-dependency-versions]
+    if: |
+      always() && 
+      needs.determine-schedule-type.outputs.code-changed == 'true' &&
+      !cancelled()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Setup Jobs Status
+        run: |
+          chmod +x scripts/ci/check-gate-status.sh
+          ./scripts/ci/check-gate-status.sh "Setup" \
+            "validate-test-data-json:${{ needs.validate-test-data-json.result }}" \
+            "code-quality-analysis:${{ needs.code-quality-analysis.result }}" \
+            "docker-build-test:${{ needs.docker-build-test.result }}" \
+            "build-and-compile:${{ needs.build-and-compile.result }}" \
+            "validate-dependency-versions:${{ needs.validate-dependency-versions.result }}"
+
+  # ==================================================================================
+  # STAGE 3: DEV ENVIRONMENT TESTING & DEPLOYMENT
+  # ==================================================================================
+
+  test-fe-dev:
+    name: Test FE (DEV)
+    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_dev == 'true' &&
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+    uses: ./.github/workflows/env-fe.yml
+    with:
+      environment: 'dev'
+      test_suite: ${{ needs.determine-envs.outputs.test_suite }}
+      base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
+
+  deploy-dev:
+    name: Deploy to DEV
+    runs-on: ubuntu-latest
+    needs: [setup-base-urls, determine-envs, test-fe-dev, gate-dev]
+    if: |
+      always() &&
+      needs.determine-envs.outputs.run_dev == 'true' &&
+      needs.gate-dev.result == 'success' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push'
+    environment:
+      name: development
+      url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-results-dev"
+          path: test-results
+
+      - name: Verify tests passed
+        id: verify-tests
+        run: |
+          chmod +x scripts/ci/verify-test-results.sh
+          ./scripts/ci/verify-test-results.sh "test-results" "DEV"
+
+      - name: Deploy to DEV
+        if: steps.verify-tests.outputs.tests_passed == 'true'
+        run: |
+          chmod +x scripts/ci/print-deployment-info.sh
+          ./scripts/ci/print-deployment-info.sh \
+            "dev" \
+            "${{ needs.setup-base-urls.outputs.base_url_dev }}" \
+            "${{ github.sha }}"
+
+  gate-dev:
+    name: Gate (DEV)
+    runs-on: ubuntu-latest
+    needs: [determine-envs, determine-test-execution, gate-setup, test-fe-dev, test-be-dev]
+    if: always() && !cancelled()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check DEV Testing Jobs Status
+        run: |
+          chmod +x scripts/ci/check-gate-status-env.sh
+          ./scripts/ci/check-gate-status-env.sh "dev" \
+            "gate-setup:${{ needs.gate-setup.result }}" \
+            "test-fe-dev:${{ needs.test-fe-dev.result }}" \
+            "test-be-dev:${{ needs.test-be-dev.result }}" \
+            "determine-envs.run_dev:${{ needs.determine-envs.outputs.run_dev }}" \
+            "determine-test-execution.run_ui_tests:${{ needs.determine-test-execution.outputs.run_ui_tests }}" \
+            "determine-test-execution.run_be_tests:${{ needs.determine-test-execution.outputs.run_be_tests }}" \
+            "determine-test-execution.be_env_dev:${{ needs.determine-test-execution.outputs.be_env_dev }}" \
+            "determine-test-execution.be_test_mode:${{ needs.determine-test-execution.outputs.be_test_mode }}"
+
+  # ==================================================================================
+  # STAGE 4: TEST ENVIRONMENT TESTING & DEPLOYMENT
+  # (Only runs if test-fe-dev succeeded or if environment=test only)
+  # ==================================================================================
+
+  test-fe-test:
+    name: Test FE (TEST)
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-dev]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_test == 'true' &&
+      (needs.gate-dev.result == 'success' ||
+       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+    uses: ./.github/workflows/env-fe.yml
+    with:
+      environment: 'test'
+      test_suite: ${{ needs.determine-envs.outputs.test_suite }}
+      base_url: ${{ needs.setup-base-urls.outputs.base_url_test }}
+
+  deploy-test:
+    name: Deploy (TEST)
+    runs-on: ubuntu-latest
+    needs: [setup-base-urls, determine-envs, test-fe-test, gate-test]
+    if: |
+      always() &&
+      needs.determine-envs.outputs.run_test == 'true' &&
+      needs.gate-test.result == 'success' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push'
+    environment:
+      name: test
+      url: ${{ needs.setup-base-urls.outputs.base_url_test }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-results-test"
+          path: test-results
+
+      - name: Verify tests passed
+        id: verify-tests
+        run: |
+          chmod +x scripts/ci/verify-test-results.sh
+          ./scripts/ci/verify-test-results.sh "test-results" "TEST"
+
+      - name: Deploy to TEST
+        if: steps.verify-tests.outputs.tests_passed == 'true'
+        run: |
+          chmod +x scripts/ci/print-deployment-info.sh
+          ./scripts/ci/print-deployment-info.sh \
+            "test" \
+            "${{ needs.setup-base-urls.outputs.base_url_test }}" \
+            "${{ github.sha }}" \
+            "dev"
+
+  gate-test:
+    name: Gate (TEST)
+    runs-on: ubuntu-latest
+    needs: [determine-envs, determine-test-execution, gate-dev, test-fe-test, test-be-test]
+    if: always() && !cancelled()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check TEST Testing Jobs Status
+        run: |
+          chmod +x scripts/ci/check-gate-status-env.sh
+          ./scripts/ci/check-gate-status-env.sh "test" \
+            "gate-dev:${{ needs.gate-dev.result }}" \
+            "test-fe-test:${{ needs.test-fe-test.result }}" \
+            "test-be-test:${{ needs.test-be-test.result }}" \
+            "determine-envs.run_test:${{ needs.determine-envs.outputs.run_test }}" \
+            "determine-test-execution.run_ui_tests:${{ needs.determine-test-execution.outputs.run_ui_tests }}" \
+            "determine-test-execution.run_be_tests:${{ needs.determine-test-execution.outputs.run_be_tests }}" \
+            "determine-test-execution.be_env_test:${{ needs.determine-test-execution.outputs.be_env_test }}" \
+            "determine-test-execution.be_test_mode:${{ needs.determine-test-execution.outputs.be_test_mode }}"
+
+  # ==================================================================================
+  # STAGE 5: PROD ENVIRONMENT TESTING & DEPLOYMENT
+  # (Only runs if test-test-environment succeeded or if environment=prod only)
+  # ==================================================================================
+
+  test-fe-prod:
+    name: Test FE (PROD)
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-test]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_prod == 'true' &&
+      (needs.gate-test.result == 'success' ||
+       (needs.gate-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false')) &&
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+    uses: ./.github/workflows/env-fe.yml
+    with:
+      environment: 'prod'
+      test_suite: ${{ needs.determine-envs.outputs.test_suite }}
+      base_url: ${{ needs.setup-base-urls.outputs.base_url_prod }}
+
+  deploy-prod:
+    name: Deploy (PROD)
+    runs-on: ubuntu-latest
+    needs: [setup-base-urls, determine-envs, test-fe-prod, gate-prod]
+    if: |
+      always() &&
+      needs.determine-envs.outputs.run_prod == 'true' &&
+      needs.gate-prod.result == 'success' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push'
+    environment:
+      name: production
+      url: ${{ needs.setup-base-urls.outputs.base_url_prod }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-results-prod"
+          path: test-results
+
+      - name: Verify tests passed
+        id: verify-tests
+        run: |
+          chmod +x scripts/ci/verify-test-results.sh
+          ./scripts/ci/verify-test-results.sh "test-results" "PROD"
+
+      - name: Deploy to PROD
+        if: steps.verify-tests.outputs.tests_passed == 'true'
+        run: |
+          chmod +x scripts/ci/print-deployment-info.sh
+          ./scripts/ci/print-deployment-info.sh \
+            "prod" \
+            "${{ needs.setup-base-urls.outputs.base_url_prod }}" \
+            "${{ github.sha }}" \
+            "test"
+
+  gate-prod:
+    name: Gate (PROD)
+    runs-on: ubuntu-latest
+    needs: [determine-envs, gate-test, test-fe-prod]
+    if: always() && !cancelled()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check PROD Testing Jobs Status
+        run: |
+          chmod +x scripts/ci/check-gate-status-env.sh
+          ./scripts/ci/check-gate-status-env.sh "prod" \
+            "gate-test:${{ needs.gate-test.result }}" \
+            "test-fe-prod:${{ needs.test-fe-prod.result }}" \
+            "determine-envs.run_prod:${{ needs.determine-envs.outputs.run_prod }}"
+
+  # ==================================================================================
+  # STAGE 5: BE TESTS (Run in parallel with FE tests)
+  # BE tests run in dev/test only (never prod)
+  # Uses reusable workflow: env-be.yml
+  # ==================================================================================
+
+  test-be-dev:
+    name: Test BE (DEV)
+    uses: ./.github/workflows/env-be.yml
+    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
+    # Note: BE tests run when:
+    # - BE tests are enabled (run_be_tests == 'true')
+    # - Dev environment is selected for be tests (be_env_dev == 'true')
+    # - Dev environment is selected for fe tests (run_dev == 'true')
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_be_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_dev == 'true' &&
+      needs.determine-envs.outputs.run_dev == 'true' &&
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+    with:
+      environment: 'dev'
+      be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
+      base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
+    secrets: inherit
+
+  test-be-test:
+    name: Test BE (TEST)
+    uses: ./.github/workflows/env-be.yml
+    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_be_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_test == 'true' &&
+      needs.determine-envs.outputs.run_test == 'true' &&
+      (needs.gate-dev.result == 'success' ||
+       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+    with:
+      environment: 'test'
+      be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
+      base_url: ${{ needs.setup-base-urls.outputs.base_url_test }}
+    secrets: inherit
+
+  allure-conversion-be:
+    name: Convert BE Results to Allure
+    runs-on: ubuntu-latest
+    needs: [determine-test-execution, determine-envs, test-be-dev, test-be-test]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_be_tests == 'true' &&
+      (needs.test-be-dev.result == 'success' || needs.test-be-dev.result == 'failure' || needs.test-be-dev.result == 'skipped') &&
+      (needs.test-be-test.result == 'success' || needs.test-be-test.result == 'failure' || needs.test-be-test.result == 'skipped')
+    outputs:
+      has_be_results: ${{ steps.set-output.outputs.has_be_results }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: List available be artifacts (debug)
+        if: always()
+        run: |
+          echo "🔍 Checking for be artifacts..."
+          echo "Expected artifact patterns:"
+          echo "  - gatling-be-results-dev"
+          echo "  - jmeter-be-results-dev"
+          echo "  - locust-be-results-dev"
+          echo "  - gatling-be-results-test"
+          echo "  - jmeter-be-results-test"
+          echo "  - locust-be-results-test"
+
+      - name: Download BE Test Results (DEV)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: |
+            *-be-results-dev
+          path: be-results-dev
+          merge-multiple: true
+
+      - name: Download BE Test Results (TEST)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: |
+            *-be-results-test
+          path: be-results-test
+          merge-multiple: true
+
+      - name: Download BE Test Results (PROD)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: |
+            *-be-results-prod
+          path: be-results-prod
+          merge-multiple: true
+
+      - name: Convert BE Results to Allure Format (DEV)
+        id: convert-be-dev
+        continue-on-error: true
+        run: |
+          if [ -d "be-results-dev" ] && [ "$(find be-results-dev -type f 2>/dev/null | wc -l)" -gt 0 ]; then
+            chmod +x scripts/ci/prepare-be-results.sh
+            ./scripts/ci/prepare-be-results.sh "be-results-dev" "allure-be-results-dev"
+            echo "has_be_results_dev=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_be_results_dev=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Convert BE Results to Allure Format (TEST)
+        id: convert-be-test
+        continue-on-error: true
+        run: |
+          if [ -d "be-results-test" ] && [ "$(find be-results-test -type f 2>/dev/null | wc -l)" -gt 0 ]; then
+            chmod +x scripts/ci/prepare-be-results.sh
+            ./scripts/ci/prepare-be-results.sh "be-results-test" "allure-be-results-test"
+            echo "has_be_results_test=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_be_results_test=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Convert BE Results to Allure Format (PROD)
+        id: convert-be-prod
+        continue-on-error: true
+        run: |
+          if [ -d "be-results-prod" ] && [ "$(find be-results-prod -type f 2>/dev/null | wc -l)" -gt 0 ]; then
+            chmod +x scripts/ci/prepare-be-results.sh
+            ./scripts/ci/prepare-be-results.sh "be-results-prod" "allure-be-results-prod"
+            echo "has_be_results_prod=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_be_results_prod=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload BE Allure Results (DEV)
+        uses: actions/upload-artifact@v4
+        if: always() && steps.convert-be-dev.outputs.has_be_results_dev == 'true'
+        with:
+          name: be-allure-results-dev
+          path: allure-be-results-dev/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Upload BE Allure Results (TEST)
+        uses: actions/upload-artifact@v4
+        if: always() && steps.convert-be-test.outputs.has_be_results_test == 'true'
+        with:
+          name: be-allure-results-test
+          path: allure-be-results-test/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Upload BE Allure Results (PROD)
+        uses: actions/upload-artifact@v4
+        if: always() && steps.convert-be-prod.outputs.has_be_results_prod == 'true'
+        with:
+          name: be-allure-results-prod
+          path: allure-be-results-prod/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Set has_be_results output
+        id: set-output
+        if: always()
+        run: |
+          if [ "${{ steps.convert-be-dev.outputs.has_be_results_dev }}" == "true" ] || \
+             [ "${{ steps.convert-be-test.outputs.has_be_results_test }}" == "true" ] || \
+             [ "${{ steps.convert-be-prod.outputs.has_be_results_prod }}" == "true" ]; then
+            echo "has_be_results=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_be_results=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ==================================================================================
+  # STAGE 6: COMBINED REPORTING
+  # Aggregates results from all tested environments
+  # ==================================================================================
+
+  combined-allure-report:
+    name: Combined Allure Report (All Environments)
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, test-fe-test, test-fe-prod, allure-conversion-be]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-schedule-type.outputs.code-changed == 'true' &&
+      (needs.determine-test-execution.outputs.run_ui_tests == 'true' || 
+       needs.determine-test-execution.outputs.run_be_tests == 'true')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: List available test result artifacts (debug)
+        if: always()
+        run: |
+          echo "🔍 Checking for test result artifacts..."
+          echo "Expected artifact patterns (RAW RESULTS ONLY - not generated reports):"
+          echo "  - *-results-dev (contains target/allure-results/ with JSON files)"
+          echo "  - *-results-test (contains target/allure-results/ with JSON files)"
+          echo "  - *-results-prod (contains target/allure-results/ with JSON files)"
+          echo "  - be-allure-results (if be tests ran)"
+          echo ""
+          echo "Note: We do NOT download allure-report-* artifacts as those are already generated HTML reports"
+          echo "      We need the raw JSON results from *-results-* artifacts"
+
+      - name: Download test results (DEV)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-results-dev"
+          path: all-test-results/results-dev
+          merge-multiple: true
+
+      - name: Download test results (TEST)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-results-test"
+          path: all-test-results/results-test
+          merge-multiple: true
+
+      - name: Download test results (PROD)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "*-results-prod"
+          path: all-test-results/results-prod
+          merge-multiple: true
+
+      - name: Download be allure results (DEV)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "be-allure-results-dev"
+          path: all-test-results/be-results-dev
+          merge-multiple: true
+
+      - name: Download be allure results (TEST)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "be-allure-results-test"
+          path: all-test-results/be-results-test
+          merge-multiple: true
+
+      - name: Download be allure results (PROD)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "be-allure-results-prod"
+          path: all-test-results/be-results-prod
+          merge-multiple: true
+
+      - name: "Debug: Show downloaded artifact structure"
+        if: always()
+        run: |
+          chmod +x scripts/ci/debug-artifact-structure.sh
+          ./scripts/ci/debug-artifact-structure.sh "all-test-results"
+
+      - name: Prepare combined Allure results
+        if: always()
+        run: |
+          chmod +x scripts/ci/merge-allure-results.sh
+          ./scripts/ci/merge-allure-results.sh
+          
+          chmod +x scripts/ci/verify-merged-allure-results.sh
+          ./scripts/ci/verify-merged-allure-results.sh "allure-results-combined"
+          
+          # Add environment labels to prevent Allure deduplication across environments
+          chmod +x scripts/ci/add-environment-labels.sh
+          ./scripts/ci/add-environment-labels.sh "allure-results-combined" "all-test-results"
+
+      - name: Install Allure CLI
+        if: always()
+        run: |
+          chmod +x scripts/ci/install-allure-cli.sh
+          ./scripts/ci/install-allure-cli.sh "2.25.0"
+
+      - name: Generate Combined Allure Report
+        if: always()
+        run: |
+          echo "Generating combined Allure report (all environments)..."
+          
+          # Verify results directory exists and has files
+          if [ ! -d "allure-results-combined" ]; then
+            echo "❌ Error: allure-results-combined directory not found"
+            exit 1
+          fi
+          
+          RESULT_COUNT=$(find allure-results-combined -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')
+          echo "📊 Found $RESULT_COUNT result files to process"
+          
+          if [ "$RESULT_COUNT" -eq 0 ]; then
+            echo "⚠️  Warning: No result files found, but continuing..."
+          fi
+          
+          # Generate report
+          allure generate allure-results-combined --clean -o allure-report-combined
+          
+          # Verify report was generated
+          if [ ! -d "allure-report-combined" ]; then
+            echo "❌ Error: Report directory was not created"
+            exit 1
+          fi
+          
+          if [ ! -f "allure-report-combined/index.html" ]; then
+            echo "❌ Error: Report index.html was not created"
+            exit 1
+          fi
+          
+          echo "✅ Combined report generated successfully!"
+          echo "   Report location: allure-report-combined/"
+          echo "   Report size: $(du -sh allure-report-combined | cut -f1)"
+
+      - name: Upload Combined Allure Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-report-combined-all-environments
+          path: allure-report-combined/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Check GitHub Pages Deployment Conditions
+        if: always()
+        run: |
+          echo "🔍 Checking GitHub Pages deployment conditions..."
+          echo ""
+          echo "Current branch: ${{ github.ref }}"
+          echo "Required branch: refs/heads/main"
+          echo "Code changed: ${{ needs.determine-schedule-type.outputs.code-changed }}"
+          echo ""
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "⏭️  GitHub Pages deployment skipped: Not on main branch"
+            echo "   (This is expected for feature branches)"
+          elif [ "${{ needs.determine-schedule-type.outputs.code-changed }}" != "true" ]; then
+            echo "⏭️  GitHub Pages deployment skipped: No code changes detected"
+          else
+            echo "✅ All conditions met - GitHub Pages will be deployed"
+          fi
+          echo ""
+          echo "📥 Report is still available as artifact: 'allure-report-combined-all-environments'"
+
+      - name: Deploy to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main' && needs.determine-schedule-type.outputs.code-changed == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report-combined
+          keep_files: false
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Report Info
+        if: always()
+        run: |
+          echo "📊 Combined Allure Report Generated!"
+          echo ""
+          
+          # Show diagnostic information
+          if [ -d "allure-report-combined" ]; then
+            echo "✅ Report directory exists"
+            echo "   Files: $(find allure-report-combined -type f | wc -l | tr -d ' ')"
+            echo "   Size: $(du -sh allure-report-combined | cut -f1)"
+            
+            # Check if report has test data
+            if [ -f "allure-report-combined/index.html" ]; then
+              echo "✅ Report index.html exists"
+            else
+              echo "❌ Report index.html missing!"
+            fi
+          else
+            echo "❌ Report directory does not exist!"
+          fi
+          
+          echo ""
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "🌐 View online at:"
+            echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+            echo ""
+            echo "ℹ️  Note: GitHub Pages only updates on main branch when code changes"
+          else
+            echo "ℹ️  Note: GitHub Pages deployment only happens on main branch"
+            echo "   Current branch: ${{ github.ref }}"
+          fi
+          echo ""
+          echo "📥 Download 'allure-report-combined-all-environments' artifact to view the report"
+
+  # ==================================================================================
+  # STAGE 7: PIPELINE SUMMARY
+  # Always runs to show what was executed
+  # ==================================================================================
+
+  pipeline-summary:
+    name: Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, deploy-dev, test-fe-test, deploy-test, test-fe-prod, deploy-prod, combined-allure-report, test-be-dev, test-be-test, allure-conversion-be]
+    if: always()
+
+    steps:
+      - name: Generate Pipeline Summary
+        run: |
+          {
+            echo "═══════════════════════════════════════════════════════════════"
+            echo "## 📊 PIPELINE EXECUTION SUMMARY"
+            echo "═══════════════════════════════════════════════════════════════"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${{ needs.determine-schedule-type.outputs.code-changed }}" = "true" ]; then
+            {
+              echo "**Change Type**: CODE CHANGES DETECTED"
+              echo ""
+              echo "**Test Type**: ${{ github.event.inputs.test_type || 'fe-only' }}"
+              echo "**Environment Selection**: ${{ needs.determine-envs.outputs.selected_env }}"
+              echo "**Test Suite**: ${{ needs.determine-envs.outputs.test_suite }}"
+            } >> "$GITHUB_STEP_SUMMARY"
+            if [ "${{ needs.determine-test-execution.outputs.run_be_tests }}" = "true" ]; then
+              echo "**BE Test Type**: ${{ needs.determine-test-execution.outputs.be_test_mode }}" >> "$GITHUB_STEP_SUMMARY"
+            fi
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+
+            echo "### FE Tests - Environments Tested:" >> "$GITHUB_STEP_SUMMARY"
+
+            if [ "${{ needs.determine-envs.outputs.run_dev }}" = "true" ]; then
+              if [ "${{ needs.test-fe-dev.result }}" = "success" ]; then
+                echo "- ✅ **DEV**: Tests passed, Deployed" >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "- ❌ **DEV**: ${{ needs.test-fe-dev.result }}" >> "$GITHUB_STEP_SUMMARY"
+              fi
+            fi
+
+            if [ "${{ needs.determine-envs.outputs.run_test }}" = "true" ]; then
+              if [ "${{ needs.test-fe-test.result }}" = "success" ]; then
+                echo "- ✅ **TEST**: Tests passed, Deployed" >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "- ❌ **TEST**: ${{ needs.test-fe-test.result }}" >> "$GITHUB_STEP_SUMMARY"
+              fi
+            fi
+
+            if [ "${{ needs.determine-envs.outputs.run_prod }}" = "true" ]; then
+              if [ "${{ needs.test-fe-prod.result }}" = "success" ]; then
+                echo "- ✅ **PROD**: Tests passed, Deployed" >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "- ❌ **PROD**: ${{ needs.test-fe-prod.result }}" >> "$GITHUB_STEP_SUMMARY"
+              fi
+            fi
+
+            if [ "${{ needs.determine-test-execution.outputs.run_be_tests }}" = "true" ]; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "### BE Tests:" >> "$GITHUB_STEP_SUMMARY"
+              
+              if [ "${{ needs.determine-envs.outputs.run_dev }}" = "true" ] && [ "${{ needs.determine-test-execution.outputs.be_env_dev }}" = "true" ]; then
+                if [ "${{ needs.test-be-dev.result }}" = "success" ]; then
+                  echo "- ✅ **BE (DEV)**: Tests passed" >> "$GITHUB_STEP_SUMMARY"
+                else
+                  echo "- ❌ **BE (DEV)**: ${{ needs.test-be-dev.result }}" >> "$GITHUB_STEP_SUMMARY"
+                fi
+              fi
+
+              if [ "${{ needs.determine-envs.outputs.run_test }}" = "true" ] && [ "${{ needs.determine-test-execution.outputs.be_env_test }}" = "true" ]; then
+                if [ "${{ needs.test-be-test.result }}" = "success" ]; then
+                  echo "- ✅ **BE (TEST)**: Tests passed" >> "$GITHUB_STEP_SUMMARY"
+                else
+                  echo "- ❌ **BE (TEST)**: ${{ needs.test-be-test.result }}" >> "$GITHUB_STEP_SUMMARY"
+                fi
+              fi
+            fi
+
+            {
+              echo ""
+              echo "### Reports:"
+              echo "- 📊 Combined Allure Report: Download artifact 'allure-report-combined-all-environments'"
+              echo "- 📊 Individual Environment Reports: Download 'allure-report-{env}' artifacts"
+            } >> "$GITHUB_STEP_SUMMARY"
+            if [ "${{ needs.determine-test-execution.outputs.run_be_tests }}" = "true" ]; then
+              echo "- 📊 BE Test Results: Download '*-be-results' artifacts" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          else
+            {
+              echo "**Change Type**: DOCUMENTATION-ONLY"
+              echo ""
+              echo "⏭️  Skipped: Build, tests, quality checks (not needed for docs)"
+              echo "✅ Documentation changes processed successfully"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          {
+            echo ""
+            echo "**Commit**: ${{ github.sha }}"
+            echo "**Branch**: ${{ github.ref_name }}"
+            echo "**Author**: ${{ github.actor }}"
+            echo ""
+            echo "═══════════════════════════════════════════════════════════════"
+          } >> "$GITHUB_STEP_SUMMARY"

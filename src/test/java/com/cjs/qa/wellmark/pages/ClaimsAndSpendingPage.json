@@ -1,0 +1,40 @@
+{
+  "locators": [
+    {
+      "name": " Link Medical And Pharmacy",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_ContentLeft_DisplayGrid_tabAll']/a\"",
+      "variableName": "linkMedicalAndPharmacy"
+    },
+    {
+      "name": " Link Medical",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_ContentLeft_DisplayGrid_tabMedical']/a\"",
+      "variableName": "linkMedical"
+    },
+    {
+      "name": " Link Pharmacy",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_ContentLeft_DisplayGrid_tabPharm']/a\"",
+      "variableName": "linkPharmacy"
+    },
+    {
+      "name": " Grid Medical And Pharmacy",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_ContentLeft_DisplayGrid_AllClaimsGrid']/tbody\"",
+      "variableName": "gridMedicalAndPharmacy"
+    },
+    {
+      "name": " Grid Medical",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_ContentLeft_DisplayGrid_MedClaimsGrid']/tbody\"",
+      "variableName": "gridMedical"
+    },
+    {
+      "name": " Grid Pharmacy",
+      "type": "xpath",
+      "value": "\".//*[@id='ctl00_ContentLeft_DisplayGrid_PharmClaimsGrid']/tbody\"",
+      "variableName": "gridPharmacy"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "locators": [
+    {
+      "name": " Edit Year Business Started",
+      "type": "id",
+      "value": "\"YR_BUS_STRT\"",
+      "variableName": "editYearBusinessStarted"
+    },
+    {
+      "name": " Edit Year Agency Obtain Client",
+      "type": "id",
+      "value": "\"YR_CLT_OBTND\"",
+      "variableName": "editYearAgencyObtainClient"
+    },
+    {
+      "name": " Checkbox Current Auto Coverage",
+      "type": "id",
+      "value": "\"INSD_AUTO_CVG\"",
+      "variableName": "checkboxCurrentAutoCoverage"
+    },
+    {
+      "name": " Checkbox Current Work Comp Coverage",
+      "type": "id",
+      "value": "\"INSD_WC_CVG\"",
+      "variableName": "checkboxCurrentWorkCompCoverage"
+    },
+    {
+      "name": " Checkbox Current Umbrella Coverage",
+      "type": "id",
+      "value": "\"INSD_UMB_CVG\"",
+      "variableName": "checkboxCurrentUmbrellaCoverage"
+    },
+    {
+      "name": " Checkbox Current Other Coverage",
+      "type": "id",
+      "value": "\"INSD_OTH_CVG\"",
+      "variableName": "checkboxCurrentOtherCoverage"
+    },
+    {
+      "name": " Edit Describe Other Coverage",
+      "type": "id",
+      "value": "\"DESC_OTH_CVG\"",
+      "variableName": "editDescribeOtherCoverage"
+    },
+    {
+      "name": " Dropdown Applicant Part Of Franchise",
+      "type": "id",
+      "value": "\"APL_FRN_IND\"",
+      "variableName": "dropdownApplicantPartOfFranchise"
+    },
+    {
+      "name": " Dropdown Formal Safety Program In Place",
+      "type": "id",
+      "value": "\"FRML_SFTY_PGM_IND\"",
+      "variableName": "dropdownFormalSafetyProgramInPlace"
+    },
+    {
+      "name": " Edit Number Of Losses G L",
+      "type": "id",
+      "value": "\"NUM_LOSE_GL\"",
+      "variableName": "editNumberOfLossesGL"
+    },
+    {
+      "name": " Edit Number Of Losses Property",
+      "type": "id",
+      "value": "\"NUM_LOSE_PROP\"",
+      "variableName": "editNumberOfLossesProperty"
+    },
+    {
+      "name": " Edit Number Of Employees",
+      "type": "id",
+      "value": "\"NUM_EMP\"",
+      "variableName": "editNumberOfEmployees"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"advantage-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}

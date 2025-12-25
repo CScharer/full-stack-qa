@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+# Note: package-lock.json is committed for reproducible builds (same as cypress/playwright)
+
+# Test output
+test-results/
+coverage/
+.vitest/
+*.log
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

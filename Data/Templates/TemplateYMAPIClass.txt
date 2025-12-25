@@ -1,0 +1,11 @@
+package com.vivit.APINamespaces;
+
+import java.util.Map;
+
+import com.cjs.Utility.Constants;
+import com.vivit.APIServices.YMService;
+
+public class [CLASS_NAMESPACE] extends YMService
+{
+[CLASS_METHODS]
+}

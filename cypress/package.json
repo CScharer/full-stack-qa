@@ -1,0 +1,23 @@
+{
+  "name": "full-stack-qa-cypress",
+  "version": "1.0.0",
+  "description": "Cypress tests for full-stack-qa framework",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:chrome": "cypress run --browser chrome",
+    "cypress:run:firefox": "cypress run --browser firefox",
+    "cypress:run:edge": "cypress run --browser edge",
+    "test": "cypress run",
+    "build": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "cypress": "^15.8.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

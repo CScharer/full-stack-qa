@@ -1,0 +1,202 @@
+{
+  "locators": [
+    {
+      "name": " Edit Email",
+      "type": "name",
+      "value": "\"txt_email\"",
+      "variableName": "editEmail"
+    },
+    {
+      "name": " Edit Email Confirm",
+      "type": "name",
+      "value": "\"txt_emailConfirm\"",
+      "variableName": "editEmailConfirm"
+    },
+    {
+      "name": " Edit Gender",
+      "type": "name",
+      "value": "\"txt_gender\"",
+      "variableName": "editGender"
+    },
+    {
+      "name": " Edit Title",
+      "type": "name",
+      "value": "\"txt_title\"",
+      "variableName": "editTitle"
+    },
+    {
+      "name": " Edit First Name",
+      "type": "name",
+      "value": "\"txt_firstName\"",
+      "variableName": "editFirstName"
+    },
+    {
+      "name": " Edit Middle Name",
+      "type": "name",
+      "value": "\"txt_middleName\"",
+      "variableName": "editMiddleName"
+    },
+    {
+      "name": " Edit Last Name",
+      "type": "name",
+      "value": "\"txt_lastName\"",
+      "variableName": "editLastName"
+    },
+    {
+      "name": " Edit Suffix Name",
+      "type": "name",
+      "value": "\"txt_suffix\"",
+      "variableName": "editSuffixName"
+    },
+    {
+      "name": " Edit Nickname",
+      "type": "name",
+      "value": "\"txt_nickName\"",
+      "variableName": "editNickname"
+    },
+    {
+      "name": " Edit Maiden Name",
+      "type": "name",
+      "value": "\"txt_maidenName\"",
+      "variableName": "editMaidenName"
+    },
+    {
+      "name": " Edit Birthday",
+      "type": "name",
+      "value": "\"dat_birthday\"",
+      "variableName": "editBirthday"
+    },
+    {
+      "name": " Edit Personal U R L",
+      "type": "name",
+      "value": "\"txt_personalURL\"",
+      "variableName": "editPersonalURL"
+    },
+    {
+      "name": " Edit Phone Home Fax Area Code",
+      "type": "name",
+      "value": "\"txt_homeFaxAreaCode\"",
+      "variableName": "editPhoneHomeFaxAreaCode"
+    },
+    {
+      "name": " Edit Phone Home Fax",
+      "type": "name",
+      "value": "\"txt_homeFax\"",
+      "variableName": "editPhoneHomeFax"
+    },
+    {
+      "name": " Edit Email Alternate",
+      "type": "name",
+      "value": "\"txt_emailAlternate\"",
+      "variableName": "editEmailAlternate"
+    },
+    {
+      "name": " Edit Alternate I M Username",
+      "type": "name",
+      "value": "\"txt_alternateIMUsername\"",
+      "variableName": "editAlternateIMUsername"
+    },
+    {
+      "name": " Edit Alternate I M Type",
+      "type": "name",
+      "value": "\"txt_alternateIMType\"",
+      "variableName": "editAlternateIMType"
+    },
+    {
+      "name": " Edit Employee Name",
+      "type": "name",
+      "value": "\"txt_employName\"",
+      "variableName": "editEmployeeName"
+    },
+    {
+      "name": " Edit Employee Own",
+      "type": "name",
+      "value": "\"bln_employOwn\"",
+      "variableName": "editEmployeeOwn"
+    },
+    {
+      "name": " Edit Employee Title",
+      "type": "name",
+      "value": "\"txt_employTitle\"",
+      "variableName": "editEmployeeTitle"
+    },
+    {
+      "name": " Edit Employee U R L",
+      "type": "name",
+      "value": "\"txt_employURL\"",
+      "variableName": "editEmployeeURL"
+    },
+    {
+      "name": " Edit Employee Address1",
+      "type": "name",
+      "value": "\"txt_employAddress1\"",
+      "variableName": "editEmployeeAddress1"
+    },
+    {
+      "name": " Edit Employee Address2",
+      "type": "name",
+      "value": "\"txt_employAddress2\"",
+      "variableName": "editEmployeeAddress2"
+    },
+    {
+      "name": " Edit Employee City",
+      "type": "name",
+      "value": "\"txt_employCity\"",
+      "variableName": "editEmployeeCity"
+    },
+    {
+      "name": " Edit Employee Country",
+      "type": "name",
+      "value": "\"txt_employCountry\"",
+      "variableName": "editEmployeeCountry"
+    },
+    {
+      "name": " Edit Employee State",
+      "type": "name",
+      "value": "\"txt_employState\"",
+      "variableName": "editEmployeeState"
+    },
+    {
+      "name": " Edit Employee Zip",
+      "type": "name",
+      "value": "\"txt_employZip\"",
+      "variableName": "editEmployeeZip"
+    },
+    {
+      "name": " Edit Employee Phone Area Code",
+      "type": "name",
+      "value": "\"txt_employPhoneAreaCode\"",
+      "variableName": "editEmployeePhoneAreaCode"
+    },
+    {
+      "name": " Edit Employee Phone",
+      "type": "name",
+      "value": "\"txt_employPhone\"",
+      "variableName": "editEmployeePhone"
+    },
+    {
+      "name": " Edit Employee Fax Area Code",
+      "type": "name",
+      "value": "\"txt_employFaxAreaCode\"",
+      "variableName": "editEmployeeFaxAreaCode"
+    },
+    {
+      "name": " Edit Employee Fax",
+      "type": "name",
+      "value": "\"txt_employFax\"",
+      "variableName": "editEmployeeFax"
+    },
+    {
+      "name": " Edit Employee Continent",
+      "type": "name",
+      "value": "\"cdlCustomFieldValueIDcontinent\"",
+      "variableName": "editEmployeeContinent"
+    },
+    {
+      "name": " Edit Used H P Years",
+      "type": "name",
+      "value": "\"cdlCustomFieldValueIDUsedHPYears\"",
+      "variableName": "editUsedHPYears"
+    }
+  ]
+}

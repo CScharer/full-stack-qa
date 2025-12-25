@@ -1,0 +1,46 @@
+{
+  "locators": [
+    {
+      "name": " Button Delete Product List",
+      "type": "id",
+      "value": "\"deleteButton\"",
+      "variableName": "buttonDeleteProductList"
+    },
+    {
+      "name": " Button Add New Product Add",
+      "type": "id",
+      "value": "\"addProductBtn\"",
+      "variableName": "buttonAddNewProductAdd"
+    },
+    {
+      "name": " Button Add New Product Add Product Coveragegs",
+      "type": "id",
+      "value": "\"addProductCvgBtn\"",
+      "variableName": "buttonAddNewProductAddProductCoveragegs"
+    },
+    {
+      "name": " Dropdown Product",
+      "type": "id",
+      "value": "\"productId\"",
+      "variableName": "dropdownProduct"
+    },
+    {
+      "name": " Dropdown Program",
+      "type": "id",
+      "value": "\"programId\"",
+      "variableName": "dropdownProgram"
+    },
+    {
+      "name": " Dropdown Rating Company",
+      "type": "id",
+      "value": "\"addProductForm\"",
+      "variableName": "dropdownRatingCompany"
+    },
+    {
+      "name": " Dropdown State",
+      "type": "id",
+      "value": "\"stateCode\"",
+      "variableName": "dropdownState"
+    }
+  ]
+}

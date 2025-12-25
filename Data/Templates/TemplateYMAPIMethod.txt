@@ -1,0 +1,13 @@
+	public Map<String, String> [METHOD_NAME]([METHOD_PARAMETERS])
+	{
+		// [METHOD_DESCRIPTION]
+		// [METHOD_URL]
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(SessionNamespace.getSessionID());
+		stringBuilder.append(Constants.newLineTab(1, 1) + "<Call Method=\"[METHOD_CALL]\">");
+[METHOD_CALL_PARAMETERS]
+		stringBuilder.append(Constants.newLineTab(1, 1) + "</Call>");
+		final Map<String, String> mapResponse = getAPIXMLResponse("POST", stringBuilder.toString());
+		stringBuilder = null;
+		return mapResponse;
+	}

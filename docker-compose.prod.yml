@@ -1,0 +1,186 @@
+# Docker Compose for Production Environment
+# Usage: docker-compose -f docker-compose.prod.yml up
+
+services:
+  # Selenium Hub
+  selenium-hub:
+    image: seleniarm/hub:latest
+    container_name: selenium-hub-prod
+    platform: linux/arm64
+    ports:
+      - "4444:4444"
+    environment:
+      - GRID_MAX_SESSION=20
+      - GRID_BROWSER_TIMEOUT=600
+      - GRID_TIMEOUT=600
+      - SE_SESSION_REQUEST_TIMEOUT=600
+      - SE_SESSION_RETRY_INTERVAL=10
+    networks:
+      - selenium-grid-prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Chrome nodes - 4 instances for production
+  chrome-node:
+    image: seleniarm/node-chromium:latest
+    platform: linux/arm64
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_SESSION_TIMEOUT=600
+      - SE_VNC_NO_PASSWORD=1
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+      - SE_VIDEO_RECORD_ENABLED=true
+      - SE_VIDEO_FOLDER=/videos
+    volumes:
+      - ./videos:/videos
+    shm_size: 2gb
+    networks:
+      - selenium-grid-prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555/status"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    restart: always
+    deploy:
+      replicas: 4
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Firefox nodes - 2 instances
+  firefox-node:
+    image: seleniarm/node-firefox:latest
+    platform: linux/arm64
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_SESSION_TIMEOUT=600
+      - SE_VNC_NO_PASSWORD=1
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+      - SE_VIDEO_RECORD_ENABLED=true
+      - SE_VIDEO_FOLDER=/videos
+    volumes:
+      - ./videos:/videos
+    shm_size: 2gb
+    networks:
+      - selenium-grid-prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555/status"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    restart: always
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Prometheus monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-prod
+    platform: linux/arm64
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data-prod:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    networks:
+      - selenium-grid-prod
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # Grafana dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-prod
+    platform: linux/arm64
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASSWORD:-changeme}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/
+    volumes:
+      - grafana-data-prod:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - selenium-grid-prod
+    depends_on:
+      - prometheus
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+networks:
+  selenium-grid-prod:
+    driver: bridge
+
+volumes:
+  prometheus-data-prod:
+  grafana-data-prod:
+
+# Production configuration notes:
+# - 4 Chrome nodes + 2 Firefox nodes = 6 total nodes
+# - Max 20 concurrent sessions
+# - Longer timeouts (10 minutes)
+# - Video recording enabled
+# - Resource limits enforced
+# - Auto-restart on failure
+# - Log rotation configured
+# - Prometheus retention: 30 days

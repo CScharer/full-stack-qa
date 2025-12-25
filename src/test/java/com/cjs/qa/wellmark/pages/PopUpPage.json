@@ -1,0 +1,16 @@
+{
+  "locators": [
+    {
+      "name": " Label Invitation Prompt",
+      "type": "xpath",
+      "value": "\".//*[@id='oo_invitation_prompt']\"",
+      "variableName": "labelInvitationPrompt"
+    },
+    {
+      "name": " Button No Thanks",
+      "type": "xpath",
+      "value": "\".//*[@id='oo_no_thanks']\"",
+      "variableName": "buttonNoThanks"
+    }
+  ]
+}

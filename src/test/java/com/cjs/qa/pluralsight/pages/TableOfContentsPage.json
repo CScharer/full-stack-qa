@@ -1,0 +1,22 @@
+{
+  "locators": [
+    {
+      "name": " By Section",
+      "type": "xpath",
+      "value": "\"//div[@id='tab-table-of-contents']/section[contains(@class,'module')]\"",
+      "variableName": "bySection"
+    },
+    {
+      "name": " By Heading2",
+      "type": "xpath",
+      "value": "\".//div[contains(@class,'side-menu-module-title')]/h2\"",
+      "variableName": "byHeading2"
+    },
+    {
+      "name": " By Heading3",
+      "type": "xpath",
+      "value": "\".//h3\"",
+      "variableName": "byHeading3"
+    }
+  ]
+}

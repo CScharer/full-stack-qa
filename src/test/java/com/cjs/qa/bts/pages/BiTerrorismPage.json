@@ -1,0 +1,40 @@
+{
+  "locators": [
+    {
+      "name": " Dropdown Does Terrorism Apply",
+      "type": "id",
+      "value": "\"TRSM_IND\"",
+      "variableName": "dropdownDoesTerrorismApply"
+    },
+    {
+      "name": " Dropdown Does Terrorism Apply To Crime",
+      "type": "id",
+      "value": "\"TRSM_CRIM_IND1\"",
+      "variableName": "dropdownDoesTerrorismApplyToCrime"
+    },
+    {
+      "name": " Edit Certified Acts Of Terrorism Premium",
+      "type": "id",
+      "value": "\"TRSM_PREM\"",
+      "variableName": "editCertifiedActsOfTerrorismPremium"
+    },
+    {
+      "name": " Edit Terrorism Fire Following Premium",
+      "type": "id",
+      "value": "\"TRSM_FF_PREM\"",
+      "variableName": "editTerrorismFireFollowingPremium"
+    },
+    {
+      "name": " Edit Other Acts Of Terrorism",
+      "type": "id",
+      "value": "\"TRSM_OTH_PREM\"",
+      "variableName": "editOtherActsOfTerrorism"
+    },
+    {
+      "name": " Button Frame",
+      "type": "id",
+      "value": "\"terrorism-title\"",
+      "variableName": "buttonFrame"
+    }
+  ]
+}
