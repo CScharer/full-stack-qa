@@ -19,7 +19,7 @@ setup_maven_opts() {
 # Helper function to run Maven command with Progress filtering
 run_maven() {
     setup_maven_opts
-    mvn "$@" 2>&1 | grep -vE "^Progress"
+    ./mvnw "$@" 2>&1 | grep -vE "^Progress"
     return ${PIPESTATUS[0]}  # Return Maven's exit code, not grep's
 }
 

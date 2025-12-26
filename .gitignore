@@ -178,7 +178,8 @@ target/allure-results/
 target/test-reports/
 checkstyle-current.xml
 checkstyle-result.xml
-pmd-*.xml
+pmd.xml
+pmd-latest.xml
 build/
 DatabaseSchema.xlsx
 # Python cache files and directories
