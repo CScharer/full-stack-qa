@@ -51,7 +51,7 @@
 
 | File | Line(s) | Current Reference | Should Be | Type | Status |
 |------|---------|-------------------|-----------|------|--------|
-| `backend/app/config.py` | 21 | `full_stack_qa.db` | `full_stack_qa_dev.db` | 🔧 Runtime | ⚠️ **INCORRECT** - Using schema DB for runtime |
+| `backend/app/config.py` | 21, 26-29 | `full_stack_qa.db` → `full_stack_qa_dev.db` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Now uses environment-based selection with validation |
 | `backend/tests/conftest.py` | 21 | `test_full_stack_qa.db` | Keep (temporary) | 🧪 Test | ✅ **CORRECT** - Temporary test DB |
 | `scripts/start-backend.sh` | 88 | `full_stack_qa.db` | `full_stack_qa_dev.db` | 🔧 Runtime | ⚠️ **INCORRECT** - Using schema DB |
 | `scripts/run-backend-tests.sh` | 20, 52 | `test_full_stack_qa.db`, `full_stack_qa.db` | `full_stack_qa_test.db` | 🔧 Test | ⚠️ **NEEDS UPDATE** - Mixed references |
@@ -66,7 +66,8 @@
 | `docs/new_app/SCHEMA_SOURCE_OF_TRUTH.md` | 80, 83 | `full_stack_qa.db` | Keep (schema DB) | 📝 Docs | ✅ **CORRECT** - Schema examples |
 
 **Summary**:
-- ⚠️ **6 Code Files** need updates (using schema DB incorrectly)
+- ✅ **1 Code File** completed (`backend/app/config.py`)
+- ⚠️ **5 Code Files** need updates (using schema DB incorrectly)
 - ⚠️ **7 Documentation Files** need updates (references to update)
 - ✅ **2 Files** are correct (temporary test DB, schema examples)
 
@@ -329,21 +330,32 @@ DATABASE_NAME=my_custom.db
 
 ### Phase 1: Backend Code Updates
 
-#### 1.1 Update `backend/app/config.py`
+#### 1.1 Update `backend/app/config.py` ✅ **COMPLETED**
 **Current State**:
 - Hardcoded: `database_path: str = "../Data/Core/full_stack_qa.db"`
 - Uses schema database for runtime (incorrect)
 
 **Changes Needed**:
-- [ ] Add `database_name` configuration option
-- [ ] Add `environment` configuration option (dev/test/prod)
-- [ ] Update `get_database_path()` to support environment-based selection
-- [ ] Default to `full_stack_qa_dev.db` instead of `full_stack_qa.db`
-- [ ] Add logic to select database based on `ENVIRONMENT` env var
-- [ ] Ensure schema database (`full_stack_qa.db`) is NEVER used for runtime
+- [x] Add `database_name` configuration option
+- [x] Add `environment` configuration option (dev/test/prod)
+- [x] Update `get_database_path()` to support environment-based selection
+- [x] Default to `full_stack_qa_dev.db` instead of `full_stack_qa.db`
+- [x] Add logic to select database based on `ENVIRONMENT` env var
+- [x] Ensure schema database (`full_stack_qa.db`) is NEVER used for runtime
 
-**Files to Update**:
-- `backend/app/config.py` - Main configuration class and path resolution
+**Files Updated**:
+- ✅ `backend/app/config.py` - Main configuration class and path resolution
+
+**Implementation Details**:
+- Added `database_name: Optional[str]`, `database_dir: str`, and `environment: str` to Settings class
+- Changed default database path from `full_stack_qa.db` to `full_stack_qa_dev.db`
+- Implemented priority-based resolution in `get_database_path()`:
+  1. `DATABASE_PATH` env var (full path) - highest priority
+  2. `DATABASE_NAME` + `DATABASE_DIR` env vars
+  3. `ENVIRONMENT` env var → `full_stack_qa_{env}.db`
+  4. Default → `full_stack_qa_dev.db`
+- Added `_validate_not_schema_database()` function to prevent using schema database for runtime
+- Added comprehensive documentation and error messages
 
 #### 1.2 Update `backend/app/database/connection.py`
 **Current State**:
