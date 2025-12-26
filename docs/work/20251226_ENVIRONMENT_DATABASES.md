@@ -66,7 +66,8 @@
 | `docs/new_app/SCHEMA_SOURCE_OF_TRUTH.md` | 80, 83 | `full_stack_qa.db` | Keep (schema DB) | 📝 Docs | ✅ **CORRECT** - Schema examples |
 
 **Summary**:
-- ✅ **1 Code File** completed (`backend/app/config.py`)
+- ✅ **2 Code Files** completed (`backend/app/config.py`, `backend/app/database/connection.py`)
+- ✅ **1 Test File** created (`backend/tests/test_database_config.py`)
 - ⚠️ **5 Code Files** need updates (using schema DB incorrectly)
 - ⚠️ **7 Documentation Files** need updates (references to update)
 - ✅ **2 Files** are correct (temporary test DB, schema examples)
@@ -357,31 +358,70 @@ DATABASE_NAME=my_custom.db
 - Added `_validate_not_schema_database()` function to prevent using schema database for runtime
 - Added comprehensive documentation and error messages
 
-#### 1.2 Update `backend/app/database/connection.py`
+#### 1.2 Update `backend/app/database/connection.py` ✅ **COMPLETED**
 **Current State**:
 - Uses `get_database_path()` from config
+- No logging to show which database is being used
 
 **Changes Needed**:
-- [ ] Verify it correctly uses environment-based database
-- [ ] Add validation to prevent using schema database for runtime
-- [ ] Add logging to show which database is being used
+- [x] Verify it correctly uses environment-based database
+- [x] Add validation to prevent using schema database for runtime (inherited from config)
+- [x] Add logging to show which database is being used
 
-**Files to Update**:
-- `backend/app/database/connection.py` - Connection logic
+**Files Updated**:
+- ✅ `backend/app/database/connection.py` - Connection logic with logging
 
-#### 1.3 Update `backend/tests/conftest.py`
+**Implementation Details**:
+- Added logging module import and logger setup
+- Added info-level logging when connecting to database (shows database path)
+- Added debug-level logging for connection establishment and closure
+- Added error-level logging for database errors
+- Validation is already handled by `get_database_path()` which raises ValueError for schema database
+- Connection function now logs which database is being used for easier debugging
+
+#### 1.3 Test Backend Configuration Changes ✅ **COMPLETED**
+**Purpose**:
+- Verify database path resolution works correctly
+- Test all priority levels (DATABASE_PATH, DATABASE_NAME, ENVIRONMENT, default)
+- Verify schema database validation prevents runtime usage
+- Ensure logging works correctly
+
+**Test Script Created**:
+- ✅ `backend/tests/test_database_config.py` - Comprehensive test script
+
+**Test Coverage**:
+- [x] Test default database path (should be full_stack_qa_dev.db)
+- [x] Test environment-based selection (dev/test/prod)
+- [x] Test DATABASE_NAME environment variable
+- [x] Test DATABASE_PATH environment variable (highest priority)
+- [x] Test schema database validation (should reject full_stack_qa.db)
+- [x] Test validation function directly
+
+**How to Run Tests**:
+```bash
+cd backend
+python tests/test_database_config.py
+```
+
+**Expected Results**:
+- All 6 test cases should pass
+- Default database should be `full_stack_qa_dev.db`
+- Environment variables should correctly select databases
+- Schema database should be rejected with ValueError
+
+#### 1.4 Update `backend/tests/conftest.py` (Optional - Keep Current Approach)
 **Current State**:
 - Creates temporary `test_full_stack_qa.db` in temp directory
 - Uses temporary database for all tests
+- **This approach works well and keeps tests isolated**
 
-**Changes Needed**:
-- [ ] Option 1: Keep temporary database (current approach - works well)
-- [ ] Option 2: Use persistent `full_stack_qa_test.db` for integration tests
-- [ ] Document which approach is used
-- [ ] Ensure test database is isolated from dev/prod databases
+**Decision**: ✅ **KEEP CURRENT APPROACH**
+- Temporary databases are automatically cleaned up
+- Tests remain isolated from dev/prod databases
+- No changes needed
 
-**Files to Update**:
-- `backend/tests/conftest.py` - Test database configuration
+**Files to Review**:
+- `backend/tests/conftest.py` - Test database configuration (no changes needed)
 
 ### Phase 2: Script Updates
 
