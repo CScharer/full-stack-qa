@@ -16,7 +16,8 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 - ✅ Schema designed and documented (`ONE_GOAL_SCHEMA_CORRECTED.sql`)
 - ✅ Relationships documented (`ENTITY_RELATIONSHIPS.md`)
 - ✅ Source of truth established (`SCHEMA_SOURCE_OF_TRUTH.md`)
-- ✅ **Database file created** (`Data/Core/full_stack_qa.db`)
+- ✅ **Schema database created** (`Data/Core/full_stack_qa.db` - template only)
+- ✅ **Environment databases created** (`full_stack_qa_dev.db`, `full_stack_qa_test.db`)
 - ✅ **Comprehensive test suite** (62 tests covering schema, FKs, constraints, relationships, triggers)
 - ✅ **Delete triggers implemented** (`DELETE_TRIGGERS.sql`)
 - ✅ **Delete behavior documented** (`DELETE_BEHAVIOR.md`)
@@ -24,6 +25,12 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 - ⏭️ **Migration system** - Pending
 - ⏭️ **Seed data scripts** - Pending
 - ⏭️ **Database utilities** - Pending
+
+**Note**: The project now uses environment-specific databases:
+- **Schema Database** (`full_stack_qa.db`): Template/reference only - NEVER used for runtime
+- **Development Database** (`full_stack_qa_dev.db`): Default for local development
+- **Test Database** (`full_stack_qa_test.db`): Used for integration testing
+- **Production Database** (`full_stack_qa_prod.db`): For production (create when needed)
 
 ---
 
@@ -48,7 +55,8 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 **Completed**: 2025-12-14
 
 **What Was Done**:
-1. ✅ Created database file at `Data/Core/full_stack_qa.db`
+1. ✅ Created schema database at `Data/Core/full_stack_qa.db` (template)
+2. ✅ Created environment databases (`full_stack_qa_dev.db`, `full_stack_qa_test.db`)
 2. ✅ Applied schema from `ONE_GOAL_SCHEMA_CORRECTED.sql`
 3. ✅ Added `default_value` table for centralized defaults management
 4. ✅ Applied delete triggers from `DELETE_TRIGGERS.sql`
@@ -57,8 +65,10 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 7. ✅ Verified foreign keys enabled
 
 **Database Location**:
-- **Path**: `Data/Core/full_stack_qa.db`
-- **Name**: Matches repository name (`full-stack-qa` → `full_stack_qa.db`)
+- **Schema Database Path**: `Data/Core/full_stack_qa.db` (template only)
+- **Development Database Path**: `Data/Core/full_stack_qa_dev.db` (default for runtime)
+- **Test Database Path**: `Data/Core/full_stack_qa_test.db` (for testing)
+- **Name**: Matches repository name (`full-stack-qa` → `full_stack_qa_{env}.db`)
 
 **Verification Commands**:
 ```bash
@@ -82,7 +92,9 @@ sqlite3 Data/Core/full_stack_qa.db ".schema"
 - [x] Delete triggers applied
 
 **Files Created**:
-- ✅ `Data/Core/full_stack_qa.db` (SQLite database file)
+- ✅ `Data/Core/full_stack_qa.db` (Schema database - template only)
+- ✅ `Data/Core/full_stack_qa_dev.db` (Development database - default for runtime)
+- ✅ `Data/Core/full_stack_qa_test.db` (Test database - for integration testing)
 - ✅ `Data/Core/README.md` (Database documentation)
 
 ---
@@ -204,8 +216,9 @@ import os
 from pathlib import Path
 from datetime import datetime
 
-# Database path
-DB_PATH = Path(__file__).parent.parent / "full_stack_qa.db"
+# Database path (development database - default)
+DB_PATH = Path(__file__).parent.parent / "Data" / "Core" / "full_stack_qa_dev.db"
+# Note: In production code, use environment-based selection via backend config
 
 def get_current_version(db_path):
     """Get current schema version from database."""
@@ -466,7 +479,8 @@ import sqlite3
 from pathlib import Path
 from contextlib import contextmanager
 
-DB_PATH = Path(__file__).parent.parent / "full_stack_qa.db"
+DB_PATH = Path(__file__).parent.parent / "Data" / "Core" / "full_stack_qa_dev.db"
+# Note: In production code, use environment-based selection via backend config
 
 @contextmanager
 def get_db_connection():

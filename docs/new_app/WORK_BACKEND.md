@@ -13,7 +13,10 @@
 The backend API provides REST endpoints for the ONE GOAL application. It uses FastAPI with Pydantic models and connects to the SQLite database.
 
 **Prerequisites**:
-- ✅ **Database completed** - `Data/Core/full_stack_qa.db` created and tested (62 tests passing)
+- ✅ **Database completed** - Environment databases created and tested (62 tests passing)
+  - Development database: `Data/Core/full_stack_qa_dev.db` (default)
+  - Test database: `Data/Core/full_stack_qa_test.db`
+  - Schema database: `Data/Core/full_stack_qa.db` (template only, not used for runtime)
 - ✅ API contract defined (`API_CONTRACT.md`)
 - ✅ API versioning guide available (`API_VERSIONING_GUIDE.md`)
 - ✅ Delete behavior documented (`DELETE_BEHAVIOR.md`)

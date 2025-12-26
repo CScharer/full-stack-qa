@@ -18,37 +18,42 @@ Before running the application locally, ensure you have:
 
 ## 🗄️ Database Setup
 
-The database must be created before running the backend. The database file is located at:
+### Database Types
 
-```
-Data/Core/full_stack_qa.db
-```
+The project uses **environment-specific databases** for runtime data:
+
+- **Schema Database** (`full_stack_qa.db`): Template/reference only - **NEVER used for runtime**
+- **Development Database** (`full_stack_qa_dev.db`): Default database for local development
+- **Test Database** (`full_stack_qa_test.db`): Used for integration testing
+- **Production Database** (`full_stack_qa_prod.db`): Used for production (if needed)
 
 ### Quick Setup
 
-If the database doesn't exist yet, you can create it using the schema:
+The development database should already exist. If it doesn't, create it from the schema:
 
 ```bash
-# Navigate to project root (adjust path as needed)
+# Navigate to project root
 cd /path/to/full-stack-qa
 
 # Create database directory if it doesn't exist
 mkdir -p Data/Core
 
-# Create database from schema (if needed)
-sqlite3 Data/Core/full_stack_qa.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+# Create development database from schema
+sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 
 # Apply delete triggers
-sqlite3 Data/Core/full_stack_qa.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
+
+**Note**: The backend automatically uses `full_stack_qa_dev.db` by default (when `ENVIRONMENT=dev` or no environment is set).
 
 ### Verify Database
 
 ```bash
-# Check if database exists and has tables
-sqlite3 Data/Core/full_stack_qa.db ".tables"
+# Check if development database exists and has tables
+sqlite3 Data/Core/full_stack_qa_dev.db ".tables"
 
-# Should show: application, company, client, contact, contact_email, contact_phone, note, job_search_site, application_sync, default_value
+# Should show: application, company, client, contact, contact_email, contact_phone, note, job_search_site, application_sync
 ```
 
 ---
@@ -84,15 +89,21 @@ pip install -r requirements.txt
 
 ### 4. Configure Environment Variables
 
-Create a `.env` file in the `backend` directory:
+Create a `.env` file in the `backend` directory (optional - defaults work for development):
 
 ```bash
 # backend/.env
-DATABASE_PATH=../Data/Core/full_stack_qa.db
+# Database configuration (optional - defaults to full_stack_qa_dev.db)
+ENVIRONMENT=dev  # Options: dev, test, prod
+# Or use explicit path:
+# DATABASE_PATH=../Data/Core/full_stack_qa_dev.db
+
 API_HOST=0.0.0.0
 API_PORT=8008
 CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 ```
+
+**Note**: The backend automatically uses `full_stack_qa_dev.db` for development by default. You only need to set `ENVIRONMENT` or `DATABASE_PATH` if you want to use a different database.
 
 ### 5. Run Backend Server
 
@@ -246,8 +257,10 @@ npm run test:ui
 
 **Issue: Database not found**
 ```bash
-# Solution: Ensure database exists at Data/Core/full_stack_qa.db
-# Create it using the schema files if needed
+# Solution: Ensure development database exists at Data/Core/full_stack_qa_dev.db
+# Create it using the schema files if needed:
+sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
 **Issue: Port 8008 already in use**
@@ -327,7 +340,9 @@ full-stack-qa/
 │
 ├── Data/
 │   └── Core/
-│       └── full_stack_qa.db  # SQLite database
+│       ├── full_stack_qa.db  # Schema database (template only)
+│       ├── full_stack_qa_dev.db  # Development database (default)
+│       └── full_stack_qa_test.db  # Test database
 │
 └── scripts/                # Helper scripts
     ├── start-backend.sh
@@ -375,7 +390,7 @@ full-stack-qa/
 
 Before starting development, verify:
 
-- [ ] Database exists at `Data/Core/full_stack_qa.db`
+- [ ] Development database exists at `Data/Core/full_stack_qa_dev.db`
 - [ ] Backend virtual environment created and activated
 - [ ] Backend dependencies installed (`pip install -r requirements.txt`)
 - [ ] Backend `.env` file configured
