@@ -85,7 +85,7 @@ pip install -q --upgrade pip
 pip install -q -r "$BACKEND_DIR/requirements.txt"
 
 # Check if database exists
-DB_PATH="${SCRIPT_DIR}/Data/Core/full_stack_testing.db"
+DB_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa.db"
 if [ ! -f "$DB_PATH" ]; then
     echo -e "${YELLOW}⚠️  Database file not found: $DB_PATH${NC}"
     echo -e "${YELLOW}   The backend will start but database operations may fail${NC}"

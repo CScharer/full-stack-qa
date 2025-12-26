@@ -45,23 +45,23 @@ Indexes on:
 
 ### Check Tables
 ```bash
-sqlite3 Data/Core/full_stack_testing.db ".tables"
+
 ```
 
 ### Check Foreign Keys
 ```bash
-sqlite3 Data/Core/full_stack_testing.db "PRAGMA foreign_keys;"
+sqlite3 Data/Core/full_stack_qa.db "PRAGMA foreign_keys;"
 # Should return: 1
 ```
 
 ### View Schema
 ```bash
-sqlite3 Data/Core/full_stack_testing.db ".schema"
+sqlite3 Data/Core/full_stack_qa.db ".schema"
 ```
 
 ### View Specific Table
 ```bash
-sqlite3 Data/Core/full_stack_testing.db ".schema application"
+sqlite3 Data/Core/full_stack_qa.db ".schema application"
 ```
 
 ---

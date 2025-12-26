@@ -21,7 +21,7 @@ Before running the application locally, ensure you have:
 The database must be created before running the backend. The database file is located at:
 
 ```
-Data/Core/full_stack_testing.db
+Data/Core/full_stack_qa.db
 ```
 
 ### Quick Setup
@@ -36,17 +36,17 @@ cd /path/to/full-stack-qa
 mkdir -p Data/Core
 
 # Create database from schema (if needed)
-sqlite3 Data/Core/full_stack_testing.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 Data/Core/full_stack_qa.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 
 # Apply delete triggers
-sqlite3 Data/Core/full_stack_testing.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 Data/Core/full_stack_qa.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
 ### Verify Database
 
 ```bash
 # Check if database exists and has tables
-sqlite3 Data/Core/full_stack_testing.db ".tables"
+sqlite3 Data/Core/full_stack_qa.db ".tables"
 
 # Should show: application, company, client, contact, contact_email, contact_phone, note, job_search_site, application_sync, default_value
 ```
@@ -88,7 +88,7 @@ Create a `.env` file in the `backend` directory:
 
 ```bash
 # backend/.env
-DATABASE_PATH=../Data/Core/full_stack_testing.db
+DATABASE_PATH=../Data/Core/full_stack_qa.db
 API_HOST=0.0.0.0
 API_PORT=8008
 CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
@@ -246,7 +246,7 @@ npm run test:ui
 
 **Issue: Database not found**
 ```bash
-# Solution: Ensure database exists at Data/Core/full_stack_testing.db
+# Solution: Ensure database exists at Data/Core/full_stack_qa.db
 # Create it using the schema files if needed
 ```
 
@@ -327,7 +327,7 @@ full-stack-qa/
 │
 ├── Data/
 │   └── Core/
-│       └── full_stack_testing.db  # SQLite database
+│       └── full_stack_qa.db  # SQLite database
 │
 └── scripts/                # Helper scripts
     ├── start-backend.sh
@@ -375,7 +375,7 @@ full-stack-qa/
 
 Before starting development, verify:
 
-- [ ] Database exists at `Data/Core/full_stack_testing.db`
+- [ ] Database exists at `Data/Core/full_stack_qa.db`
 - [ ] Backend virtual environment created and activated
 - [ ] Backend dependencies installed (`pip install -r requirements.txt`)
 - [ ] Backend `.env` file configured

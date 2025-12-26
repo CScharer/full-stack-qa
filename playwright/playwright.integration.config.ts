@@ -52,7 +52,7 @@ export default defineConfig({
       stdout: 'pipe',
       stderr: 'pipe',
       env: {
-        DATABASE_PATH: '../Data/Core/full_stack_testing.db',
+        DATABASE_PATH: '../Data/Core/full_stack_qa.db',
         API_HOST: '0.0.0.0',
         API_PORT: '8008',
         CORS_ORIGINS: 'http://127.0.0.1:3003,http://localhost:3003',
