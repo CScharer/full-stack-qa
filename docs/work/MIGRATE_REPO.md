@@ -475,6 +475,7 @@ Error report
 3. **Verify Test Results**:
    - ✅ Backend tests: Should pass (no more 500 errors)
    - ✅ Frontend tests: Should pass
+   - ✅ Cypress tests: Should pass (port configuration fixed)
    - ✅ Performance tests: Should pass (Gatling, JMeter, Locust)
    - ✅ Code quality checks: Should pass (Spotless, Checkstyle, PMD)
    - ✅ Code Quality Analysis: Fixed (pmd-ruleset.xml added, script updated to use mvnw)
@@ -494,7 +495,14 @@ Error report
 
 ### Step 5.3: Verify GitHub Pages Deployment
 
-1. **Check Allure Reports**:
+**⚠️ IMPORTANT**: GitHub Pages only deploys on `main` branch, so PR must be merged first.
+
+1. **Merge PR to main** (required for GitHub Pages deployment):
+   - Merge PR #1: https://github.com/CScharer/full-stack-qa/pull/1
+   - This will trigger a new CI run on `main` branch
+   - GitHub Pages deployment will happen automatically on `main`
+
+2. **Check Allure Reports** (after PR merge):
    - **For PR branches**: Reports are available as artifacts (not deployed to GitHub Pages)
      - Go to **Actions** tab → Select the workflow run
      - Download artifact: `allure-report-combined-all-environments`
@@ -505,7 +513,7 @@ Error report
      - Check that test results are displayed correctly
    - **Note**: GitHub Pages only deploys on `main` branch when code changes are detected
 
-2. **Verify Pages Source**:
+3. **Verify Pages Source**:
    - Go to **Settings → Pages**
    - Confirm source is set to "GitHub Actions"
    - Verify deployment is working (will show after PR is merged to main)
@@ -513,12 +521,16 @@ Error report
 ### Step 5.4: Final Verification Checklist
 
 - [ ] All CI workflows passing
-- [ ] Backend tests passing (no 500 errors)
+- [ ] Backend tests passing (no 500 errors) ✅ **FIXED**
 - [ ] Frontend tests passing
+- [ ] Cypress tests passing (port configuration) ✅ **FIXED**
 - [ ] Performance tests passing
-- [ ] Code Quality Analysis passing (Checkstyle, PMD)
+- [ ] Code Quality Analysis passing (Checkstyle, PMD) ✅ **FIXED**
+- [ ] Port configuration centralized (prevents future mismatches) ✅ **FIXED**
+- [ ] PR #1 merged to main (required for GitHub Pages deployment)
+- [ ] GitHub Pages deployed and accessible (verify after PR merge)
+- [ ] Allure Reports accessible at https://cscharer.github.io/full-stack-qa/
 - [ ] Database connections working
-- [ ] GitHub Pages deployed and accessible
 - [ ] All features accessible
 - [ ] No critical errors in logs
 
@@ -526,6 +538,8 @@ Error report
 - Added `pmd-ruleset.xml` to repository (was missing from initial commit)
 - Updated `verify-code-quality.sh` to use `./mvnw` instead of `mvn`
 - Updated `.gitignore` to allow `pmd-ruleset.xml` (changed from `pmd-*.xml` to specific patterns)
+
+**Next Step**: Merge PR #1 to `main` to trigger GitHub Pages deployment and verify Allure Reports.
 
 **Once all items are verified, proceed to Phase 6 (disable old repo workflows).**
 

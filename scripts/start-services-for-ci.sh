@@ -20,13 +20,50 @@ FORCE_STOP=${FORCE_STOP:-"false"}  # Force stop existing services on ports
 # Function to load environment-specific ports from .env files
 load_environment_ports() {
     # Convert to lowercase (compatible with bash 3.2+)
-    local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+    local env=$(echo "${ENVIRONMENT:-dev}" | tr '[:upper:]' '[:lower:]')
     local backend_env_file="${BACKEND_DIR}/.env"
     local frontend_env_file="${FRONTEND_DIR}/.env"
     
-    # Default ports (DEV) - can be overridden by environment variables
-    local api_port=${API_PORT:-8003}
-    local frontend_port=${FRONTEND_PORT:-3003}
+    # Source centralized port configuration (single source of truth)
+    # This ensures all scripts use the same port values
+    local port_config_script="${SCRIPT_DIR}/scripts/ci/port-config.sh"
+    if [ -f "$port_config_script" ]; then
+        # Source the port config to get default ports
+        source "$port_config_script"
+        # Get ports for this environment
+        local port_config=$(get_ports_for_environment "$env")
+        eval "$port_config"
+        
+        # Use centralized config as defaults (can still be overridden by env vars or .env files)
+        api_port=${API_PORT:-$API_PORT}
+        frontend_port=${FRONTEND_PORT:-$FRONTEND_PORT}
+    else
+        # Fallback to hardcoded values if config file doesn't exist (shouldn't happen)
+        echo "⚠️  Warning: port-config.sh not found, using fallback values" >&2
+        case "$env" in
+            dev)
+                api_port=8003
+                frontend_port=3003
+                ;;
+            test)
+                api_port=8004
+                frontend_port=3004
+                ;;
+            prod)
+                api_port=8005
+                frontend_port=3005
+                ;;
+            *)
+                api_port=8003
+                frontend_port=3003
+                ;;
+        esac
+    fi
+    
+    # Allow environment variables to override (highest priority)
+    api_port=${API_PORT:-$api_port}
+    frontend_port=${FRONTEND_PORT:-$frontend_port}
+    
     local api_host="0.0.0.0"
     
     # Load backend ports from .env if it exists (only if not already set via environment variable)
