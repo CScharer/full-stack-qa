@@ -17,7 +17,8 @@ NC='\033[0m' # No Color
 
 # Configuration
 BACKEND_DIR="${SCRIPT_DIR}/backend"
-TEST_DB_PATH="${SCRIPT_DIR}/Data/Core/test_full_stack_qa.db"
+# Note: Backend tests use temporary databases created by pytest fixtures
+# No environment database needed - tests are isolated
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🧪 Running ONE GOAL Backend Tests${NC}"
@@ -48,12 +49,8 @@ echo -e "${BLUE}📦 Installing dependencies...${NC}"
 pip install -q --upgrade pip
 pip install -q -r "$BACKEND_DIR/requirements.txt"
 
-# Check if database exists (for integration tests)
-DB_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa.db"
-if [ ! -f "$DB_PATH" ]; then
-    echo -e "${YELLOW}⚠️  Database file not found: $DB_PATH${NC}"
-    echo -e "${YELLOW}   Some integration tests may fail${NC}"
-fi
+# Note: Backend unit tests use temporary databases (auto-created by pytest)
+# No database file check needed - tests are fully isolated
 
 # Run tests
 echo ""

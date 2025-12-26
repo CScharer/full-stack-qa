@@ -68,11 +68,17 @@ npm run dev  # ✅ This works
 
 ### Backend (.env file in `backend/` directory)
 ```bash
-DATABASE_PATH=../Data/Core/full_stack_qa.db
+# Database configuration (optional - defaults to full_stack_qa_dev.db)
+ENVIRONMENT=dev  # Options: dev, test, prod
+# Or use explicit path:
+# DATABASE_PATH=../Data/Core/full_stack_qa_dev.db
+
 API_HOST=0.0.0.0
 API_PORT=8008
 CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 ```
+
+**Note**: The backend automatically uses `full_stack_qa_dev.db` for development by default. You only need to set `ENVIRONMENT` or `DATABASE_PATH` if you want to use a different database.
 
 ### Frontend (.env.local file in `frontend/` directory)
 ```bash
@@ -100,7 +106,7 @@ Open browser: http://127.0.0.1:3003
 
 ### Backend won't start
 - Check if port 8008 is in use: `lsof -ti:8008 | xargs kill -9`
-- Verify database exists: `ls -la Data/Core/full_stack_qa.db`
+- Verify development database exists: `ls -la Data/Core/full_stack_qa_dev.db`
 - Check virtual environment: `source backend/venv/bin/activate`
 
 ### Frontend won't start

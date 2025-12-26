@@ -55,29 +55,36 @@ This script will:
 
 If you prefer to run tests manually:
 
-### 1. Ensure Database Exists
+### 1. Ensure Test Database Exists
+
+Integration tests use the **test environment database** (`full_stack_qa_test.db`):
 
 ```bash
-# Database should exist at:
-Data/Core/full_stack_qa.db
+# Test database should exist at:
+Data/Core/full_stack_qa_test.db
 
-# If not, create it:
+# If not, create it from schema:
 mkdir -p Data/Core
-sqlite3 Data/Core/full_stack_qa.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 Data/Core/full_stack_qa.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 Data/Core/full_stack_qa_test.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 Data/Core/full_stack_qa_test.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
+
+**Note**: The integration test script automatically sets `ENVIRONMENT=test`, which makes the backend use `full_stack_qa_test.db`.
 
 ### 2. Start Backend Server
 
 ```bash
 cd backend
 source venv/bin/activate
-export DATABASE_PATH=../Data/Core/full_stack_qa.db
+# Set environment to test (uses full_stack_qa_test.db)
+export ENVIRONMENT=test
 export API_HOST=0.0.0.0
 export API_PORT=8008
 export CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8008
 ```
+
+**Note**: Setting `ENVIRONMENT=test` automatically makes the backend use `full_stack_qa_test.db`.
 
 ### 3. Start Frontend Server
 
@@ -161,8 +168,8 @@ export FRONTEND_URL=http://127.0.0.1:3003
 # Backend URL (used by frontend)
 export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
 
-# Database path (used by backend)
-export DATABASE_PATH=../Data/Core/full_stack_qa.db
+# Set environment to test (uses full_stack_qa_test.db)
+export ENVIRONMENT=test
 ```
 
 ---
@@ -176,8 +183,8 @@ export DATABASE_PATH=../Data/Core/full_stack_qa.db
 # Check if port 8008 is in use
 lsof -ti:8008 | xargs kill -9
 
-# Verify database exists
-ls -la Data/Core/full_stack_qa.db
+# Verify test database exists
+ls -la Data/Core/full_stack_qa_test.db
 
 # Check backend dependencies
 cd backend
