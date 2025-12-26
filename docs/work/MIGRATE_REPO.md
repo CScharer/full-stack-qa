@@ -751,7 +751,11 @@ Use the status legend symbols to track progress:
   - [✅] Step 4.5.2: GitHub Pages verified (set to "GitHub Actions")
   - [✅] Step 4.5.3: Workflows verified (running automatically, verify-formatting.yml passed)
   - [✅] Step 4.3.1: Backend test failures fixed (database references updated, tests now passing)
-- [ ] [❌] Phase 5: Verify new repo is working correctly
+- [ ] [🔍] Phase 5: Verify new repo is working correctly
+  - [ ] Step 5.1: Verify CI/CD pipeline (check PR #1, all workflows passing)
+  - [ ] Step 5.2: Verify database connections (backend endpoints returning 200)
+  - [ ] Step 5.3: Verify GitHub Pages deployment (Allure reports accessible)
+  - [ ] Step 5.4: Complete final verification checklist
 - [ ] [❌] Phase 6: Disable automatic jobs in old repo (GitHub UI)
 - [ ] [❌] Phase 7: Post-migration cleanup and verification
 
