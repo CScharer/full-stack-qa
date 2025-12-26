@@ -32,13 +32,13 @@ fi
 echo "✅ Python: $(python3 --version)"
 
 # Check database exists
-if [ ! -f "$PROJECT_ROOT/Data/Core/full_stack_testing.db" ]; then
+if [ ! -f "$PROJECT_ROOT/Data/Core/full_stack_qa.db" ]; then
     echo "⚠️  Database not found. Creating database..."
     mkdir -p "$PROJECT_ROOT/Data/Core"
     if [ -f "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql" ]; then
-        sqlite3 "$PROJECT_ROOT/Data/Core/full_stack_testing.db" < "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql"
+        sqlite3 "$PROJECT_ROOT/Data/Core/full_stack_qa.db" < "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql"
         if [ -f "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql" ]; then
-            sqlite3 "$PROJECT_ROOT/Data/Core/full_stack_testing.db" < "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql"
+            sqlite3 "$PROJECT_ROOT/Data/Core/full_stack_qa.db" < "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql"
         fi
         echo "✅ Database created"
     else

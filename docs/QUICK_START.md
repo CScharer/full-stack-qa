@@ -68,7 +68,7 @@ npm run dev  # ✅ This works
 
 ### Backend (.env file in `backend/` directory)
 ```bash
-DATABASE_PATH=../Data/Core/full_stack_testing.db
+DATABASE_PATH=../Data/Core/full_stack_qa.db
 API_HOST=0.0.0.0
 API_PORT=8008
 CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
@@ -100,7 +100,7 @@ Open browser: http://127.0.0.1:3003
 
 ### Backend won't start
 - Check if port 8008 is in use: `lsof -ti:8008 | xargs kill -9`
-- Verify database exists: `ls -la Data/Core/full_stack_testing.db`
+- Verify database exists: `ls -la Data/Core/full_stack_qa.db`
 - Check virtual environment: `source backend/venv/bin/activate`
 
 ### Frontend won't start

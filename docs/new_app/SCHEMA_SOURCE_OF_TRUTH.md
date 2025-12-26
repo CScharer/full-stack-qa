@@ -77,10 +77,10 @@ The following files are **NOT** the source of truth and should **NOT** be used f
 cd /path/to/full-stack-qa
 
 # Create database from schema
-sqlite3 full_stack_testing.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 full_stack_qa.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 
 # Verify schema
-sqlite3 full_stack_testing.db ".schema"
+sqlite3 full_stack_qa.db ".schema"
 ```
 
 ### Python Script Usage

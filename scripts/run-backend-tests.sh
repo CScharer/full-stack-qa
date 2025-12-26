@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 BACKEND_DIR="${SCRIPT_DIR}/backend"
-TEST_DB_PATH="${SCRIPT_DIR}/Data/Core/test_full_stack_testing.db"
+TEST_DB_PATH="${SCRIPT_DIR}/Data/Core/test_full_stack_qa.db"
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🧪 Running ONE GOAL Backend Tests${NC}"
@@ -49,7 +49,7 @@ pip install -q --upgrade pip
 pip install -q -r "$BACKEND_DIR/requirements.txt"
 
 # Check if database exists (for integration tests)
-DB_PATH="${SCRIPT_DIR}/Data/Core/full_stack_testing.db"
+DB_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa.db"
 if [ ! -f "$DB_PATH" ]; then
     echo -e "${YELLOW}⚠️  Database file not found: $DB_PATH${NC}"
     echo -e "${YELLOW}   Some integration tests may fail${NC}"

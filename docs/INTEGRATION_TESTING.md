@@ -59,12 +59,12 @@ If you prefer to run tests manually:
 
 ```bash
 # Database should exist at:
-Data/Core/full_stack_testing.db
+Data/Core/full_stack_qa.db
 
 # If not, create it:
 mkdir -p Data/Core
-sqlite3 Data/Core/full_stack_testing.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 Data/Core/full_stack_testing.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 Data/Core/full_stack_qa.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 Data/Core/full_stack_qa.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
 ### 2. Start Backend Server
@@ -72,7 +72,7 @@ sqlite3 Data/Core/full_stack_testing.db < docs/new_app/DELETE_TRIGGERS.sql
 ```bash
 cd backend
 source venv/bin/activate
-export DATABASE_PATH=../Data/Core/full_stack_testing.db
+export DATABASE_PATH=../Data/Core/full_stack_qa.db
 export API_HOST=0.0.0.0
 export API_PORT=8008
 export CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
@@ -162,7 +162,7 @@ export FRONTEND_URL=http://127.0.0.1:3003
 export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
 
 # Database path (used by backend)
-export DATABASE_PATH=../Data/Core/full_stack_testing.db
+export DATABASE_PATH=../Data/Core/full_stack_qa.db
 ```
 
 ---
@@ -177,7 +177,7 @@ export DATABASE_PATH=../Data/Core/full_stack_testing.db
 lsof -ti:8008 | xargs kill -9
 
 # Verify database exists
-ls -la Data/Core/full_stack_testing.db
+ls -la Data/Core/full_stack_qa.db
 
 # Check backend dependencies
 cd backend

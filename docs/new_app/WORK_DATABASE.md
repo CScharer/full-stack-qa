@@ -16,7 +16,7 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 - ✅ Schema designed and documented (`ONE_GOAL_SCHEMA_CORRECTED.sql`)
 - ✅ Relationships documented (`ENTITY_RELATIONSHIPS.md`)
 - ✅ Source of truth established (`SCHEMA_SOURCE_OF_TRUTH.md`)
-- ✅ **Database file created** (`Data/Core/full_stack_testing.db`)
+- ✅ **Database file created** (`Data/Core/full_stack_qa.db`)
 - ✅ **Comprehensive test suite** (62 tests covering schema, FKs, constraints, relationships, triggers)
 - ✅ **Delete triggers implemented** (`DELETE_TRIGGERS.sql`)
 - ✅ **Delete behavior documented** (`DELETE_BEHAVIOR.md`)
@@ -48,7 +48,7 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 **Completed**: 2025-12-14
 
 **What Was Done**:
-1. ✅ Created database file at `Data/Core/full_stack_testing.db`
+1. ✅ Created database file at `Data/Core/full_stack_qa.db`
 2. ✅ Applied schema from `ONE_GOAL_SCHEMA_CORRECTED.sql`
 3. ✅ Added `default_value` table for centralized defaults management
 4. ✅ Applied delete triggers from `DELETE_TRIGGERS.sql`
@@ -57,20 +57,20 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 7. ✅ Verified foreign keys enabled
 
 **Database Location**:
-- **Path**: `Data/Core/full_stack_testing.db`
-- **Name**: Matches repository name (`full-stack-qa` → `full_stack_testing.db`)
+- **Path**: `Data/Core/full_stack_qa.db`
+- **Name**: Matches repository name (`full-stack-qa` → `full_stack_qa.db`)
 
 **Verification Commands**:
 ```bash
 # Check tables
-sqlite3 Data/Core/full_stack_testing.db ".tables"
+sqlite3 Data/Core/full_stack_qa.db ".tables"
 
 # Check Foreign Keys
-sqlite3 Data/Core/full_stack_testing.db "PRAGMA foreign_keys;"
+sqlite3 Data/Core/full_stack_qa.db "PRAGMA foreign_keys;"
 # Returns: 1
 
 # View schema
-sqlite3 Data/Core/full_stack_testing.db ".schema"
+sqlite3 Data/Core/full_stack_qa.db ".schema"
 ```
 
 **Acceptance Criteria**:
@@ -82,7 +82,7 @@ sqlite3 Data/Core/full_stack_testing.db ".schema"
 - [x] Delete triggers applied
 
 **Files Created**:
-- ✅ `Data/Core/full_stack_testing.db` (SQLite database file)
+- ✅ `Data/Core/full_stack_qa.db` (SQLite database file)
 - ✅ `Data/Core/README.md` (Database documentation)
 
 ---
@@ -205,7 +205,7 @@ from pathlib import Path
 from datetime import datetime
 
 # Database path
-DB_PATH = Path(__file__).parent.parent / "full_stack_testing.db"
+DB_PATH = Path(__file__).parent.parent / "full_stack_qa.db"
 
 def get_current_version(db_path):
     """Get current schema version from database."""
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     main()
 ```
 
-**Note**: The database is located at `Data/Core/full_stack_testing.db` (not `database/test-data.db`).
+**Note**: The database is located at `Data/Core/full_stack_qa.db` (not `database/test-data.db`).
 
 ---
 
@@ -435,7 +435,7 @@ VALUES
 **Files to Create**:
 - `Data/Core/scripts/reset_db.py`
 
-**Note**: Database file is at `Data/Core/full_stack_testing.db`
+**Note**: Database file is at `Data/Core/full_stack_qa.db`
 
 ---
 
@@ -466,7 +466,7 @@ import sqlite3
 from pathlib import Path
 from contextlib import contextmanager
 
-DB_PATH = Path(__file__).parent.parent / "full_stack_testing.db"
+DB_PATH = Path(__file__).parent.parent / "full_stack_qa.db"
 
 @contextmanager
 def get_db_connection():
@@ -616,7 +616,7 @@ def get_application_by_id(app_id):
 
 ```
 Data/Core/
-├── full_stack_testing.db          ✅ Created
+├── full_stack_qa.db          ✅ Created
 ├── README.md                      ✅ Created
 ├── migrations/                    ⏭️ Pending
 │   ├── 20251214_000000_initial_schema.sql
@@ -662,20 +662,20 @@ Data/Core/
 ### Quick Start Commands
 
 ```bash
-# 1. Database already created at Data/Core/full_stack_testing.db ✅
+# 1. Database already created at Data/Core/full_stack_qa.db ✅
 
 # 2. Verify schema
-sqlite3 Data/Core/full_stack_testing.db ".schema"
+sqlite3 Data/Core/full_stack_qa.db ".schema"
 
 # 3. Test Foreign Keys
-sqlite3 Data/Core/full_stack_testing.db "PRAGMA foreign_keys;"
+sqlite3 Data/Core/full_stack_qa.db "PRAGMA foreign_keys;"
 # Should return: 1
 
 # 4. Run all tests
 pytest Data/Core/tests/ -v
 
 # 5. View tables
-sqlite3 Data/Core/full_stack_testing.db ".tables"
+sqlite3 Data/Core/full_stack_qa.db ".tables"
 ```
 
 ---
@@ -699,7 +699,7 @@ sqlite3 Data/Core/full_stack_testing.db ".tables"
 
 The database work is complete when:
 
-1. ✅ **Database file created and schema applied** - `Data/Core/full_stack_testing.db`
+1. ✅ **Database file created and schema applied** - `Data/Core/full_stack_qa.db`
 2. ✅ **Delete triggers implemented** - `DELETE_TRIGGERS.sql` with 4 triggers
 3. ✅ **Delete behavior documented** - `DELETE_BEHAVIOR.md` for frontend team
 4. ✅ **All schema tests pass** - 62/62 tests passing
@@ -715,7 +715,7 @@ The database work is complete when:
 ## 🎯 Completed Work Summary
 
 ### ✅ Phase 1: Database Setup & Schema Creation
-- ✅ Task 1.1: Database file created (`full_stack_testing.db`)
+- ✅ Task 1.1: Database file created (`full_stack_qa.db`)
 - ✅ Task 1.2: Delete triggers implemented and tested
 - ✅ Task 1.3: Comprehensive test suite (62 tests)
 
