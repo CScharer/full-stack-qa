@@ -102,3 +102,22 @@ While waiting for GitHub Pages:
 5. ✅ Wait 1-5 minutes for GitHub Pages to build
 6. ✅ Visit: https://cscharer.github.io/full-stack-qa/
 7. ✅ Should see Allure report (not 404)
+
+## Still Not Working?
+
+1. Check repository permissions:
+   - Settings → Actions → General
+   - "Workflow permissions" should be "Read and write permissions"
+
+2. Check if `gh-pages` branch exists:
+   - If missing, deployment hasn't run
+   - If exists but old, deployment may have failed
+
+3. Check workflow logs for errors:
+   - Look for "Deploy to GitHub Pages" step
+   - Check for permission errors or file issues
+
+4. Try manual trigger:
+   - Actions → "Selenium Grid CI/CD Pipeline" → "Run workflow"
+   - Select `main` branch
+   - This will force a new deployment
