@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Custom PMD Ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Custom PMD ruleset based on quickstart but excludes GuardLogStatement rule.
+        All logging now goes through GuardedLogger which performs guard checks internally,
+        so the GuardLogStatement rule is no longer needed.
+    </description>
+
+    <!-- Include all rules from quickstart ruleset -->
+    <rule ref="rulesets/java/quickstart.xml">
+        <!-- Exclude GuardLogStatement since GuardedLogger handles guards internally -->
+        <exclude name="GuardLogStatement"/>
+    </rule>
+</ruleset>
