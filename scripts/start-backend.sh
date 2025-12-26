@@ -19,6 +19,9 @@ BACKEND_DIR="${SCRIPT_DIR}/backend"
 ENVIRONMENT=${ENVIRONMENT:-"dev"}  # dev, test, or prod
 API_RELOAD=${API_RELOAD:-"true"}
 
+# Export ENVIRONMENT for backend config (uses full_stack_qa_{env}.db)
+export ENVIRONMENT
+
 # Function to load environment-specific ports from .env file
 load_environment_ports() {
     # Convert to lowercase (compatible with bash 3.2+)
@@ -84,16 +87,20 @@ echo -e "${BLUE}📦 Installing dependencies...${NC}"
 pip install -q --upgrade pip
 pip install -q -r "$BACKEND_DIR/requirements.txt"
 
-# Check if database exists
-DB_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa.db"
-if [ ! -f "$DB_PATH" ]; then
-    echo -e "${YELLOW}⚠️  Database file not found: $DB_PATH${NC}"
+# Check if environment database exists
+# Backend config will use: full_stack_qa_{ENVIRONMENT}.db
+ENV_DB_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa_${ENVIRONMENT}.db"
+if [ ! -f "$ENV_DB_PATH" ]; then
+    echo -e "${YELLOW}⚠️  Environment database not found: $ENV_DB_PATH${NC}"
     echo -e "${YELLOW}   The backend will start but database operations may fail${NC}"
+    echo -e "${YELLOW}   Create it with: sqlite3 $ENV_DB_PATH < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql${NC}"
 fi
 
 # Start the server
 echo ""
 echo -e "${GREEN}✅ Starting FastAPI server...${NC}"
+echo -e "${BLUE}   Environment: $ENVIRONMENT${NC}"
+echo -e "${BLUE}   Database: full_stack_qa_${ENVIRONMENT}.db${NC}"
 echo -e "${BLUE}   Host: $API_HOST${NC}"
 echo -e "${BLUE}   Port: $API_PORT${NC}"
 echo -e "${BLUE}   Reload: $API_RELOAD${NC}"

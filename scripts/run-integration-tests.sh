@@ -9,6 +9,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PLAYWRIGHT_DIR="$PROJECT_ROOT/playwright"
 
+# Set environment to test for integration tests
+# This ensures the backend uses full_stack_qa_test.db
+export ENVIRONMENT=test
+
 echo "════════════════════════════════════════"
 echo "🧪 Running Integration Tests"
 echo "════════════════════════════════════════"
@@ -31,22 +35,24 @@ if ! command -v python3 &> /dev/null; then
 fi
 echo "✅ Python: $(python3 --version)"
 
-# Check database exists
-if [ ! -f "$PROJECT_ROOT/Data/Core/full_stack_qa.db" ]; then
-    echo "⚠️  Database not found. Creating database..."
+# Check test environment database exists
+# Integration tests use full_stack_qa_test.db (test environment)
+TEST_DB_PATH="$PROJECT_ROOT/Data/Core/full_stack_qa_test.db"
+if [ ! -f "$TEST_DB_PATH" ]; then
+    echo "⚠️  Test database not found. Creating test database from schema..."
     mkdir -p "$PROJECT_ROOT/Data/Core"
     if [ -f "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql" ]; then
-        sqlite3 "$PROJECT_ROOT/Data/Core/full_stack_qa.db" < "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql"
+        sqlite3 "$TEST_DB_PATH" < "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql"
         if [ -f "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql" ]; then
-            sqlite3 "$PROJECT_ROOT/Data/Core/full_stack_qa.db" < "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql"
+            sqlite3 "$TEST_DB_PATH" < "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql"
         fi
-        echo "✅ Database created"
+        echo "✅ Test database created: full_stack_qa_test.db"
     else
         echo "❌ Schema file not found. Please create the database manually."
         exit 1
     fi
 else
-    echo "✅ Database exists"
+    echo "✅ Test database exists: full_stack_qa_test.db"
 fi
 
 # Check backend venv
