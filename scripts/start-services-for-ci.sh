@@ -24,9 +24,45 @@ load_environment_ports() {
     local backend_env_file="${BACKEND_DIR}/.env"
     local frontend_env_file="${FRONTEND_DIR}/.env"
     
-    # Default ports (DEV) - can be overridden by environment variables
-    local api_port=${API_PORT:-8003}
-    local frontend_port=${FRONTEND_PORT:-3003}
+    # Set default ports based on environment (if not already set via environment variable)
+    if [ -z "$API_PORT" ]; then
+        case "$env" in
+            dev)
+                api_port=8003
+                ;;
+            test)
+                api_port=8004
+                ;;
+            prod)
+                api_port=8005
+                ;;
+            *)
+                api_port=8003  # Default to dev
+                ;;
+        esac
+    else
+        api_port="$API_PORT"
+    fi
+    
+    if [ -z "$FRONTEND_PORT" ]; then
+        case "$env" in
+            dev)
+                frontend_port=3003
+                ;;
+            test)
+                frontend_port=3004
+                ;;
+            prod)
+                frontend_port=3005
+                ;;
+            *)
+                frontend_port=3003  # Default to dev
+                ;;
+        esac
+    else
+        frontend_port="$FRONTEND_PORT"
+    fi
+    
     local api_host="0.0.0.0"
     
     # Load backend ports from .env if it exists (only if not already set via environment variable)
