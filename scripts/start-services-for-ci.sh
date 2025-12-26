@@ -20,48 +20,49 @@ FORCE_STOP=${FORCE_STOP:-"false"}  # Force stop existing services on ports
 # Function to load environment-specific ports from .env files
 load_environment_ports() {
     # Convert to lowercase (compatible with bash 3.2+)
-    local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+    local env=$(echo "${ENVIRONMENT:-dev}" | tr '[:upper:]' '[:lower:]')
     local backend_env_file="${BACKEND_DIR}/.env"
     local frontend_env_file="${FRONTEND_DIR}/.env"
     
-    # Set default ports based on environment (if not already set via environment variable)
-    if [ -z "$API_PORT" ]; then
+    # Source centralized port configuration (single source of truth)
+    # This ensures all scripts use the same port values
+    local port_config_script="${SCRIPT_DIR}/scripts/ci/port-config.sh"
+    if [ -f "$port_config_script" ]; then
+        # Source the port config to get default ports
+        source "$port_config_script"
+        # Get ports for this environment
+        local port_config=$(get_ports_for_environment "$env")
+        eval "$port_config"
+        
+        # Use centralized config as defaults (can still be overridden by env vars or .env files)
+        api_port=${API_PORT:-$API_PORT}
+        frontend_port=${FRONTEND_PORT:-$FRONTEND_PORT}
+    else
+        # Fallback to hardcoded values if config file doesn't exist (shouldn't happen)
+        echo "⚠️  Warning: port-config.sh not found, using fallback values" >&2
         case "$env" in
             dev)
                 api_port=8003
-                ;;
-            test)
-                api_port=8004
-                ;;
-            prod)
-                api_port=8005
-                ;;
-            *)
-                api_port=8003  # Default to dev
-                ;;
-        esac
-    else
-        api_port="$API_PORT"
-    fi
-    
-    if [ -z "$FRONTEND_PORT" ]; then
-        case "$env" in
-            dev)
                 frontend_port=3003
                 ;;
             test)
+                api_port=8004
                 frontend_port=3004
                 ;;
             prod)
+                api_port=8005
                 frontend_port=3005
                 ;;
             *)
-                frontend_port=3003  # Default to dev
+                api_port=8003
+                frontend_port=3003
                 ;;
         esac
-    else
-        frontend_port="$FRONTEND_PORT"
     fi
+    
+    # Allow environment variables to override (highest priority)
+    api_port=${API_PORT:-$api_port}
+    frontend_port=${FRONTEND_PORT:-$frontend_port}
     
     local api_host="0.0.0.0"
     
