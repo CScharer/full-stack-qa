@@ -494,14 +494,20 @@ Error report
 ### Step 5.3: Verify GitHub Pages Deployment
 
 1. **Check Allure Reports**:
-   - Visit: https://cscharer.github.io/full-stack-qa/
-   - Verify reports are generated and accessible
-   - Check that test results are displayed correctly
+   - **For PR branches**: Reports are available as artifacts (not deployed to GitHub Pages)
+     - Go to **Actions** tab → Select the workflow run
+     - Download artifact: `allure-report-combined-all-environments`
+     - Extract and open `index.html` in a browser
+   - **For main branch**: Reports are deployed to GitHub Pages
+     - Visit: https://cscharer.github.io/full-stack-qa/
+     - Verify reports are generated and accessible
+     - Check that test results are displayed correctly
+   - **Note**: GitHub Pages only deploys on `main` branch when code changes are detected
 
 2. **Verify Pages Source**:
    - Go to **Settings → Pages**
    - Confirm source is set to "GitHub Actions"
-   - Verify deployment is working
+   - Verify deployment is working (will show after PR is merged to main)
 
 ### Step 5.4: Final Verification Checklist
 
