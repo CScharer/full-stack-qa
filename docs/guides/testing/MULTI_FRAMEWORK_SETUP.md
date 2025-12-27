@@ -1,21 +1,137 @@
 # Multi-Framework Testing Setup
 
-This guide explains how to use the multiple testing frameworks available in this project: Selenium, Playwright, Cypress, and Robot Framework.
+This guide explains how to use the multiple testing frameworks available in this project: Cypress, Playwright, Robot Framework, Selenide, Selenium, and Vibium.
 
 ---
 
 ## 📋 Overview
 
-This framework now supports **4 different UI testing tools**:
+This framework now supports **6 different UI testing tools**:
 
-1. **Cypress** (JavaScript) - Frontend-focused, time-travel debugging
-2. **Playwright** (Java) - Modern, fast, reliable
-3. **Robot Framework** (Python) - Keyword-driven, human-readable
-4. **Selenium** (Java) - Legacy support, Grid compatibility
+1. 🎬 [**Cypress** (TypeScript)](#cypress) - Frontend-focused, time-travel debugging
+2. 🎭 [**Playwright** (TypeScript)](#playwright) - Modern, fast, reliable
+3. 🤖 [**Robot Framework** (Python)](#robot-framework) - Keyword-driven, human-readable
+4. 🛡️ [**Selenide** (Java)](#selenide) - Concise Selenium wrapper, fluent API
+5. 🔧 [**Selenium** (Java)](#selenium) - Legacy support, Grid compatibility
+6. ⚡ [**Vibium** (TypeScript)](#vibium) - AI-native automation, modern browser control
 
 ---
 
-## 🎭 Playwright (TypeScript)
+## Cypress
+
+### Overview
+
+Cypress is a modern JavaScript/TypeScript testing framework that runs directly in the browser, providing excellent debugging capabilities and time-travel debugging.
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Setup
+
+```bash
+cd cypress
+npm install
+```
+
+### Running Tests
+
+```bash
+# Interactive mode (Test Runner) - Recommended for development
+./scripts/run-cypress-tests.sh open
+
+# Headless mode
+./scripts/run-cypress-tests.sh run chrome
+
+# Specific browser
+./scripts/run-cypress-tests.sh run firefox
+./scripts/run-cypress-tests.sh run edge
+
+# Direct npm commands
+cd cypress
+npm run cypress:run    # Headless mode
+npm run cypress:open   # Interactive mode
+```
+
+### Environment Variables
+
+```bash
+export CYPRESS_BASE_URL="http://localhost:3003"
+export TEST_ENVIRONMENT="local"
+```
+
+### Test Structure
+
+```
+cypress/
+├── cypress/
+│   ├── e2e/
+│   │   └── google-search.cy.ts    # Test files (TypeScript)
+│   └── support/
+│       ├── commands.ts             # Custom commands
+│       └── e2e.ts                  # Support file
+├── cypress.config.ts               # Configuration (TypeScript)
+├── tsconfig.json                    # TypeScript config
+└── package.json
+```
+
+### Features
+
+- ✅ **TypeScript** - Type safety and better IDE support
+- ✅ **Time-travel Debugging** - See every step of test execution
+- ✅ **Real-time Reloads** - See changes instantly
+- ✅ **Automatic Waiting** - No manual waits needed
+- ✅ **Network Stubbing** - Mock API responses
+- ✅ **Screenshot/Video** - Automatic capture
+- ✅ **Cross-browser** - Chrome, Firefox, Edge
+
+### Example Test
+
+```typescript
+describe('Google Search Tests', () => {
+  it('should perform a search', () => {
+    cy.visit('/')
+    cy.get('input[name="q"]').type('Cypress{enter}')
+    cy.url().should('include', 'search')
+    cy.get('#search').should('be.visible')
+  })
+})
+```
+
+### Best Use Cases
+
+- Frontend-heavy applications
+- JavaScript/TypeScript teams
+- Time-travel debugging needs
+- Component testing
+- Real-time development workflow
+
+### Troubleshooting
+
+**Issue:** Node modules not found
+```bash
+cd cypress && npm install
+```
+
+**Issue:** TypeScript errors
+```bash
+cd cypress
+npm run build
+```
+
+---
+
+## Playwright
+
+### Overview
+
+Playwright is a modern, fast, and reliable end-to-end testing framework with excellent browser automation capabilities, auto-waiting, and network interception.
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
 
 ### Setup
 
@@ -37,9 +153,24 @@ cd playwright && npm test
 # Specific browser
 cd playwright && npm run test:chrome
 cd playwright && npm run test:firefox
+cd playwright && npm run test:webkit
 
 # UI mode (interactive)
 cd playwright && npm run test:ui
+
+# Debug mode
+cd playwright && npm run test:debug
+
+# Headed mode (see browser)
+cd playwright && npm run test:headed
+```
+
+### Environment Variables
+
+```bash
+export BASE_URL="http://localhost:3003"
+export TEST_ENVIRONMENT="local"
+export CI=true
 ```
 
 ### Test Structure
@@ -56,12 +187,13 @@ playwright/
 
 ### Features
 
-- ✅ TypeScript for type safety
-- ✅ Auto-waiting for elements
-- ✅ Network interception
-- ✅ Multi-browser (Chromium, Firefox, WebKit)
-- ✅ Screenshot/video capture
-- ✅ HTML reports
+- ✅ **TypeScript** - Type safety and better IDE support
+- ✅ **Auto-waiting** - No manual waits needed
+- ✅ **Network Interception** - Mock API calls
+- ✅ **Multi-browser** - Chromium, Firefox, WebKit
+- ✅ **Screenshot/Video** - Automatic capture
+- ✅ **HTML Reports** - Beautiful test reports
+- ✅ **Parallel Execution** - Built-in support
 
 ### Example Test
 
@@ -77,73 +209,40 @@ test('should perform a search', async ({ page }) => {
 })
 ```
 
----
+### Best Use Cases
 
-## 🎬 Cypress (TypeScript)
+- Modern web applications
+- API mocking needs
+- Fast execution requirements
+- Multi-browser testing
+- TypeScript projects
 
-### Setup
+### Troubleshooting
 
+**Issue:** Browsers not installed
 ```bash
-cd cypress
-npm install
+cd playwright
+npx playwright install --with-deps chromium
 ```
 
-### Running Tests
-
+**Issue:** TypeScript errors
 ```bash
-# Interactive mode (Test Runner)
-./scripts/run-cypress-tests.sh open
-
-# Headless mode
-./scripts/run-cypress-tests.sh run chrome
-
-# Specific browser
-./scripts/run-cypress-tests.sh run firefox
-```
-
-### Test Structure
-
-```
-cypress/
-├── cypress/
-│   ├── e2e/
-│   │   └── google-search.cy.ts    # Test files (TypeScript)
-│   └── support/
-│       ├── commands.ts             # Custom commands
-│       └── e2e.ts                  # Support file
-├── cypress.config.ts               # Configuration (TypeScript)
-├── tsconfig.json                    # TypeScript config
-└── package.json
-```
-
-### Features
-
-- ✅ TypeScript for type safety
-- ✅ Time-travel debugging
-- ✅ Real-time reloads
-- ✅ Automatic waiting
-- ✅ Network stubbing
-- ✅ Screenshot/video capture
-
-### Example Test
-
-```typescript
-describe('Google Search Tests', () => {
-  it('should perform a search', () => {
-    cy.visit('/')
-    cy.get('input[name="q"]').type('Cypress{enter}')
-    cy.url().should('include', 'search')
-  })
-})
+cd playwright
+npx tsc --noEmit
 ```
 
 ---
 
-## 🤖 Robot Framework
+## Robot Framework
+
+### Overview
+
+Robot Framework is a keyword-driven test automation framework that uses human-readable syntax, making it accessible to non-programmers. It supports both UI and API testing.
 
 ### Prerequisites
 
 - Python 3.13+ (latest stable version)
+- pip
 
 ### Setup
 
@@ -164,6 +263,16 @@ pip install robotframework-requests
 
 # Via Maven
 ./mvnw test -Probot
+
+# Via Robot Framework CLI
+robot src/test/robot/GoogleSearchTests.robot
+
+# API tests only (no Grid needed)
+cd src/test/robot
+robot --include api tests/
+
+# Web tests (requires Grid)
+robot --include web tests/
 ```
 
 ### Test Structure
@@ -177,11 +286,13 @@ src/test/robot/
 
 ### Features
 
-- ✅ Human-readable keyword syntax
-- ✅ Built-in libraries
-- ✅ Data-driven testing
-- ✅ HTML reports
-- ✅ Easy for non-programmers
+- ✅ **Human-readable** - Keyword-driven syntax
+- ✅ **Built-in Libraries** - Selenium, Requests, etc.
+- ✅ **Data-driven Testing** - Easy test data management
+- ✅ **HTML Reports** - Comprehensive test reports
+- ✅ **Easy to Learn** - Non-programmers can write tests
+- ✅ **Extensible** - Custom libraries support
+- ✅ **API + UI** - Combined testing capabilities
 
 ### Example Test
 
@@ -192,7 +303,373 @@ Perform Google Search
     Input Text      name:q    Robot Framework
     Press Keys      name:q    RETURN
     Wait Until Page Contains    Robot Framework
+    Page Should Contain Element    id:search
     Close Browser
+```
+
+### Best Use Cases
+
+- Non-technical testers
+- Keyword-driven approach
+- BDD-style tests
+- API + UI combined testing
+- Teams with mixed technical skills
+
+### Troubleshooting
+
+**Issue:** Library not found
+```bash
+pip install robotframework-seleniumlibrary
+pip install robotframework-requests
+```
+
+**Issue:** Browser driver not found
+```bash
+# Robot Framework uses Selenium, so ensure drivers are available
+# Or use WebDriverManager in your setup
+```
+
+**Note**: Web tests require Selenium Grid. See [Docker Guide](../infrastructure/DOCKER.md) for Grid setup.
+
+---
+
+## Selenide
+
+### Overview
+
+Selenide is a concise wrapper around Selenium WebDriver that provides a fluent API for writing clean and readable tests. It automatically handles waits and provides built-in screenshot capabilities.
+
+### Prerequisites
+
+- Java 21+
+- Maven (configured in `pom.xml`)
+
+### Setup
+
+Already configured in `pom.xml`. No additional setup needed!
+
+### Running Tests
+
+```bash
+# Run Selenide tests via Maven
+./mvnw test -DsuiteXmlFile=testng-selenide-suite.xml
+
+# Or using the test script
+./scripts/ci/run-maven-tests.sh test selenide testng-selenide-suite.xml
+
+# Specific test class
+./mvnw test -Dtest=HomePageTests
+```
+
+### Test Structure
+
+```
+src/test/java/com/cjs/qa/junit/
+├── HomePageTests.java          # Selenide test examples
+└── pages/
+    └── HomePage.java            # Page Object Model
+```
+
+### Features
+
+- ✅ **Fluent API** - Concise and readable syntax
+- ✅ **Automatic waits** - No explicit wait statements needed
+- ✅ **Built-in screenshots** - Automatic on test failures
+- ✅ **Selenium Grid support** - Works with Grid infrastructure
+- ✅ **TestNG integration** - Advanced test management
+- ✅ **Allure reports** - Beautiful test reports
+- ✅ **Page Object Model** - Clean architecture support
+
+### Example Test
+
+```java
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.*;
+import com.codeborne.selenide.SelenideElement;
+
+@Test
+public void testHomePage() {
+    open("http://localhost:3003");
+    $("#search").shouldBe(visible);
+    $("#search").setValue("Selenide");
+    $("#search").pressEnter();
+    title().shouldContain("Search");
+}
+```
+
+### Configuration
+
+Selenide can be configured in test setup:
+
+```java
+@BeforeMethod
+public void setUp() {
+    Configuration.browser = "chrome";
+    Configuration.headless = true;
+    Configuration.timeout = 10000;
+    Configuration.pageLoadTimeout = 60000;
+    Configuration.browserSize = "1920x1080";
+    Configuration.baseUrl = "http://localhost:3003";
+}
+```
+
+### Best Use Cases
+
+- Java-based test teams
+- Teams familiar with Selenium
+- Projects requiring concise test syntax
+- Selenium Grid compatibility needs
+- Quick test development
+
+### Troubleshooting
+
+**Issue:** Tests not running
+```bash
+# Verify Selenium Grid is running
+docker-compose up -d selenium-hub chrome-node-1
+
+# Check Maven dependencies
+./mvnw dependency:tree | grep selenide
+```
+
+**Issue:** Grid connection failed
+```bash
+# Check Grid is running
+curl http://localhost:4444/wd/hub/status
+```
+
+---
+
+## Selenium
+
+### Overview
+
+Selenium is the industry-standard web automation framework with extensive browser and language support. It's the foundation for many other testing frameworks and provides robust Grid capabilities.
+
+### Prerequisites
+
+- Java 21+
+- Maven (configured in `pom.xml`)
+
+### Setup
+
+Already configured in `pom.xml`. No additional setup needed!
+
+### Running Tests
+
+```bash
+# Default test suite
+./scripts/run-tests.sh Scenarios chrome
+
+# Specific test class
+./mvnw test -Dtest=Scenarios#Google
+
+# With specific browser
+./mvnw test -Dtest=Scenarios#Microsoft -Dbrowser=firefox
+
+# Via Maven with suite file
+./mvnw test -DsuiteXmlFile=testng-ci-suite.xml
+
+# Smoke tests only
+./scripts/run-smoke-tests.sh
+```
+
+### Test Structure
+
+```
+src/test/java/com/cjs/qa/
+├── google/
+│   ├── Google.java              # Test class
+│   └── pages/                   # Page Objects
+├── microsoft/
+│   ├── Microsoft.java
+│   └── pages/
+└── selenium/                    # Selenium wrappers
+    ├── SeleniumWebDriver.java
+    └── Page.java
+```
+
+### Features
+
+- ✅ **Selenium Grid** - Distributed testing
+- ✅ **Multi-browser** - Chrome, Firefox, Edge, Safari
+- ✅ **Page Object Model** - Clean architecture
+- ✅ **TestNG Integration** - Advanced test management
+- ✅ **Allure Reports** - Beautiful test reports
+- ✅ **Parallel Execution** - 5 threads by default
+- ✅ **WebDriverManager** - Automatic driver management
+
+### Example Test
+
+```java
+@Test
+public void testGoogleSearch() {
+    GoogleSearchPage googlePage = new GoogleSearchPage(driver);
+    googlePage.navigate();
+    googlePage.search("Selenium WebDriver");
+    Assert.assertTrue(googlePage.areSearchResultsVisible());
+}
+```
+
+### Best Use Cases
+
+- Legacy applications
+- Selenium Grid requirements
+- Cross-browser matrix testing
+- Large existing test suites
+- Enterprise environments
+
+### Troubleshooting
+
+**Issue:** WebDriver not found
+```bash
+# WebDriverManager should handle this automatically
+# If issues persist, check Grid connection
+docker-compose ps
+```
+
+**Issue:** Grid connection failed
+```bash
+# Check Grid is running
+curl http://localhost:4444/wd/hub/status
+
+# Start Grid
+docker-compose up -d selenium-hub chrome-node-1
+```
+
+---
+
+## Vibium
+
+### Overview
+
+Vibium is an AI-native browser automation framework developed by Jason Huggins (creator of Selenium and Appium). It provides both async and sync APIs for browser automation and is designed for both AI agents and humans.
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Setup
+
+```bash
+cd vibium
+npm install
+```
+
+This installs:
+- `vibium@0.1.2` (released version)
+- `@vibium/darwin-arm64@0.1.2` (clicker binary for macOS ARM64)
+- TypeScript and type definitions
+
+### Running Tests
+
+```bash
+# Using the test script (recommended)
+./scripts/run-vibium-tests.sh
+
+# With options
+./scripts/run-vibium-tests.sh --watch    # Watch mode
+./scripts/run-vibium-tests.sh --ui       # UI mode
+./scripts/run-vibium-tests.sh --coverage # Coverage report
+
+# Or directly
+cd vibium && npm test
+
+# Watch mode
+cd vibium && npm run test:watch
+
+# UI mode
+cd vibium && npm run test:ui
+```
+
+### Test Structure
+
+```
+vibium/
+├── tests/
+│   └── example.spec.ts      # Test files (TypeScript)
+├── helpers/
+│   └── example.ts            # Helper functions
+├── types/
+│   └── vibium.d.ts          # Type definitions
+├── vitest.config.ts          # Vitest configuration
+└── package.json              # Dependencies
+```
+
+### Features
+
+- ✅ **AI-Native** - Designed for AI agents and humans
+- ✅ **Dual API** - Both async (`browser`) and sync (`browserSync`) APIs
+- ✅ **TypeScript** - Full type safety
+- ✅ **Vitest Integration** - Modern test runner
+- ✅ **Auto-waiting** - Built-in element waiting
+- ✅ **Screenshot Support** - Easy screenshot capture
+- ✅ **Chrome for Testing** - Automatically downloads Chrome
+
+### Example Test (Async API)
+
+```typescript
+import { browser } from 'vibium'
+
+describe('Vibium Tests', () => {
+  it('should navigate and interact', async () => {
+    const vibe = await browser.launch({ headless: true })
+    await vibe.go('https://example.com')
+    
+    const link = await vibe.find('a')
+    const text = await link.text()
+    console.log(`Found link: ${text}`)
+    
+    const screenshot = await vibe.screenshot()
+    await vibe.quit()
+  })
+})
+```
+
+### Example Test (Sync API)
+
+```typescript
+import { browserSync } from 'vibium'
+
+describe('Vibium Sync Tests', () => {
+  it('should navigate and interact', () => {
+    const vibe = browserSync.launch()
+    vibe.go('https://example.com')
+    
+    const link = vibe.find('a')
+    const text = link.text()
+    console.log(`Found link: ${text}`)
+    
+    const screenshot = vibe.screenshot()
+    vibe.quit()
+  })
+})
+```
+
+### Best Use Cases
+
+- AI-native automation projects
+- Modern TypeScript teams
+- Projects requiring both sync and async APIs
+- Advanced browser control needs
+- Quick browser automation scripts
+- Chrome-based testing
+
+### Troubleshooting
+
+**Issue:** Vibium package not found
+```bash
+cd vibium && npm install
+# Verify installation
+npm list vibium
+```
+
+**Issue:** Clicker binary not found (macOS ARM64)
+```bash
+# The @vibium/darwin-arm64 package should be installed automatically
+# If not, reinstall:
+cd vibium && npm install @vibium/darwin-arm64
 ```
 
 ---
@@ -207,9 +684,6 @@ Use Maven profiles to run specific frameworks:
 # Selenium only (default)
 ./mvnw test
 
-# Playwright only
-./mvnw test -Pplaywright
-
 # Robot Framework only
 ./mvnw test -Probot
 
@@ -222,9 +696,11 @@ Use Maven profiles to run specific frameworks:
 | Framework | Language | Maven Profile | Script | Best For |
 |-----------|----------|---------------|--------|----------|
 | Selenium | Java | `selenium` (default) | `run-tests.sh` | Legacy, Grid |
-| Playwright | Java | `playwright` | `run-playwright-tests.sh` | Modern apps |
-| Cypress | JavaScript | N/A | `run-cypress-tests.sh` | Frontend-heavy |
+| Playwright | TypeScript | N/A | `run-playwright-tests.sh` | Modern apps |
+| Cypress | TypeScript | N/A | `run-cypress-tests.sh` | Frontend-heavy |
 | Robot Framework | Python | `robot` | `run-robot-tests.sh` | Non-technical |
+| Selenide | Java | `selenium` | `run-maven-tests.sh` | Concise syntax |
+| Vibium | TypeScript | N/A | `run-vibium-tests.sh` | AI-native |
 
 ---
 
@@ -233,77 +709,75 @@ Use Maven profiles to run specific frameworks:
 ### Speed
 1. **Playwright** - Fastest (auto-waiting, parallel execution)
 2. **Cypress** - Fast (runs in browser)
-3. **Selenium** - Medium (depends on driver)
-4. **Robot Framework** - Medium (Python overhead)
+3. **Vibium** - Fast (modern browser control)
+4. **Selenium** - Medium (depends on driver)
+5. **Selenide** - Medium (Selenium wrapper)
+6. **Robot Framework** - Medium (Python overhead)
 
 ### Learning Curve
 1. **Robot Framework** - Easiest (keyword-driven)
 2. **Cypress** - Easy (JavaScript, good docs)
-3. **Selenium** - Medium (Java, WebDriver API)
-4. **Playwright** - Medium (Java, async concepts)
+3. **Vibium** - Easy (TypeScript, modern API)
+4. **Selenide** - Medium (Java, fluent API)
+5. **Selenium** - Medium (Java, WebDriver API)
+6. **Playwright** - Medium (TypeScript, async concepts)
 
-### Best Use Cases
+### Best Use Cases Summary
 
 **Selenium:**
 - Legacy applications
 - Selenium Grid requirements
 - Cross-browser matrix testing
 - Large existing test suites
+- Enterprise environments
+
+**Selenide:**
+- Java-based test teams
+- Teams familiar with Selenium
+- Projects requiring concise test syntax
+- Selenium Grid compatibility needs
+- Quick test development
 
 **Playwright:**
 - Modern web applications
 - API mocking needs
 - Fast execution requirements
 - Multi-browser testing
+- TypeScript projects
 
 **Cypress:**
 - Frontend-heavy applications
 - JavaScript/TypeScript teams
 - Time-travel debugging needs
 - Component testing
+- Real-time development workflow
 
 **Robot Framework:**
 - Non-technical testers
 - Keyword-driven approach
 - BDD-style tests
 - API + UI combined testing
+- Teams with mixed technical skills
 
----
-
-## 🛠️ Troubleshooting
-
-### Playwright
-
-**Issue:** Browsers not installed
-```bash
-./mvnw exec:java -Dexec.mainClass="com.microsoft.playwright.CLI" -Dexec.args="install chromium"
-```
-
-### Cypress
-
-**Issue:** Node modules not found
-```bash
-cd cypress && npm install
-```
-
-### Robot Framework
-
-**Issue:** Library not found
-```bash
-pip install robotframework-seleniumlibrary
-```
+**Vibium:**
+- AI-native automation projects
+- Modern TypeScript teams
+- Projects requiring both sync and async APIs
+- Advanced browser control needs
+- Quick browser automation scripts
 
 ---
 
 ## 📚 Additional Resources
 
-- [Playwright Documentation](https://playwright.dev/java/)
 - [Cypress Documentation](https://docs.cypress.io/)
+- [Playwright Documentation](https://playwright.dev/)
 - [Robot Framework Documentation](https://robotframework.org/)
+- [Selenide Documentation](https://selenide.org/)
 - [Selenium Documentation](https://www.selenium.dev/documentation/)
+- [Vibium Documentation](https://vibium.com/)
 
 ---
 
 **Created**: January 2025
-**Last Updated**: January 2025
-
+**Last Updated**: December 2025

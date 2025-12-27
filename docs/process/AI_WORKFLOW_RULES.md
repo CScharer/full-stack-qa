@@ -305,7 +305,7 @@ Before making ANY code changes, you MUST:
 
 #### **Folder Selection Guide:**
 
-**Analysis & Recommendations** → `docs/analysis/YYYY-MM-DD-topic/`
+**Analysis & Recommendations** → `docs/work/` (date-prefixed planning documents)
 - Code reviews
 - Project audits
 - Improvement recommendations
@@ -410,7 +410,7 @@ Content starts here...
 #### **Common Mistakes to Avoid:**
 - ❌ Creating issue templates in `.github/` (use `docs/issues/open/`)
 - ❌ Creating guides in project root (use `docs/guides/`)
-- ❌ Creating analysis in project root (use `docs/analysis/YYYY-MM-DD-topic/`)
+- ❌ Creating analysis in project root (use `docs/work/` with date-prefixed filenames)
 - ❌ Forgetting to update NAVIGATION.md
 
 #### **Exceptions - .md Files Outside docs/:**

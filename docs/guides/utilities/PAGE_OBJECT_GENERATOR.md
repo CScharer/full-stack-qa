@@ -281,8 +281,7 @@ loginPage.login("user@example.com", "password");
 
 ## 📚 Related Documentation
 
-- [Page Object Generator Analysis](../analysis/2025-11-13-comprehensive/PAGE_OBJECT_GENERATOR_ANALYSIS.md)
-- [Page Object Model Best Practices](../analysis/2025-11-13-comprehensive/MODERN_CODING_STANDARDS.md)
+- [Page Object Model Best Practices](../java/CODE_QUALITY.md)
 - [AI Workflow Rules](../../process/AI_WORKFLOW_RULES.md)
 
 ---
