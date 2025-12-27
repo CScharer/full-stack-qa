@@ -1,15 +1,22 @@
 #!/bin/bash
-# Start Backend and Frontend services for Local Development
+# Start Backend and Frontend services for specified environment
 # This script starts both services with reload enabled and handles cleanup on exit
-# Usage: ./scripts/start-dev.sh [OPTIONS] [be=PORT] [fe=PORT]
-# 
-# Examples:
-#   ./scripts/start-dev.sh                    # Use default ports (8003, 3003)
-#   ./scripts/start-dev.sh be=3000            # Backend on 3000, frontend on 3003
-#   ./scripts/start-dev.sh fe=3001            # Backend on 8003, frontend on 3001
-#   ./scripts/start-dev.sh be=3000 fe=3001   # Backend on 3000, frontend on 3001
-#   ./scripts/start-dev.sh --force be=3000    # Force stop and use custom backend port
-#   ./scripts/start-dev.sh --background       # Run in background with default ports
+#
+# USAGE:
+#   ./scripts/start-env.sh [--env ENV|-e ENV] [OPTIONS] [be=PORT] [fe=PORT]
+#
+# ENVIRONMENT OPTIONS:
+#   --env ENV    or  -e ENV     Environment: dev, test, or prod (default: dev)
+#   --env=ENV    or  -e=ENV     Same as above with equals sign
+#
+# EXAMPLES:
+#   ./scripts/start-env.sh                           # Default: dev environment
+#   ./scripts/start-env.sh --env test                # Test environment
+#   ./scripts/start-env.sh -e prod                   # Production environment
+#   ./scripts/start-env.sh --env dev be=3000         # Dev with custom backend port
+#   ./scripts/start-env.sh -e test --background      # Test environment in background
+#
+# Run with --help for full usage information
 
 set -e
 
@@ -22,9 +29,18 @@ BACKGROUND=false
 FORCE=false
 BACKEND_PORT=""
 FRONTEND_PORT=""
+ENVIRONMENT_PARAM=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --env|-e)
+            ENVIRONMENT_PARAM="$2"
+            shift 2
+            ;;
+        --env=*|-e=*)
+            ENVIRONMENT_PARAM="${1#*=}"
+            shift
+            ;;
         --background)
             BACKGROUND=true
             shift
@@ -34,24 +50,32 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --help|-h)
-            echo -e "${BLUE}Usage: ./scripts/start-dev.sh [OPTIONS] [be=PORT] [fe=PORT]${NC}"
+            echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+            echo -e "${BLUE}Usage: ./scripts/start-env.sh [--env ENV|-e ENV] [OPTIONS] [be=PORT] [fe=PORT]${NC}"
+            echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
             echo ""
-            echo "Options:"
+            echo -e "${YELLOW}ENVIRONMENT OPTIONS:${NC}"
+            echo "  --env ENV       Environment: dev, test, or prod (default: dev)"
+            echo "  -e ENV          Short form of --env"
+            echo "  --env=ENV       Environment with equals sign"
+            echo "  -e=ENV          Short form with equals sign"
+            echo ""
+            echo -e "${YELLOW}OTHER OPTIONS:${NC}"
             echo "  --background    Run services in background"
             echo "  --force         Force stop existing services on ports before starting"
             echo "  --help, -h      Show this help message"
             echo ""
-            echo "Port Arguments:"
+            echo -e "${YELLOW}PORT ARGUMENTS:${NC}"
             echo "  be=PORT         Custom backend port (default: 8003)"
             echo "  fe=PORT         Custom frontend port (default: 3003)"
             echo ""
-            echo "Examples:"
-            echo "  ./scripts/start-dev.sh                    # Use default ports (8003, 3003)"
-            echo "  ./scripts/start-dev.sh be=3000            # Backend on 3000, frontend on 3003"
-            echo "  ./scripts/start-dev.sh fe=3001           # Backend on 8003, frontend on 3001"
-            echo "  ./scripts/start-dev.sh be=3000 fe=3001   # Backend on 3000, frontend on 3001"
-            echo "  ./scripts/start-dev.sh --force be=3000   # Force stop and use custom backend port"
-            echo "  ./scripts/start-dev.sh --background      # Run in background with default ports"
+            echo -e "${YELLOW}EXAMPLES:${NC}"
+            echo "  ./scripts/start-env.sh                    # Default: dev environment"
+            echo "  ./scripts/start-env.sh --env test         # Test environment"
+            echo "  ./scripts/start-env.sh -e prod            # Production environment"
+            echo "  ./scripts/start-env.sh --env=dev          # Dev with equals syntax"
+            echo "  ./scripts/start-env.sh --env dev be=3000   # Dev with custom backend port"
+            echo "  ./scripts/start-env.sh -e test --background  # Test in background"
             exit 0
             ;;
         be=*)
@@ -74,12 +98,28 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo -e "${RED}❌ Unknown argument: $1${NC}"
-            echo -e "${BLUE}Usage: ./scripts/start-dev.sh [OPTIONS] [be=PORT] [fe=PORT]${NC}"
+            echo -e "${BLUE}Usage: ./scripts/start-env.sh [--env ENV|-e ENV] [OPTIONS] [be=PORT] [fe=PORT]${NC}"
             echo -e "${BLUE}Run with --help for more information${NC}"
             exit 1
             ;;
     esac
 done
+
+# Set environment with priority: command-line param > env var > default
+if [ -n "$ENVIRONMENT_PARAM" ]; then
+    ENVIRONMENT=$(echo "$ENVIRONMENT_PARAM" | tr '[:upper:]' '[:lower:]')
+elif [ -n "$ENVIRONMENT" ]; then
+    ENVIRONMENT=$(echo "$ENVIRONMENT" | tr '[:upper:]' '[:lower:]')
+else
+    ENVIRONMENT="dev"
+fi
+
+# Validate environment value
+if [[ ! "$ENVIRONMENT" =~ ^(dev|test|prod)$ ]]; then
+    echo -e "${RED}❌ Invalid environment: '$ENVIRONMENT'${NC}"
+    echo -e "${YELLOW}   Must be one of: dev, test, prod${NC}"
+    exit 1
+fi
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -89,8 +129,10 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}🚀 Starting Services for Local Development${NC}"
+echo -e "${BLUE}🚀 Starting Services for ${ENVIRONMENT} Environment${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+echo ""
+echo -e "${BLUE}   Environment: $ENVIRONMENT${NC}"
 echo ""
 
 # Track if we should cleanup on exit
@@ -125,8 +167,8 @@ if [ "$FORCE" = "true" ]; then
     echo ""
 fi
 
-# Set environment variables for local development
-export ENVIRONMENT=dev
+# Set environment variables
+export ENVIRONMENT
 export API_RELOAD=true
 export FORCE_STOP=${FORCE:-"false"}
 

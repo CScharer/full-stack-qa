@@ -1,6 +1,21 @@
 #!/bin/bash
 # Start ONE GOAL Frontend Application
-# This script starts the Next.js frontend server for development
+# This script starts the Next.js frontend server for the specified environment
+#
+# USAGE:
+#   ./scripts/start-fe.sh [OPTIONS]
+#
+# ENVIRONMENT OPTIONS:
+#   --env ENV    or  -e ENV     Environment: dev, test, or prod (default: dev)
+#   --env=ENV    or  -e=ENV     Same as above with equals sign
+#
+# EXAMPLES:
+#   ./scripts/start-fe.sh                    # Default: dev environment
+#   ./scripts/start-fe.sh --env test         # Test environment
+#   ./scripts/start-fe.sh -e prod            # Production environment
+#   ./scripts/start-fe.sh --env=dev          # Dev with equals syntax
+#
+# Run with --help for full usage information
 
 set -e
 
@@ -9,6 +24,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
 # Colors for output
+RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
@@ -16,7 +32,63 @@ NC='\033[0m' # No Color
 
 # Configuration
 FRONTEND_DIR="${SCRIPT_DIR}/frontend"
-ENVIRONMENT=${ENVIRONMENT:-"dev"}  # dev, test, or prod
+
+# Parse command-line arguments for environment
+ENVIRONMENT_PARAM=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --env|-e)
+            ENVIRONMENT_PARAM="$2"
+            shift 2
+            ;;
+        --env=*|-e=*)
+            ENVIRONMENT_PARAM="${1#*=}"
+            shift
+            ;;
+        --help|-h)
+            echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+            echo -e "${BLUE}Usage: ./scripts/start-fe.sh [OPTIONS]${NC}"
+            echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+            echo ""
+            echo -e "${YELLOW}ENVIRONMENT OPTIONS:${NC}"
+            echo "  --env ENV       Environment: dev, test, or prod (default: dev)"
+            echo "  -e ENV          Short form of --env"
+            echo "  --env=ENV       Environment with equals sign"
+            echo "  -e=ENV          Short form with equals sign"
+            echo ""
+            echo -e "${YELLOW}OTHER OPTIONS:${NC}"
+            echo "  --help, -h      Show this help message"
+            echo ""
+            echo -e "${YELLOW}EXAMPLES:${NC}"
+            echo "  ./scripts/start-fe.sh                    # Default: dev environment"
+            echo "  ./scripts/start-fe.sh --env test         # Test environment"
+            echo "  ./scripts/start-fe.sh -e prod            # Production environment"
+            echo "  ./scripts/start-fe.sh --env=dev          # Dev with equals syntax"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+# Set environment with priority: command-line param > env var > default
+if [ -n "$ENVIRONMENT_PARAM" ]; then
+    ENVIRONMENT=$(echo "$ENVIRONMENT_PARAM" | tr '[:upper:]' '[:lower:]')
+elif [ -n "$ENVIRONMENT" ]; then
+    ENVIRONMENT=$(echo "$ENVIRONMENT" | tr '[:upper:]' '[:lower:]')
+else
+    ENVIRONMENT="dev"
+fi
+
+# Validate environment value
+if [[ ! "$ENVIRONMENT" =~ ^(dev|test|prod)$ ]]; then
+    echo -e "${RED}❌ Invalid environment: '$ENVIRONMENT'${NC}"
+    echo -e "${YELLOW}   Must be one of: dev, test, prod${NC}"
+    exit 1
+fi
 
 # Function to load environment-specific ports from .env file
 load_environment_ports() {

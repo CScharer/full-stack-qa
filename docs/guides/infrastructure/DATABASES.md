@@ -126,7 +126,9 @@ Scripts should set the `ENVIRONMENT` variable before running:
 
 ```bash
 # Development
-ENVIRONMENT=dev ./scripts/start-backend.sh
+./scripts/start-be.sh --env dev
+# Or: ./scripts/start-be.sh -e dev
+# Or: ENVIRONMENT=dev ./scripts/start-be.sh (backward compatible)
 
 # Testing
 ENVIRONMENT=test ./scripts/run-integration-tests.sh

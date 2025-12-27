@@ -112,7 +112,9 @@ CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8008
 
 # Or using the helper script (if available)
-../scripts/start-backend.sh
+../scripts/start-be.sh                  # Default: dev environment
+../scripts/start-be.sh --env dev         # Explicit dev
+../scripts/start-be.sh -e test          # Test environment
 ```
 
 ### 6. Verify Backend is Running
@@ -168,7 +170,9 @@ NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
 npm run dev
 
 # Or using the helper script (if available)
-../scripts/start-frontend.sh
+../scripts/start-fe.sh                  # Default: dev environment
+../scripts/start-fe.sh --env dev         # Explicit dev
+../scripts/start-fe.sh -e test          # Test environment
 ```
 
 ### 5. Verify Frontend is Running
@@ -205,11 +209,30 @@ PORT=3003 npm run dev
 
 ```bash
 # Terminal 1 - Backend
-./scripts/start-backend.sh
+./scripts/start-be.sh                    # Default: dev environment
+./scripts/start-be.sh --env dev          # Explicit dev
+./scripts/start-be.sh -e test            # Test environment
+./scripts/start-be.sh --env=prod         # Production environment
 
 # Terminal 2 - Frontend
-./scripts/start-frontend.sh
+./scripts/start-fe.sh                    # Default: dev environment
+./scripts/start-fe.sh --env dev          # Explicit dev
+./scripts/start-fe.sh -e test            # Test environment
+./scripts/start-fe.sh --env=prod         # Production environment
 ```
+
+### Option 3: Start Both Services Together
+
+```bash
+# Start both backend and frontend in one command
+./scripts/start-env.sh                   # Default: dev environment
+./scripts/start-env.sh --env test        # Test environment
+./scripts/start-env.sh -e prod           # Production environment
+./scripts/start-env.sh --env dev be=8004 fe=3004  # Custom ports
+./scripts/start-env.sh -e test --background  # Run in background
+```
+
+**Note**: Run `./scripts/start-env.sh --help` for full usage information.
 
 ---
 
@@ -345,8 +368,8 @@ full-stack-qa/
 │       └── full_stack_qa_test.db  # Test database
 │
 └── scripts/                # Helper scripts
-    ├── start-backend.sh
-    └── start-frontend.sh
+    ├── start-be.sh
+    └── start-fe.sh
 ```
 
 ---
