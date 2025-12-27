@@ -24,7 +24,7 @@ The project uses **environment-specific databases** for runtime data:
 
 - **Schema Database** (`full_stack_qa.db`): Template/reference only - **NEVER used for runtime**
 - **Development Database** (`full_stack_qa_dev.db`): Default database for local development
-- **Test Database** (`full_stack_qa_test.db`): Used for integration testing
+- **Test Database** (`full_stack_qa_test.db`): Used for integration testing (when `ENVIRONMENT=test`)
 - **Production Database** (`full_stack_qa_prod.db`): Used for production (if needed)
 
 ### Quick Setup

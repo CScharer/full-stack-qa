@@ -44,12 +44,20 @@ These tests use **Playwright** to simulate real user interactions with the appli
 This script will:
 1. Check prerequisites (Node.js, Python, database)
 2. Install dependencies if needed
-3. Start backend server (port 8004 for test environment)
-4. Start frontend dev server (port 3004 for test environment)
+3. Start backend server (environment-specific port)
+4. Start frontend dev server (environment-specific port)
 5. Run Playwright integration tests
 6. Clean up servers after tests
 
-**Note**: Integration tests use the **test environment** (ports 8004/3004) by default. See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+**Environment Support**:
+- **Default**: `dev` environment (ports 8003/3003, database: `full_stack_qa_dev.db`)
+- **Override**: Set `ENVIRONMENT` env var to use `test` or `prod`
+  ```bash
+  ENVIRONMENT=test ./scripts/run-integration-tests.sh  # Uses test environment
+  ENVIRONMENT=prod ./scripts/run-integration-tests.sh  # Uses prod environment
+  ```
+
+**Note**: See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ---
 
@@ -57,56 +65,79 @@ This script will:
 
 If you prefer to run tests manually:
 
-### 1. Ensure Test Database Exists
+### 1. Ensure Environment Database Exists
 
-Integration tests use the **test environment database** (`full_stack_qa_test.db`):
+Integration tests use the **environment-specific database** based on `ENVIRONMENT`:
+- `dev` → `full_stack_qa_dev.db` (default)
+- `test` → `full_stack_qa_test.db`
+- `prod` → `full_stack_qa_prod.db`
 
 ```bash
-# Test database should exist at:
+# For dev environment (default):
+Data/Core/full_stack_qa_dev.db
+
+# For test environment:
 Data/Core/full_stack_qa_test.db
 
-# If not, create it from schema:
+# For prod environment:
+Data/Core/full_stack_qa_prod.db
+
+# Create database from schema if needed:
 mkdir -p Data/Core
-sqlite3 Data/Core/full_stack_qa_test.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 Data/Core/full_stack_qa_test.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
-**Note**: The integration test script automatically sets `ENVIRONMENT=test`, which makes the backend use `full_stack_qa_test.db`.
+**Note**: The integration test script defaults to `dev` environment but can be overridden with `ENVIRONMENT` env var.
 
 ### 2. Start Backend Server
 
 ```bash
 cd backend
 source venv/bin/activate
-# Set environment to test (uses full_stack_qa_test.db and port 8004)
-export ENVIRONMENT=test
+# Set environment (defaults to dev if not set)
+export ENVIRONMENT=${ENVIRONMENT:-dev}
 export API_HOST=0.0.0.0
-export API_PORT=8004
-export CORS_ORIGINS=http://127.0.0.1:3004,http://localhost:3004
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8004
+# Ports are automatically selected based on environment (8003/8004/8005)
+python -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT:-8003}
 ```
 
-**OR using the helper script**:
+**OR using the helper script** (recommended):
 ```bash
+# Default (dev environment)
+./scripts/start-be.sh
+
+# Test environment
 ./scripts/start-be.sh --env test
+
+# Prod environment
+./scripts/start-be.sh --env prod
 ```
 
-**Note**: Setting `ENVIRONMENT=test` automatically makes the backend use `full_stack_qa_test.db` and port 8004. See [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) for more options.
+**Note**: Setting `ENVIRONMENT` automatically makes the backend use the correct database and port. See [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) for more options.
 
 ### 3. Start Frontend Server
 
 ```bash
 cd frontend
-export NEXT_PUBLIC_API_URL=http://localhost:8004/api/v1
-PORT=3004 npm run dev
+# Ports are automatically selected based on environment
+export NEXT_PUBLIC_API_URL=http://localhost:${API_PORT:-8003}/api/v1
+PORT=${FRONTEND_PORT:-3003} npm run dev
 ```
 
-**OR using the helper script**:
+**OR using the helper script** (recommended):
 ```bash
+# Default (dev environment)
+./scripts/start-fe.sh
+
+# Test environment
 ./scripts/start-fe.sh --env test
+
+# Prod environment
+./scripts/start-fe.sh --env prod
 ```
 
-**Note**: Test environment uses ports 8004 (backend) and 3004 (frontend). See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+**Note**: Ports are automatically selected based on environment. See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ### 4. Run Integration Tests
 
@@ -165,28 +196,38 @@ playwright/
 ### Playwright Integration Config
 
 The integration test configuration (`playwright.integration.config.ts`) automatically:
-- Starts backend server on port 8004 (test environment)
-- Starts frontend dev server on port 3004 (test environment)
+- Starts backend server on environment-specific port (defaults to dev: 8003)
+- Starts frontend dev server on environment-specific port (defaults to dev: 3003)
 - Waits for both servers to be ready
 - Runs tests against the running application
 - Cleans up servers after tests
 
-**Note**: Integration tests use the **test environment** (ports 8004/3004). See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+**Environment Support**:
+- **Default**: `dev` environment (ports 8003/3003)
+- **Override**: Set `ENVIRONMENT` env var to use `test` or `prod`
+  ```bash
+  ENVIRONMENT=test npm run test:integration  # Uses test environment (8004/3004)
+  ENVIRONMENT=prod npm run test:integration  # Uses prod environment (8005/3005)
+  ```
+
+**Note**: See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ### Environment Variables
 
 You can override defaults:
 
 ```bash
-# Frontend URL (test environment)
-export FRONTEND_URL=http://127.0.0.1:3004
+# Set environment (defaults to dev)
+export ENVIRONMENT=dev  # or test, prod
 
-# Backend URL (used by frontend - test environment)
-export NEXT_PUBLIC_API_URL=http://localhost:8004/api/v1
+# Frontend URL (optional - auto-selected based on ENVIRONMENT)
+export FRONTEND_URL=http://127.0.0.1:3003  # dev: 3003, test: 3004, prod: 3005
 
-# Set environment to test (uses full_stack_qa_test.db and ports 8004/3004)
-export ENVIRONMENT=test
+# Backend URL (optional - auto-selected based on ENVIRONMENT)
+export NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1  # dev: 8003, test: 8004, prod: 8005
 ```
+
+**Note**: Ports are automatically selected from `config/ports.json` based on `ENVIRONMENT`. You typically only need to set `ENVIRONMENT`.
 
 ---
 
@@ -196,8 +237,11 @@ export ENVIRONMENT=test
 
 **Solution:**
 ```bash
-# Check if port 8004 is in use (test environment)
-lsof -ti:8004 | xargs kill -9
+# Check if port is in use (check your environment's port)
+# dev: 8003, test: 8004, prod: 8005
+lsof -ti:8003 | xargs kill -9  # dev environment
+# or
+lsof -ti:8004 | xargs kill -9  # test environment
 
 # Verify test database exists
 ls -la Data/Core/full_stack_qa_test.db
@@ -212,8 +256,11 @@ pip install -r requirements.txt
 
 **Solution:**
 ```bash
-# Check if port 3003 is in use
-lsof -ti:3003 | xargs kill -9
+# Check if port is in use (check your environment's port)
+# dev: 3003, test: 3004, prod: 3005
+lsof -ti:3003 | xargs kill -9  # dev environment
+# or
+lsof -ti:3004 | xargs kill -9  # test environment
 
 # Verify frontend dependencies
 cd frontend
@@ -225,7 +272,7 @@ npm install --legacy-peer-deps
 **Solution:**
 - Ensure both servers are running
 - Check that `NEXT_PUBLIC_API_URL` is set correctly
-- Verify CORS is configured in backend (should allow `http://127.0.0.1:3003` and `http://localhost:3003`)
+- Verify CORS is configured in backend (should allow environment-specific ports: dev=3003, test=3004, prod=3005)
 
 ### Issue: Database locked errors
 

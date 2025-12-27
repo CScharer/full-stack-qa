@@ -56,8 +56,8 @@
 | `backend/tests/conftest.py` | 21 | `test_full_stack_qa.db` | Keep (temporary) | 🧪 Test | ✅ **CORRECT** - Temporary test DB |
 | `scripts/start-be.sh` (renamed from `start-backend.sh`) | 19, 88-92 | `full_stack_qa.db` → `full_stack_qa_dev.db` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Uses ENVIRONMENT variable, accepts `--env` parameter |
 | `scripts/run-backend-tests.sh` | 19-20, 51-56 | Removed schema DB refs | ✅ **COMPLETED** | 🔧 Test | ✅ **FIXED** - Uses temporary test DBs |
-| `scripts/run-integration-tests.sh` | 10, 35-50 | `full_stack_qa.db` → `full_stack_qa_test.db` | ✅ **COMPLETED** | 🔧 Test | ✅ **FIXED** - Uses ENVIRONMENT=test |
-| `playwright/playwright.integration.config.ts` | 55 | `DATABASE_PATH` → `ENVIRONMENT=test` | ✅ **COMPLETED** | 🔧 Test | ✅ **FIXED** - Uses test environment |
+| `scripts/run-integration-tests.sh` | 10, 35-50 | `full_stack_qa.db` → Environment-based | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Defaults to dev, supports all environments |
+| `playwright/playwright.integration.config.ts` | 55 | `DATABASE_PATH` → `ENVIRONMENT` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Defaults to dev, supports all environments |
 | `Data/Core/README.md` | 3, 48, 53, 59, 64, 83 | `full_stack_qa.db` | Document both schema and env DBs | 📝 Docs | ⚠️ **NEEDS UPDATE** - Only shows schema DB |
 | `docs/LOCAL_DEVELOPMENT.md` | 24, 39, 42, 49, 91, 249, 330, 378 | `full_stack_qa.db` | `full_stack_qa_dev.db` | 📝 Docs | ⚠️ **NEEDS UPDATE** - 8 references |
 | `docs/INTEGRATION_TESTING.md` | 62, 66, 67, 75, 165, 180 | `full_stack_qa.db` | `full_stack_qa_test.db` | 📝 Docs | ⚠️ **NEEDS UPDATE** - 6 references |
@@ -180,8 +180,8 @@ We need separate databases for each environment:
 #### 2.1 Update Scripts
 - `scripts/start-be.sh` (renamed from `start-backend.sh`) - Support environment-based database selection
 - `scripts/run-backend-tests.sh` - Use test database
-- `scripts/run-integration-tests.sh` - Use test database
-- `playwright/playwright.integration.config.ts` - Use test database
+- `scripts/run-integration-tests.sh` - Use environment-based database (defaults to dev)
+- `playwright/playwright.integration.config.ts` - Use environment-based database (defaults to dev)
 
 #### 2.2 Test Configuration
 - `backend/tests/conftest.py` - Use test database (`test_full_stack_qa.db` or `full_stack_qa_test.db`)

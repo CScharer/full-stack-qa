@@ -34,6 +34,8 @@ docs/
 │   │   ├── DOCKER.md                    Complete Docker guide
 │   │   ├── GITHUB_ACTIONS.md            CI/CD pipeline guide
 │   │   ├── GITHUB_PAGES_SETUP.md        Report hosting setup
+│   │   ├── PORT_CONFIGURATION.md        Port configuration guide
+│   │   ├── SERVICE_SCRIPTS.md           Service management scripts guide
 │   │   └── ADD_PERFORMANCE_TO_CICD.md   Performance testing in CI/CD
 │   ├── testing/                         🧪 Testing Guides
 │   │   ├── TEST_EXECUTION_GUIDE.md      How to run tests

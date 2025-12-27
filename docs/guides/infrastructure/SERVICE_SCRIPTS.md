@@ -278,7 +278,7 @@ fi
 ---
 
 ### `scripts/ci/port-config.sh`
-**Purpose**: Centralized port configuration (single source of truth)  
+**Purpose**: Centralized port configuration for shell scripts (reads from `config/ports.json`)  
 **Location**: `scripts/ci/port-config.sh`  
 **Usage**: Source this file and use `get_ports_for_environment`:
 ```bash
@@ -291,11 +291,15 @@ eval "$PORT_VARS"
 **Function Provided**:
 - **`get_ports_for_environment <environment>`**
   - Returns environment variables for ports
+  - Reads from `config/ports.json` (single source of truth)
+  - Falls back to hardcoded values if `jq` is not installed
   - Example: `PORT_VARS=$(get_ports_for_environment "test")`
 
-**Used by**: `verify-services.sh`, `start-services-for-ci.sh` (indirectly)
+**Used by**: `verify-services.sh`, `start-services-for-ci.sh`, `determine-ports.sh`
 
-**See Also**: [Port Configuration Guide](./PORT_CONFIGURATION.md) for detailed port configuration documentation
+**See Also**: 
+- [Port Configuration Guide](./PORT_CONFIGURATION.md) for detailed port configuration documentation
+- `config/ports.json` - Single source of truth for all port assignments
 
 ---
 
