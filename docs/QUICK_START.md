@@ -39,12 +39,12 @@ cd /path/to/full-stack-qa
 ```bash
 cd backend
 source venv/bin/activate
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8008
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8003
 ```
 
 **Backend will be available at:**
-- API: http://localhost:8008
-- Docs: http://localhost:8008/docs
+- API: http://localhost:8003 (dev), http://localhost:8004 (test), http://localhost:8005 (prod)
+- Docs: http://localhost:8003/docs
 
 ---
 
@@ -61,7 +61,7 @@ cd /path/to/full-stack-qa
 **OR manually:**
 ```bash
 cd frontend
-export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+export NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1
 PORT=3003 npm run dev
 ```
 
@@ -98,7 +98,7 @@ ENVIRONMENT=dev  # Options: dev, test, prod
 # DATABASE_PATH=../Data/Core/full_stack_qa_dev.db
 
 API_HOST=0.0.0.0
-API_PORT=8008
+API_PORT=8003  # dev: 8003, test: 8004, prod: 8005
 CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 ```
 
@@ -106,7 +106,7 @@ CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 
 ### Frontend (.env.local file in `frontend/` directory)
 ```bash
-NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1  # dev: 8003, test: 8004, prod: 8005
 ```
 
 **Note:** Environment variables set in terminal (like `export NEXT_PUBLIC_API_URL=...`) only work for that terminal session. For persistence, use `.env.local` file.
@@ -117,7 +117,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
 
 ### Check Backend
 ```bash
-curl http://localhost:8008/health
+curl http://localhost:8003/health  # dev: 8003, test: 8004, prod: 8005
 # Should return: {"status":"healthy"}
 ```
 
@@ -129,19 +129,20 @@ Open browser: http://127.0.0.1:3003
 ## 🔧 Troubleshooting
 
 ### Backend won't start
-- Check if port 8008 is in use: `lsof -ti:8008 | xargs kill -9`
+- Check if port 8003 is in use: `lsof -ti:8003 | xargs kill -9` (dev: 8003, test: 8004, prod: 8005)
 - Verify development database exists: `ls -la Data/Core/full_stack_qa_dev.db`
 - Check virtual environment: `source backend/venv/bin/activate`
 
 ### Frontend won't start
-- Check if port 3003 is in use: `lsof -ti:3003 | xargs kill -9`
+- Check if port 3003 is in use: `lsof -ti:3003 | xargs kill -9` (dev: 3003, test: 3004, prod: 3005)
 - Verify .env.local exists: `ls -la frontend/.env.local`
 - Check dependencies: `cd frontend && npm install --legacy-peer-deps`
 
 ### Frontend can't connect to backend
-- Verify backend is running: `curl http://localhost:8008/health`
+- Verify backend is running: `curl http://localhost:8003/health` (dev: 8003, test: 8004, prod: 8005)
 - Check .env.local has correct URL: `cat frontend/.env.local`
 - Check CORS settings in backend config
+- Ensure port matches environment (dev=8003, test=8004, prod=8005)
 
 ---
 
