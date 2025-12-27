@@ -45,10 +45,25 @@ This guide explains the database architecture for the full-stack-qa project, inc
 | Database File | Type | Status | Purpose | Used By |
 |---------------|------|--------|---------|---------|
 | `full_stack_qa.db` | 📐 Schema | ✅ Exists | Schema template (read-only) | Schema reference only |
-| `test_full_stack_qa.db` | 🧪 Test | 🗑️ Temporary | Auto-created during pytest | `backend/tests/conftest.py` |
-| `full_stack_qa_dev.db` | 🔧 Environment | ⏭️ Planned | Development runtime data | Backend API (dev), Local scripts |
-| `full_stack_qa_test.db` | 🔧 Environment | ⏭️ Planned | Test runtime data | Integration tests, CI/CD |
+| `pytest_temp_full_stack_qa_{env}.db` | 🧪 Test | 🗑️ Temporary | Auto-created during pytest (environment-aware) | `backend/tests/conftest.py`, `Data/Core/tests/conftest.py` |
+| `full_stack_qa_dev.db` | 🔧 Environment | ✅ Exists | Development runtime data | Backend API (dev), Local scripts |
+| `full_stack_qa_test.db` | 🔧 Environment | ✅ Exists | Test runtime data | Integration tests, CI/CD |
 | `full_stack_qa_prod.db` | 🔧 Environment | ⏭️ Planned | Production runtime data | Production deployments |
+
+### Note on Temporary Test Database
+
+**`pytest_temp_full_stack_qa_{env}.db`** is a temporary database created automatically by pytest fixtures. It is:
+- ✅ **NOT a persistent file** - Created in a temporary directory and auto-deleted after tests
+- ✅ **Environment-aware** - Name includes environment suffix (dev/test/prod)
+- ✅ **Default to dev** - Uses `dev` environment if `ENVIRONMENT` variable not set
+- ✅ **Prefixed with `pytest_temp_`** - Clearly indicates it's a temporary pytest database
+
+**Examples:**
+- `ENVIRONMENT=dev` (or unset) → `pytest_temp_full_stack_qa_dev.db`
+- `ENVIRONMENT=test` → `pytest_temp_full_stack_qa_test.db`
+- `ENVIRONMENT=prod` → `pytest_temp_full_stack_qa_prod.db`
+
+**Important**: This should NOT be confused with `full_stack_qa_test.db` (the persistent environment database for integration tests).
 
 ---
 

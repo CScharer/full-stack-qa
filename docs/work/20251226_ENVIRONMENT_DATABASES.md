@@ -35,7 +35,7 @@
 | Database File | Location | Type | Status | Purpose | Used By |
 |---------------|----------|------|--------|---------|---------|
 | `full_stack_qa.db` | `/full-stack-qa/Data/Core/full_stack_qa.db` | 📐 Schema Database | ✅ Exists | **Schema template** - Contains canonical database schema/structure. This is the single source of truth for database schema. Used as reference for creating environment databases. **NOT used for runtime data.** | Schema reference only |
-| `test_full_stack_qa.db` | Temporary (created in `tempfile.mkdtemp()`) | 🧪 Test Database | 🗑️ Temporary | **Temporary test database** - Created automatically during pytest test execution. Created in temporary directory, used for tests, then auto-deleted. Not a persistent file. | `backend/tests/conftest.py` (pytest fixtures) |
+| `pytest_temp_full_stack_qa_{env}.db` | Temporary (created in `tempfile.mkdtemp()`) | 🧪 Test Database | 🗑️ Temporary | **Temporary test database** - Created automatically during pytest test execution. Environment-aware naming (defaults to `dev`). Created in temporary directory, used for tests, then auto-deleted. Not a persistent file. | `backend/tests/conftest.py`, `Data/Core/tests/conftest.py` (pytest fixtures) |
 | `full_stack_qa_dev.db` | `/full-stack-qa/Data/Core/full_stack_qa_dev.db` | 🔧 Environment Database | ✅ Exists | **Development environment** - Runtime database for local development. Default database for development work. | Backend API (dev mode), Local development scripts |
 | `full_stack_qa_test.db` | `/full-stack-qa/Data/Core/full_stack_qa_test.db` | 🔧 Environment Database | ✅ Exists | **Test environment** - Runtime database for integration testing and CI/CD. Used for automated testing. | Integration tests, CI/CD pipelines, Test scripts |
 | `full_stack_qa_prod.db` | `/full-stack-qa/Data/Core/full_stack_qa_prod.db` | 🔧 Environment Database | ⏭️ Planned | **Production environment** - Runtime database for production (if needed). Used for production data storage. | Production deployments (if applicable) |
@@ -44,7 +44,7 @@
 
 **Total Databases**: 5
 - ✅ **1 Exists**: `full_stack_qa.db` (schema database)
-- 🗑️ **1 Temporary**: `test_full_stack_qa.db` (auto-created during tests)
+- 🗑️ **1 Temporary**: `pytest_temp_full_stack_qa_{env}.db` (auto-created during tests, environment-aware)
 - ✅ **2 Exists**: Environment databases (dev/test)
 - ⏭️ **1 Optional**: `full_stack_qa_prod.db` (create when needed)
 
@@ -53,7 +53,8 @@
 | File | Line(s) | Current Reference | Should Be | Type | Status |
 |------|---------|-------------------|-----------|------|--------|
 | `backend/app/config.py` | 21, 26-29 | `full_stack_qa.db` → `full_stack_qa_dev.db` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Now uses environment-based selection with validation |
-| `backend/tests/conftest.py` | 21 | `test_full_stack_qa.db` | Keep (temporary) | 🧪 Test | ✅ **CORRECT** - Temporary test DB |
+| `backend/tests/conftest.py` | 21 | `pytest_temp_full_stack_qa_{env}.db` | ✅ **UPDATED** | 🧪 Test | ✅ **UPDATED** - Environment-aware temporary test DB |
+| `Data/Core/tests/conftest.py` | 20 | `pytest_temp_full_stack_qa_{env}.db` | ✅ **UPDATED** | 🧪 Test | ✅ **UPDATED** - Environment-aware temporary test DB |
 | `scripts/start-be.sh` (renamed from `start-backend.sh`) | 19, 88-92 | `full_stack_qa.db` → `full_stack_qa_dev.db` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Uses ENVIRONMENT variable, accepts `--env` parameter |
 | `scripts/run-backend-tests.sh` | 19-20, 51-56 | Removed schema DB refs | ✅ **COMPLETED** | 🔧 Test | ✅ **FIXED** - Uses temporary test DBs |
 | `scripts/run-integration-tests.sh` | 10, 35-50 | `full_stack_qa.db` → Environment-based | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Defaults to dev, supports all environments |
@@ -85,15 +86,15 @@
 - **Note**: This is NOT an environment database - it's the schema template
 
 ### Current Environment Database Limitation
-- **Current Test Database**: `test_full_stack_qa.db` (hardcoded)
-- **Location**: `/full-stack-qa/Data/Core/test_full_stack_qa.db`
-- **Issue**: Only one test database exists, used for all test scenarios
-- **Problem**: Cannot properly test different environments without conflicts
+- **Current Test Database**: `pytest_temp_full_stack_qa_{env}.db` (environment-aware)
+- **Location**: Temporary directory (auto-created, auto-deleted)
+- **Status**: ✅ **UPDATED** - Now environment-aware, defaults to `dev`
+- **Note**: Database name includes environment suffix for better debugging
 
 ### Current Implementation
 - Database path is hardcoded in multiple locations
 - No environment-based database selection
-- Test database (`test_full_stack_qa.db`) used for all scenarios
+- Test database (`pytest_temp_full_stack_qa_{env}.db`) is environment-aware (defaults to `dev`)
 
 ---
 
@@ -184,7 +185,8 @@ We need separate databases for each environment:
 - `playwright/playwright.integration.config.ts` - Use environment-based database (defaults to dev)
 
 #### 2.2 Test Configuration
-- `backend/tests/conftest.py` - Use test database (`test_full_stack_qa.db` or `full_stack_qa_test.db`)
+- `backend/tests/conftest.py` - Uses environment-aware temporary test database (`pytest_temp_full_stack_qa_{env}.db`)
+- `Data/Core/tests/conftest.py` - Uses environment-aware temporary test database (`pytest_temp_full_stack_qa_{env}.db`)
 
 ### Phase 3: Database Creation
 
@@ -412,7 +414,7 @@ python tests/test_database_config.py
 
 #### 1.4 Update `backend/tests/conftest.py` (Optional - Keep Current Approach)
 **Current State**:
-- Creates temporary `test_full_stack_qa.db` in temp directory
+- Creates temporary `pytest_temp_full_stack_qa_{env}.db` in temp directory (environment-aware)
 - Uses temporary database for all tests
 - **This approach works well and keeps tests isolated**
 
@@ -448,7 +450,7 @@ python tests/test_database_config.py
 
 #### 2.2 Update `scripts/run-backend-tests.sh` ✅ **COMPLETED**
 **Current State**:
-- References: `test_full_stack_qa.db` (temporary test database)
+- References: `pytest_temp_full_stack_qa_{env}.db` (environment-aware temporary test database)
 - References: `full_stack_qa.db` (schema database) for integration tests
 
 **Changes Needed**:
