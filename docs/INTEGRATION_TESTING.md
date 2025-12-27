@@ -1,6 +1,6 @@
 # Integration Testing Guide
 
-**Last Updated**: 2025-12-14  
+**Last Updated**: 2025-12-27  
 **Purpose**: Guide for running full-stack integration tests
 
 ---

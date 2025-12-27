@@ -43,17 +43,22 @@ This backend provides REST endpoints for managing job applications, companies, c
 
 4. **Run the API**:
    ```bash
-   # Option 1: Using uvicorn directly
-   uvicorn app.main:app --reload --host localhost --port 8000
+   # Option 1: Using helper script (recommended)
+   ../scripts/start-be.sh                    # Default: dev environment
+   ../scripts/start-be.sh --env dev          # Explicit dev
+   ../scripts/start-be.sh -e test            # Test environment
    
-   # Option 2: Using Python
+   # Option 2: Using uvicorn directly
+   uvicorn app.main:app --reload --host localhost --port 8003
+   
+   # Option 3: Using Python
    python -m app.main
    ```
 
 5. **Access API**:
-   - API: http://localhost:8000
-   - Docs: http://localhost:8000/docs
-   - ReDoc: http://localhost:8000/redoc
+   - API: http://localhost:8003 (dev), http://localhost:8004 (test), http://localhost:8005 (prod)
+   - Docs: http://localhost:8003/docs
+   - ReDoc: http://localhost:8003/redoc
 
 ## 📁 Project Structure
 

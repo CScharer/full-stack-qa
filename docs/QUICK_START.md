@@ -1,17 +1,38 @@
 # Quick Start Guide
 
-**Last Updated**: 2025-12-14  
+**Last Updated**: 2025-12-27  
 **Purpose**: Quick reference for starting the application
 
 ---
 
-## 🚀 Quick Start (2 Terminals)
+## 🚀 Quick Start
+
+### Option 1: Start Both Services Together
+
+```bash
+cd /path/to/full-stack-qa
+./scripts/start-env.sh                   # Default: dev environment
+./scripts/start-env.sh --env test        # Test environment
+./scripts/start-env.sh -e prod           # Production environment
+```
+
+**OR with custom ports:**
+```bash
+./scripts/start-env.sh --env dev be=8004 fe=3004
+```
+
+---
+
+### Option 2: Start Services Separately (2 Terminals)
 
 ### Terminal 1: Start Backend
 
 ```bash
 cd /path/to/full-stack-qa
-./scripts/start-backend.sh
+./scripts/start-be.sh                    # Default: dev environment
+./scripts/start-be.sh --env dev          # Explicit dev
+./scripts/start-be.sh -e test            # Test environment
+./scripts/start-be.sh --env=prod         # Production environment
 ```
 
 **OR manually:**
@@ -31,7 +52,10 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8008
 
 ```bash
 cd /path/to/full-stack-qa
-./scripts/start-frontend.sh
+./scripts/start-fe.sh                    # Default: dev environment
+./scripts/start-fe.sh --env dev          # Explicit dev
+./scripts/start-fe.sh -e test            # Test environment
+./scripts/start-fe.sh --env=prod         # Production environment
 ```
 
 **OR manually:**

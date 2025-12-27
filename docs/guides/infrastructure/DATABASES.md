@@ -1,6 +1,6 @@
 # Database Configuration Guide
 
-**Last Updated**: 2025-12-26  
+**Last Updated**: 2025-12-27  
 **Status**: ✅ Active  
 **Related**: [Environment Databases Work Plan](../../work/20251226_ENVIRONMENT_DATABASES.md)
 
@@ -126,7 +126,9 @@ Scripts should set the `ENVIRONMENT` variable before running:
 
 ```bash
 # Development
-ENVIRONMENT=dev ./scripts/start-backend.sh
+./scripts/start-be.sh --env dev
+# Or: ./scripts/start-be.sh -e dev
+# Or: ENVIRONMENT=dev ./scripts/start-be.sh (backward compatible)
 
 # Testing
 ENVIRONMENT=test ./scripts/run-integration-tests.sh
@@ -257,6 +259,6 @@ For implementation details and update plans, see:
 
 ---
 
-**Last Updated**: 2025-12-26  
+**Last Updated**: 2025-12-27  
 **Maintained By**: Development Team
 

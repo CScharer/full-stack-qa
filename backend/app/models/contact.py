@@ -1,7 +1,7 @@
 """
 Pydantic models for Contact entity.
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
@@ -28,8 +28,7 @@ class ContactEmailResponse(ContactEmailBase):
     created_by: str
     modified_by: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ContactPhoneBase(BaseModel):
@@ -54,8 +53,7 @@ class ContactPhoneResponse(ContactPhoneBase):
     created_by: str
     modified_by: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ContactBase(BaseModel):
@@ -100,8 +98,7 @@ class ContactResponse(ContactBase):
     created_by: str
     modified_by: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ContactFullResponse(ContactResponse):

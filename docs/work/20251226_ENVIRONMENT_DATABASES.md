@@ -1,7 +1,7 @@
 # Environment Databases Configuration
 
 **Created**: 2025-12-26  
-**Last Updated**: 2025-12-26  
+**Last Updated**: 2025-12-27  
 **Type**: Work Item / Implementation Document  
 **Status**: ✅ **COMPLETE** - All phases implemented and validated  
 **Priority**: 🟡 Medium
@@ -54,7 +54,7 @@
 |------|---------|-------------------|-----------|------|--------|
 | `backend/app/config.py` | 21, 26-29 | `full_stack_qa.db` → `full_stack_qa_dev.db` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Now uses environment-based selection with validation |
 | `backend/tests/conftest.py` | 21 | `test_full_stack_qa.db` | Keep (temporary) | 🧪 Test | ✅ **CORRECT** - Temporary test DB |
-| `scripts/start-backend.sh` | 19, 88-92 | `full_stack_qa.db` → `full_stack_qa_dev.db` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Uses ENVIRONMENT variable |
+| `scripts/start-be.sh` (renamed from `start-backend.sh`) | 19, 88-92 | `full_stack_qa.db` → `full_stack_qa_dev.db` | ✅ **COMPLETED** | 🔧 Runtime | ✅ **FIXED** - Uses ENVIRONMENT variable, accepts `--env` parameter |
 | `scripts/run-backend-tests.sh` | 19-20, 51-56 | Removed schema DB refs | ✅ **COMPLETED** | 🔧 Test | ✅ **FIXED** - Uses temporary test DBs |
 | `scripts/run-integration-tests.sh` | 10, 35-50 | `full_stack_qa.db` → `full_stack_qa_test.db` | ✅ **COMPLETED** | 🔧 Test | ✅ **FIXED** - Uses ENVIRONMENT=test |
 | `playwright/playwright.integration.config.ts` | 55 | `DATABASE_PATH` → `ENVIRONMENT=test` | ✅ **COMPLETED** | 🔧 Test | ✅ **FIXED** - Uses test environment |
@@ -69,7 +69,7 @@
 **Summary**:
 - ✅ **2 Code Files** completed (`backend/app/config.py`, `backend/app/database/connection.py`)
 - ✅ **1 Test File** created (`backend/tests/test_database_config.py`)
-- ✅ **4 Script Files** completed (`scripts/start-backend.sh`, `scripts/run-backend-tests.sh`, `scripts/run-integration-tests.sh`, `playwright/playwright.integration.config.ts`)
+- ✅ **4 Script Files** completed (`scripts/start-be.sh` (renamed), `scripts/run-backend-tests.sh`, `scripts/run-integration-tests.sh`, `playwright/playwright.integration.config.ts`)
 - ⚠️ **7 Documentation Files** need updates (references to update)
 - ✅ **2 Files** are correct (temporary test DB, schema examples)
 
@@ -178,7 +178,7 @@ We need separate databases for each environment:
 ### Phase 2: Script Updates
 
 #### 2.1 Update Scripts
-- `scripts/start-backend.sh` - Support environment-based database selection
+- `scripts/start-be.sh` (renamed from `start-backend.sh`) - Support environment-based database selection
 - `scripts/run-backend-tests.sh` - Use test database
 - `scripts/run-integration-tests.sh` - Use test database
 - `playwright/playwright.integration.config.ts` - Use test database
@@ -276,7 +276,7 @@ DATABASE_NAME=my_custom.db
 - `backend/tests/conftest.py` - Test database configuration
 
 ### Scripts
-- `scripts/start-backend.sh` - Backend startup script
+- `scripts/start-be.sh` (renamed from `start-backend.sh`) - Backend startup script
 - `scripts/run-backend-tests.sh` - Test execution script
 - `scripts/run-integration-tests.sh` - Integration test script
 
@@ -426,7 +426,7 @@ python tests/test_database_config.py
 
 ### Phase 2: Script Updates ✅ **COMPLETED**
 
-#### 2.1 Update `scripts/start-backend.sh` ✅ **COMPLETED**
+#### 2.1 Update `scripts/start-be.sh` (renamed from `start-backend.sh`) ✅ **COMPLETED**
 **Current State**:
 - Checks for: `Data/Core/full_stack_qa.db` (schema database)
 - Uses schema database path
@@ -438,7 +438,7 @@ python tests/test_database_config.py
 - [x] Add warning if environment database is not found
 
 **Files Updated**:
-- ✅ `scripts/start-backend.sh` - Database path check updated
+- ✅ `scripts/start-be.sh` (renamed from `start-backend.sh`) - Database path check updated
 
 **Implementation Details**:
 - Export `ENVIRONMENT` variable (defaults to "dev")
@@ -606,7 +606,7 @@ sqlite3 Data/Core/full_stack_qa_test.db < docs/new_app/DELETE_TRIGGERS.sql
   - ✅ Only references in validation/error messages (correct)
   - ✅ Backend config validates and rejects schema database
 - [x] Verify all scripts use environment-appropriate databases
-  - ✅ `scripts/start-backend.sh` uses `ENVIRONMENT=dev` (default)
+  - ✅ `scripts/start-be.sh` uses `ENVIRONMENT=dev` (default), accepts `--env` parameter
   - ✅ `scripts/run-integration-tests.sh` uses `ENVIRONMENT=test`
   - ✅ `playwright/playwright.integration.config.ts` uses `ENVIRONMENT=test`
   - ✅ `scripts/run-backend-tests.sh` uses temporary databases (correct)

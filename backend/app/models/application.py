@@ -1,7 +1,7 @@
 """
 Pydantic models for Application entity.
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -58,5 +58,4 @@ class ApplicationResponse(ApplicationBase):
     created_by: str
     modified_by: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

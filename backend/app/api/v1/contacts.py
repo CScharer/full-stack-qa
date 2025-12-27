@@ -20,7 +20,7 @@ async def list_contacts(
     client_id: Optional[int] = Query(None),
     contact_type: Optional[str] = Query(None),
     sort: str = Query("created_on"),
-    order: str = Query("desc", regex="^(asc|desc)$"),
+    order: str = Query("desc", pattern="^(asc|desc)$"),
     include_deleted: bool = Query(False)
 ):
     """List contacts with pagination and filtering."""
