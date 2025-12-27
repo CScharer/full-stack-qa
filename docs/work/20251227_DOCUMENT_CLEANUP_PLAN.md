@@ -150,8 +150,9 @@ This table lists all non-living documents (planning documents, analysis document
 | `docs/new_app/` | `WORK_FRONTEND.md` | ✅ Left as is | ✅ Complete |
 | `docs/new_app/` | `FRONTEND_WORKFLOW_RECOMMENDATIONS.md` | ✅ Left as is | ✅ Complete |
 | `docs/guides/testing/` | `SMOKE_TEST_PLAN.md` | ✅ Left as is | ✅ Complete |
+| `docs/guides/testing/` | `MULTI_FRAMEWORK_SETUP.md` | ✅ Consolidated and reorganized | ✅ Complete |
 
-**Total Non-Living Documents**: 27
+**Total Non-Living Documents**: 28
 
 **Cleanup Summary**:
 - ✅ **Deleted**: 17 documents 
