@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-**Last Updated**: 2025-12-14  
+**Last Updated**: 2025-12-27  
 **Purpose**: Quick reference for starting the application
 
 ---

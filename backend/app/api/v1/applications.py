@@ -19,7 +19,7 @@ async def list_applications(
     company_id: Optional[int] = Query(None, description="Filter by company"),
     client_id: Optional[int] = Query(None, description="Filter by client"),
     sort: str = Query("created_on", description="Sort field"),
-    order: str = Query("desc", regex="^(asc|desc)$", description="Sort order"),
+    order: str = Query("desc", pattern="^(asc|desc)$", description="Sort order"),
     include_deleted: bool = Query(False, description="Include soft-deleted records")
 ):
     """List applications with pagination and filtering."""

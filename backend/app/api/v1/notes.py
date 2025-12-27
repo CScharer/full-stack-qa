@@ -17,7 +17,7 @@ async def list_notes(
     page: int = Query(1, ge=1),
     limit: int = Query(50, ge=1, le=100),
     sort: str = Query("created_on"),
-    order: str = Query("desc", regex="^(asc|desc)$"),
+    order: str = Query("desc", pattern="^(asc|desc)$"),
     include_deleted: bool = Query(False)
 ):
     """List notes with pagination and filtering."""

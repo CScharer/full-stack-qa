@@ -1,6 +1,6 @@
 # Local Development Guide
 
-**Last Updated**: 2025-12-14  
+**Last Updated**: 2025-12-27  
 **Purpose**: Guide for running the ONE GOAL frontend and backend locally
 
 ---

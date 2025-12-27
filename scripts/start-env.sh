@@ -137,16 +137,27 @@ echo ""
 
 # Track if we should cleanup on exit
 CLEANUP_ON_EXIT=false
+BACKEND_PID=""
+FRONTEND_PID=""
 
 # Function to cleanup on exit
 cleanup() {
     if [ "$CLEANUP_ON_EXIT" = "true" ]; then
         echo ""
         echo -e "${YELLOW}🛑 Stopping services...${NC}"
+        # Stop backend if running
+        if [ -n "$BACKEND_PID" ] && kill -0 "$BACKEND_PID" 2>/dev/null; then
+            echo -e "${YELLOW}   Stopping backend (PID: $BACKEND_PID)...${NC}"
+            kill "$BACKEND_PID" 2>/dev/null || true
+        fi
+        # Stop frontend if running
+        if [ -n "$FRONTEND_PID" ] && kill -0 "$FRONTEND_PID" 2>/dev/null; then
+            echo -e "${YELLOW}   Stopping frontend (PID: $FRONTEND_PID)...${NC}"
+            kill "$FRONTEND_PID" 2>/dev/null || true
+        fi
+        # Also try using stop-services.sh as fallback
         if [ -f "$SCRIPT_DIR/scripts/stop-services.sh" ]; then
-            bash "$SCRIPT_DIR/scripts/stop-services.sh"
-        else
-            echo -e "${RED}❌ stop-services.sh not found${NC}"
+            bash "$SCRIPT_DIR/scripts/stop-services.sh" 2>/dev/null || true
         fi
         echo -e "${GREEN}✅ Cleanup complete${NC}"
     fi
@@ -208,6 +219,7 @@ if [ -n "$FRONTEND_PORT" ]; then
         exit 1
     fi
     export FRONTEND_PORT="$FRONTEND_PORT"
+    export PORT="$FRONTEND_PORT"  # Frontend script uses PORT, not FRONTEND_PORT
     echo -e "${BLUE}📌 Using custom frontend port: $FRONTEND_PORT${NC}"
 fi
 
@@ -215,52 +227,42 @@ if [ -n "$BACKEND_PORT" ] || [ -n "$FRONTEND_PORT" ]; then
     echo ""
 fi
 
-# Start services using the CI script (but with reload enabled)
+# Start services using the individual scripts (with environment and port support)
+# The API_PORT and PORT environment variables are already set above and will be picked up by the scripts
 if [ "$BACKGROUND" = "true" ]; then
     echo -e "${BLUE}📦 Starting services in background...${NC}"
     echo ""
-    # Run in background and capture output
-    bash "$SCRIPT_DIR/scripts/start-services-for-ci.sh" > "$SCRIPT_DIR/dev-services.log" 2>&1 &
-    SERVICES_PID=$!
-    echo -e "${GREEN}✅ Services starting in background (PID: $SERVICES_PID)${NC}"
-    echo -e "${BLUE}   Logs: $SCRIPT_DIR/dev-services.log${NC}"
+    # Start backend in background (API_PORT is already exported)
+    bash "$SCRIPT_DIR/scripts/start-be.sh" --env "$ENVIRONMENT" > "$SCRIPT_DIR/dev-backend.log" 2>&1 &
+    BACKEND_PID=$!
+    # Start frontend in background (PORT is already exported)
+    bash "$SCRIPT_DIR/scripts/start-fe.sh" --env "$ENVIRONMENT" > "$SCRIPT_DIR/dev-frontend.log" 2>&1 &
+    FRONTEND_PID=$!
+    echo -e "${GREEN}✅ Services starting in background${NC}"
+    echo -e "${BLUE}   Backend PID: $BACKEND_PID${NC}"
+    echo -e "${BLUE}   Frontend PID: $FRONTEND_PID${NC}"
+    echo -e "${BLUE}   Backend logs: $SCRIPT_DIR/dev-backend.log${NC}"
+    echo -e "${BLUE}   Frontend logs: $SCRIPT_DIR/dev-frontend.log${NC}"
     echo ""
     echo -e "${YELLOW}   To stop services, run: ./scripts/stop-services.sh${NC}"
-    echo -e "${YELLOW}   Or: kill $SERVICES_PID${NC}"
+    echo -e "${YELLOW}   Or: kill $BACKEND_PID $FRONTEND_PID${NC}"
     echo ""
-    # Wait for the background process
-    wait $SERVICES_PID
+    # Wait for both processes
+    wait $BACKEND_PID $FRONTEND_PID
 else
     echo -e "${BLUE}📦 Starting services in foreground...${NC}"
     echo -e "${YELLOW}   Press Ctrl+C to stop both services${NC}"
     echo ""
-    # Run in foreground - will be interrupted by signal handlers
-    # Note: We need to run without set -e here so cleanup can run on error
-    set +e
-    bash "$SCRIPT_DIR/scripts/start-services-for-ci.sh"
-    EXIT_CODE=$?
-    set -e
+    # Start backend in background (API_PORT is already exported)
+    bash "$SCRIPT_DIR/scripts/start-be.sh" --env "$ENVIRONMENT" &
+    BACKEND_PID=$!
+    # Start frontend in background (PORT is already exported)
+    bash "$SCRIPT_DIR/scripts/start-fe.sh" --env "$ENVIRONMENT" &
+    FRONTEND_PID=$!
     
-    # If script exited with error, cleanup and exit
-    if [ $EXIT_CODE -ne 0 ]; then
-        CLEANUP_ON_EXIT=true
-        cleanup
-        exit $EXIT_CODE
-    fi
-    
-    # On successful start, services are running in background
-    # The script will exit but services continue running
-    # User can press Ctrl+C in this terminal to stop them, or use stop-services.sh
-    echo ""
-    echo -e "${GREEN}✅ Services started successfully!${NC}"
-    echo -e "${YELLOW}   Services are running in the background${NC}"
-    echo -e "${YELLOW}   To stop services, press Ctrl+C or run: ./scripts/stop-services.sh${NC}"
-    echo ""
-    
-    # Keep script running so Ctrl+C can stop services
-    # Wait for signal (SIGINT/SIGTERM) which will trigger cleanup
+    # Enable cleanup on exit
     CLEANUP_ON_EXIT=true
-    while true; do
-        sleep 1
-    done
+    
+    # Wait for both processes or signal (Ctrl+C will trigger cleanup)
+    wait $BACKEND_PID $FRONTEND_PID 2>/dev/null || true
 fi

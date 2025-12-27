@@ -17,7 +17,7 @@ async def list_companies(
     limit: int = Query(50, ge=1, le=100),
     job_type: Optional[str] = Query(None),
     sort: str = Query("created_on"),
-    order: str = Query("desc", regex="^(asc|desc)$"),
+    order: str = Query("desc", pattern="^(asc|desc)$"),
     include_deleted: bool = Query(False)
 ):
     """List companies with pagination and filtering."""
