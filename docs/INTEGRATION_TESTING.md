@@ -227,7 +227,7 @@ export FRONTEND_URL=http://127.0.0.1:3003  # dev: 3003, test: 3004, prod: 3005
 export NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1  # dev: 8003, test: 8004, prod: 8005
 ```
 
-**Note**: Ports are automatically selected from `config/ports.json` based on `ENVIRONMENT`. You typically only need to set `ENVIRONMENT`.
+**Note**: Configuration (ports, database, API paths, timeouts, CORS) is automatically selected from `config/environments.json` based on `ENVIRONMENT`. You typically only need to set `ENVIRONMENT`.
 
 ---
 

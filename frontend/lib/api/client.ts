@@ -4,6 +4,10 @@
  */
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
+// Note: API timeout is configured in config/environments.json (apiClient: 10000ms)
+// This value should match the centralized configuration
+const API_TIMEOUT = 10000; // 10 seconds (from config/environments.json)
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003/api/v1';
 
 /**
@@ -14,7 +18,7 @@ const apiClient: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 second timeout
+  timeout: API_TIMEOUT, // From config/environments.json
 });
 
 /**

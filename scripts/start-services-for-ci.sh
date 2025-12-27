@@ -14,7 +14,14 @@ BACKEND_DIR="${SCRIPT_DIR}/backend"
 FRONTEND_DIR="${SCRIPT_DIR}/frontend"
 ENVIRONMENT=${ENVIRONMENT:-"dev"}  # dev, test, or prod
 API_RELOAD=${API_RELOAD:-"false"}  # Disable reload for CI
-MAX_WAIT=${MAX_WAIT:-120}  # Maximum wait time in seconds
+# Load timeout from centralized config if available
+SCRIPT_DIR_FULL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ENV_CONFIG="${SCRIPT_DIR_FULL}/config/environments.json"
+if [ -f "$ENV_CONFIG" ] && command -v jq &> /dev/null; then
+    MAX_WAIT=${MAX_WAIT:-$(jq -r '.timeouts.serviceStartup' "$ENV_CONFIG" 2>/dev/null || echo "120")}
+else
+    MAX_WAIT=${MAX_WAIT:-120}  # Fallback: Maximum wait time in seconds
+fi
 FORCE_STOP=${FORCE_STOP:-"false"}  # Force stop existing services on ports
 
 # Function to load environment-specific ports from .env files

@@ -13,7 +13,15 @@
 set -e
 
 BASE_URL=${1}
-TIMEOUT=${2:-30}
+# Get timeout from centralized config if available
+SCRIPT_DIR_FULL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ENV_CONFIG="${SCRIPT_DIR_FULL}/config/environments.json"
+if [ -f "$ENV_CONFIG" ] && command -v jq &> /dev/null; then
+    DEFAULT_TIMEOUT=$(jq -r '.timeouts.serviceVerification' "$ENV_CONFIG" 2>/dev/null || echo "30")
+else
+    DEFAULT_TIMEOUT=30
+fi
+TIMEOUT=${2:-$DEFAULT_TIMEOUT}
 
 # Validate required arguments
 if [ -z "$BASE_URL" ]; then

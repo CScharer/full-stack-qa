@@ -1,33 +1,79 @@
-# Configuration Files
+# Configuration Directory
 
-This directory contains centralized configuration files used across the project.
+This directory contains centralized configuration files used across the project. All environment-specific configuration (ports, database, API endpoints, timeouts, CORS) is managed here.
 
-## Port Configuration
+## Available Configuration Files
 
-**File**: `config/ports.json`
+### `environments.json` (Comprehensive Configuration)
 
-This is the **single source of truth** for port assignments across all environments. Both shell scripts and TypeScript/JavaScript code read from this file.
+**Purpose**: Single source of truth for all environment configuration including:
+- Ports and URLs (frontend/backend)
+- Database paths and naming patterns
+- API endpoints (`/api/v1`, `/health`, etc.)
+- CORS origins (per environment)
+- Service timeouts
+- All environment-specific settings
 
-### Usage
+This is the **primary configuration file** for all environment settings. Both shell scripts and TypeScript/JavaScript code read from this file.
 
-#### Shell Scripts
+### `ports.json` (Ports Only)
+
+**Purpose**: Port assignments and URLs for all environments.
+
+**Use Case**: Use this file if you only need port configuration. For comprehensive configuration, use `environments.json`.
+
+**Note**: Scripts automatically read from `environments.json` first, then fall back to `ports.json` if needed.
+
+## Usage
+
+#### Shell Scripts - Comprehensive Configuration
+
+**Using `env-config.sh` utility (recommended):**
 ```bash
-# Source port-config.sh which reads from ports.json
+source scripts/ci/env-config.sh
+export_environment_config "dev"
+# Now all config vars are set: FRONTEND_PORT, API_PORT, DATABASE_NAME, API_BASE_PATH, etc.
+```
+
+**Using `port-config.sh` (ports only):**
+```bash
 source scripts/ci/port-config.sh
 eval "$(get_ports_for_environment "dev")"
-echo "Frontend: $FRONTEND_PORT"
-echo "Backend: $API_PORT"
+# Ports are set: FRONTEND_PORT, API_PORT, FRONTEND_URL, API_URL
 ```
 
-#### TypeScript/JavaScript
+**Reading directly with jq:**
+```bash
+FRONTEND_PORT=$(jq -r '.environments.dev.frontend.port' config/environments.json)
+API_PORT=$(jq -r '.environments.dev.backend.port' config/environments.json)
+API_BASE_PATH=$(jq -r '.api.basePath' config/environments.json)
+DB_NAME=$(jq -r '.environments.dev.database.name' config/environments.json)
+```
+
+#### TypeScript/JavaScript - Comprehensive Configuration
+
+**Using `port-config.ts` utility (recommended - type-safe):**
 ```typescript
-import { getPortsForEnvironment } from './config/port-config';
-const ports = getPortsForEnvironment('dev');
-console.log(ports.frontend.port); // 3003
-console.log(ports.backend.port); // 8003
+import { getEnvironmentConfig, getApiConfig, getTimeoutConfig } from './config/port-config';
+const env = getEnvironmentConfig('dev');
+const api = getApiConfig();
+console.log(env.frontend.port); // 3003
+console.log(env.backend.port); // 8003
+console.log(api.basePath); // "/api/v1"
+console.log(env.database.name); // "full_stack_qa_dev.db"
 ```
 
-### Port Assignments
+**Importing directly:**
+```typescript
+import config from '../../config/environments.json';
+const env = config.environments.dev;
+console.log(env.frontend.port); // 3003
+console.log(config.api.basePath); // "/api/v1"
+```
+
+### Configuration Values
+
+#### Port Assignments
 
 | Environment | Frontend Port | Backend Port |
 |-------------|---------------|--------------|
@@ -35,12 +81,44 @@ console.log(ports.backend.port); // 8003
 | test | 3004 | 8004 |
 | prod | 3005 | 8005 |
 
-### Updating Ports
+#### API Endpoints (from environments.json)
+- Base Path: `/api/v1`
+- Health Check: `/health`
+- API Docs: `/docs`
+- ReDoc: `/redoc`
 
-To change port assignments:
-1. Update `config/ports.json` (single source of truth)
-2. Shell scripts will automatically use the new values (via `port-config.sh`)
-3. TypeScript/JavaScript will automatically use the new values (via `port-config.ts`)
+#### Database Configuration (from environments.json)
+- Directory: `Data/Core`
+- Schema Database: `full_stack_qa.db`
+- Naming Pattern: `full_stack_qa_{env}.db`
+- Examples:
+  - Dev: `full_stack_qa_dev.db`
+  - Test: `full_stack_qa_test.db`
+  - Prod: `full_stack_qa_prod.db`
 
-**Note**: If `jq` is not installed, shell scripts will fall back to hardcoded values in `port-config.sh`. It's recommended to install `jq` for full JSON support.
+#### Timeouts (from environments.json)
+- Service Startup: 120 seconds
+- Service Verification: 30 seconds
+- API Client: 10000ms (10 seconds)
+- Web Server: 120000ms (120 seconds)
+- Check Interval: 2 seconds
+
+### Updating Configuration
+
+**To update configuration values:**
+
+1. **Edit `config/environments.json`** (single source of truth for all config)
+2. **Scripts automatically use the new values**:
+   - Shell scripts: Via `scripts/ci/env-config.sh` or `scripts/ci/port-config.sh`
+   - TypeScript/JavaScript: Via `playwright/config/port-config.ts`
+3. **All configuration values** (ports, database, API paths, timeouts, CORS) are in one place
+
+**Alternative: Update `ports.json` (ports only)**
+- If you only need to change ports, you can update `config/ports.json`
+- Scripts will automatically use the new values
+- Note: For other config values (database, API paths, timeouts), use `environments.json`
+
+**Requirements**: 
+- Shell scripts require `jq` for JSON parsing (install with `brew install jq` on macOS or `apt-get install jq` on Linux)
+- If `jq` is not installed, scripts will fall back to hardcoded values
 

@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { getPortsForEnvironment } from './config/port-config';
+import { getPortsForEnvironment, getEnvironmentConfig, getApiConfig, getTimeoutConfig } from './config/port-config';
 
 const execAsync = promisify(exec);
 
@@ -12,18 +12,24 @@ const execAsync = promisify(exec);
  * Environment Support:
  * - Defaults to 'dev' environment (ports 8003/3003)
  * - Can be overridden via ENVIRONMENT env var (dev, test, prod)
- * - Ports are automatically selected from centralized config (config/ports.json)
+ * - All configuration (ports, database, API paths, timeouts, CORS) is automatically 
+ *   selected from centralized config (config/environments.json)
  */
 
 // Get environment from env var, default to 'dev' to match other scripts
 const environment = process.env.ENVIRONMENT || 'dev';
 
-// Get ports from centralized configuration
-const ports = getPortsForEnvironment(environment, 'dev');
-const apiPort = ports.backend.port.toString();
-const frontendPort = ports.frontend.port.toString();
-const frontendUrl = ports.frontend.url.replace('localhost', '127.0.0.1');
-const apiUrl = ports.backend.url;
+// Get configuration from centralized config
+const envConfig = getEnvironmentConfig(environment, 'dev');
+const apiConfig = getApiConfig();
+const timeoutConfig = getTimeoutConfig();
+
+const apiPort = envConfig.backend.port.toString();
+const frontendPort = envConfig.frontend.port.toString();
+const frontendUrl = envConfig.frontend.url.replace('localhost', '127.0.0.1');
+const apiUrl = envConfig.backend.url;
+const apiBasePath = apiConfig.basePath;
+const healthEndpoint = apiConfig.healthEndpoint;
 
 console.log(`🔧 Playwright Integration Config: Using ${environment.toUpperCase()} environment`);
 console.log(`   Backend: ${apiUrl} (port ${apiPort})`);
@@ -67,8 +73,8 @@ export default defineConfig({
   webServer: [
     {
       command: `cd ../backend && source venv/bin/activate && python -m uvicorn app.main:app --host 0.0.0.0 --port ${apiPort}`,
-      url: `${apiUrl}/health`,
-      timeout: 120 * 1000,
+      url: `${apiUrl}${healthEndpoint}`,
+      timeout: timeoutConfig.webServer,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',
       stderr: 'pipe',
@@ -76,7 +82,7 @@ export default defineConfig({
         ENVIRONMENT: environment, // Uses environment-specific database (full_stack_qa_{env}.db)
         API_HOST: '0.0.0.0',
         API_PORT: apiPort,
-        CORS_ORIGINS: `${frontendUrl},http://localhost:${frontendPort}`,
+        CORS_ORIGINS: envConfig.corsOrigins.join(','),
       },
     },
     {
@@ -88,7 +94,7 @@ export default defineConfig({
       stderr: 'pipe',
       env: {
         PORT: frontendPort,
-        NEXT_PUBLIC_API_URL: `${apiUrl}/api/v1`,
+        NEXT_PUBLIC_API_URL: `${apiUrl}${apiBasePath}`,
       },
     },
   ],

@@ -1,23 +1,40 @@
 #!/bin/bash
 # scripts/ci/port-config.sh
-# Centralized port configuration for all environments
-# This file reads from config/ports.json (single source of truth)
-# All scripts should source this file to get port values
+# Centralized configuration for all environments
+# This file reads from config/environments.json (single source of truth)
+# All scripts should source this file to get configuration values
 
 set -e
 
-# Get script directory to find port config JSON
+# Get script directory to find config JSON
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PORT_CONFIG_JSON="${SCRIPT_DIR}/config/ports.json"
+ENV_CONFIG_JSON="${SCRIPT_DIR}/config/environments.json"
+PORT_CONFIG_JSON="${SCRIPT_DIR}/config/ports.json"  # Fallback for backward compatibility
 
-# Port Configuration (Single Source of Truth)
+# Configuration (Single Source of Truth)
 # Documented in: docs/new_app/ONE_GOAL.md
-# Source: config/ports.json (shared with TypeScript/JavaScript)
+# Source: config/environments.json (comprehensive config) or config/ports.json (fallback)
 
 get_ports_for_environment() {
     local env=$(echo "${1:-dev}" | tr '[:upper:]' '[:lower:]')
     
-    # Try to read from JSON config if available (preferred)
+    # Try to read from environments.json first (preferred - comprehensive config)
+    if [ -f "$ENV_CONFIG_JSON" ] && command -v jq &> /dev/null; then
+        local frontend_port=$(jq -r ".environments[\"$env\"].frontend.port" "$ENV_CONFIG_JSON" 2>/dev/null)
+        local backend_port=$(jq -r ".environments[\"$env\"].backend.port" "$ENV_CONFIG_JSON" 2>/dev/null)
+        local frontend_url=$(jq -r ".environments[\"$env\"].frontend.url" "$ENV_CONFIG_JSON" 2>/dev/null)
+        local backend_url=$(jq -r ".environments[\"$env\"].backend.url" "$ENV_CONFIG_JSON" 2>/dev/null)
+        
+        if [ "$frontend_port" != "null" ] && [ -n "$frontend_port" ]; then
+            echo "FRONTEND_PORT=$frontend_port"
+            echo "API_PORT=$backend_port"
+            echo "FRONTEND_URL=$frontend_url"
+            echo "API_URL=$backend_url"
+            return 0
+        fi
+    fi
+    
+    # Fallback to ports.json (backward compatibility)
     if [ -f "$PORT_CONFIG_JSON" ] && command -v jq &> /dev/null; then
         local frontend_port=$(jq -r ".[\"$env\"].frontend.port" "$PORT_CONFIG_JSON" 2>/dev/null)
         local backend_port=$(jq -r ".[\"$env\"].backend.port" "$PORT_CONFIG_JSON" 2>/dev/null)

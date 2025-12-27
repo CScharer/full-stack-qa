@@ -277,8 +277,32 @@ fi
 
 ---
 
-### `scripts/ci/port-config.sh`
-**Purpose**: Centralized port configuration for shell scripts (reads from `config/ports.json`)  
+### `scripts/ci/env-config.sh` (Recommended)
+**Purpose**: Comprehensive environment configuration utility (reads from `config/environments.json`)  
+**Location**: `scripts/ci/env-config.sh`  
+**Usage**: Source this file and use configuration functions:
+```bash
+source "$(dirname "$0")/env-config.sh"
+export_environment_config "dev"
+# Now all config vars are set: ports, database, API, timeouts, CORS
+```
+
+**Functions Provided**:
+- **`get_ports_for_environment <environment>`** - Returns port variables
+- **`get_database_for_environment <environment>`** - Returns database variables
+- **`get_api_endpoints`** - Returns API endpoint paths
+- **`get_timeouts`** - Returns timeout values
+- **`get_cors_origins <environment>`** - Returns CORS origins
+- **`export_environment_config <environment>`** - Exports all config for an environment
+
+**Used by**: All scripts that need comprehensive configuration
+
+**See Also**: 
+- [Port Configuration Guide](./PORT_CONFIGURATION.md) for detailed configuration documentation
+- `config/environments.json` - Single source of truth for all configuration
+
+### `scripts/ci/port-config.sh` (Backward Compatibility)
+**Purpose**: Port configuration only (reads from `config/environments.json` or `config/ports.json`)  
 **Location**: `scripts/ci/port-config.sh`  
 **Usage**: Source this file and use `get_ports_for_environment`:
 ```bash
@@ -291,15 +315,13 @@ eval "$PORT_VARS"
 **Function Provided**:
 - **`get_ports_for_environment <environment>`**
   - Returns environment variables for ports
-  - Reads from `config/ports.json` (single source of truth)
+  - Reads from `config/environments.json` (preferred) or `config/ports.json` (fallback)
   - Falls back to hardcoded values if `jq` is not installed
   - Example: `PORT_VARS=$(get_ports_for_environment "test")`
 
-**Used by**: `verify-services.sh`, `start-services-for-ci.sh`, `determine-ports.sh`
+**Used by**: Scripts that only need port configuration (backward compatibility)
 
-**See Also**: 
-- [Port Configuration Guide](./PORT_CONFIGURATION.md) for detailed port configuration documentation
-- `config/ports.json` - Single source of truth for all port assignments
+**Note**: For new code, prefer `env-config.sh` which provides comprehensive configuration.
 
 ---
 
