@@ -79,7 +79,7 @@ on:
       enable_robot_tests:
         description: 'Enable Robot Framework Tests'
         type: boolean
-        default: false
+        default: true
       enable_selenide_tests:
         description: 'Enable Selenide Tests'
         type: boolean
