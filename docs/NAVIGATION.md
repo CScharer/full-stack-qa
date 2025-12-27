@@ -16,18 +16,9 @@ docs/
 ├── NAVIGATION.md (this file)           📍 You are here!
 ├── README.md                            📖 Main documentation overview
 │
-├── analysis/                            🔍 Analysis & Recommendations
-│   ├── 2025-11-13-comprehensive/       ⭐ Latest Analysis (Start Here!)
-│   │   ├── README.md                   🗺️ Analysis navigation guide
-│   │   ├── ANALYSIS_EXECUTIVE_SUMMARY.md      📊 High-level overview
-│   │   ├── QUICK_ACTION_PLAN.md        ✅ Prioritized action items
-│   │   ├── COMPREHENSIVE_ANALYSIS_2025.md     📖 Complete analysis
-│   │   └── MODERN_CODING_STANDARDS.md  💻 Java 17 & Selenium 4 guide
-│   └── previous/                        📦 Historical analyses
-│       ├── ANALYSIS.md                  Previous project analysis
-│       ├── ANALYSIS_SUGGESTIONS.md      150-task roadmap
-│       ├── ANALYSIS_PS_RESULTS.md       Password migration results
-│       └── COMMIT_SAFETY_REPORT.md      Commit safety analysis
+├── work/                                📋 Work & Planning Documents
+│   ├── MIGRATE_REPO.md                  📦 Repository migration history
+│   └── [date-prefixed documents]        📅 Planning and analysis documents
 │
 ├── guides/                              📚 How-To Guides & Documentation
 │   ├── infrastructure/                  🏗️ Infrastructure Setup
@@ -139,8 +130,8 @@ Project Structure:
 | **See Allure reports** | `guides/testing/ALLURE_REPORTING.md` |
 | **Performance testing** | `guides/testing/PERFORMANCE_TESTING.md` |
 | **Mobile testing** | `guides/testing/MOBILE_TESTING.md` |
-| **Improve the framework** | `analysis/2025-11-13-comprehensive/` |
-| **Learn modern Java/Selenium** | `analysis/2025-11-13-comprehensive/MODERN_CODING_STANDARDS.md` |
+| **Improve the framework** | `work/` (planning documents) |
+| **Learn modern Java/Selenium** | `guides/java/CODE_QUALITY.md` |
 | **See what's been done** | `archive/` |
 | **Understand decisions** | `architecture/decisions/` |
 | **Know team standards** | `process/` |

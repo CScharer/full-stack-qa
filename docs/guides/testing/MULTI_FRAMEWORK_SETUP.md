@@ -780,4 +780,4 @@ Use Maven profiles to run specific frameworks:
 ---
 
 **Created**: January 2025
-**Last Updated**: January 2025
+**Last Updated**: December 2025
