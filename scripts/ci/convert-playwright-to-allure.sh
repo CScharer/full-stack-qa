@@ -28,9 +28,9 @@ if [ ! -d "$PLAYWRIGHT_RESULTS_DIR" ]; then
     exit 0
 fi
 
-# Use Python to parse Playwright results.json files
+# Use Python to parse Playwright JUnit XML files (Playwright uses JUnit reporter)
 python3 <<PYTHON_SCRIPT
-import json
+import xml.etree.ElementTree as ET
 import os
 import sys
 from pathlib import Path
@@ -44,89 +44,119 @@ env = "$ENVIRONMENT" if "$ENVIRONMENT" else None
 
 converted = 0
 
-# Look for Playwright results.json files
-results_files = list(Path(playwright_dir).rglob("results.json"))
+# Look for Playwright JUnit XML files (Playwright uses JUnit reporter)
+# Playwright generates: test-results/junit.xml or test-results/integration-junit.xml
+junit_files = []
+if os.path.isdir(playwright_dir):
+    # Search for JUnit XML files
+    junit_files = list(Path(playwright_dir).rglob("junit.xml"))
+    junit_files.extend(list(Path(playwright_dir).rglob("*junit*.xml")))
+    # Also check parent directory
+    if os.path.isdir(os.path.dirname(playwright_dir)):
+        parent_junit = list(Path(os.path.dirname(playwright_dir)).rglob("junit.xml"))
+        junit_files.extend(parent_junit)
 
-if not results_files:
-    print("ℹ️  No Playwright results.json files found")
+if not junit_files:
+    print("ℹ️  No Playwright JUnit XML files found")
     print("   This is expected if Playwright tests haven't run")
     sys.exit(0)
 
-for json_file in results_files:
+for junit_file in junit_files:
     try:
-        with open(json_file, 'r') as f:
-            data = json.load(f)
+        tree = ET.parse(junit_file)
+        root = tree.getroot()
         
-        # Playwright results structure: { "stats": { "total": N, "expected": M, ... }, "suites": [...] }
-        if 'stats' in data:
-            stats = data['stats']
-            total = stats.get('total', 0)
-            expected = stats.get('expected', 0)  # Passed tests
-            failures = total - expected
-            
-            print(f"📊 Playwright Stats: {total} tests, {expected} passed, {failures} failed")
-            
-            if total > 0:
-                status = "passed" if failures == 0 else "failed"
-                duration = stats.get('duration', 0) or 60000  # Default 1 minute
-                
-                test_uuid = uuid.uuid4().hex[:32]
-                timestamp = int(datetime.now().timestamp() * 1000)
-                test_name = "Playwright Test Suite"
-                full_name = f"Playwright.{test_name}"
-                history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
-                
-                labels = [
-                    {"name": "suite", "value": "Playwright Tests"},
-                    {"name": "testClass", "value": "Playwright"},
-                    {"name": "epic", "value": "Playwright E2E Testing"},
-                    {"name": "feature", "value": "Playwright Tests"}
-                ]
-                
-                if env and env not in ["unknown", "combined"]:
-                    labels.append({"name": "environment", "value": env})
-                
-                params = []
-                if env and env not in ["unknown", "combined"]:
-                    params.append({"name": "Environment", "value": env.upper()})
-                
-                result = {
-                    "uuid": test_uuid,
-                    "historyId": history_id,
-                    "fullName": full_name,
-                    "labels": labels,
-                    "name": f"{test_name} ({expected} passed, {failures} failed)",
-                    "status": status,
-                    "statusDetails": {
-                        "known": False,
-                        "muted": False,
-                        "flaky": False
-                    },
-                    "stage": "finished",
-                    "description": f"Playwright Test Suite: {total} tests total, {expected} passed, {failures} failed",
-                    "steps": [],
-                    "attachments": [],
-                    "parameters": params,
-                    "start": timestamp,
-                    "stop": timestamp + duration
-                }
-                
-                output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
-                with open(output_file, 'w') as f:
-                    json.dump(result, f, indent=2)
-                
-                print(f"✅ Created Allure result: {output_file}")
-                print(f"   Status: {status}, Tests: {total}, Passed: {expected}, Failed: {failures}")
-                converted += 1
+        # JUnit XML structure: <testsuites> -> <testsuite> -> <testcase>
+        # Count tests
+        total = 0
+        passed = 0
+        failed = 0
+        skipped = 0
+        total_time = 0
         
-        # Also process individual test results from suites if available
-        if 'suites' in data:
-            suites = data.get('suites', [])
-            print(f"📊 Found {len(suites)} test suites")
-            # Could process individual tests here if needed
+        # Handle both <testsuites> and <testsuite> root elements
+        if root.tag == 'testsuites':
+            test_suites = root.findall('testsuite')
+        elif root.tag == 'testsuite':
+            test_suites = [root]
+        else:
+            test_suites = []
+        
+        for suite in test_suites:
+            suite_total = int(suite.get('tests', 0))
+            suite_failures = int(suite.get('failures', 0))
+            suite_errors = int(suite.get('errors', 0))
+            suite_skipped = int(suite.get('skipped', 0))
+            suite_time = float(suite.get('time', 0))
+            
+            total += suite_total
+            failed += suite_failures + suite_errors
+            skipped += suite_skipped
+            total_time += suite_time
+            
+            # Count passed tests (total - failed - skipped)
+            passed += suite_total - suite_failures - suite_errors - suite_skipped
+        
+        print(f"📊 Playwright Stats: {total} tests, {passed} passed, {failed} failed, {skipped} skipped")
+        
+        if total > 0:
+            status = "passed" if failed == 0 else "failed"
+            duration = int(total_time * 1000) if total_time > 0 else 60000  # Convert to milliseconds
+            
+            test_uuid = uuid.uuid4().hex[:32]
+            timestamp = int(datetime.now().timestamp() * 1000)
+            test_name = "Playwright Test Suite"
+            full_name = f"Playwright.{test_name}"
+            history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+            
+            labels = [
+                {"name": "suite", "value": "Playwright Tests"},
+                {"name": "testClass", "value": "Playwright"},
+                {"name": "epic", "value": "Playwright E2E Testing"},
+                {"name": "feature", "value": "Playwright Tests"}
+            ]
+            
+            if env and env not in ["unknown", "combined"]:
+                labels.append({"name": "environment", "value": env})
+            
+            params = []
+            if env and env not in ["unknown", "combined"]:
+                params.append({"name": "Environment", "value": env.upper()})
+            
+            result = {
+                "uuid": test_uuid,
+                "historyId": history_id,
+                "fullName": full_name,
+                "labels": labels,
+                "name": f"{test_name} ({passed} passed, {failed} failed, {skipped} skipped)",
+                "status": status,
+                "statusDetails": {
+                    "known": False,
+                    "muted": False,
+                    "flaky": False
+                },
+                "stage": "finished",
+                "description": f"Playwright Test Suite: {total} tests total, {passed} passed, {failed} failed, {skipped} skipped",
+                "steps": [],
+                "attachments": [],
+                "parameters": params,
+                "start": timestamp,
+                "stop": timestamp + duration
+            }
+            
+            output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+            with open(output_file, 'w') as f:
+                import json
+                json.dump(result, f, indent=2)
+            
+            print(f"✅ Created Allure result: {output_file}")
+            print(f"   Status: {status}, Tests: {total}, Passed: {passed}, Failed: {failed}, Skipped: {skipped}")
+            converted += 1
         
     except Exception as e:
-        print(f"⚠️  Error parsing Playwright results from {json_file}: {e}", file=sys.stderr)
+        print(f"⚠️  Error parsing Playwright JUnit XML from {junit_file}: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
         continue
 
 if converted == 0:

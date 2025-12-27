@@ -57,42 +57,68 @@ fi
 if [ -d "$SOURCE_DIR/cypress-results" ]; then
     echo "   Converting Cypress results..."
     chmod +x scripts/ci/convert-cypress-to-allure.sh
-    find "$SOURCE_DIR/cypress-results" -type d -name "cypress" | while read cypress_dir; do
-        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$cypress_dir" "$ENV_FOR_CONVERSION" || true
-    done
+    # Try to find mochawesome.json or cypress-results.json anywhere in cypress-results
+    if find "$SOURCE_DIR/cypress-results" -name "mochawesome.json" -o -name "cypress-results.json" 2>/dev/null | head -1 | read json_file; then
+        json_dir=$(dirname "$json_file")
+        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$ENV_FOR_CONVERSION" || true
+    else
+        # Fallback: try common directory structure
+        find "$SOURCE_DIR/cypress-results" -type d -name "cypress" | while read cypress_dir; do
+            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$cypress_dir" "$ENV_FOR_CONVERSION" || true
+        done
+    fi
 fi
 
 # Convert Playwright results
 if [ -d "$SOURCE_DIR/playwright-results" ]; then
     echo "   Converting Playwright results..."
     chmod +x scripts/ci/convert-playwright-to-allure.sh
-    find "$SOURCE_DIR/playwright-results" -type d -name "test-results" | while read playwright_dir; do
-        ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$playwright_dir" "$ENV_FOR_CONVERSION" || true
-    done
+    # Try multiple locations: test-results directory, playwright-results root, or any directory with results.json
+    if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
+        ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$ENV_FOR_CONVERSION" || true
+    fi
+    # Also try the root playwright-results directory
+    if find "$SOURCE_DIR/playwright-results" -name "results.json" 2>/dev/null | head -1 | read results_file; then
+        results_dir=$(dirname "$results_file")
+        ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$results_dir" "$ENV_FOR_CONVERSION" || true
+    fi
 fi
 
 # Convert Robot Framework results
 if [ -d "$SOURCE_DIR/robot-results" ]; then
     echo "   Converting Robot Framework results..."
     chmod +x scripts/ci/convert-robot-to-allure.sh
-    find "$SOURCE_DIR/robot-results" -type d \( -name "robot-reports" -o -name "target" \) | while read robot_dir; do
-        if [ -f "$robot_dir/output.xml" ] || [ -f "$robot_dir/robot-reports/output.xml" ]; then
-            OUTPUT_DIR="$robot_dir"
-            if [ -f "$robot_dir/robot-reports/output.xml" ]; then
-                OUTPUT_DIR="$robot_dir/robot-reports"
+    # Try to find output.xml in various locations
+    if find "$SOURCE_DIR/robot-results" -name "output.xml" 2>/dev/null | head -1 | read output_xml; then
+        output_dir=$(dirname "$output_xml")
+        ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$ENV_FOR_CONVERSION" || true
+    else
+        # Fallback: try common directory names
+        find "$SOURCE_DIR/robot-results" -type d \( -name "robot-reports" -o -name "target" \) | while read robot_dir; do
+            if [ -f "$robot_dir/output.xml" ] || [ -f "$robot_dir/robot-reports/output.xml" ]; then
+                OUTPUT_DIR="$robot_dir"
+                if [ -f "$robot_dir/robot-reports/output.xml" ]; then
+                    OUTPUT_DIR="$robot_dir/robot-reports"
+                fi
+                ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$OUTPUT_DIR" "$ENV_FOR_CONVERSION" || true
             fi
-            ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$OUTPUT_DIR" "$ENV_FOR_CONVERSION" || true
-        fi
-    done
+        done
+    fi
 fi
 
 # Convert Vibium results
 if [ -d "$SOURCE_DIR/vibium-results" ]; then
     echo "   Converting Vibium results..."
     chmod +x scripts/ci/convert-vibium-to-allure.sh
-    find "$SOURCE_DIR/vibium-results" -type d -name "test-results" | while read vibium_dir; do
-        ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$vibium_dir" "$ENV_FOR_CONVERSION" || true
-    done
+    # Try test-results directory first
+    if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
+        ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$ENV_FOR_CONVERSION" || true
+    else
+        # Fallback: search for any result files
+        find "$SOURCE_DIR/vibium-results" -type d -name "test-results" | while read vibium_dir; do
+            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$vibium_dir" "$ENV_FOR_CONVERSION" || true
+        done
+    fi
 fi
 
 # Step 4: Add environment labels
