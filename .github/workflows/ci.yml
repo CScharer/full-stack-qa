@@ -1130,6 +1130,9 @@ jobs:
     if: always()
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Generate Pipeline Summary
         run: |
           chmod +x scripts/ci/generate-pipeline-summary.sh
