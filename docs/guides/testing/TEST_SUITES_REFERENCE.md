@@ -506,6 +506,18 @@ Service verification uses `scripts/ci/verify-services.sh`:
   - Clear error messages
   - Reusable across test jobs
   - Uses centralized `port-config.sh` for port configuration (single source of truth)
+  - Uses `wait-for-service.sh` utility for consistent waiting behavior
+
+**Service Waiting Utility**:
+All service waiting logic uses `scripts/ci/wait-for-service.sh`:
+- **Location**: `scripts/ci/wait-for-service.sh`
+- **Usage**: `./scripts/ci/wait-for-service.sh <url> <service-name> [timeout-seconds] [check-interval]`
+- **Used by**: `start-services-for-ci.sh`, `verify-services.sh`, `wait-for-grid.sh`, `wait-for-services.sh`
+- **Benefits**:
+  - Consistent waiting behavior across all scripts
+  - Configurable timeout and check interval
+  - Progress reporting every 10 seconds
+  - Clear error messages with attempt counts
 
 **Benefits**:
 - ✅ No need to modify workflow files for timeout adjustments

@@ -638,6 +638,7 @@ with:
 2. **`scripts/ci/create-allure-env-properties.sh`** - Create Allure environment properties
 3. **`scripts/ci/install-robot-framework.sh`** - Install Robot Framework dependencies
 4. **`scripts/ci/verify-services.sh`** - Verify frontend/backend services are running
+5. **`scripts/ci/wait-for-service.sh`** - Reusable utility for waiting for any service (used internally by other scripts)
 
 **Example: Using Allure Environment Properties Script**:
 ```yaml
@@ -676,6 +677,17 @@ with:
     ./scripts/ci/wait-for-grid.sh \
       "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" \
       "${{ inputs.grid_wait_timeout_seconds || 60 }}"
+```
+
+**Example: Using Service Waiting Utility Directly**:
+```yaml
+- name: Wait for Custom Service
+  run: |
+    ./scripts/ci/wait-for-service.sh \
+      "http://localhost:8080/health" \
+      "Custom Service" \
+      60 \
+      2
 ```
 
 ---

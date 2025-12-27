@@ -143,36 +143,30 @@ timeout "$TIMEOUT" bash -c "until curl -sf $GRID_URL; do sleep 2; done"
 - **Used in**: `env-fe.yml` workflow (frontend tests - smoke, grid, robot, selenide)
 - **Checks**: Selenium Grid status endpoint
 
-#### Recommendation 🔧:
+#### Recommendation 🔧: ✅ **IMPLEMENTED**
 
-**Create `scripts/ci/wait-for-service.sh`** - A reusable service waiting utility:
-```bash
-#!/bin/bash
-# Wait for a service to be ready
-# Usage: ./scripts/ci/wait-for-service.sh <url> <service-name> [timeout-seconds]
+**Created `scripts/ci/wait-for-service.sh`** - A reusable service waiting utility:
+- ✅ Supports configurable timeout and check interval
+- ✅ Provides progress reporting every 10 seconds
+- ✅ Clear error messages with attempt counts
+- ✅ Proper exit codes for success/failure
 
-URL=$1
-SERVICE_NAME=$2
-TIMEOUT=${3:-60}
-
-# Wait logic with proper error handling
-```
-
-**Update all scripts to use this utility**:
-- `start-services-for-ci.sh` → Use `wait-for-service.sh`
-- `verify-services.sh` → Use `wait-for-service.sh`
-- `wait-for-services.sh` → Use `wait-for-service.sh` internally (keep as wrapper for BE/FE services)
-- `wait-for-grid.sh` → Use `wait-for-service.sh` internally (keep as wrapper for Selenium Grid)
+**Updated all scripts to use this utility**:
+- ✅ `start-services-for-ci.sh` → Uses `wait-for-service.sh` (with fallback)
+- ✅ `verify-services.sh` → Uses `wait-for-service.sh` (with fallback)
+- ✅ `wait-for-services.sh` → Uses `wait-for-service.sh` internally (kept as wrapper for BE/FE services)
+- ✅ `wait-for-grid.sh` → Uses `wait-for-service.sh` internally (kept as wrapper for Selenium Grid)
 
 **Note**: `wait-for-services.sh` and `wait-for-grid.sh` serve different purposes:
 - `wait-for-services.sh`: Application services (Backend + Frontend)
 - `wait-for-grid.sh`: Test infrastructure (Selenium Grid)
-Both should remain as separate scripts but can use the shared utility internally.
+Both remain as separate scripts but use the shared utility internally.
 
 **Benefits**:
-- Consistent waiting behavior
-- Single place to fix bugs
-- Easier to add features (retry logic, better error messages)
+- ✅ Consistent waiting behavior
+- ✅ Single place to fix bugs
+- ✅ Better error messages and progress reporting
+- ✅ Configurable timeout and check interval
 
 ---
 
@@ -319,13 +313,16 @@ stop_port() {
 **Implementation Date**: 2025-12-27  
 **Status**: Phase 1 implementation complete, awaiting review
 
-### Phase 2: Service Waiting Utility
-1. Create `scripts/ci/wait-for-service.sh`
-2. Update `start-services-for-ci.sh` to use it
-3. Update `verify-services.sh` to use it
-4. Update `wait-for-grid.sh` to use it internally (keep as wrapper for Selenium Grid)
-5. Update `wait-for-services.sh` to use it internally (keep as wrapper for BE/FE services)
+### Phase 2: Service Waiting Utility ✅ **COMPLETED**
+1. ✅ Create `scripts/ci/wait-for-service.sh`
+2. ✅ Update `start-services-for-ci.sh` to use it
+3. ✅ Update `verify-services.sh` to use it
+4. ✅ Update `wait-for-grid.sh` to use it internally (keep as wrapper for Selenium Grid)
+5. ✅ Update `wait-for-services.sh` to use it internally (keep as wrapper for BE/FE services)
    - **Note**: Keep `wait-for-services.sh` and `wait-for-grid.sh` as separate scripts - they serve different purposes
+
+**Implementation Date**: 2025-12-27  
+**Status**: Phase 2 implementation complete, awaiting review
 
 ### Phase 3: Port Utilities
 1. Create `scripts/ci/port-utils.sh`
@@ -374,5 +371,27 @@ stop_port() {
 - `scripts/ci/verify-services.sh` - Now uses `port-config.sh` for port configuration
 - `docs/work/20251227_SERVICE_SCRIPTS_DUPLICATION_ANALYSIS.md` - Updated with Phase 1 completion status
 
-**Next Steps**: Phase 2 implementation (Service Waiting Utility)
+## ✅ Phase 2 Implementation Summary
+
+**Completed Items**:
+- ✅ Created `scripts/ci/wait-for-service.sh` - Reusable service waiting utility
+- ✅ Updated `start-services-for-ci.sh` to use `wait-for-service.sh` (with fallback)
+- ✅ Updated `verify-services.sh` to use `wait-for-service.sh` (with fallback)
+- ✅ Updated `wait-for-grid.sh` to use `wait-for-service.sh` internally (kept as Selenium Grid wrapper)
+- ✅ Updated `wait-for-services.sh` to use `wait-for-service.sh` internally (kept as BE/FE services wrapper)
+
+**Files Modified**:
+- `scripts/ci/wait-for-service.sh` - New reusable utility script
+- `scripts/start-services-for-ci.sh` - Uses utility with fallback
+- `scripts/ci/verify-services.sh` - Uses utility with fallback
+- `scripts/ci/wait-for-grid.sh` - Uses utility internally (wrapper)
+- `scripts/ci/wait-for-services.sh` - Uses utility internally (wrapper)
+
+**Benefits**:
+- ✅ Consistent waiting behavior across all scripts
+- ✅ Single place to fix bugs and add features
+- ✅ Better error messages and progress reporting
+- ✅ Configurable timeout and check interval
+
+**Next Steps**: Phase 3 implementation (Port Utilities)
 

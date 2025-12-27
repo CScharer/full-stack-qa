@@ -124,27 +124,37 @@ is_port_in_use() {
     fi
 }
 
-# Function to check if a service is ready
+# Function to check if a service is ready (uses centralized utility)
 wait_for_service() {
     local url=$1
     local service_name=$2
-    local elapsed=0
     
-    echo "⏳ Waiting for $service_name to be ready..."
-    while [ $elapsed -lt $MAX_WAIT ]; do
-        if curl -sf "$url" > /dev/null 2>&1; then
-            echo "✅ $service_name is ready!"
+    # Use centralized wait-for-service.sh utility
+    local wait_script="${SCRIPT_DIR}/scripts/ci/wait-for-service.sh"
+    if [ -f "$wait_script" ]; then
+        if "$wait_script" "$url" "$service_name" "$MAX_WAIT" 2; then
             return 0
+        else
+            return 1
         fi
-        sleep 2
-        elapsed=$((elapsed + 2))
-        if [ $((elapsed % 10)) -eq 0 ]; then
-            echo "   Still waiting... (${elapsed}s/${MAX_WAIT}s)"
-        fi
-    done
-    
-    echo "❌ $service_name failed to start within ${MAX_WAIT}s"
-    return 1
+    else
+        # Fallback to inline logic if utility doesn't exist
+        local elapsed=0
+        echo "⏳ Waiting for $service_name to be ready..."
+        while [ $elapsed -lt $MAX_WAIT ]; do
+            if curl -sf "$url" > /dev/null 2>&1; then
+                echo "✅ $service_name is ready!"
+                return 0
+            fi
+            sleep 2
+            elapsed=$((elapsed + 2))
+            if [ $((elapsed % 10)) -eq 0 ]; then
+                echo "   Still waiting... (${elapsed}s/${MAX_WAIT}s)"
+            fi
+        done
+        echo "❌ $service_name failed to start within ${MAX_WAIT}s"
+        return 1
+    fi
 }
 
 # Function to stop process on a port
