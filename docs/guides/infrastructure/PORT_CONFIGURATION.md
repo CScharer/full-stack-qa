@@ -22,6 +22,8 @@ Port assignments are documented in `docs/new_app/ONE_GOAL.md` and enforced via `
 
 This file contains the authoritative port assignments for all environments. All scripts should source this file to ensure consistency.
 
+**See Also**: [Service Scripts Guide](./SERVICE_SCRIPTS.md) for information on how service management scripts use port configuration.
+
 ### Usage
 
 ```bash

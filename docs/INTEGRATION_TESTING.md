@@ -44,10 +44,12 @@ These tests use **Playwright** to simulate real user interactions with the appli
 This script will:
 1. Check prerequisites (Node.js, Python, database)
 2. Install dependencies if needed
-3. Start backend server (port 8008)
-4. Start frontend dev server (port 3003)
+3. Start backend server (port 8004 for test environment)
+4. Start frontend dev server (port 3004 for test environment)
 5. Run Playwright integration tests
 6. Clean up servers after tests
+
+**Note**: Integration tests use the **test environment** (ports 8004/3004) by default. See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ---
 
@@ -76,23 +78,35 @@ sqlite3 Data/Core/full_stack_qa_test.db < docs/new_app/DELETE_TRIGGERS.sql
 ```bash
 cd backend
 source venv/bin/activate
-# Set environment to test (uses full_stack_qa_test.db)
+# Set environment to test (uses full_stack_qa_test.db and port 8004)
 export ENVIRONMENT=test
 export API_HOST=0.0.0.0
-export API_PORT=8008
-export CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8008
+export API_PORT=8004
+export CORS_ORIGINS=http://127.0.0.1:3004,http://localhost:3004
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8004
 ```
 
-**Note**: Setting `ENVIRONMENT=test` automatically makes the backend use `full_stack_qa_test.db`.
+**OR using the helper script**:
+```bash
+./scripts/start-be.sh --env test
+```
+
+**Note**: Setting `ENVIRONMENT=test` automatically makes the backend use `full_stack_qa_test.db` and port 8004. See [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) for more options.
 
 ### 3. Start Frontend Server
 
 ```bash
 cd frontend
-export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
-PORT=3003 npm run dev
+export NEXT_PUBLIC_API_URL=http://localhost:8004/api/v1
+PORT=3004 npm run dev
 ```
+
+**OR using the helper script**:
+```bash
+./scripts/start-fe.sh --env test
+```
+
+**Note**: Test environment uses ports 8004 (backend) and 3004 (frontend). See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ### 4. Run Integration Tests
 
@@ -151,24 +165,26 @@ playwright/
 ### Playwright Integration Config
 
 The integration test configuration (`playwright.integration.config.ts`) automatically:
-- Starts backend server on port 8008
-- Starts frontend dev server on port 3003
+- Starts backend server on port 8004 (test environment)
+- Starts frontend dev server on port 3004 (test environment)
 - Waits for both servers to be ready
 - Runs tests against the running application
 - Cleans up servers after tests
+
+**Note**: Integration tests use the **test environment** (ports 8004/3004). See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ### Environment Variables
 
 You can override defaults:
 
 ```bash
-# Frontend URL
-export FRONTEND_URL=http://127.0.0.1:3003
+# Frontend URL (test environment)
+export FRONTEND_URL=http://127.0.0.1:3004
 
-# Backend URL (used by frontend)
-export NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+# Backend URL (used by frontend - test environment)
+export NEXT_PUBLIC_API_URL=http://localhost:8004/api/v1
 
-# Set environment to test (uses full_stack_qa_test.db)
+# Set environment to test (uses full_stack_qa_test.db and ports 8004/3004)
 export ENVIRONMENT=test
 ```
 
@@ -180,8 +196,8 @@ export ENVIRONMENT=test
 
 **Solution:**
 ```bash
-# Check if port 8008 is in use
-lsof -ti:8008 | xargs kill -9
+# Check if port 8004 is in use (test environment)
+lsof -ti:8004 | xargs kill -9
 
 # Verify test database exists
 ls -la Data/Core/full_stack_qa_test.db

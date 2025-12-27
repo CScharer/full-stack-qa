@@ -99,7 +99,7 @@ ENVIRONMENT=dev  # Options: dev, test, prod
 # DATABASE_PATH=../Data/Core/full_stack_qa_dev.db
 
 API_HOST=0.0.0.0
-API_PORT=8008
+API_PORT=8003  # dev: 8003, test: 8004, prod: 8005
 CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 ```
 
@@ -109,30 +109,34 @@ CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
 
 ```bash
 # Using uvicorn directly
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8008
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8003
 
-# Or using the helper script (if available)
+# Or using the helper script (recommended)
 ../scripts/start-be.sh                  # Default: dev environment
 ../scripts/start-be.sh --env dev         # Explicit dev
 ../scripts/start-be.sh -e test          # Test environment
 ```
 
+**Note**: The default dev port is **8003** (not 8008). See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+
 ### 6. Verify Backend is Running
 
-- **API**: http://localhost:8008
-- **API Docs (Swagger)**: http://localhost:8008/docs
-- **API Docs (ReDoc)**: http://localhost:8008/redoc
-- **Health Check**: http://localhost:8008/health
+- **API**: http://localhost:8003 (dev), http://localhost:8004 (test), http://localhost:8005 (prod)
+- **API Docs (Swagger)**: http://localhost:8003/docs
+- **API Docs (ReDoc)**: http://localhost:8003/redoc
+- **Health Check**: http://localhost:8003/health
 
 ### Backend Test Endpoints
 
 ```bash
-# Test API health
-curl http://localhost:8008/health
+# Test API health (dev environment)
+curl http://localhost:8003/health
 
 # Test applications endpoint
-curl http://localhost:8008/api/v1/applications
+curl http://localhost:8003/api/v1/applications
 ```
+
+**See Also**: [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) for service management scripts.
 
 ---
 
@@ -160,7 +164,7 @@ Create a `.env.local` file in the `frontend` directory:
 
 ```bash
 # frontend/.env.local
-NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1  # dev: 8003, test: 8004, prod: 8005
 ```
 
 ### 4. Run Frontend Development Server
@@ -196,7 +200,7 @@ npm run dev
 ```bash
 cd backend
 source venv/bin/activate
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8008
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8003
 ```
 
 **Terminal 2 - Frontend:**
@@ -286,11 +290,11 @@ sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.
 sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
-**Issue: Port 8008 already in use**
+**Issue: Port 8003 already in use**
 ```bash
-# Solution: Change port in .env file or kill process using port 8008
+# Solution: Change port in .env file or kill process using port 8003
 # macOS/Linux:
-lsof -ti:8008 | xargs kill -9
+lsof -ti:8003 | xargs kill -9
 
 # Or use a different port:
 uvicorn app.main:app --reload --port 8009
@@ -317,7 +321,7 @@ lsof -ti:3003 | xargs kill -9
 **Issue: API connection errors**
 ```bash
 # Solution: Ensure backend is running and .env.local has correct API URL
-# Check: NEXT_PUBLIC_API_URL=http://localhost:8008/api/v1
+# Check: NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1 (dev: 8003, test: 8004, prod: 8005)
 ```
 
 **Issue: Module resolution errors**
@@ -378,8 +382,8 @@ full-stack-qa/
 
 ### Backend Endpoints
 
-- **Base URL**: `http://localhost:8008`
-- **API Base**: `http://localhost:8008/api/v1`
+- **Base URL**: `http://localhost:8003` (dev), `http://localhost:8004` (test), `http://localhost:8005` (prod)
+- **API Base**: `http://localhost:8003/api/v1` (dev), `http://localhost:8004/api/v1` (test), `http://localhost:8005/api/v1` (prod)
 - **Applications**: `GET/POST /api/v1/applications`
 - **Companies**: `GET/POST /api/v1/companies`
 - **Contacts**: `GET/POST /api/v1/contacts`
@@ -401,7 +405,7 @@ full-stack-qa/
 
 ## 📚 Additional Resources
 
-- **Backend API Documentation**: http://localhost:8008/docs (when backend is running)
+- **Backend API Documentation**: http://localhost:8003/docs (dev), http://localhost:8004/docs (test), http://localhost:8005/docs (prod)
 - **Database Schema**: `docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql`
 - **API Contract**: `docs/new_app/API_CONTRACT.md`
 - **Backend Work Plan**: `docs/new_app/WORK_BACKEND.md`
@@ -417,7 +421,7 @@ Before starting development, verify:
 - [ ] Backend virtual environment created and activated
 - [ ] Backend dependencies installed (`pip install -r requirements.txt`)
 - [ ] Backend `.env` file configured
-- [ ] Backend server runs on http://localhost:8008
+- [ ] Backend server runs on http://localhost:8003 (dev), http://localhost:8004 (test), or http://localhost:8005 (prod)
 - [ ] Frontend dependencies installed (`npm install`)
 - [ ] Frontend `.env.local` file configured
 - [ ] Frontend server runs on http://127.0.0.1:3003

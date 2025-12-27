@@ -146,4 +146,7 @@ Open browser: http://127.0.0.1:3003
 
 ---
 
-**For detailed instructions, see:** [LOCAL_DEVELOPMENT.md](./LOCAL_DEVELOPMENT.md)
+**For detailed instructions, see:** 
+- [LOCAL_DEVELOPMENT.md](./LOCAL_DEVELOPMENT.md) - Complete local development guide
+- [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) - Service management scripts documentation
+- [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) - Port assignments and configuration

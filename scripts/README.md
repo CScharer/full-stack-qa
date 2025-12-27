@@ -4,6 +4,33 @@ This directory contains helper scripts for common development tasks.
 
 ## Available Scripts
 
+### Service Management Scripts
+
+For starting, stopping, and verifying application services (Backend and Frontend):
+
+- **`start-be.sh`** - Start backend service
+- **`start-fe.sh`** - Start frontend service
+- **`start-env.sh`** - Start both services together
+- **`start-services-for-ci.sh`** - Start services for CI/CD (idempotent)
+- **`stop-services.sh`** - Stop all services
+
+**See**: [Service Scripts Guide](../docs/guides/infrastructure/SERVICE_SCRIPTS.md) for complete documentation.
+
+### CI/CD Utility Scripts
+
+Located in `scripts/ci/` directory:
+
+- **`verify-services.sh`** - Verify services are running and responding
+- **`wait-for-services.sh`** - Wait for Backend and Frontend to be ready
+- **`wait-for-grid.sh`** - Wait for Selenium Grid to be ready
+- **`wait-for-service.sh`** - Reusable utility for waiting for any service
+- **`port-utils.sh`** - Port management utilities
+- **`port-config.sh`** - Centralized port configuration
+
+**See**: [Service Scripts Guide](../docs/guides/infrastructure/SERVICE_SCRIPTS.md) for complete documentation.
+
+---
+
 ### `run-tests.sh`
 Run test suite with optional parameters.
 
