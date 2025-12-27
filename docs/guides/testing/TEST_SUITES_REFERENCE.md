@@ -333,8 +333,10 @@ All TestNG suite files are located in: `src/test/resources/`
 
 **CI/CD Usage**: 
 - Job: `robot-tests`
-- Timeout: 10 minutes
+- **Status**: ✅ **Enabled by default** (`enable_robot_tests: default: true`)
+- Timeout: 5 minutes (configurable via `robot_tests_timeout_minutes` input)
 - Command: `python3 -m robot.run --outputdir target/robot-reports src/test/robot/`
+- **Docker Networking**: Uses `172.17.0.1` (Docker bridge gateway) in GitHub Actions to access services
 
 **Parallel Execution**:
 - ❌ **Not configured** - Robot Framework runs tests sequentially
