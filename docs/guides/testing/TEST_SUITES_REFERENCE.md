@@ -578,7 +578,7 @@ While all tests can have timeout configured, some have limitations for parallel 
         ▼                 ▼
 ┌─────────────────┐  ┌─────────────────┐
 │  Allure Report  │  │  Test Summary   │
-│  (aggregates)   │  │  (Groups 3 + 4) │
+│  (aggregates)   │  │  (Group 3)      │
 └─────────────────┘  └─────────────────┘
 ```
 
@@ -647,8 +647,9 @@ While all tests can have timeout configured, some have limitations for parallel 
 **Purpose**: Provides a comprehensive test result summary for all test frameworks in the GitHub Actions UI.
 
 **Includes**:
-- ✅ **Group 3 Tests** (Selenium Grid + Maven): Smoke, Grid, Mobile, Responsive, Selenide, Vibium
-- ✅ **Group 4 Tests** (Alternative Frameworks): Cypress, Playwright, Robot Framework
+- ✅ **All Frontend Tests** (Group 3):
+  - **Category A** (Selenium Grid + Maven): Smoke, Grid, Mobile, Responsive, Selenide, Vibium
+  - **Category B** (Alternative Frameworks): Cypress, Playwright, Robot Framework
 
 **Result Parsing**:
 - **Maven Surefire XML** (`TEST-*.xml`) - For TestNG-based tests
@@ -662,7 +663,7 @@ While all tests can have timeout configured, some have limitations for parallel 
 - Passed/Failed/Error counts
 - Status summary (✅ PASSED / ❌ FAILED / ⚠️ NO TESTS FOUND)
 
-**Dependencies**: Waits for all test jobs to complete (Groups 3 + 4)
+**Dependencies**: Waits for all test jobs to complete (Group 3 - all frontend tests)
 
 ### Allure Report Job
 
@@ -671,7 +672,7 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 **Purpose**: Generates comprehensive Allure HTML reports for all test frameworks.
 
-**Includes**: All test frameworks (Groups 3 + 4)
+**Includes**: All test frameworks (Group 3 - all frontend tests)
 
 **Output**: 
 - HTML report with detailed test results

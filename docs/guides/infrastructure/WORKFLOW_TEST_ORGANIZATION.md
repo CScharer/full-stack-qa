@@ -13,7 +13,7 @@
 
 - [Overview](#overview)
 - [Test Job Groups](#test-job-groups)
-- [Why Tests Are Grouped This Way](#why-tests-are-grouped-this-way)
+- [Technical Differences Between Test Categories](#technical-differences-between-test-categories)
 - [Test Result Reporting](#test-result-reporting)
 - [Visual Grouping in GitHub Actions](#visual-grouping-in-github-actions)
 
@@ -56,14 +56,29 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 ---
 
-### Group 3: Selenium Grid + Maven Tests
+### Group 3: Frontend Tests (All Frameworks)
 
-**Jobs**:
+**Visual Grouping**: All frontend test jobs appear together in GitHub Actions UI as a single visual group.
+
+**All Jobs in Group 3**:
 - `Test FE ({env}) / Smoke Tests ({env})`
 - `Test FE ({env}) / Mobile Browser Tests ({env})`
 - `Test FE ({env}) / Responsive Design Tests ({env})`
 - `Test FE ({env}) / Selenide Tests ({env})`
 - `Test FE ({env}) / Vibium Tests ({env})`
+- `Test FE ({env}) / Cypress Tests ({env})`
+- `Test FE ({env}) / Playwright Tests ({env})`
+- `Test FE ({env}) / Robot Tests ({env})`
+
+**Why They're Grouped Together**: The `environment-test-summary` job depends on all of these test jobs, causing GitHub Actions to visually group them together.
+
+#### Technical Categories (Within Group 3)
+
+While all tests appear in the same visual group, they can be categorized by their technical characteristics:
+
+##### Category A: Selenium Grid + Maven Tests
+
+**Tests**: Smoke, Mobile Browser, Responsive Design, Selenide, Vibium
 
 **Common Characteristics**:
 - ✅ All use **Selenium Grid** (Docker services: `selenium-hub`, `chrome-node`)
@@ -74,14 +89,9 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 **Execution Method**: Maven Surefire Plugin with TestNG
 
----
+##### Category B: Alternative Execution Methods
 
-### Group 4: Alternative Execution Methods
-
-**Jobs**:
-- `Test FE ({env}) / Cypress Tests ({env})`
-- `Test FE ({env}) / Playwright Tests ({env})`
-- `Test FE ({env}) / Robot Tests ({env})`
+**Tests**: Cypress, Playwright, Robot Framework
 
 **Common Characteristics**:
 - ✅ **Cypress**: Does NOT use Selenium Grid, uses Node.js/npm directly
@@ -96,20 +106,20 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 ---
 
-## Why Tests Are Grouped This Way
+## Technical Differences Between Test Categories
 
-### Technical Differences
+While all frontend tests appear in the same visual group (Group 3), they have distinct technical characteristics that are important to understand:
 
-#### 1. Execution Method
+### 1. Execution Method
 
-| Group | Execution Tool | Language/Runtime |
-|-------|---------------|------------------|
-| Group 3 | Maven (`run-maven-tests.sh`) | Java (TestNG) |
-| Group 4 - Cypress | npm (`npm run cypress:run`) | Node.js/JavaScript |
-| Group 4 - Playwright | npm (`npm test`) | Node.js/TypeScript |
-| Group 4 - Robot | Python (`python -m robot.run`) | Python |
+| Category | Test Types | Execution Tool | Language/Runtime |
+|----------|-----------|---------------|------------------|
+| Category A (Selenium Grid + Maven) | Smoke, Mobile, Responsive, Selenide, Vibium | Maven (`run-maven-tests.sh`) | Java (TestNG) |
+| Category B - Cypress | Cypress | npm (`npm run cypress:run`) | Node.js/JavaScript |
+| Category B - Playwright | Playwright | npm (`npm test`) | Node.js/TypeScript |
+| Category B - Robot | Robot Framework | Python (`python -m robot.run`) | Python |
 
-#### 2. Selenium Grid Dependency
+### 2. Selenium Grid Dependency
 
 | Test Type | Uses Selenium Grid? | Grid Configuration |
 |-----------|-------------------|-------------------|
@@ -118,17 +128,25 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 | Playwright | ❌ No | N/A - Uses built-in browser automation |
 | Robot | ✅ Yes | `services:` section with `selenium-hub` and `chrome-node` |
 
-#### 3. Resource Requirements
+### 3. Resource Requirements
 
-- **Group 3**: Requires Docker services (Selenium Grid) + Java/Maven
-- **Group 4 - Cypress/Playwright**: Requires Node.js, no Docker services
-- **Group 4 - Robot**: Requires Docker services + Python
+- **Category A (Selenium Grid + Maven)**: Requires Docker services (Selenium Grid) + Java/Maven
+- **Category B - Cypress/Playwright**: Requires Node.js, no Docker services
+- **Category B - Robot**: Requires Docker services + Python
 
-#### 4. Service Management
+### 4. Service Management
 
-- **Group 3**: All start backend/frontend services via `start-services-for-ci.sh`, then use Selenium Grid
-- **Group 4 - Cypress/Playwright**: Start their own services, don't need Selenium Grid
-- **Group 4 - Robot**: Starts services AND uses Selenium Grid, but runs via Python
+- **Category A (Selenium Grid + Maven)**: All start backend/frontend services via `start-services-for-ci.sh`, then use Selenium Grid
+- **Category B - Cypress/Playwright**: Start their own services, don't need Selenium Grid
+- **Category B - Robot**: Starts services AND uses Selenium Grid, but runs via Python
+
+### Why These Differences Matter
+
+Understanding these technical differences is important for:
+- **Troubleshooting**: Knowing which infrastructure a test uses helps diagnose failures
+- **Resource Planning**: Different tests require different resources (Docker, Java, Node.js, Python)
+- **Maintenance**: Tests with similar execution methods share similar maintenance needs
+- **Optimization**: Understanding execution methods helps optimize test performance
 
 ---
 
@@ -142,8 +160,9 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 **Purpose**: Provides a comprehensive test result summary for all test frameworks in the GitHub Actions UI.
 
 **Includes**:
-- ✅ **Group 3 Tests** (Selenium Grid + Maven): Smoke, Grid, Mobile, Responsive, Selenide, Vibium
-- ✅ **Group 4 Tests** (Alternative Frameworks): Cypress, Playwright, Robot Framework
+- ✅ **All Frontend Tests** (Group 3):
+  - **Category A** (Selenium Grid + Maven): Smoke, Grid, Mobile, Responsive, Selenide, Vibium
+  - **Category B** (Alternative Frameworks): Cypress, Playwright, Robot Framework
 
 **Result Parsing**:
 - **Maven Surefire XML** (`TEST-*.xml`) - For TestNG-based tests
@@ -157,7 +176,7 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 - Passed/Failed/Error counts
 - Status summary (✅ PASSED / ❌ FAILED / ⚠️ NO TESTS FOUND)
 
-**Dependencies**: Waits for all test jobs to complete (Groups 3 + 4)
+**Dependencies**: Waits for all test jobs to complete (Group 3 - all frontend tests)
 
 ### Allure Report Job
 
@@ -166,7 +185,7 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 **Purpose**: Generates comprehensive Allure HTML reports for all test frameworks.
 
-**Includes**: All test frameworks (Groups 3 + 4)
+**Includes**: All test frameworks (Group 3 - all frontend tests)
 
 **Output**: 
 - HTML report with detailed test results
@@ -183,52 +202,55 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 ## Visual Grouping in GitHub Actions
 
-### Current Grouping Behavior
+### Current Visual Grouping
 
-**Update (2025-12-27)**: After updating the `environment-test-summary` job to include Group 4 tests, GitHub Actions now visually groups **all test jobs together** (Groups 3 + 4 appear in the same visual group).
+**Current State (2025-12-27)**: All frontend test jobs appear together in a single visual group (Group 3) in the GitHub Actions UI.
 
-### Why Groups Are Now Together
+### Why All Tests Appear Together
 
 GitHub Actions UI groups jobs visually based on:
 
 1. **Job Dependencies** (`needs:`): 
-   - All test jobs have NO dependencies (run in parallel)
-   - **Key Change**: The `environment-test-summary` job now depends on **all test jobs** (Groups 3 + 4)
+   - All test jobs have NO dependencies between them (run in parallel)
+   - **Key Factor**: The `environment-test-summary` job depends on **all frontend test jobs**
    - This dependency relationship causes GitHub Actions to group all dependent jobs together visually
 
-2. **Job Characteristics**:
-   - **Group 3**: All use `services:` (Selenium Grid), Maven, similar structure
-   - **Group 4**: Different execution methods, different infrastructure needs
-   - However, when a reporting job depends on all of them, they appear grouped together
-
-3. **Resource Requirements**:
-   - **Group 3**: Requires Docker services (Selenium Grid) + Java/Maven
-   - **Group 4 - Cypress/Playwright**: Requires Node.js, no Docker services
-   - **Group 4 - Robot**: Requires Docker services + Python
-   - These differences still exist but don't affect visual grouping when all are dependencies of the same job
+2. **Shared Reporting Dependency**:
+   - When multiple jobs are dependencies of the same reporting job, they tend to be grouped together
+   - Both `environment-test-summary` and `environment-allure-report` depend on all frontend tests
+   - This creates a visual grouping of all frontend test jobs
 
 ### Important Notes
 
 - ✅ **Visual grouping does NOT affect execution** - All tests run in parallel regardless of visual grouping
-- ✅ **Visual grouping changed** - After adding Group 4 to `test-summary` dependencies, all tests now appear in the same visual group
-- ✅ **Both reporting jobs include all test frameworks** (Groups 3 + 4)
-- ✅ **The technical differences remain** - Groups 3 and 4 still have different execution methods and infrastructure requirements, but they're now visually grouped together
+- ✅ **Visual grouping is unified** - All frontend tests appear in Group 3 visually
+- ✅ **Technical differences remain** - Tests still have distinct execution methods and infrastructure requirements (see [Technical Differences](#technical-differences-between-test-categories) section)
+- ✅ **Both reporting jobs include all test frameworks** - Test Summary and Allure Report aggregate results from all frontend tests
+- ✅ **Understanding technical categories is still important** - Even though visually grouped, knowing the technical differences helps with troubleshooting and optimization
 
 ---
 
 ## Summary
 
-**Test Organization Principles**:
+**Visual Organization**:
 
-1. **Group 3 (Selenium Grid + Maven)**: Tests that use Selenium Grid infrastructure and Maven/Java execution
-2. **Group 4 (Alternative Frameworks)**: Tests that use different execution methods (npm/Python) or don't require Selenium Grid
+- **Group 3**: All frontend test jobs appear together in a single visual group in GitHub Actions UI
+- This unified grouping is due to shared dependencies on reporting jobs (`test-summary` and `allure-report`)
+
+**Technical Categories** (within Group 3):
+
+1. **Category A (Selenium Grid + Maven)**: Tests that use Selenium Grid infrastructure and Maven/Java execution
+   - Smoke, Mobile Browser, Responsive Design, Selenide, Vibium
+2. **Category B (Alternative Frameworks)**: Tests that use different execution methods (npm/Python) or don't require Selenium Grid
+   - Cypress, Playwright, Robot Framework
 
 **Key Points**:
 
 - All test jobs run in **parallel** (no dependencies between test jobs)
-- **Visual grouping**: After updating `test-summary` to include all tests, Groups 3 and 4 now appear together in GitHub Actions UI
-- Both **Test Summary** and **Allure Report** include all test frameworks (Groups 3 + 4)
-- Technical differences between groups remain (execution methods, infrastructure), but they're now visually grouped together
+- **Visual grouping**: All frontend tests appear together in Group 3
+- **Technical differences**: Tests still have distinct execution methods and infrastructure requirements (see Technical Differences section)
+- Both **Test Summary** and **Allure Report** include all test frameworks
+- Understanding technical categories helps with troubleshooting, resource planning, and optimization
 
 **Related Documentation**:
 - [Test Suites Reference](../testing/TEST_SUITES_REFERENCE.md) - Detailed test suite configurations

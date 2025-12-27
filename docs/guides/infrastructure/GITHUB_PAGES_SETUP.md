@@ -145,7 +145,7 @@ For each test:
    - ✅ Generate Allure Report
    - ✅ Code Quality Analysis
    - ✅ Docker Build Test
-   - ✅ Test Summary (includes all test frameworks: Groups 3 + 4)
+   - ✅ Test Summary (includes all test frameworks: Group 3)
 
 ### Verify Allure Results Generated
 
