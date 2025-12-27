@@ -162,6 +162,8 @@ This table lists all non-living documents (planning documents, analysis document
 - ✅ **Updated**: 2 documents (date prefix updated from 20251225 to 20251227)
   - `20251227_REMAINING_WORK_SUMMARY.md` (also updated "Last Updated" date to 2025-12-27)
   - `20251227_SUPPRESS_WARNINGS_INVENTORY.md` (also updated "Last Updated" date to 2025-12-27)
+- ✅ **Consolidated**: 1 document
+  - `MULTI_FRAMEWORK_SETUP.md` (reorganized sections, added anchor links, consolidated all framework information into single sections, removed duplicates)
 - ✅ **Left as is**: 8 documents (kept for reference)
   - `MIGRATE_REPO.md` (historical reference)
   - 5 `WORK_*` documents in `docs/new_app/` (active work documents)
