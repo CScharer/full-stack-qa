@@ -519,6 +519,17 @@ All service waiting logic uses `scripts/ci/wait-for-service.sh`:
   - Progress reporting every 10 seconds
   - Clear error messages with attempt counts
 
+**Port Utilities**:
+All port-related operations use `scripts/ci/port-utils.sh`:
+- **Location**: `scripts/ci/port-utils.sh`
+- **Functions**: `is_port_in_use`, `get_port_pid`, `stop_port`, `check_port_status`
+- **Used by**: `start-services-for-ci.sh`, `stop-services.sh`, `verify-services.sh`
+- **Benefits**:
+  - Consistent port checking behavior across all scripts
+  - Single place to fix bugs and add features
+  - Better error messages and status reporting
+  - Reusable functions for port management
+
 **Benefits**:
 - ✅ No need to modify workflow files for timeout adjustments
 - ✅ Easy to experiment with parallel execution settings

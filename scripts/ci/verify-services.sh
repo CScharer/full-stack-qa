@@ -22,9 +22,15 @@ if [ -z "$BASE_URL" ]; then
   exit 1
 fi
 
-# Get script directory to source port config
+# Get script directory to source port config and utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PORT_CONFIG="${SCRIPT_DIR}/scripts/ci/port-config.sh"
+PORT_UTILS="${SCRIPT_DIR}/scripts/ci/port-utils.sh"
+
+# Source port utilities if available
+if [ -f "$PORT_UTILS" ]; then
+    source "$PORT_UTILS"
+fi
 
 # Source centralized port configuration
 if [ -f "$PORT_CONFIG" ]; then
@@ -81,7 +87,11 @@ if [ -f "$WAIT_SCRIPT" ]; then
   "$WAIT_SCRIPT" "http://localhost:$FRONTEND_PORT" "Frontend" "$TIMEOUT" 2 || {
     echo "❌ Frontend not responding on port $FRONTEND_PORT"
     echo "Checking if process is running:"
-    lsof -i :"$FRONTEND_PORT" || echo "No process found on port $FRONTEND_PORT"
+    if [ -f "$PORT_UTILS" ]; then
+      check_port_status "$FRONTEND_PORT" "Frontend" || echo "No process found on port $FRONTEND_PORT"
+    else
+      lsof -i :"$FRONTEND_PORT" || echo "No process found on port $FRONTEND_PORT"
+    fi
     exit 1
   }
 else
@@ -90,7 +100,11 @@ else
   timeout "$TIMEOUT" bash -c "until curl -sf http://localhost:$FRONTEND_PORT > /dev/null; do echo '  Waiting for frontend...'; sleep 2; done" || {
     echo "❌ Frontend not responding on port $FRONTEND_PORT"
     echo "Checking if process is running:"
-    lsof -i :"$FRONTEND_PORT" || echo "No process found on port $FRONTEND_PORT"
+    if [ -f "$PORT_UTILS" ]; then
+      check_port_status "$FRONTEND_PORT" "Frontend" || echo "No process found on port $FRONTEND_PORT"
+    else
+      lsof -i :"$FRONTEND_PORT" || echo "No process found on port $FRONTEND_PORT"
+    fi
     exit 1
   }
   echo "✅ Frontend is responding on port $FRONTEND_PORT"
@@ -101,7 +115,11 @@ if [ -f "$WAIT_SCRIPT" ]; then
   "$WAIT_SCRIPT" "http://localhost:$API_PORT/docs" "Backend" "$TIMEOUT" 2 || {
     echo "❌ Backend not responding on port $API_PORT"
     echo "Checking if process is running:"
-    lsof -i :"$API_PORT" || echo "No process found on port $API_PORT"
+    if [ -f "$PORT_UTILS" ]; then
+      check_port_status "$API_PORT" "Backend" || echo "No process found on port $API_PORT"
+    else
+      lsof -i :"$API_PORT" || echo "No process found on port $API_PORT"
+    fi
     exit 1
   }
 else
@@ -110,7 +128,11 @@ else
   timeout "$TIMEOUT" bash -c "until curl -sf http://localhost:$API_PORT/docs > /dev/null; do echo '  Waiting for backend...'; sleep 2; done" || {
     echo "❌ Backend not responding on port $API_PORT"
     echo "Checking if process is running:"
-    lsof -i :"$API_PORT" || echo "No process found on port $API_PORT"
+    if [ -f "$PORT_UTILS" ]; then
+      check_port_status "$API_PORT" "Backend" || echo "No process found on port $API_PORT"
+    else
+      lsof -i :"$API_PORT" || echo "No process found on port $API_PORT"
+    fi
     exit 1
   }
   echo "✅ Backend is responding on port $API_PORT"

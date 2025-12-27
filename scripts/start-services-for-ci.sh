@@ -114,15 +114,26 @@ echo "🚀 Checking and Starting Services for CI/CD Testing"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
 
-# Function to check if a port is in use
-is_port_in_use() {
-    local port=$1
-    if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1 || nc -z localhost $port 2>/dev/null; then
-        return 0  # Port is in use
-    else
-        return 1  # Port is not in use
-    fi
-}
+# Source port utilities if available
+PORT_UTILS="${SCRIPT_DIR}/scripts/ci/port-utils.sh"
+if [ -f "$PORT_UTILS" ]; then
+    source "$PORT_UTILS"
+else
+    # Fallback: define port functions inline if utility doesn't exist
+    is_port_in_use() {
+        local port=$1
+        if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1 || nc -z localhost $port 2>/dev/null; then
+            return 0  # Port is in use
+        else
+            return 1  # Port is not in use
+        fi
+    }
+    
+    get_port_pid() {
+        local port=$1
+        lsof -ti :$port 2>/dev/null | head -1 || echo ""
+    }
+fi
 
 # Function to check if a service is ready (uses centralized utility)
 wait_for_service() {
@@ -157,29 +168,43 @@ wait_for_service() {
     fi
 }
 
-# Function to stop process on a port
+# Function to stop process on a port (uses port-utils.sh if available)
 stop_port_if_in_use() {
     local port=$1
     local service_name=$2
     
-    if is_port_in_use "$port"; then
-        local pid=$(lsof -ti :$port 2>/dev/null | head -1 || echo "")
-        if [ -n "$pid" ]; then
+    if [ -f "$PORT_UTILS" ]; then
+        # Use centralized port utility
+        if is_port_in_use "$port"; then
             if [ "$FORCE_STOP" = "true" ]; then
-                echo "   🛑 Stopping existing $service_name on port $port (PID: $pid)..."
-                kill $pid 2>/dev/null || true
-                sleep 2
-                if kill -0 $pid 2>/dev/null; then
-                    echo "   🛑 Force killing $service_name (PID: $pid)..."
-                    kill -9 $pid 2>/dev/null || true
-                fi
-                sleep 1
+                stop_port "$port" "$service_name" "true"
+                return 0
             else
                 return 1  # Port in use and not forcing stop
             fi
         fi
+        return 0
+    else
+        # Fallback to inline logic if utility doesn't exist
+        if is_port_in_use "$port"; then
+            local pid=$(get_port_pid "$port")
+            if [ -n "$pid" ]; then
+                if [ "$FORCE_STOP" = "true" ]; then
+                    echo "   🛑 Stopping existing $service_name on port $port (PID: $pid)..."
+                    kill $pid 2>/dev/null || true
+                    sleep 2
+                    if kill -0 $pid 2>/dev/null; then
+                        echo "   🛑 Force killing $service_name (PID: $pid)..."
+                        kill -9 $pid 2>/dev/null || true
+                    fi
+                    sleep 1
+                else
+                    return 1  # Port in use and not forcing stop
+                fi
+            fi
+        fi
+        return 0
     fi
-    return 0
 }
 
 # Check and start Backend
@@ -187,7 +212,7 @@ echo "📦 Checking Backend API..."
 BACKEND_PID=""
 if is_port_in_use "$API_PORT"; then
     # Try to find the PID of the process using the port
-    BACKEND_PID=$(lsof -ti :$API_PORT 2>/dev/null | head -1 || echo "")
+    BACKEND_PID=$(get_port_pid "$API_PORT")
     if [ -n "$BACKEND_PID" ]; then
         # Verify it's actually the backend by checking the endpoint
         if curl -sf "http://localhost:$API_PORT/docs" > /dev/null 2>&1; then
@@ -272,7 +297,7 @@ echo "📦 Checking Frontend..."
 FRONTEND_PID=""
 if is_port_in_use "$FRONTEND_PORT"; then
     # Try to find the PID of the process using the port
-    FRONTEND_PID=$(lsof -ti :$FRONTEND_PORT 2>/dev/null | head -1 || echo "")
+    FRONTEND_PID=$(get_port_pid "$FRONTEND_PORT")
     if [ -n "$FRONTEND_PID" ]; then
         # Verify it's actually the frontend by checking the endpoint
         if curl -sf "http://localhost:$FRONTEND_PORT" > /dev/null 2>&1; then

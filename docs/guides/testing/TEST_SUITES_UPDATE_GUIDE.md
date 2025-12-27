@@ -639,6 +639,7 @@ with:
 3. **`scripts/ci/install-robot-framework.sh`** - Install Robot Framework dependencies
 4. **`scripts/ci/verify-services.sh`** - Verify frontend/backend services are running
 5. **`scripts/ci/wait-for-service.sh`** - Reusable utility for waiting for any service (used internally by other scripts)
+6. **`scripts/ci/port-utils.sh`** - Reusable utility for port management (used internally by other scripts)
 
 **Example: Using Allure Environment Properties Script**:
 ```yaml

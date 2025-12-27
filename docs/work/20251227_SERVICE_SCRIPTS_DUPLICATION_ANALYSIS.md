@@ -324,11 +324,14 @@ stop_port() {
 **Implementation Date**: 2025-12-27  
 **Status**: Phase 2 implementation complete, awaiting review
 
-### Phase 3: Port Utilities
-1. Create `scripts/ci/port-utils.sh`
-2. Update `start-services-for-ci.sh` to source it
-3. Update `stop-services.sh` to source it
-4. Update `verify-services.sh` to source it (if needed)
+### Phase 3: Port Utilities ✅ **COMPLETED**
+1. ✅ Create `scripts/ci/port-utils.sh`
+2. ✅ Update `start-services-for-ci.sh` to source it
+3. ✅ Update `stop-services.sh` to source it
+4. ✅ Update `verify-services.sh` to source it
+
+**Implementation Date**: 2025-12-27  
+**Status**: Phase 3 implementation complete, awaiting review
 
 ### Phase 4: Documentation
 1. Update script documentation
@@ -393,5 +396,31 @@ stop_port() {
 - ✅ Better error messages and progress reporting
 - ✅ Configurable timeout and check interval
 
-**Next Steps**: Phase 3 implementation (Port Utilities)
+## ✅ Phase 3 Implementation Summary
+
+**Completed Items**:
+- ✅ Created `scripts/ci/port-utils.sh` - Reusable port utility functions
+- ✅ Updated `start-services-for-ci.sh` to use port utilities (with fallback)
+- ✅ Updated `stop-services.sh` to use port utilities (with fallback)
+- ✅ Updated `verify-services.sh` to use port utilities (with fallback)
+
+**Files Modified**:
+- `scripts/ci/port-utils.sh` - New reusable utility script with port functions
+- `scripts/start-services-for-ci.sh` - Uses port utilities for `is_port_in_use`, `get_port_pid`, `stop_port_if_in_use`
+- `scripts/stop-services.sh` - Uses port utilities for `stop_port` and port verification
+- `scripts/ci/verify-services.sh` - Uses port utilities for `check_port_status`
+
+**Functions Provided**:
+- `is_port_in_use <port>` - Check if a port is in use
+- `get_port_pid <port>` - Get the PID of the process using a port
+- `stop_port <port> <service-name> [force]` - Stop the process using a port
+- `check_port_status <port> <service-name>` - Check and display port status
+
+**Benefits**:
+- ✅ Consistent port checking behavior across all scripts
+- ✅ Single place to fix bugs and add features
+- ✅ Better error messages and status reporting
+- ✅ Reusable functions for port management
+
+**Next Steps**: Phase 4 implementation (Documentation)
 
