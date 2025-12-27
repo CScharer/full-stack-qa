@@ -57,15 +57,17 @@ fi
 if [ -d "$SOURCE_DIR/cypress-results" ]; then
     echo "   Converting Cypress results..."
     chmod +x scripts/ci/convert-cypress-to-allure.sh
-    # Try to find mochawesome.json or cypress-results.json anywhere in cypress-results
-    if find "$SOURCE_DIR/cypress-results" -name "mochawesome.json" -o -name "cypress-results.json" 2>/dev/null | head -1 | read json_file; then
+    # Try to find result JSON files in multiple locations
+    # Look for: mochawesome.json, cypress-results.json, or results/cypress-results.json
+    if find "$SOURCE_DIR/cypress-results" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1 | read json_file; then
         json_dir=$(dirname "$json_file")
         ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$ENV_FOR_CONVERSION" || true
-    else
-        # Fallback: try common directory structure
-        find "$SOURCE_DIR/cypress-results" -type d -name "cypress" | while read cypress_dir; do
-            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$cypress_dir" "$ENV_FOR_CONVERSION" || true
-        done
+    elif [ -d "$SOURCE_DIR/cypress-results/cypress/results" ]; then
+        # Check for results directory structure
+        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/results" "$ENV_FOR_CONVERSION" || true
+    elif [ -d "$SOURCE_DIR/cypress-results/cypress" ]; then
+        # Fallback: try cypress directory
+        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress" "$ENV_FOR_CONVERSION" || true
     fi
 fi
 

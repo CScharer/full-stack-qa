@@ -28,14 +28,22 @@ if [ ! -d "$ROBOT_RESULTS_DIR" ]; then
     exit 0
 fi
 
-# Look for output.xml file
-OUTPUT_XML="$ROBOT_RESULTS_DIR/output.xml"
+# Look for output.xml file (search recursively if directory provided)
+OUTPUT_XML=""
+if [ -f "$ROBOT_RESULTS_DIR/output.xml" ]; then
+    OUTPUT_XML="$ROBOT_RESULTS_DIR/output.xml"
+elif [ -d "$ROBOT_RESULTS_DIR" ]; then
+    # Search recursively for output.xml
+    OUTPUT_XML=$(find "$ROBOT_RESULTS_DIR" -name "output.xml" 2>/dev/null | head -1)
+fi
 
-if [ ! -f "$OUTPUT_XML" ]; then
-    echo "ℹ️  No Robot Framework output.xml found"
+if [ -z "$OUTPUT_XML" ] || [ ! -f "$OUTPUT_XML" ]; then
+    echo "ℹ️  No Robot Framework output.xml found in $ROBOT_RESULTS_DIR"
     echo "   This is expected if Robot Framework tests haven't run"
     exit 0
 fi
+
+echo "📊 Found Robot Framework output.xml: $OUTPUT_XML"
 
 # Use Python to parse Robot Framework XML
 python3 <<PYTHON_SCRIPT

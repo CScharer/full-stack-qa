@@ -136,7 +136,8 @@ fi
 CONVERTED=0
 
 # Try to find and parse Cypress result JSON files
-if find "$CYPRESS_RESULTS_DIR" -name "mochawesome.json" -o -name "cypress-results.json" 2>/dev/null | head -1 | read json_file; then
+# Look for mochawesome.json, cypress-results.json, or any JSON file in results directory
+if find "$CYPRESS_RESULTS_DIR" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/results/*.json" \) 2>/dev/null | head -1 | read json_file; then
     echo "📊 Found Cypress result file: $json_file"
     
     # Use Python to parse JSON (more reliable than grep)
