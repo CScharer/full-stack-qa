@@ -573,3 +573,93 @@ All robot tests execute successfully in the local environment. This confirms:
 
 **Next Steps**: Since tests work locally but fail in CI/CD, the focus should be on investigating pipeline-specific issues (Selenium Grid networking, BASE_URL conversion, service timing, etc.) as outlined in Phase 2 of the fix plan.
 
+---
+
+## 🔍 CI/CD Pipeline Test Results Analysis
+
+**Date**: 2025-12-27  
+**Pipeline**: Robot Tests (dev environment)  
+**Status**: ⚠️ **PARTIAL FAILURE** - 3 passed, 2 failed
+
+### Test Results Summary
+
+**API Tests** (`APITests.robot`):
+- ✅ **3 tests, 3 passed, 0 failed**
+- All API tests passed successfully
+- Tests use external API (jsonplaceholder.typicode.com)
+- No local services required
+
+**HomePage Tests** (`HomePageTests.robot`):
+- ❌ **2 tests, 0 passed, 2 failed**
+- Both UI tests failed with networking error
+- Tests require local frontend service
+- **Error**: `WebDriverException: Message: unknown error: net::ERR_NAME_NOT_RESOLVED`
+
+### Root Cause Identified
+
+**Issue**: Docker Networking - `host.docker.internal` Not Resolved
+
+**Error Details**:
+```
+WebDriverException: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=143.0.7499.169)
+```
+
+**What's Happening**:
+1. Tests run in GitHub Actions runner (Ubuntu)
+2. Selenium Grid runs in Docker containers (selenium-hub, chrome-node)
+3. Backend/Frontend services run on the runner (localhost:8003, localhost:3003)
+4. Browser in Docker container tries to access `host.docker.internal:3003`
+5. **`host.docker.internal` cannot be resolved** in GitHub Actions environment
+6. Tests fail with `ERR_NAME_NOT_RESOLVED`
+
+**Current BASE_URL Conversion Logic** (line 847-849):
+```bash
+if [[ "$BASE_URL" == http://localhost:* ]]; then
+  BASE_URL="${BASE_URL/localhost/host.docker.internal}"
+fi
+```
+
+**Problem**: `host.docker.internal` is a Docker Desktop feature that **does not work in GitHub Actions** (Linux runners don't support it).
+
+### Solution Options
+
+#### Option 1: Use `172.17.0.1` (Docker Bridge Gateway) ✅ RECOMMENDED
+- **For Linux**: Use `172.17.0.1` instead of `host.docker.internal`
+- This is the default Docker bridge gateway IP
+- Works in GitHub Actions Linux runners
+
+#### Option 2: Use Service Network Alias
+- Configure services with network aliases
+- Access services via alias instead of IP/hostname
+
+#### Option 3: Use `host` Network Mode
+- Run Selenium Grid with `network_mode: host`
+- Services accessible via `localhost` directly
+- **Note**: May have port conflicts
+
+### Recommended Fix
+
+**Update BASE_URL conversion logic** to detect GitHub Actions environment and use appropriate host:
+
+```bash
+# Detect if running in GitHub Actions
+if [ -n "$GITHUB_ACTIONS" ]; then
+  # GitHub Actions: Use Docker bridge gateway
+  if [[ "$BASE_URL" == http://localhost:* ]]; then
+    BASE_URL="${BASE_URL/localhost/172.17.0.1}"
+  fi
+else
+  # Local/Docker Desktop: Use host.docker.internal
+  if [[ "$BASE_URL" == http://localhost:* ]]; then
+    BASE_URL="${BASE_URL/localhost/host.docker.internal}"
+  fi
+fi
+```
+
+### Next Steps
+
+1. ✅ **Phase 1 Complete**: Tests enabled in pipeline
+2. 🔧 **Phase 2 In Progress**: Fix Docker networking issue
+3. 📋 **Phase 3 Pending**: Validate fix and update documentation
+

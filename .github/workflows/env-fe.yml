@@ -843,9 +843,19 @@ jobs:
           BASE_URL="${{ inputs.base_url }}"
           
           # When using Selenium Grid (container), localhost points to the container itself.
-          # Use host.docker.internal so the browser inside the grid can reach the services.
+          # Need to use the Docker bridge gateway to reach services on the host.
+          # - GitHub Actions (Linux): Use 172.17.0.1 (Docker bridge gateway)
+          # - Docker Desktop (macOS/Windows): Use host.docker.internal
           if [[ "$BASE_URL" == http://localhost:* ]]; then
-            BASE_URL="${BASE_URL/localhost/host.docker.internal}"
+            if [ -n "$GITHUB_ACTIONS" ]; then
+              # GitHub Actions: Use Docker bridge gateway IP
+              BASE_URL="${BASE_URL/localhost/172.17.0.1}"
+              echo "🔧 GitHub Actions detected: Using Docker bridge gateway (172.17.0.1)"
+            else
+              # Local/Docker Desktop: Use host.docker.internal
+              BASE_URL="${BASE_URL/localhost/host.docker.internal}"
+              echo "🔧 Local/Docker Desktop: Using host.docker.internal"
+            fi
           fi
           
           if [ -z "$BASE_URL" ]; then
