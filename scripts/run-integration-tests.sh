@@ -9,13 +9,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PLAYWRIGHT_DIR="$PROJECT_ROOT/playwright"
 
-# Set environment to test for integration tests
-# This ensures the backend uses full_stack_qa_test.db
-export ENVIRONMENT=test
+# Set environment (defaults to dev, can be overridden)
+# This determines which database and ports to use
+ENVIRONMENT=${ENVIRONMENT:-dev}
+export ENVIRONMENT
 
 echo "════════════════════════════════════════"
 echo "🧪 Running Integration Tests"
 echo "════════════════════════════════════════"
+echo ""
+echo "📋 Environment: $ENVIRONMENT"
+echo "   Database: full_stack_qa_${ENVIRONMENT}.db"
 echo ""
 
 # Check prerequisites
@@ -35,24 +39,26 @@ if ! command -v python3 &> /dev/null; then
 fi
 echo "✅ Python: $(python3 --version)"
 
-# Check test environment database exists
-# Integration tests use full_stack_qa_test.db (test environment)
-TEST_DB_PATH="$PROJECT_ROOT/Data/Core/full_stack_qa_test.db"
-if [ ! -f "$TEST_DB_PATH" ]; then
-    echo "⚠️  Test database not found. Creating test database from schema..."
+# Check environment-specific database exists
+# Integration tests use full_stack_qa_{environment}.db based on ENVIRONMENT
+DB_NAME="full_stack_qa_${ENVIRONMENT}.db"
+DB_PATH="$PROJECT_ROOT/Data/Core/$DB_NAME"
+if [ ! -f "$DB_PATH" ]; then
+    echo "⚠️  Environment database not found: $DB_NAME"
+    echo "   Creating $ENVIRONMENT environment database from schema..."
     mkdir -p "$PROJECT_ROOT/Data/Core"
     if [ -f "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql" ]; then
-        sqlite3 "$TEST_DB_PATH" < "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql"
+        sqlite3 "$DB_PATH" < "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql"
         if [ -f "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql" ]; then
-            sqlite3 "$TEST_DB_PATH" < "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql"
+            sqlite3 "$DB_PATH" < "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql"
         fi
-        echo "✅ Test database created: full_stack_qa_test.db"
+        echo "✅ $ENVIRONMENT environment database created: $DB_NAME"
     else
         echo "❌ Schema file not found. Please create the database manually."
         exit 1
     fi
 else
-    echo "✅ Test database exists: full_stack_qa_test.db"
+    echo "✅ $ENVIRONMENT environment database exists: $DB_NAME"
 fi
 
 # Check backend venv

@@ -179,7 +179,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # API Settings
     api_host: str = "localhost"
-    api_port: int = 8008
+    api_port: int = 8003  # Default dev port (see config/ports.json for all ports)
     
     # Database Settings
     db_path: str = "../database/test-data.db"

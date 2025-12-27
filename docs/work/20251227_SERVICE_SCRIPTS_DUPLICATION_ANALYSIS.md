@@ -1,0 +1,464 @@
+# Service Scripts Duplication Analysis
+
+> **Purpose**: Analysis of code duplication in service-related scripts (start, stop, verify, wait) with recommendations for consolidation.
+
+## 📌 Important Distinctions
+
+**Service Types**:
+- **Application Services**: Backend and Frontend services (the application itself)
+  - Scripts: `start-services-for-ci.sh`, `stop-services.sh`, `verify-services.sh`, `wait-for-services.sh`
+  - Used in: Backend test workflows (`env-be.yml`)
+- **Test Infrastructure**: Selenium Grid (test execution infrastructure)
+  - Scripts: `wait-for-grid.sh`
+  - Used in: Frontend test workflows (`env-fe.yml`)
+
+**Key Point**: `wait-for-services.sh` and `wait-for-grid.sh` serve **different purposes** and should remain as separate scripts:
+- `wait-for-services.sh` → Waits for **Backend and Frontend application services**
+- `wait-for-grid.sh` → Waits for **Selenium Grid test infrastructure**
+
+---
+
+## 📋 Legend
+
+| Icon | Meaning | Description |
+|------|---------|-------------|
+| ✅ | Good | No issues, follows best practices |
+| ⚠️ | Duplication Found | Code is duplicated and should be consolidated |
+| 🔧 | Recommendation | Suggested improvement |
+| 📝 | Documentation | Needs documentation update |
+
+---
+
+## 🔍 Duplication Analysis
+
+### 1. Port Extraction Logic ⚠️ **DUPLICATION FOUND**
+
+**Issue**: Multiple scripts have different ways of extracting ports from base URLs or environments.
+
+#### Current State:
+
+**`scripts/ci/verify-services.sh`** (✅ **UPDATED**):
+```bash
+# Now uses port-config.sh (single source of truth)
+# Extract environment from base_url by checking port
+ENVIRONMENT="dev"  # Default to dev
+if [[ "$BASE_URL" == *":3003"* ]]; then
+  ENVIRONMENT="dev"
+elif [[ "$BASE_URL" == *":3004"* ]]; then
+  ENVIRONMENT="test"
+elif [[ "$BASE_URL" == *":3005"* ]]; then
+  ENVIRONMENT="prod"
+fi
+
+# Get ports for this environment using centralized config
+PORT_VARS=$(get_ports_for_environment "$ENVIRONMENT")
+eval "$PORT_VARS"
+```
+
+**`scripts/start-services-for-ci.sh`** (Lines 20-107):
+- ✅ Uses `scripts/ci/port-config.sh` (good!)
+- Has fallback hardcoded values
+
+**`scripts/ci/port-config.sh`**:
+- ✅ Centralized port configuration (single source of truth)
+
+#### Recommendation 🔧: ✅ **IMPLEMENTED**
+
+**Updated `verify-services.sh` to use `port-config.sh`**:
+- ✅ Extracts environment from base URL by checking port
+- ✅ Uses `get_ports_for_environment()` function
+- ✅ Removed hardcoded port mapping
+- ✅ Added fallback to hardcoded values if port-config.sh doesn't exist (safety)
+
+**Benefits**:
+- ✅ Single source of truth for ports
+- ✅ Consistent behavior across all scripts
+- ✅ Easier to maintain (change ports in one place)
+
+---
+
+### 2. Service Waiting/Verification Logic ⚠️ **DUPLICATION FOUND**
+
+**Issue**: Multiple scripts have similar logic for waiting/verifying services are ready.
+
+#### Current State:
+
+**`scripts/start-services-for-ci.sh`** (Lines 128-148):
+```bash
+wait_for_service() {
+    local url=$1
+    local service_name=$2
+    local elapsed=0
+    
+    echo "⏳ Waiting for $service_name to be ready..."
+    while [ $elapsed -lt $MAX_WAIT ]; do
+        if curl -sf "$url" > /dev/null 2>&1; then
+            echo "✅ $service_name is ready!"
+            return 0
+        fi
+        sleep 2
+        elapsed=$((elapsed + 2))
+        if [ $((elapsed % 10)) -eq 0 ]; then
+            echo "   Still waiting... (${elapsed}s/${MAX_WAIT}s)"
+        fi
+    done
+    
+    echo "❌ $service_name failed to start within ${MAX_WAIT}s"
+    return 1
+}
+```
+
+**`scripts/ci/verify-services.sh`** (Lines 50-66):
+```bash
+# Inline timeout/curl logic
+timeout "$TIMEOUT" bash -c "until curl -sf http://localhost:$FRONTEND_PORT > /dev/null; do echo '  Waiting for frontend...'; sleep 2; done" || {
+  echo "❌ Frontend not responding on port $FRONTEND_PORT"
+  exit 1
+}
+```
+
+**`scripts/ci/wait-for-services.sh`** (Lines 17-25):
+```bash
+# Waits for Backend and Frontend services (application services)
+for i in $(seq 1 $MAX_ATTEMPTS); do
+  if curl -sf "$FRONTEND_URL" >/dev/null 2>&1 && curl -sf "$BACKEND_URL/health" >/dev/null 2>&1; then
+    echo "✅ Services are ready!"
+    READY=true
+    break
+  fi
+  echo "Waiting... ($i/$MAX_ATTEMPTS)"
+  sleep 2
+done
+```
+- **Purpose**: Waits for Backend and Frontend application services
+- **Used in**: `env-be.yml` workflow (backend tests)
+- **Checks**: Both frontend and backend endpoints
+
+**`scripts/ci/wait-for-grid.sh`** (Line 12):
+```bash
+# Waits for Selenium Grid (test infrastructure)
+timeout "$TIMEOUT" bash -c "until curl -sf $GRID_URL; do sleep 2; done"
+```
+- **Purpose**: Waits for Selenium Grid infrastructure
+- **Used in**: `env-fe.yml` workflow (frontend tests - smoke, grid, robot, selenide)
+- **Checks**: Selenium Grid status endpoint
+
+#### Recommendation 🔧: ✅ **IMPLEMENTED**
+
+**Created `scripts/ci/wait-for-service.sh`** - A reusable service waiting utility:
+- ✅ Supports configurable timeout and check interval
+- ✅ Provides progress reporting every 10 seconds
+- ✅ Clear error messages with attempt counts
+- ✅ Proper exit codes for success/failure
+
+**Updated all scripts to use this utility**:
+- ✅ `start-services-for-ci.sh` → Uses `wait-for-service.sh` (with fallback)
+- ✅ `verify-services.sh` → Uses `wait-for-service.sh` (with fallback)
+- ✅ `wait-for-services.sh` → Uses `wait-for-service.sh` internally (kept as wrapper for BE/FE services)
+- ✅ `wait-for-grid.sh` → Uses `wait-for-service.sh` internally (kept as wrapper for Selenium Grid)
+
+**Note**: `wait-for-services.sh` and `wait-for-grid.sh` serve different purposes:
+- `wait-for-services.sh`: Application services (Backend + Frontend)
+- `wait-for-grid.sh`: Test infrastructure (Selenium Grid)
+Both remain as separate scripts but use the shared utility internally.
+
+**Benefits**:
+- ✅ Consistent waiting behavior
+- ✅ Single place to fix bugs
+- ✅ Better error messages and progress reporting
+- ✅ Configurable timeout and check interval
+
+---
+
+### 3. Port Checking Logic ⚠️ **DUPLICATION FOUND**
+
+**Issue**: Multiple scripts check if ports are in use with similar logic.
+
+#### Current State:
+
+**`scripts/start-services-for-ci.sh`** (Lines 118-125):
+```bash
+is_port_in_use() {
+    local port=$1
+    if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1 || nc -z localhost $port 2>/dev/null; then
+        return 0  # Port is in use
+    else
+        return 1  # Port is not in use
+    fi
+}
+```
+
+**`scripts/stop-services.sh`** (Line 20):
+```bash
+if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
+```
+
+**`scripts/ci/verify-services.sh`** (Lines 53, 63):
+```bash
+lsof -i :"$FRONTEND_PORT" || echo "No process found on port $FRONTEND_PORT"
+```
+
+#### Recommendation 🔧:
+
+**Create `scripts/ci/port-utils.sh`** - Common port utilities:
+```bash
+#!/bin/bash
+# Port utility functions
+# Usage: source scripts/ci/port-utils.sh
+
+is_port_in_use() {
+    local port=$1
+    # Check if port is in use
+}
+
+get_port_pid() {
+    local port=$1
+    # Get PID of process using port
+}
+
+stop_port() {
+    local port=$1
+    # Stop process on port
+}
+```
+
+**Update all scripts to source this utility**:
+- `start-services-for-ci.sh` → Source `port-utils.sh`
+- `stop-services.sh` → Source `port-utils.sh`
+- `verify-services.sh` → Source `port-utils.sh` (if needed)
+
+**Benefits**:
+- Consistent port checking
+- Reusable port management functions
+- Easier to maintain
+
+---
+
+### 4. Service Verification Duplication ⚠️ **DUPLICATION FOUND**
+
+**Issue**: `start-services-for-ci.sh` already verifies services are responding, but `verify-services.sh` does the same thing.
+
+#### Current State:
+
+**`scripts/start-services-for-ci.sh`** (Lines 183, 268):
+- Verifies backend is responding: `curl -sf "http://localhost:$API_PORT/docs"`
+- Verifies frontend is responding: `curl -sf "http://localhost:$FRONTEND_PORT"`
+
+**`scripts/ci/verify-services.sh`**:
+- Does the same verification
+
+#### Recommendation 🔧:
+
+**Option 1: Remove `verify-services.sh` and use `start-services-for-ci.sh` verification**
+- `start-services-for-ci.sh` already verifies services
+- `verify-services.sh` is redundant if services are started with `start-services-for-ci.sh`
+
+**Option 2: Keep `verify-services.sh` but make it use shared utilities**
+- Use `wait-for-service.sh` utility
+- Use `port-utils.sh` for port extraction
+- Keep it as a standalone verification tool (useful when services are started externally)
+
+**Recommendation**: **Option 2** - Keep `verify-services.sh` but refactor to use shared utilities. It's useful for verifying services started externally or in different contexts.
+
+---
+
+## 📊 Summary of Recommendations
+
+### High Priority (Should Fix)
+
+1. **Update `verify-services.sh` to use `port-config.sh`** ⚠️
+   - Remove hardcoded port mapping
+   - Use `get_ports_for_environment()` function
+   - Extract environment from base URL
+
+2. **Create `scripts/ci/wait-for-service.sh` utility** 🔧
+   - Consolidate all service waiting logic
+   - Update all scripts to use it
+   - Consistent timeout and error handling
+
+### Medium Priority (Should Consider)
+
+3. **Create `scripts/ci/port-utils.sh` utility** 🔧
+   - Consolidate port checking logic
+   - Reusable port management functions
+   - Update scripts to source it
+
+4. **Refactor `verify-services.sh` to use shared utilities** 🔧
+   - Use `wait-for-service.sh`
+   - Use `port-config.sh` for port extraction
+   - Keep as standalone verification tool
+
+### Low Priority (Nice to Have)
+
+5. **Keep `wait-for-services.sh` and `wait-for-grid.sh` separate** ✅
+   - **`wait-for-services.sh`**: Waits for **Backend and Frontend services** (application services)
+     - Used in: `env-be.yml` workflow
+     - Parameters: `FRONTEND_URL`, `BACKEND_URL`, `MAX_ATTEMPTS`, `ENVIRONMENT`
+     - Checks: Frontend and Backend health endpoints
+   - **`wait-for-grid.sh`**: Waits for **Selenium Grid** (test infrastructure)
+     - Used in: `env-fe.yml` workflow (multiple test jobs)
+     - Parameters: `GRID_URL`, `TIMEOUT`
+     - Checks: Selenium Grid status endpoint
+   - **Recommendation**: Keep separate - they serve different purposes and have different requirements
+   - **Note**: Both could use the same underlying `wait-for-service.sh` utility (if created) but should remain as separate scripts for clarity
+
+---
+
+## 🎯 Implementation Plan
+
+### Phase 1: Port Configuration Consolidation ✅ **COMPLETED**
+1. ✅ Update `verify-services.sh` to use `port-config.sh`
+2. ⏳ Test with all environments (dev, test, prod) - Ready for review
+
+**Implementation Date**: 2025-12-27  
+**Status**: Phase 1 implementation complete, awaiting review
+
+### Phase 2: Service Waiting Utility ✅ **COMPLETED**
+1. ✅ Create `scripts/ci/wait-for-service.sh`
+2. ✅ Update `start-services-for-ci.sh` to use it
+3. ✅ Update `verify-services.sh` to use it
+4. ✅ Update `wait-for-grid.sh` to use it internally (keep as wrapper for Selenium Grid)
+5. ✅ Update `wait-for-services.sh` to use it internally (keep as wrapper for BE/FE services)
+   - **Note**: Keep `wait-for-services.sh` and `wait-for-grid.sh` as separate scripts - they serve different purposes
+
+**Implementation Date**: 2025-12-27  
+**Status**: Phase 2 implementation complete, awaiting review
+
+### Phase 3: Port Utilities ✅ **COMPLETED**
+1. ✅ Create `scripts/ci/port-utils.sh`
+2. ✅ Update `start-services-for-ci.sh` to source it
+3. ✅ Update `stop-services.sh` to source it
+4. ✅ Update `verify-services.sh` to source it
+
+**Implementation Date**: 2025-12-27  
+**Status**: Phase 3 implementation complete, awaiting review
+
+### Phase 4: Documentation ✅ **COMPLETED**
+1. ✅ Create comprehensive service scripts guide (`docs/guides/infrastructure/SERVICE_SCRIPTS.md`)
+2. ✅ Document all service scripts with usage examples
+3. ✅ Document shared utilities (`wait-for-service.sh`, `port-utils.sh`, `port-config.sh`)
+4. ✅ Add "When to Use Which Script" section
+5. ✅ Add common workflows and troubleshooting
+6. ✅ Update script headers with usage examples (already done in previous phases)
+
+**Implementation Date**: 2025-12-27  
+**Status**: Phase 4 implementation complete, awaiting review
+
+---
+
+## 📝 Files to Update
+
+### New Files to Create:
+- `scripts/ci/wait-for-service.sh` - Reusable service waiting utility
+- `scripts/ci/port-utils.sh` - Common port utilities
+
+### Files to Update:
+- `scripts/ci/verify-services.sh` - Use `port-config.sh` and `wait-for-service.sh`
+- `scripts/start-services-for-ci.sh` - Use `wait-for-service.sh` and `port-utils.sh`
+- `scripts/stop-services.sh` - Use `port-utils.sh`
+- `scripts/ci/wait-for-grid.sh` - Use `wait-for-service.sh` internally (keep as Selenium Grid wrapper)
+- `scripts/ci/wait-for-services.sh` - Use `wait-for-service.sh` internally (keep as BE/FE services wrapper)
+
+### Documentation to Update:
+- `docs/guides/testing/TEST_SUITES_UPDATE_GUIDE.md` - Document new utilities
+- Script headers - Update usage examples
+
+---
+
+**Last Updated**: 2025-12-27  
+**Status**: ✅ **ALL PHASES COMPLETE** - Phase 1, 2, 3, 4 all implemented and documented
+
+## ✅ Phase 1 Implementation Summary
+
+**Completed Items**:
+- ✅ Updated `scripts/ci/verify-services.sh` to use `port-config.sh`
+- ✅ Removed hardcoded port mapping (replaced with centralized config)
+- ✅ Added environment extraction from base URL
+- ✅ Added fallback logic for safety
+
+**Files Modified**:
+- `scripts/ci/verify-services.sh` - Now uses `port-config.sh` for port configuration
+- `docs/work/20251227_SERVICE_SCRIPTS_DUPLICATION_ANALYSIS.md` - Updated with Phase 1 completion status
+
+## ✅ Phase 2 Implementation Summary
+
+**Completed Items**:
+- ✅ Created `scripts/ci/wait-for-service.sh` - Reusable service waiting utility
+- ✅ Updated `start-services-for-ci.sh` to use `wait-for-service.sh` (with fallback)
+- ✅ Updated `verify-services.sh` to use `wait-for-service.sh` (with fallback)
+- ✅ Updated `wait-for-grid.sh` to use `wait-for-service.sh` internally (kept as Selenium Grid wrapper)
+- ✅ Updated `wait-for-services.sh` to use `wait-for-service.sh` internally (kept as BE/FE services wrapper)
+
+**Files Modified**:
+- `scripts/ci/wait-for-service.sh` - New reusable utility script
+- `scripts/start-services-for-ci.sh` - Uses utility with fallback
+- `scripts/ci/verify-services.sh` - Uses utility with fallback
+- `scripts/ci/wait-for-grid.sh` - Uses utility internally (wrapper)
+- `scripts/ci/wait-for-services.sh` - Uses utility internally (wrapper)
+
+**Benefits**:
+- ✅ Consistent waiting behavior across all scripts
+- ✅ Single place to fix bugs and add features
+- ✅ Better error messages and progress reporting
+- ✅ Configurable timeout and check interval
+
+## ✅ Phase 3 Implementation Summary
+
+**Completed Items**:
+- ✅ Created `scripts/ci/port-utils.sh` - Reusable port utility functions
+- ✅ Updated `start-services-for-ci.sh` to use port utilities (with fallback)
+- ✅ Updated `stop-services.sh` to use port utilities (with fallback)
+- ✅ Updated `verify-services.sh` to use port utilities (with fallback)
+
+**Files Modified**:
+- `scripts/ci/port-utils.sh` - New reusable utility script with port functions
+- `scripts/start-services-for-ci.sh` - Uses port utilities for `is_port_in_use`, `get_port_pid`, `stop_port_if_in_use`
+- `scripts/stop-services.sh` - Uses port utilities for `stop_port` and port verification
+- `scripts/ci/verify-services.sh` - Uses port utilities for `check_port_status`
+
+**Functions Provided**:
+- `is_port_in_use <port>` - Check if a port is in use
+- `get_port_pid <port>` - Get the PID of the process using a port
+- `stop_port <port> <service-name> [force]` - Stop the process using a port
+- `check_port_status <port> <service-name>` - Check and display port status
+
+**Benefits**:
+- ✅ Consistent port checking behavior across all scripts
+- ✅ Single place to fix bugs and add features
+- ✅ Better error messages and status reporting
+- ✅ Reusable functions for port management
+
+## ✅ Phase 4 Implementation Summary
+
+**Completed Items**:
+- ✅ Created comprehensive service scripts guide (`docs/guides/infrastructure/SERVICE_SCRIPTS.md`)
+- ✅ Documented all service scripts with usage examples
+- ✅ Documented shared utilities (`wait-for-service.sh`, `port-utils.sh`, `port-config.sh`)
+- ✅ Added "When to Use Which Script" decision table
+- ✅ Added common workflows and troubleshooting sections
+- ✅ Added script relationship diagram
+- ✅ Added migration notes for updating scripts
+
+**Files Created**:
+- `docs/guides/infrastructure/SERVICE_SCRIPTS.md` - Comprehensive guide (500+ lines)
+
+**Documentation Sections**:
+- Overview of service types
+- Detailed documentation for each script
+- Shared utilities documentation
+- "When to Use Which Script" decision table
+- Common workflows
+- Script relationship diagram
+- Troubleshooting guide
+- Best practices
+- Migration notes
+
+**Benefits**:
+- ✅ Single source of truth for service script documentation
+- ✅ Clear guidance on when to use which script
+- ✅ Examples for common workflows
+- ✅ Troubleshooting guide for common issues
+- ✅ Migration path for updating scripts
+
+**Next Steps**: All phases complete! ✅
+

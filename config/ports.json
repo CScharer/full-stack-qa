@@ -1,0 +1,33 @@
+{
+  "dev": {
+    "frontend": {
+      "port": 3003,
+      "url": "http://localhost:3003"
+    },
+    "backend": {
+      "port": 8003,
+      "url": "http://localhost:8003"
+    }
+  },
+  "test": {
+    "frontend": {
+      "port": 3004,
+      "url": "http://localhost:3004"
+    },
+    "backend": {
+      "port": 8004,
+      "url": "http://localhost:8004"
+    }
+  },
+  "prod": {
+    "frontend": {
+      "port": 3005,
+      "url": "http://localhost:3005"
+    },
+    "backend": {
+      "port": 8005,
+      "url": "http://localhost:8005"
+    }
+  }
+}
+

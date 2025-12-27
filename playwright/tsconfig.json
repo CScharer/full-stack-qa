@@ -15,7 +15,7 @@
       "@/*": ["./tests/*"]
     }
   },
-  "include": ["tests/**/*.ts"],
+  "include": ["tests/**/*.ts", "config/**/*.ts", "../config/**/*.json"],
   "exclude": ["node_modules"]
 }
 

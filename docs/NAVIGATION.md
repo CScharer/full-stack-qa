@@ -34,6 +34,8 @@ docs/
 │   │   ├── DOCKER.md                    Complete Docker guide
 │   │   ├── GITHUB_ACTIONS.md            CI/CD pipeline guide
 │   │   ├── GITHUB_PAGES_SETUP.md        Report hosting setup
+│   │   ├── PORT_CONFIGURATION.md        Port configuration guide
+│   │   ├── SERVICE_SCRIPTS.md           Service management scripts guide
 │   │   └── ADD_PERFORMANCE_TO_CICD.md   Performance testing in CI/CD
 │   ├── testing/                         🧪 Testing Guides
 │   │   ├── TEST_EXECUTION_GUIDE.md      How to run tests
@@ -128,7 +130,7 @@ Project Structure:
 |---------------------|---------------|
 | **Set up project for first time** | `guides/setup/` → `README.md` |
 | **Run tests** | `guides/testing/TEST_EXECUTION_GUIDE.md` |
-| **Run tests locally (no Docker)** | `LOCAL_TESTING_GUIDE.md` |
+| **Run tests locally (no Docker)** | `guides/testing/LOCAL_TESTING.md` |
 | **Set up Docker/Grid** | `guides/infrastructure/DOCKER.md` |
 | **Understand CI/CD** | `guides/infrastructure/GITHUB_ACTIONS.md` |
 | **Fix CI/CD issues** | `guides/troubleshooting/CI_TROUBLESHOOTING.md` |

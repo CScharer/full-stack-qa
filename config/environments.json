@@ -1,0 +1,77 @@
+{
+  "api": {
+    "basePath": "/api/v1",
+    "healthEndpoint": "/health",
+    "docsEndpoint": "/docs",
+    "redocEndpoint": "/redoc"
+  },
+  "database": {
+    "directory": "Data/Core",
+    "schemaDatabase": "full_stack_qa.db",
+    "namingPattern": "full_stack_qa_{env}.db"
+  },
+  "timeouts": {
+    "serviceStartup": 120,
+    "serviceVerification": 30,
+    "apiClient": 10000,
+    "webServer": 120000,
+    "checkInterval": 2
+  },
+  "environments": {
+    "dev": {
+      "frontend": {
+        "port": 3003,
+        "url": "http://localhost:3003"
+      },
+      "backend": {
+        "port": 8003,
+        "url": "http://localhost:8003"
+      },
+      "database": {
+        "name": "full_stack_qa_dev.db",
+        "path": "Data/Core/full_stack_qa_dev.db"
+      },
+      "corsOrigins": [
+        "http://127.0.0.1:3003",
+        "http://localhost:3003"
+      ]
+    },
+    "test": {
+      "frontend": {
+        "port": 3004,
+        "url": "http://localhost:3004"
+      },
+      "backend": {
+        "port": 8004,
+        "url": "http://localhost:8004"
+      },
+      "database": {
+        "name": "full_stack_qa_test.db",
+        "path": "Data/Core/full_stack_qa_test.db"
+      },
+      "corsOrigins": [
+        "http://127.0.0.1:3004",
+        "http://localhost:3004"
+      ]
+    },
+    "prod": {
+      "frontend": {
+        "port": 3005,
+        "url": "http://localhost:3005"
+      },
+      "backend": {
+        "port": 8005,
+        "url": "http://localhost:8005"
+      },
+      "database": {
+        "name": "full_stack_qa_prod.db",
+        "path": "Data/Core/full_stack_qa_prod.db"
+      },
+      "corsOrigins": [
+        "http://127.0.0.1:3005",
+        "http://localhost:3005"
+      ]
+    }
+  }
+}
+

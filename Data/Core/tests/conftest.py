@@ -13,11 +13,27 @@ from pathlib import Path
 def test_db_path():
     """
     Create a temporary database file for testing.
-    This is created once per test session and cleaned up after all tests.
+    Database name is environment-aware and prefixed with pytest_temp_.
+    Defaults to dev environment if ENVIRONMENT not set.
+    
+    Examples:
+        ENVIRONMENT=dev (or unset) -> pytest_temp_full_stack_qa_dev.db
+        ENVIRONMENT=test -> pytest_temp_full_stack_qa_test.db
+        ENVIRONMENT=prod -> pytest_temp_full_stack_qa_prod.db
     """
     # Create temporary directory for test database
     temp_dir = tempfile.mkdtemp()
-    db_path = os.path.join(temp_dir, "test_full_stack_qa.db")
+    
+    # Get environment from env var, default to 'dev' (consistent with other scripts)
+    environment = os.getenv("ENVIRONMENT", "dev").lower()
+    
+    # Validate environment
+    if environment not in ["dev", "test", "prod"]:
+        environment = "dev"  # Fallback to dev if invalid
+    
+    # Create environment-aware database name with pytest_temp_ prefix
+    db_name = f"pytest_temp_full_stack_qa_{environment}.db"
+    db_path = os.path.join(temp_dir, db_name)
     
     yield db_path
     

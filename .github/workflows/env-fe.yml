@@ -88,10 +88,87 @@ on:
         description: 'Enable Vibium Tests'
         type: boolean
         default: true
+      # Timeout Configuration - Minutes (all default to 5 minutes)
+      smoke_tests_timeout_minutes:
+        description: 'Timeout in minutes for Smoke Tests'
+        type: number
+        default: 5
+      grid_tests_timeout_minutes:
+        description: 'Timeout in minutes for Grid Tests'
+        type: number
+        default: 5
+      mobile_tests_timeout_minutes:
+        description: 'Timeout in minutes for Mobile Browser Tests'
+        type: number
+        default: 5
+      responsive_tests_timeout_minutes:
+        description: 'Timeout in minutes for Responsive Design Tests'
+        type: number
+        default: 5
+      cypress_tests_timeout_minutes:
+        description: 'Timeout in minutes for Cypress Tests'
+        type: number
+        default: 5
+      playwright_tests_timeout_minutes:
+        description: 'Timeout in minutes for Playwright Tests'
+        type: number
+        default: 5
+      robot_tests_timeout_minutes:
+        description: 'Timeout in minutes for Robot Framework Tests'
+        type: number
+        default: 5
+      selenide_tests_timeout_minutes:
+        description: 'Timeout in minutes for Selenide Tests'
+        type: number
+        default: 5
+      vibium_tests_timeout_minutes:
+        description: 'Timeout in minutes for Vibium Tests'
+        type: number
+        default: 5
+      # Version Configuration
+      java_version:
+        description: 'Java version for JDK setup'
+        type: string
+        default: '21'
+      python_version:
+        description: 'Python version for setup-python'
+        type: string
+        default: '3.11'
+      node_version:
+        description: 'Node.js version for setup-node'
+        type: string
+        default: '20'
+      # Test Configuration
+      test_retry_count:
+        description: 'Number of retries for failed tests'
+        type: number
+        default: 1
+      # Timeout Configuration - Seconds (for service/grid waits)
+      grid_wait_timeout_seconds:
+        description: 'Timeout in seconds for waiting for Selenium Grid'
+        type: number
+        default: 60
+      service_wait_timeout_seconds:
+        description: 'Timeout in seconds for waiting for services (frontend/backend)'
+        type: number
+        default: 30
+      # Resource Configuration
+      maven_memory:
+        description: 'Maven heap size (e.g., 2048m, 4096m)'
+        type: string
+        default: '2048m'
+      allure_version:
+        description: 'Allure CLI version'
+        type: string
+        default: '2.25.0'
+      docker_shm_size:
+        description: 'Docker shared memory size for Selenium nodes (e.g., 2gb, 4gb)'
+        type: string
+        default: '2gb'
 
 env:
-  JAVA_VERSION: '21'
-  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  JAVA_VERSION: ${{ inputs.java_version || '21' }}
+  MAVEN_OPTS: -Xmx${{ inputs.maven_memory || '2048m' }} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
   # Default Selenium Grid hub URL for CI runs
   SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
 
@@ -126,7 +203,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -135,12 +212,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
 
       - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -149,23 +226,21 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Wait for Selenium Grid
         run: |
-          chmod +x scripts/ci/wait-for-grid.sh
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "60"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
 
       - name: Run Smoke Tests
-        timeout-minutes: 5
+        timeout-minutes: ${{ inputs.smoke_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           TEST_ENVIRONMENT: ${{ inputs.environment }}
@@ -177,15 +252,14 @@ jobs:
           echo "Environment: ${{ inputs.environment }}"
           echo "URL: ${{ inputs.base_url }}"
           echo ""
-          ./mvnw -ntp test \
-            -Dtest.environment=${{ inputs.environment }} \
-            -Dtest.retry.max.count=1 \
-            -DsuiteXmlFile=testng-smoke-suite.xml
+          ./scripts/ci/run-maven-tests.sh \
+            "${{ inputs.environment }}" \
+            "testng-smoke-suite.xml" \
+            "${{ inputs.test_retry_count || 1 }}"
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Smoke Test Results
@@ -225,7 +299,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
       firefox-node:
         image: selenium/node-firefox:${{ inputs.selenium_version }}
@@ -234,7 +308,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
       edge-node:
         image: selenium/node-edge:${{ inputs.selenium_version }}
@@ -243,7 +317,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -252,12 +326,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
 
       - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -266,25 +340,24 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Wait for Selenium Grid
         run: |
           echo "⏳ Waiting for Grid..."
-          timeout 60 bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
+          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
           sleep 10
           echo "✅ Grid ready!"
 
       - name: Run Grid Tests
-        timeout-minutes: 15
+        timeout-minutes: ${{ inputs.grid_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           BROWSER: ${{ matrix.browser }}
@@ -301,27 +374,23 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          mkdir -p target/allure-results
-          cat > target/allure-results/environment.properties << EOF
-          Environment=${{ inputs.environment }}
-          Test.Suite=${{ inputs.test_suite }}
-          Base.URL=${{ inputs.base_url }}
-          Browser=${{ matrix.browser }}
-          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
-          Execution.Type=CI/CD
-          Grid.Type=Selenium Grid
-          EOF
+          ./scripts/ci/create-allure-env-properties.sh \
+            "${{ inputs.environment }}" \
+            "${{ matrix.browser }}" \
+            "${{ inputs.se_hub_port }}" \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.test_suite }}" \
+            "Grid.Type=Selenium Grid"
 
-          ./mvnw -ntp test \
-            -Dtest.environment=${{ inputs.environment }} \
-            -Dbrowser=${{ matrix.browser }} \
-            -Dtest.retry.max.count=1 \
-            -DsuiteXmlFile=testng-${{ inputs.test_suite }}-suite.xml
+          ./scripts/ci/run-maven-tests.sh \
+            "${{ inputs.environment }}" \
+            "testng-${{ inputs.test_suite }}-suite.xml" \
+            "${{ inputs.test_retry_count || 1 }}" \
+            "${{ matrix.browser }}"
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Grid Test Results
@@ -354,7 +423,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: 2
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -363,12 +432,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
 
       - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -377,24 +446,23 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Wait for Selenium Grid
         run: |
-          timeout 60 bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
+          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
           sleep 5
           echo "✅ Grid ready!"
 
       - name: Run Mobile Browser Tests
-        timeout-minutes: 10
+        timeout-minutes: ${{ inputs.mobile_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           TEST_ENVIRONMENT: ${{ inputs.environment }}
@@ -408,26 +476,22 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          mkdir -p target/allure-results
-          cat > target/allure-results/environment.properties << EOF
-          Environment=${{ inputs.environment }}
-          Test.Suite=mobile-browser
-          Base.URL=${{ inputs.base_url }}
-          Browser=Chrome Mobile
-          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
-          Execution.Type=CI/CD
-          Device.Type=Mobile Viewport
-          EOF
+          ./scripts/ci/create-allure-env-properties.sh \
+            "${{ inputs.environment }}" \
+            "Chrome Mobile" \
+            "${{ inputs.se_hub_port }}" \
+            "${{ inputs.base_url }}" \
+            "mobile-browser" \
+            "Device.Type=Mobile Viewport"
 
-          ./mvnw -ntp test \
-            -Dtest.environment=${{ inputs.environment }} \
-            -Dtest.retry.max.count=1 \
-            -DsuiteXmlFile=testng-mobile-browser-suite.xml
+          ./scripts/ci/run-maven-tests.sh \
+            "${{ inputs.environment }}" \
+            "testng-mobile-browser-suite.xml" \
+            "${{ inputs.test_retry_count || 1 }}"
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Mobile Test Results
@@ -460,7 +524,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: 2
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -469,12 +533,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
 
       - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -483,24 +547,23 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Wait for Selenium Grid
         run: |
-          timeout 60 bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
+          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
           sleep 5
           echo "✅ Grid ready!"
 
       - name: Run Responsive Design Tests
-        timeout-minutes: 10
+        timeout-minutes: ${{ inputs.responsive_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           TEST_ENVIRONMENT: ${{ inputs.environment }}
@@ -514,26 +577,22 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          mkdir -p target/allure-results
-          cat > target/allure-results/environment.properties << EOF
-          Environment=${{ inputs.environment }}
-          Test.Suite=responsive
-          Base.URL=${{ inputs.base_url }}
-          Browser=Chrome
-          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
-          Execution.Type=CI/CD
-          Screen.Sizes=Desktop, Tablet, Mobile
-          EOF
+          ./scripts/ci/create-allure-env-properties.sh \
+            "${{ inputs.environment }}" \
+            "Chrome" \
+            "${{ inputs.se_hub_port }}" \
+            "${{ inputs.base_url }}" \
+            "responsive" \
+            "Screen.Sizes=Desktop, Tablet, Mobile"
 
-          ./mvnw -ntp test \
-            -Dtest.environment=${{ inputs.environment }} \
-            -Dtest.retry.max.count=1 \
-            -DsuiteXmlFile=testng-responsive-suite.xml
+          ./scripts/ci/run-maven-tests.sh \
+            "${{ inputs.environment }}" \
+            "testng-responsive-suite.xml" \
+            "${{ inputs.test_retry_count || 1 }}"
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Responsive Test Results
@@ -560,12 +619,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
           cache: 'npm'
           cache-dependency-path: cypress/package-lock.json
 
@@ -576,7 +635,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Install Cypress dependencies
@@ -589,7 +647,7 @@ jobs:
           sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 || sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2
 
       - name: Run Cypress Tests
-        timeout-minutes: 10
+        timeout-minutes: ${{ inputs.cypress_tests_timeout_minutes || 5 }}
         working-directory: ./cypress
         env:
           CYPRESS_BASE_URL: ${{ inputs.base_url }}
@@ -611,7 +669,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Cypress Test Results
@@ -638,12 +695,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
           cache: 'npm'
           cache-dependency-path: playwright/package-lock.json
 
@@ -654,7 +711,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Install Playwright dependencies
@@ -666,7 +722,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright Tests
-        timeout-minutes: 10
+        timeout-minutes: ${{ inputs.playwright_tests_timeout_minutes || 5 }}
         working-directory: ./playwright
         env:
           BASE_URL: ${{ inputs.base_url }}
@@ -691,7 +747,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Playwright Test Results
@@ -726,7 +781,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -735,12 +790,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
 
       - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -749,91 +804,32 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         run: |
-          echo "🔍 Verifying services are running..."
-          
-          # Extract port from base_url
-          BASE_URL="${{ inputs.base_url }}"
-          if [[ "$BASE_URL" == *":3003"* ]]; then
-            FRONTEND_PORT=3003
-            API_PORT=8003
-          elif [[ "$BASE_URL" == *":3004"* ]]; then
-            FRONTEND_PORT=3004
-            API_PORT=8004
-          elif [[ "$BASE_URL" == *":3005"* ]]; then
-            FRONTEND_PORT=3005
-            API_PORT=8005
-          else
-            FRONTEND_PORT=3003
-            API_PORT=8003
-          fi
-          
-          echo "Checking Frontend on port $FRONTEND_PORT..."
-          timeout 30 bash -c 'until curl -sf http://localhost:'"$FRONTEND_PORT"' > /dev/null; do echo "  Waiting for frontend..."; sleep 2; done' || {
-            echo "❌ Frontend not responding on port $FRONTEND_PORT"
-            echo "Checking if process is running:"
-            lsof -i :"$FRONTEND_PORT" || echo "No process found on port $FRONTEND_PORT"
-            exit 1
-          }
-          echo "✅ Frontend is responding on port $FRONTEND_PORT"
-          
-          echo "Checking Backend on port $API_PORT..."
-          timeout 30 bash -c 'until curl -sf http://localhost:'"$API_PORT"'/docs > /dev/null; do echo "  Waiting for backend..."; sleep 2; done' || {
-            echo "❌ Backend not responding on port $API_PORT"
-            echo "Checking if process is running:"
-            lsof -i :"$API_PORT" || echo "No process found on port $API_PORT"
-            exit 1
-          }
-          echo "✅ Backend is responding on port $API_PORT"
-          
-          echo "✅ All services verified and ready!"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 30 }}"
 
       - name: Install Robot Framework dependencies
         run: |
-          # Get Python executable path
-          PYTHON_EXE=$(which python3 || which python)
-          echo "Using Python: $PYTHON_EXE"
-          "$PYTHON_EXE" --version
-          
-          # Install Robot Framework and libraries
-          "$PYTHON_EXE" -m pip install --upgrade pip
-          "$PYTHON_EXE" -m pip install robotframework
-          "$PYTHON_EXE" -m pip install robotframework-seleniumlibrary
-          "$PYTHON_EXE" -m pip install robotframework-requests
-          
-          # Verify installation
-          echo "Installed Robot Framework packages:"
-          "$PYTHON_EXE" -m pip list | grep -i robot || echo "⚠️ Robot Framework packages not found"
-          
-          # Test import
-          "$PYTHON_EXE" -c "from robot.libraries.BuiltIn import BuiltIn; from SeleniumLibrary import SeleniumLibrary; print('✅ SeleniumLibrary imported successfully')" || {
-            echo "❌ Failed to import SeleniumLibrary"
-            echo "Python path: $("$PYTHON_EXE" -c 'import sys; print(\"\\n\".join(sys.path))')"
-            exit 1
-          }
-          
-          # Set Python path for Maven plugin (if needed)
-          echo "PYTHON_EXE=$PYTHON_EXE" >> "$GITHUB_ENV"
+          ./scripts/ci/install-robot-framework.sh
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Wait for Selenium Grid
         run: |
-          chmod +x scripts/ci/wait-for-grid.sh
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "60"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
 
       - name: Run Robot Framework Tests
-        timeout-minutes: 10
+        timeout-minutes: ${{ inputs.robot_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           TEST_ENVIRONMENT: ${{ inputs.environment }}
@@ -892,7 +888,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Robot Framework Test Results
@@ -926,7 +921,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -935,12 +930,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
 
       - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -949,23 +944,21 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Wait for Selenium Grid
         run: |
-          chmod +x scripts/ci/wait-for-grid.sh
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "60"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
 
       - name: Run Selenide Tests
-        timeout-minutes: 15
+        timeout-minutes: ${{ inputs.selenide_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           TEST_ENVIRONMENT: ${{ inputs.environment }}
@@ -979,26 +972,22 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          mkdir -p target/allure-results
-          cat > target/allure-results/environment.properties << EOF
-          Environment=${{ inputs.environment }}
-          Test.Suite=selenide
-          Base.URL=${{ inputs.base_url }}
-          Browser=Chrome
-          Selenium.Hub=localhost:${{ inputs.se_hub_port }}
-          Execution.Type=CI/CD
-          Framework=Selenide
-          EOF
+          ./scripts/ci/create-allure-env-properties.sh \
+            "${{ inputs.environment }}" \
+            "Chrome" \
+            "${{ inputs.se_hub_port }}" \
+            "${{ inputs.base_url }}" \
+            "selenide" \
+            "Framework=Selenide"
 
-          ./mvnw -ntp test \
-            -Dtest.environment=${{ inputs.environment }} \
-            -Dtest.retry.max.count=1 \
-            -DsuiteXmlFile=testng-selenide-suite.xml
+          ./scripts/ci/run-maven-tests.sh \
+            "${{ inputs.environment }}" \
+            "testng-selenide-suite.xml" \
+            "${{ inputs.test_retry_count || 1 }}"
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Selenide Test Results
@@ -1025,12 +1014,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ inputs.node_version || '20' }}
           cache: 'npm'
           cache-dependency-path: vibium/package-lock.json
 
@@ -1041,7 +1030,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Install Vibium dependencies
@@ -1062,7 +1050,7 @@ jobs:
           echo "✅ Vibium dependencies installed successfully"
 
       - name: Run Vibium Tests
-        timeout-minutes: 10
+        timeout-minutes: ${{ inputs.vibium_tests_timeout_minutes || 5 }}
         env:
           TEST_ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
@@ -1073,13 +1061,11 @@ jobs:
           echo "Environment: ${{ inputs.environment }}"
           echo "URL: ${{ inputs.base_url }}"
           echo ""
-          chmod +x scripts/run-vibium-tests.sh
           ./scripts/run-vibium-tests.sh
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Vibium Test Results
@@ -1153,8 +1139,7 @@ jobs:
       - name: Install Allure CLI
         if: always()
         run: |
-          chmod +x scripts/ci/install-allure-cli.sh
-          ./scripts/ci/install-allure-cli.sh "2.25.0"
+          ./scripts/ci/install-allure-cli.sh "${{ inputs.allure_version || '2.25.0' }}"
 
       - name: Generate Allure Report
         if: always()
