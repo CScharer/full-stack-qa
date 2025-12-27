@@ -505,6 +505,7 @@ Service verification uses `scripts/ci/verify-services.sh`:
   - Configurable timeout
   - Clear error messages
   - Reusable across test jobs
+  - Uses centralized `port-config.sh` for port configuration (single source of truth)
 
 **Benefits**:
 - ✅ No need to modify workflow files for timeout adjustments

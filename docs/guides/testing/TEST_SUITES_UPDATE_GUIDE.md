@@ -643,7 +643,6 @@ with:
 ```yaml
 - name: Create Allure Environment Properties
   run: |
-    chmod +x scripts/ci/create-allure-env-properties.sh
     ./scripts/ci/create-allure-env-properties.sh \
       "${{ inputs.environment }}" \
       "${{ matrix.browser }}" \
@@ -658,7 +657,6 @@ with:
 - name: Verify Services Are Running
   if: inputs.base_url == 'http://localhost:3003' || ...
   run: |
-    chmod +x scripts/ci/verify-services.sh
     ./scripts/ci/verify-services.sh \
       "${{ inputs.base_url }}" \
       "${{ inputs.service_wait_timeout_seconds || 30 }}"
@@ -668,7 +666,6 @@ with:
 ```yaml
 - name: Install Robot Framework dependencies
   run: |
-    chmod +x scripts/ci/install-robot-framework.sh
     ./scripts/ci/install-robot-framework.sh
 ```
 
@@ -676,7 +673,6 @@ with:
 ```yaml
 - name: Wait for Selenium Grid
   run: |
-    chmod +x scripts/ci/wait-for-grid.sh
     ./scripts/ci/wait-for-grid.sh \
       "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" \
       "${{ inputs.grid_wait_timeout_seconds || 60 }}"

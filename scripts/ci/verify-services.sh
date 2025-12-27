@@ -22,23 +22,51 @@ if [ -z "$BASE_URL" ]; then
   exit 1
 fi
 
+# Get script directory to source port config
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PORT_CONFIG="${SCRIPT_DIR}/scripts/ci/port-config.sh"
+
+# Source centralized port configuration
+if [ -f "$PORT_CONFIG" ]; then
+  source "$PORT_CONFIG"
+else
+  echo "⚠️  Warning: port-config.sh not found, using fallback values" >&2
+fi
+
 echo "🔍 Verifying services are running..."
 echo "   Base URL: $BASE_URL"
 echo "   Timeout: ${TIMEOUT}s"
 
-# Extract ports from base_url
+# Extract environment from base_url by checking port
+ENVIRONMENT="dev"  # Default to dev
 if [[ "$BASE_URL" == *":3003"* ]]; then
-  FRONTEND_PORT=3003
-  API_PORT=8003
+  ENVIRONMENT="dev"
 elif [[ "$BASE_URL" == *":3004"* ]]; then
-  FRONTEND_PORT=3004
-  API_PORT=8004
+  ENVIRONMENT="test"
 elif [[ "$BASE_URL" == *":3005"* ]]; then
-  FRONTEND_PORT=3005
-  API_PORT=8005
+  ENVIRONMENT="prod"
+fi
+
+# Get ports for this environment using centralized config
+if [ -f "$PORT_CONFIG" ]; then
+  PORT_VARS=$(get_ports_for_environment "$ENVIRONMENT")
+  eval "$PORT_VARS"
 else
-  FRONTEND_PORT=3003
-  API_PORT=8003
+  # Fallback to hardcoded values if port-config.sh doesn't exist
+  case "$ENVIRONMENT" in
+    test)
+      FRONTEND_PORT=3004
+      API_PORT=8004
+      ;;
+    prod)
+      FRONTEND_PORT=3005
+      API_PORT=8005
+      ;;
+    *)
+      FRONTEND_PORT=3003
+      API_PORT=8003
+      ;;
+  esac
 fi
 
 echo "   Frontend Port: $FRONTEND_PORT"

@@ -37,22 +37,22 @@
 
 #### Current State:
 
-**`scripts/ci/verify-services.sh`** (Lines 30-42):
+**`scripts/ci/verify-services.sh`** (✅ **UPDATED**):
 ```bash
-# Hardcoded port mapping
+# Now uses port-config.sh (single source of truth)
+# Extract environment from base_url by checking port
+ENVIRONMENT="dev"  # Default to dev
 if [[ "$BASE_URL" == *":3003"* ]]; then
-  FRONTEND_PORT=3003
-  API_PORT=8003
+  ENVIRONMENT="dev"
 elif [[ "$BASE_URL" == *":3004"* ]]; then
-  FRONTEND_PORT=3004
-  API_PORT=8004
+  ENVIRONMENT="test"
 elif [[ "$BASE_URL" == *":3005"* ]]; then
-  FRONTEND_PORT=3005
-  API_PORT=8005
-else
-  FRONTEND_PORT=3003
-  API_PORT=8003
+  ENVIRONMENT="prod"
 fi
+
+# Get ports for this environment using centralized config
+PORT_VARS=$(get_ports_for_environment "$ENVIRONMENT")
+eval "$PORT_VARS"
 ```
 
 **`scripts/start-services-for-ci.sh`** (Lines 20-107):
@@ -62,17 +62,18 @@ fi
 **`scripts/ci/port-config.sh`**:
 - ✅ Centralized port configuration (single source of truth)
 
-#### Recommendation 🔧:
+#### Recommendation 🔧: ✅ **IMPLEMENTED**
 
-**Update `verify-services.sh` to use `port-config.sh`**:
-- Extract environment from base URL
-- Use `get_ports_for_environment()` function
-- Remove hardcoded port mapping
+**Updated `verify-services.sh` to use `port-config.sh`**:
+- ✅ Extracts environment from base URL by checking port
+- ✅ Uses `get_ports_for_environment()` function
+- ✅ Removed hardcoded port mapping
+- ✅ Added fallback to hardcoded values if port-config.sh doesn't exist (safety)
 
 **Benefits**:
-- Single source of truth for ports
-- Consistent behavior across all scripts
-- Easier to maintain (change ports in one place)
+- ✅ Single source of truth for ports
+- ✅ Consistent behavior across all scripts
+- ✅ Easier to maintain (change ports in one place)
 
 ---
 
@@ -311,9 +312,12 @@ stop_port() {
 
 ## 🎯 Implementation Plan
 
-### Phase 1: Port Configuration Consolidation
-1. Update `verify-services.sh` to use `port-config.sh`
-2. Test with all environments (dev, test, prod)
+### Phase 1: Port Configuration Consolidation ✅ **COMPLETED**
+1. ✅ Update `verify-services.sh` to use `port-config.sh`
+2. ⏳ Test with all environments (dev, test, prod) - Ready for review
+
+**Implementation Date**: 2025-12-27  
+**Status**: Phase 1 implementation complete, awaiting review
 
 ### Phase 2: Service Waiting Utility
 1. Create `scripts/ci/wait-for-service.sh`
@@ -356,5 +360,19 @@ stop_port() {
 ---
 
 **Last Updated**: 2025-12-27  
-**Status**: 📋 Analysis Complete - Ready for Implementation
+**Status**: ✅ Phase 1 Complete - Phase 2, 3, 4 Pending
+
+## ✅ Phase 1 Implementation Summary
+
+**Completed Items**:
+- ✅ Updated `scripts/ci/verify-services.sh` to use `port-config.sh`
+- ✅ Removed hardcoded port mapping (replaced with centralized config)
+- ✅ Added environment extraction from base URL
+- ✅ Added fallback logic for safety
+
+**Files Modified**:
+- `scripts/ci/verify-services.sh` - Now uses `port-config.sh` for port configuration
+- `docs/work/20251227_SERVICE_SCRIPTS_DUPLICATION_ANALYSIS.md` - Updated with Phase 1 completion status
+
+**Next Steps**: Phase 2 implementation (Service Waiting Utility)
 
