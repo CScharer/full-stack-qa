@@ -152,10 +152,23 @@ on:
         description: 'Timeout in seconds for waiting for services (frontend/backend)'
         type: number
         default: 30
+      # Resource Configuration
+      maven_memory:
+        description: 'Maven heap size (e.g., 2048m, 4096m)'
+        type: string
+        default: '2048m'
+      allure_version:
+        description: 'Allure CLI version'
+        type: string
+        default: '2.25.0'
+      docker_shm_size:
+        description: 'Docker shared memory size for Selenium nodes (e.g., 2gb, 4gb)'
+        type: string
+        default: '2gb'
 
 env:
   JAVA_VERSION: ${{ inputs.java_version || '21' }}
-  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  MAVEN_OPTS: -Xmx${{ inputs.maven_memory || '2048m' }} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
   # Default Selenium Grid hub URL for CI runs
   SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
 
@@ -190,7 +203,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -213,7 +226,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Set up JDK
@@ -225,7 +237,6 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          chmod +x scripts/ci/wait-for-grid.sh
           ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
 
       - name: Run Smoke Tests
@@ -241,7 +252,6 @@ jobs:
           echo "Environment: ${{ inputs.environment }}"
           echo "URL: ${{ inputs.base_url }}"
           echo ""
-          chmod +x scripts/ci/run-maven-tests.sh
           ./scripts/ci/run-maven-tests.sh \
             "${{ inputs.environment }}" \
             "testng-smoke-suite.xml" \
@@ -250,7 +260,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Smoke Test Results
@@ -290,7 +299,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
       firefox-node:
         image: selenium/node-firefox:${{ inputs.selenium_version }}
@@ -299,7 +308,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
       edge-node:
         image: selenium/node-edge:${{ inputs.selenium_version }}
@@ -308,7 +317,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -331,7 +340,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Set up JDK
@@ -366,7 +374,6 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          chmod +x scripts/ci/create-allure-env-properties.sh
           ./scripts/ci/create-allure-env-properties.sh \
             "${{ inputs.environment }}" \
             "${{ matrix.browser }}" \
@@ -375,7 +382,6 @@ jobs:
             "${{ inputs.test_suite }}" \
             "Grid.Type=Selenium Grid"
 
-          chmod +x scripts/ci/run-maven-tests.sh
           ./scripts/ci/run-maven-tests.sh \
             "${{ inputs.environment }}" \
             "testng-${{ inputs.test_suite }}-suite.xml" \
@@ -385,7 +391,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Grid Test Results
@@ -418,7 +423,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: 2
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -441,7 +446,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Set up JDK
@@ -472,7 +476,6 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          chmod +x scripts/ci/create-allure-env-properties.sh
           ./scripts/ci/create-allure-env-properties.sh \
             "${{ inputs.environment }}" \
             "Chrome Mobile" \
@@ -481,7 +484,6 @@ jobs:
             "mobile-browser" \
             "Device.Type=Mobile Viewport"
 
-          chmod +x scripts/ci/run-maven-tests.sh
           ./scripts/ci/run-maven-tests.sh \
             "${{ inputs.environment }}" \
             "testng-mobile-browser-suite.xml" \
@@ -490,7 +492,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Mobile Test Results
@@ -523,7 +524,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: 2
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -546,7 +547,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Set up JDK
@@ -577,7 +577,6 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          chmod +x scripts/ci/create-allure-env-properties.sh
           ./scripts/ci/create-allure-env-properties.sh \
             "${{ inputs.environment }}" \
             "Chrome" \
@@ -586,7 +585,6 @@ jobs:
             "responsive" \
             "Screen.Sizes=Desktop, Tablet, Mobile"
 
-          chmod +x scripts/ci/run-maven-tests.sh
           ./scripts/ci/run-maven-tests.sh \
             "${{ inputs.environment }}" \
             "testng-responsive-suite.xml" \
@@ -595,7 +593,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Responsive Test Results
@@ -638,7 +635,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Install Cypress dependencies
@@ -673,7 +669,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Cypress Test Results
@@ -716,7 +711,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Install Playwright dependencies
@@ -753,7 +747,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Playwright Test Results
@@ -788,7 +781,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -811,20 +804,17 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         run: |
-          chmod +x scripts/ci/verify-services.sh
           ./scripts/ci/verify-services.sh \
             "${{ inputs.base_url }}" \
             "${{ inputs.service_wait_timeout_seconds || 30 }}"
 
       - name: Install Robot Framework dependencies
         run: |
-          chmod +x scripts/ci/install-robot-framework.sh
           ./scripts/ci/install-robot-framework.sh
 
       - name: Set up JDK
@@ -836,7 +826,6 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          chmod +x scripts/ci/wait-for-grid.sh
           ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
 
       - name: Run Robot Framework Tests
@@ -899,7 +888,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Robot Framework Test Results
@@ -933,7 +921,7 @@ jobs:
           SE_EVENT_BUS_PUBLISH_PORT: ${{ inputs.se_pub_port }}
           SE_EVENT_BUS_SUBSCRIBE_PORT: ${{ inputs.se_sub_port }}
           SE_NODE_MAX_SESSIONS: ${{ inputs.se_max_sessions }}
-        options: --shm-size=2gb
+        options: --shm-size=${{ inputs.docker_shm_size || '2gb' }}
 
     steps:
       - name: Checkout code
@@ -956,7 +944,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Set up JDK
@@ -968,7 +955,6 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          chmod +x scripts/ci/wait-for-grid.sh
           ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
 
       - name: Run Selenide Tests
@@ -986,7 +972,6 @@ jobs:
           echo ""
 
           # Create Allure environment properties file
-          chmod +x scripts/ci/create-allure-env-properties.sh
           ./scripts/ci/create-allure-env-properties.sh \
             "${{ inputs.environment }}" \
             "Chrome" \
@@ -995,7 +980,6 @@ jobs:
             "selenide" \
             "Framework=Selenide"
 
-          chmod +x scripts/ci/run-maven-tests.sh
           ./scripts/ci/run-maven-tests.sh \
             "${{ inputs.environment }}" \
             "testng-selenide-suite.xml" \
@@ -1004,7 +988,6 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Selenide Test Results
@@ -1047,7 +1030,6 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
 
       - name: Install Vibium dependencies
@@ -1079,13 +1061,11 @@ jobs:
           echo "Environment: ${{ inputs.environment }}"
           echo "URL: ${{ inputs.base_url }}"
           echo ""
-          chmod +x scripts/run-vibium-tests.sh
           ./scripts/run-vibium-tests.sh
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          chmod +x scripts/stop-services.sh
           ./scripts/stop-services.sh || true
 
       - name: Upload Vibium Test Results
@@ -1159,8 +1139,7 @@ jobs:
       - name: Install Allure CLI
         if: always()
         run: |
-          chmod +x scripts/ci/install-allure-cli.sh
-          ./scripts/ci/install-allure-cli.sh "2.25.0"
+          ./scripts/ci/install-allure-cli.sh "${{ inputs.allure_version || '2.25.0' }}"
 
       - name: Generate Allure Report
         if: always()

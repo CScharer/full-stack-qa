@@ -113,6 +113,11 @@
   - `grid_wait_timeout_seconds` (default: 60) - For waiting for Selenium Grid
   - `service_wait_timeout_seconds` (default: 30) - For waiting for frontend/backend services
 
+**Resource Configuration** (✅ Implemented):
+- `maven_memory` (default: `'2048m'`) - Maven heap size
+- `allure_version` (default: `'2.25.0'`) - Allure CLI version
+- `docker_shm_size` (default: `'2gb'`) - Docker shared memory for Selenium nodes
+
 **Parallel Execution Configuration** (🔧 Planned):
 **New Input Structure** (to be added):
 
@@ -474,6 +479,10 @@ with:
   node_version: '20'         # Optional: defaults to '20'
   test_retry_count: 2       # Optional: defaults to 1
   smoke_tests_timeout_minutes: 7  # Optional: defaults to 5
+  # Resource Configuration
+  maven_memory: '4096m'     # Optional: defaults to '2048m'
+  allure_version: '2.26.0'  # Optional: defaults to '2.25.0'
+  docker_shm_size: '4gb'   # Optional: defaults to '2gb'
 ```
 
 ### Step-by-Step: Add New Workflow Inputs (Parallel Execution - Planned)

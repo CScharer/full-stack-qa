@@ -401,6 +401,11 @@ All test jobs run in **parallel** (no dependencies between them):
 - `grid_wait_timeout_seconds` (default: `60`) ✅ - Timeout in seconds for waiting for Selenium Grid
 - `service_wait_timeout_seconds` (default: `30`) ✅ - Timeout in seconds for waiting for services (frontend/backend)
 
+**Resource Configuration Inputs**:
+- `maven_memory` (default: `'2048m'`) ✅ - Maven heap size (e.g., `2048m`, `4096m`)
+- `allure_version` (default: `'2.25.0'`) ✅ - Allure CLI version
+- `docker_shm_size` (default: `'2gb'`) ✅ - Docker shared memory size for Selenium nodes (e.g., `2gb`, `4gb`)
+
 **Timeout Inputs - Test Execution** (for each test type):
 > **Standard**: All timeout defaults are **5 minutes** for consistency. Tests should be optimized to complete within this timeframe.
 
@@ -452,6 +457,10 @@ with:
   # Timeout Configuration - Service/Grid Waits
   grid_wait_timeout_seconds: 90
   service_wait_timeout_seconds: 45
+  # Resource Configuration
+  maven_memory: '4096m'
+  allure_version: '2.26.0'
+  docker_shm_size: '4gb'
   # Parallel Configuration (planned)
   smoke_tests_parallel: 'tests'
   smoke_tests_thread_count: 3
