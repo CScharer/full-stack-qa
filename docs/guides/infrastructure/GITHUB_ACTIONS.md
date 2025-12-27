@@ -11,7 +11,7 @@
 
 Automated CI/CD pipeline built on a **7-stage parallel architecture**. It features environment-aware testing (DEV → TEST → PROD), integrated performance testing (Gatling, JMeter, Locust) targeting internal service ports (8003/3003), and a robust **Fail-Fast Barrier Propagation** system that ensures failures in one environment correctly block all downstream activity.
 
-> **Note**: For a complete, detailed reference of the current pipeline jobs and logic, please see the **[Pipeline Workflow Reference Guide](PIPELINE_WORKFLOW.md)**.
+> **Note**: For a complete, detailed reference of the current pipeline jobs and logic, please see the **[Pipeline Workflow Reference Guide](PIPELINE_WORKFLOW.md)**. For information about how test jobs are organized and grouped, see **[Workflow Test Organization](WORKFLOW_TEST_ORGANIZATION.md)**.
 
 ---
 
@@ -107,4 +107,6 @@ A separate workflow (`.github/workflows/verify-formatting.yml`) enforces formatt
 
 ---
 
-**See Also**: [PIPELINE_WORKFLOW.md](PIPELINE_WORKFLOW.md) for the definitive technical specification.
+**See Also**: 
+- [PIPELINE_WORKFLOW.md](PIPELINE_WORKFLOW.md) - Definitive technical specification
+- [WORKFLOW_TEST_ORGANIZATION.md](WORKFLOW_TEST_ORGANIZATION.md) - Test job grouping and organization

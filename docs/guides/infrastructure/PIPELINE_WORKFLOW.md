@@ -5,7 +5,7 @@
 **Last Updated**: 2025-12-21
 **Maintained By**: CJS QA Team
 **Status**: Active
-**Related To**: GITHUB_ACTIONS.md, CI_TROUBLESHOOTING.md
+**Related To**: GITHUB_ACTIONS.md, CI_TROUBLESHOOTING.md, WORKFLOW_TEST_ORGANIZATION.md
 **Version**: 3.4 - Performance Target Optimization
 ---
 

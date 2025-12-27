@@ -13,6 +13,7 @@
 - [Vibium Test Configuration](#vibium-test-configuration)
 - [CI/CD Execution Strategy](#cicd-execution-strategy)
 - [Parallel Execution Summary](#parallel-execution-summary)
+- [Test Result Reporting](#test-result-reporting)
 
 ---
 
@@ -573,11 +574,12 @@ While all tests can have timeout configured, some have limitations for parallel 
 │  vibium         │
 └─────────────────┘
         │
-        ▼
-┌─────────────────┐
-│  Allure Report  │
-│  (aggregates)   │
-└─────────────────┘
+        ├─────────────────┐
+        ▼                 ▼
+┌─────────────────┐  ┌─────────────────┐
+│  Allure Report  │  │  Test Summary   │
+│  (aggregates)   │  │  (Group 3)      │
+└─────────────────┘  └─────────────────┘
 ```
 
 ### Job Configuration Summary
@@ -635,6 +637,58 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 ---
 
+## Test Result Reporting
+
+### Test Summary Job
+
+**Job Name**: `environment-test-summary`  
+**Location**: `.github/workflows/env-fe.yml` (line 1160)
+
+**Purpose**: Provides a comprehensive test result summary for all test frameworks in the GitHub Actions UI.
+
+**Includes**:
+- ✅ **All Frontend Tests** (Group 3):
+  - **Category A** (Selenium Grid + Maven): Smoke, Grid, Mobile, Responsive, Selenide, Vibium
+  - **Category B** (Alternative Frameworks): Cypress, Playwright, Robot Framework
+
+**Result Parsing**:
+- **Maven Surefire XML** (`TEST-*.xml`) - For TestNG-based tests
+- **Allure JSON** (`*-result.json`) - For Allure-integrated tests
+- **Playwright JSON** (`results.json`) - For Playwright tests
+- **Cypress JSON** (`mochawesome.json`, `cypress-results.json`) - For Cypress tests
+- **Robot Framework XML** (`output.xml`) - For Robot Framework tests
+
+**Output**: 
+- Total tests count
+- Passed/Failed/Error counts
+- Status summary (✅ PASSED / ❌ FAILED / ⚠️ NO TESTS FOUND)
+
+**Dependencies**: Waits for all test jobs to complete (Group 3 - all frontend tests)
+
+### Allure Report Job
+
+**Job Name**: `environment-allure-report`  
+**Location**: `.github/workflows/env-fe.yml` (line 1082)
+
+**Purpose**: Generates comprehensive Allure HTML reports for all test frameworks.
+
+**Includes**: All test frameworks (Group 3 - all frontend tests)
+
+**Output**: 
+- HTML report with detailed test results
+- Screenshots, logs, and attachments
+- Test execution timeline
+- Environment-specific reports per environment (dev, test, prod)
+
+**Deployment**: 
+- Artifacts uploaded for each environment
+- Combined report generated in main workflow (`combined-allure-report`)
+- GitHub Pages deployment (main branch only)
+
+**Note**: The Allure Report includes all test frameworks, while the Test Summary provides a quick overview in the GitHub Actions UI.
+
+---
+
 ## Notes
 
 1. **TestNG Suite Override**: Even though Maven Surefire is configured for parallel execution at the method level, individual TestNG suite XML files can override this with their own `parallel` attribute.
@@ -668,6 +722,15 @@ While all tests can have timeout configured, some have limitations for parallel 
    - **Database-dependent tests** may need sequential execution if they modify shared state
    - **Service-dependent tests** may conflict if they require exclusive access
    - **Solution**: Design tests to be parallel-safe with proper isolation and cleanup
+
+---
+
+## Related Documentation
+
+- [Workflow Test Organization](../infrastructure/WORKFLOW_TEST_ORGANIZATION.md) - Test job grouping and organization in GitHub Actions
+- [Pipeline Workflow](../infrastructure/PIPELINE_WORKFLOW.md) - Complete pipeline architecture and job dependencies
+- [GitHub Actions](../infrastructure/GITHUB_ACTIONS.md) - CI/CD pipeline overview
+- [Test Suites Update Guide](TEST_SUITES_UPDATE_GUIDE.md) - Step-by-step guide for updating test configurations
 
 ---
 

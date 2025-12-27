@@ -1160,7 +1160,7 @@ jobs:
   environment-test-summary:
     name: Test Summary (${{ inputs.environment }})
     runs-on: ubuntu-latest
-    needs: [smoke-tests, grid-tests, mobile-browser-tests, responsive-design-tests, selenide-tests, vibium-tests]  # Wait for ALL tests
+    needs: [smoke-tests, grid-tests, mobile-browser-tests, responsive-design-tests, cypress-tests, playwright-tests, robot-tests, selenide-tests, vibium-tests]  # Wait for ALL tests (Groups 3 + 4)
     if: always()
 
     steps:
@@ -1173,6 +1173,9 @@ jobs:
           echo "  - grid-results-*-${{ inputs.environment }}"
           echo "  - mobile-results-${{ inputs.environment }}"
           echo "  - responsive-results-${{ inputs.environment }}"
+          echo "  - cypress-results-${{ inputs.environment }}"
+          echo "  - playwright-results-${{ inputs.environment }}"
+          echo "  - robot-results-${{ inputs.environment }}"
           echo "  - selenide-results-${{ inputs.environment }}"
           echo "  - vibium-results-${{ inputs.environment }}"
 
@@ -1293,6 +1296,25 @@ jobs:
               fi
             fi
           done < <(find test-results -type f \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null || true)
+
+          # 5. Parse Robot Framework XML files (output.xml)
+          echo "📊 Parsing Robot Framework XML results..."
+          while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+              # Robot Framework output.xml structure: <robot><statistics><total><stat pass="X" fail="Y">...
+              # Extract pass and fail counts from <total><stat> element
+              pass=$(grep -oP '<total><stat[^>]*pass="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              fail=$(grep -oP '<total><stat[^>]*fail="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              if [ -n "$pass" ] || [ -n "$fail" ]; then
+                total=$((pass + fail))
+                if [ "$total" -gt 0 ]; then
+                  TOTAL_TESTS=$((TOTAL_TESTS + total))
+                  TOTAL_FAILURES=$((TOTAL_FAILURES + ${fail:-0}))
+                  TOTAL_PASSED=$((TOTAL_PASSED + ${pass:-0}))
+                fi
+              fi
+            fi
+          done < <(find test-results -type f -name "output.xml" 2>/dev/null || true)
 
           # Calculate passed tests if not already calculated
           if [ "$TOTAL_PASSED" -eq 0 ] && [ "$TOTAL_TESTS" -gt 0 ]; then
