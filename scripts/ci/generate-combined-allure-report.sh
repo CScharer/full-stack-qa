@@ -36,6 +36,22 @@ if [ "$RESULT_COUNT" -eq 0 ]; then
     echo "⚠️  Warning: No result files found, but continuing..."
 fi
 
+# Verify categories.json exists
+if [ -f "$RESULTS_DIR/categories.json" ]; then
+    echo "✅ Categories file found: $RESULTS_DIR/categories.json"
+    echo "   File size: $(wc -l < "$RESULTS_DIR/categories.json" | tr -d ' ') lines"
+else
+    echo "⚠️  Warning: categories.json not found in results directory"
+    echo "   This may cause Categories section to be missing from report"
+fi
+
+# Verify executor.json exists
+if [ -f "$RESULTS_DIR/executor.json" ]; then
+    echo "✅ Executor file found: $RESULTS_DIR/executor.json"
+else
+    echo "⚠️  Warning: executor.json not found in results directory"
+fi
+
 # Generate report
 # Note: We preserve history manually, so we can use --clean for fresh report
 echo ""

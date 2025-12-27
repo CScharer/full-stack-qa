@@ -17,6 +17,8 @@ mkdir -p "$RESULTS_DIR"
 
 # Create categories.json file
 # This defines custom test categories for the Allure report
+# Note: Allure Categories section primarily shows defects (failed/broken tests)
+# If all tests pass, the section may appear empty
 cat > "$RESULTS_DIR/categories.json" << 'EOF'
 [
   {
@@ -33,14 +35,21 @@ cat > "$RESULTS_DIR/categories.json" << 'EOF'
     "name": "Skipped Tests",
     "matchedStatuses": ["skipped"],
     "messageRegex": ".*"
-  },
-  {
-    "name": "Passed Tests",
-    "matchedStatuses": ["passed"],
-    "messageRegex": ".*"
   }
 ]
 EOF
+
+# Verify file was created
+if [ ! -f "$RESULTS_DIR/categories.json" ]; then
+    echo "❌ Error: Failed to create categories.json file"
+    exit 1
+fi
+
+# Verify JSON is valid
+if ! python3 -m json.tool "$RESULTS_DIR/categories.json" > /dev/null 2>&1; then
+    echo "❌ Error: categories.json contains invalid JSON"
+    exit 1
+fi
 
 echo "✅ Created Allure categories file: $RESULTS_DIR/categories.json"
 echo "   Categories defined:"
