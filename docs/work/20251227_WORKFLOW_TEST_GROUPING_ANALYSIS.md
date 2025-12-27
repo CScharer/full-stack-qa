@@ -171,16 +171,16 @@ GitHub Actions UI groups jobs visually based on:
 3. ✅ Added Robot Framework XML parsing (output.xml) to test summary
 
 **Will This Change Visual Grouping?**
-- ❌ **No** - The visual grouping in GitHub Actions UI is based on:
-  - Job characteristics (services, execution method, infrastructure)
-  - Job naming patterns
-  - Resource requirements
-  - **Note**: Adding dependencies to `test-summary` does NOT change visual grouping, as grouping is based on job characteristics, not dependency chains
+- ✅ **Yes** - The visual grouping in GitHub Actions UI **did change** after this update
+- **Before**: Groups 3 and 4 appeared in separate visual groups
+- **After**: Groups 3 and 4 now appear together in the same visual group
+- **Reason**: Adding Group 4 tests to `test-summary` dependencies caused GitHub Actions to group all dependent jobs together visually
 
 **What Changed?**
 - ✅ **Test Summary** now includes all test frameworks (Groups 3 + 4)
 - ✅ Added Robot Framework XML parsing (`output.xml`) to test summary
 - ✅ Updated debug output to list Group 4 test artifacts
+- ✅ **Visual grouping changed** - All test jobs now appear in the same visual group
 - ✅ All tests already run in parallel (no dependency changes)
 - ✅ The `environment-allure-report` already includes all tests
 

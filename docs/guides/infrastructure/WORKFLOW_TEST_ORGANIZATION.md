@@ -183,32 +183,36 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 ## Visual Grouping in GitHub Actions
 
-### Why Groups Appear Separately
+### Current Grouping Behavior
+
+**Update (2025-12-27)**: After updating the `environment-test-summary` job to include Group 4 tests, GitHub Actions now visually groups **all test jobs together** (Groups 3 + 4 appear in the same visual group).
+
+### Why Groups Are Now Together
 
 GitHub Actions UI groups jobs visually based on:
 
-1. **Job Characteristics**:
+1. **Job Dependencies** (`needs:`): 
+   - All test jobs have NO dependencies (run in parallel)
+   - **Key Change**: The `environment-test-summary` job now depends on **all test jobs** (Groups 3 + 4)
+   - This dependency relationship causes GitHub Actions to group all dependent jobs together visually
+
+2. **Job Characteristics**:
    - **Group 3**: All use `services:` (Selenium Grid), Maven, similar structure
    - **Group 4**: Different execution methods, different infrastructure needs
+   - However, when a reporting job depends on all of them, they appear grouped together
 
-2. **Resource Requirements**:
+3. **Resource Requirements**:
    - **Group 3**: Requires Docker services (Selenium Grid) + Java/Maven
    - **Group 4 - Cypress/Playwright**: Requires Node.js, no Docker services
    - **Group 4 - Robot**: Requires Docker services + Python
-
-3. **Job Naming Patterns**:
-   - GitHub Actions may group visually based on job name patterns or execution characteristics
-
-4. **Job Dependencies** (`needs:`): 
-   - All test jobs have NO dependencies (run in parallel)
-   - Reporting jobs (`test-summary`, `allure-report`) depend on test jobs, but this doesn't affect visual grouping
+   - These differences still exist but don't affect visual grouping when all are dependencies of the same job
 
 ### Important Notes
 
 - ✅ **Visual grouping does NOT affect execution** - All tests run in parallel regardless of visual grouping
-- ✅ **Visual grouping is based on job characteristics**, not dependency chains
+- ✅ **Visual grouping changed** - After adding Group 4 to `test-summary` dependencies, all tests now appear in the same visual group
 - ✅ **Both reporting jobs include all test frameworks** (Groups 3 + 4)
-- ✅ **The grouping is technically correct** - It reflects different execution methods and infrastructure requirements
+- ✅ **The technical differences remain** - Groups 3 and 4 still have different execution methods and infrastructure requirements, but they're now visually grouped together
 
 ---
 
@@ -222,9 +226,9 @@ GitHub Actions UI groups jobs visually based on:
 **Key Points**:
 
 - All test jobs run in **parallel** (no dependencies between test jobs)
-- Visual grouping in GitHub Actions UI reflects technical architecture
+- **Visual grouping**: After updating `test-summary` to include all tests, Groups 3 and 4 now appear together in GitHub Actions UI
 - Both **Test Summary** and **Allure Report** include all test frameworks (Groups 3 + 4)
-- The grouping helps understand test architecture and troubleshoot issues
+- Technical differences between groups remain (execution methods, infrastructure), but they're now visually grouped together
 
 **Related Documentation**:
 - [Test Suites Reference](../testing/TEST_SUITES_REFERENCE.md) - Detailed test suite configurations
