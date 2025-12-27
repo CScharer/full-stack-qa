@@ -220,8 +220,8 @@ This verifies:
 
 - **[Environment Databases Work Plan](../../work/20251226_ENVIRONMENT_DATABASES.md)** - Detailed implementation plan
 - **[Database Schema Source](../../new_app/SCHEMA_SOURCE_OF_TRUTH.md)** - Schema database documentation
-- **[Local Development Guide](../../LOCAL_DEVELOPMENT.md)** - Development setup
-- **[Integration Testing Guide](../../INTEGRATION_TESTING.md)** - Testing setup
+- **[Local Development Guide](../setup/LOCAL_DEVELOPMENT.md)** - Development setup
+- **[Integration Testing Guide](../testing/INTEGRATION_TESTING.md)** - Testing setup
 
 ---
 

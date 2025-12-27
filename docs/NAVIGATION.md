@@ -130,7 +130,7 @@ Project Structure:
 |---------------------|---------------|
 | **Set up project for first time** | `guides/setup/` → `README.md` |
 | **Run tests** | `guides/testing/TEST_EXECUTION_GUIDE.md` |
-| **Run tests locally (no Docker)** | `LOCAL_TESTING_GUIDE.md` |
+| **Run tests locally (no Docker)** | `guides/testing/LOCAL_TESTING.md` |
 | **Set up Docker/Grid** | `guides/infrastructure/DOCKER.md` |
 | **Understand CI/CD** | `guides/infrastructure/GITHUB_ACTIONS.md` |
 | **Fix CI/CD issues** | `guides/troubleshooting/CI_TROUBLESHOOTING.md` |

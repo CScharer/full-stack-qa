@@ -666,8 +666,7 @@ Copy this template for each commit/push session:
 - [Quick Reference Guide](./QUICK_REFERENCE.md) - One-page summary of critical checks
 - [AI Workflow Rules](./AI_WORKFLOW_RULES.md) - Detailed workflow rules and guidelines for AI-assisted development (includes commit/push approval requirements)
 - [Selenium Grid Intermittent Failures](../issues/20251220_SELENIUM_GRID_INTERMITTENT_FAILURES.md) - Version alignment reference and Selenium client/server version matching
-- [Local Testing Guide](../LOCAL_TESTING_GUIDE.md) - How to run tests locally
-- [Debugging Pipeline Failures](../DEBUGGING_PIPELINE_FAILURES.md) - Debugging guide
+- [Local Testing Guide](../guides/testing/LOCAL_TESTING.md) - How to run tests locally and debug pipeline failures
 - [Version Tracking](./VERSION_TRACKING.md) - Dependency version tracking and update scheduling
 
 ---

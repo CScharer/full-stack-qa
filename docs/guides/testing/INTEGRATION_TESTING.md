@@ -357,6 +357,6 @@ npx playwright test --config=playwright.integration.config.ts tests/integration/
 
 ## 📚 Related Documentation
 
-- [Local Development Guide](./LOCAL_DEVELOPMENT.md) - How to run the application locally
+- [Local Development Guide](../setup/LOCAL_DEVELOPMENT.md) - How to run the application locally
 - [Backend API Tests](../backend/tests/) - Unit tests for backend API
 - [Frontend Unit Tests](../frontend/__tests__/) - Unit tests for frontend components
