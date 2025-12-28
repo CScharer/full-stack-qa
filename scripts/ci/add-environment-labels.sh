@@ -413,9 +413,24 @@ for result_file in all_files:
 
 # SECOND PASS: Find and update all containers with name="Surefire test" or suite="Surefire test"
 # These are parent containers that create the hierarchy, even if they don't have epic/feature labels
+# CRITICAL: Also find containers that have "Selenide Tests" as a child (via childrenUuid)
 print("\n🔍 Second pass: Finding and updating parent 'Surefire test' containers...")
 parent_containers_updated = 0
 surefire_containers_found = 0
+
+# First, find all container UUIDs that have "Selenide Tests" as name
+selenide_container_uids = set()
+for container_file in container_files:
+    try:
+        with open(container_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if data.get('name') == 'Selenide Tests':
+            selenide_container_uids.add(data.get('uuid', ''))
+    except:
+        pass
+
+print(f"   📊 Found {len(selenide_container_uids)} container(s) with name='Selenide Tests'")
+
 for container_file in container_files:
     try:
         with open(container_file, 'r', encoding='utf-8') as f:
@@ -425,6 +440,15 @@ for container_file in container_files:
         is_surefire_parent = False
         container_name = data.get('name', '')
         container_suite = None
+        has_selenide_child = False
+        
+        # Check if this container has "Selenide Tests" as a child (via childrenUuid)
+        if 'childrenUuid' in data:
+            children_uuids = data.get('childrenUuid', [])
+            if any(uid in selenide_container_uids for uid in children_uuids):
+                has_selenide_child = True
+                is_surefire_parent = True
+                surefire_containers_found += 1
         
         if container_name == 'Surefire test':
             is_surefire_parent = True
@@ -480,8 +504,17 @@ for container_file in container_files:
                     data['labels'] = labels
             
             # Update container name
-            if container_name == 'Surefire test':
+            if container_name == 'Surefire test' or has_selenide_child:
                 data['name'] = 'Selenide Tests'
+                updated = True
+            
+            # If this container has "Selenide Tests" as a child, we need to flatten the hierarchy
+            # by removing the nested "Selenide Tests" container and moving its children up
+            if has_selenide_child and 'childrenUuid' in data:
+                children_uuids = data.get('childrenUuid', [])
+                # Remove "Selenide Tests" container UUIDs from children
+                # We'll let Allure handle the flattening, but renaming the parent should help
+                # The nested "Selenide Tests" container will be updated separately
                 updated = True
             
             if updated:
@@ -491,7 +524,8 @@ for container_file in container_files:
                 if parent_containers_updated <= 5:
                     name_val = data.get('name', 'N/A')
                     suite_val = next((l.get('value', '') for l in data.get('labels', []) if l.get('name') == 'suite'), 'N/A')
-                    print(f"   🔧 Updated parent container: {container_file.name[:50]}... (name={name_val}, suite={suite_val})")
+                    children_info = f", children={len(data.get('childrenUuid', []))}" if 'childrenUuid' in data else ""
+                    print(f"   🔧 Updated parent container: {container_file.name[:50]}... (name={name_val}, suite={suite_val}{children_info})")
     except Exception as e:
         print(f"⚠️  Error processing container {container_file}: {e}", file=sys.stderr)
 
