@@ -57,6 +57,7 @@ processed = 0
 skipped = 0
 errors = 0
 selenide_updated = 0
+name_fixed_count = 0
 
 # If we have source directory, try to map files to environments
 env_mapping = {}
@@ -117,6 +118,17 @@ for result_file in all_files:
     try:
         with open(result_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
+        
+        # FIX: Ensure 'name' field is a string, not an array (fixes JSON deserialization errors)
+        # Some files may have been created with name as an array, which causes Allure to skip them
+        name_fixed = False
+        if 'name' in data and isinstance(data['name'], list):
+            # Convert array to string (take first element or join)
+            if len(data['name']) > 0:
+                data['name'] = str(data['name'][0]) if isinstance(data['name'][0], str) else ' '.join(str(x) for x in data['name'])
+            else:
+                data['name'] = 'Unnamed Test'
+            name_fixed = True
         
         # Determine environment
         env = "unknown"
@@ -368,9 +380,12 @@ for result_file in all_files:
             new_history_id = hashlib.md5(f"{test_name}:{env}".encode()).hexdigest()
             data['historyId'] = new_history_id
         
-        # Write back to file
-        with open(result_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        # Write back to file (always write if we fixed name field or if any updates were made)
+        if name_fixed or (is_selenide_test and selenide_file_updated) or env != "unknown":
+            with open(result_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            if name_fixed:
+                name_fixed_count += 1
         
         processed += 1
         
@@ -467,6 +482,8 @@ print(f"   Processed: {processed} files")
 print(f"   Skipped (already labeled): {skipped} files")
 print(f"   Errors: {errors} files")
 print(f"   Selenide tests updated: {selenide_updated} files")
+if 'name_fixed_count' in locals() and name_fixed_count > 0:
+    print(f"   Files with invalid 'name' field fixed: {name_fixed_count} files")
 print(f"   Total: {len(all_files)} files ({len(result_files)} result files, {len(container_files)} container files)")
 print(f"   Environments found: {', '.join(sorted(envs_found)) if envs_found else 'none'}")
 
