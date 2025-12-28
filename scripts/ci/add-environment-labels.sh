@@ -134,15 +134,21 @@ for result_file in all_files:
         env = "unknown"
         
         # First, check if already has environment label
+        # IMPORTANT: If environment label already exists and is valid (dev/test/prod), keep it
+        # Don't skip - we still need to ensure it's properly formatted and add parameters
+        has_valid_env = False
         if 'labels' in data:
             for label in data['labels']:
                 if label.get('name') == 'environment':
-                    env = label.get('value', 'unknown')
-                    skipped += 1
+                    existing_env = label.get('value', 'unknown')
+                    if existing_env in ['dev', 'test', 'prod']:
+                        env = existing_env
+                        has_valid_env = True
+                        # Don't break - continue to check other labels and add parameters
                     break
         
-        # If no environment label, try to determine from file mapping or labels
-        if env == "unknown":
+        # If no valid environment label found, try to determine from file mapping or labels
+        if not has_valid_env and env == "unknown":
             # Check if we have a mapping for this file
             filename = result_file.name
             if filename in env_mapping:
@@ -398,12 +404,12 @@ for result_file in all_files:
             new_history_id = hashlib.md5(f"{test_name}:{env}".encode()).hexdigest()
             data['historyId'] = new_history_id
         
-        # Write back to file (always write if we fixed name field or if any updates were made)
-        if name_fixed or (is_selenide_test and selenide_file_updated) or env != "unknown":
-            with open(result_file, 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
-            if name_fixed:
-                name_fixed_count += 1
+        # Write back to file (always write to ensure environment labels/params are added)
+        # We always add environment labels and parameters, so we should always write
+        with open(result_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        if name_fixed:
+            name_fixed_count += 1
         
         processed += 1
         
