@@ -270,16 +270,17 @@ for result_file in all_files:
                     if is_container and label_value == 'Surefire test':
                         is_selenide_test = True
             
-            # After processing all labels, check if container has suite="Surefire test"
-            # This needs to be checked after suite_value is set in the loop above
-            if is_container and suite_value == 'Surefire test':
-                is_selenide_test = True
                 elif label_name == 'parentSuite':
                     parent_suite_label_index = i
                     parent_suite_value = label_value
                     # For container files, check if parentSuite contains "Surefire" (Selenide containers)
                     if is_container and 'Surefire' in label_value:
                         is_selenide_test = True
+            
+            # After processing all labels, check if container has suite="Surefire test"
+            # This needs to be checked after suite_value is set in the loop above
+            if is_container and suite_value == 'Surefire test':
+                is_selenide_test = True
             
             # If this is a Selenide test, update labels for proper grouping
             # Allure uses parentSuite for top-level grouping in Suites view
