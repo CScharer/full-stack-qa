@@ -619,10 +619,14 @@ Backend test results are converted to Allure format:
 ### Recent Updates (2025-12-27)
 
 - ✅ **Fixed Framework Conversions**: All frameworks now create individual test results (not summaries)
-  - Cypress: 2 individual tests
-  - Robot Framework: 5 individual tests
-  - Vibium: 6 individual tests with correct status (was showing as skipped, now shows passed)
-- ✅ **Fixed Selenide Visibility**: Selenide tests now appear in Suites view
-  - Updated suite label from generic "Surefire test" to "Selenide Tests"
-  - Tests visible in both Suites and Features By Stories views
+  - Cypress: 2 individual tests ✅
+  - Robot Framework: 5 individual tests ✅
+  - Vibium: 6 individual tests with correct status (was showing as skipped, now shows passed) ✅
+  - Playwright: Individual tests ✅
+- ⚠️ **Selenide Visibility Fix (In Progress)**: Selenide tests suite grouping
+  - Updated suite label from generic "Surefire test" to "Selenide Tests" ✅
+  - Removed `parentSuite` label so tests appear as top-level suite (like other frameworks) ✅
+  - Updated `fullName` field to include "Selenide." prefix for additional grouping hints ✅
+  - Tests visible in Features By Stories view ✅
+  - ⏳ Pending: Verify tests appear in Suites view under "Selenide Tests" (currently under "Surefire suite")
 - ✅ **Improved Test Status Detection**: Fixed Vibium status logic to properly detect passed tests

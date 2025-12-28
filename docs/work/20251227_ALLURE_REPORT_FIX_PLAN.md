@@ -219,7 +219,7 @@
 ---
 
 ### Step 5: Verify Selenide Results
-**Status**: ✅ **Completed**  
+**Status**: ⚠️ **In Progress** - Suite visibility issue  
 **Priority**: 🟡 Medium
 
 **Description**: Verify Selenide tests are generating Allure results and appearing in combined report
@@ -232,18 +232,21 @@
 - Selenide uses TestNG with Allure listener (generates Allure results automatically)
 - Results are uploaded as `selenide-results-{env}` artifact containing `target/allure-results/`
 - Results are merged by `merge-allure-results.sh` script
-- **Issue Found**: Selenide tests had generic suite label "Surefire test" which made them hard to find in Suites view
+- **Issue Found**: Selenide tests had `parentSuite="Surefire suite"` which groups them under "Surefire suite" instead of appearing as separate "Selenide Tests" suite
+- Tests have correct `suite="Selenide Tests"` label but are still grouped under parent suite
 
 **Solution Implemented**:
 - ✅ Updated `scripts/ci/add-environment-labels.sh` to detect Selenide tests
 - ✅ Selenide tests identified by: `epic="HomePage Tests"` and `testClass` containing `"HomePageTests"`
 - ✅ Suite label automatically changed from "Surefire test" to "Selenide Tests"
-- ✅ Tests now appear in both Suites view and Features By Stories view
+- ✅ **Remove `parentSuite` label**: So Selenide tests appear as top-level suite (like other frameworks)
+- ✅ **Update `fullName` field**: Prepend "Selenide." to fullName for additional grouping hints (e.g., "Selenide.com.cjs.qa.junit.tests.HomePageTests.testHomePageLoads")
+- ⏳ Pending verification: Tests should now appear in Suites view under "Selenide Tests" (not under "Surefire suite")
 
 **Testing**:
-- ✅ Verified Selenide tests appear in combined report
+- ✅ Verified Selenide tests appear in combined report (8 tests found)
 - ✅ Verified Selenide tests have proper suite labels ("Selenide Tests")
-- ✅ Verified tests visible in Suites view under "Selenide Tests"
+- ⏳ **Pending**: Verify tests visible in Suites view under "Selenide Tests" (currently grouped under "Surefire suite")
 - ✅ Verified tests visible in Features By Stories under "HomePage Tests" → "HomePage Navigation"
 
 ---
@@ -468,24 +471,44 @@ The environment differentiation issue is considered fixed. Tests are properly la
    - Integrated into CI workflow
 
 4. **✅ Framework Integration** - Created conversion scripts for all missing frameworks:
-   - `scripts/ci/convert-cypress-to-allure.sh` - Converts Cypress results
-   - `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright results
-   - `scripts/ci/convert-robot-to-allure.sh` - Converts Robot Framework results
-   - `scripts/ci/convert-vibium-to-allure.sh` - Converts Vibium results
+   - `scripts/ci/convert-cypress-to-allure.sh` - Converts Cypress results (creates individual test results)
+   - `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright results (creates individual test results)
+   - `scripts/ci/convert-robot-to-allure.sh` - Converts Robot Framework results (creates individual test results)
+   - `scripts/ci/convert-vibium-to-allure.sh` - Converts Vibium results (creates individual test results, fixed status detection)
    - All scripts integrated into CI workflow
+   - ✅ All frameworks now show individual test results (not summaries)
+   - ✅ Vibium status logic fixed (shows passed, not skipped)
 
-5. **✅ CI Workflow Updates** - Updated `.github/workflows/ci.yml`:
+5. **✅ Selenide Suite Label Fix** - Updated `scripts/ci/add-environment-labels.sh`:
+   - Detects Selenide tests by epic and testClass
+   - Updates suite label from "Surefire test" to "Selenide Tests"
+   - Removes `parentSuite` label to make Selenide appear as top-level suite (like other frameworks)
+   - Updates `fullName` field to include "Selenide." prefix for additional grouping hints
+   - ⚠️ **In Progress**: Pending verification after next CI run
+
+6. **✅ CI Workflow Updates** - Updated `.github/workflows/ci.yml`:
    - Added artifact downloads for all framework results
    - Added conversion step before report generation
    - Added executor, categories, and history preservation steps
 
-### ⏳ Pending Verification (After Next CI Run)
+### ✅ Verified and Working
 
-1. **Verify Executors Section** - Should appear in generated report
-2. **Verify Categories Section** - Should appear with custom categories
-3. **Verify Trend Section** - Should appear after second report generation
-4. **Verify Framework Tests** - All frameworks should appear in "Features By Stories"
-5. **Verify Selenide Results** - Should appear in combined report
+1. ✅ **Executors Section** - Appears in generated report with build information
+2. ✅ **Categories Section** - Appears with custom categories (Skipped Tests, etc.)
+3. ✅ **Framework Tests in Features By Stories** - All frameworks appear (Playwright, Cypress, Robot, Vibium, Selenide)
+4. ✅ **Individual Test Results** - All frameworks show individual tests (not summaries):
+   - Cypress: 2 individual tests ✅
+   - Robot Framework: 5 individual tests ✅
+   - Vibium: 6 individual tests (all passed) ✅
+   - Playwright: Individual tests ✅
+5. ✅ **Environment Labels** - Visible in test names and parameters
+
+### ⏳ Pending Verification
+
+1. ⚠️ **Selenide Tests in Suites View** - Currently grouped under "Surefire suite" instead of appearing as separate "Selenide Tests" suite
+   - Fix implemented: Remove `parentSuite` label in `add-environment-labels.sh`
+   - Pending verification after next CI run
+2. **Trend Section** - Will appear after second report generation (requires historical data)
 
 ---
 

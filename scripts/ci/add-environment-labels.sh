@@ -203,14 +203,15 @@ for result_file in result_files:
             if f"[{env.upper()}]" not in test_name and f"({env})" not in test_name:
                 data['name'] = f"{test_name} [{env.upper()}]"
         
-        # Update suite label for Selenide tests to make them more visible
+        # Update suite labels for Selenide tests to make them more visible
         # Selenide tests have epic="HomePage Tests" and testClass containing "HomePageTests"
-        # They currently have suite="Surefire test" which is too generic
+        # They currently have parentSuite="Surefire suite" and suite="Surefire test" which groups them incorrectly
         if 'labels' in data:
             labels = data.get('labels', [])
             epic_value = None
             test_class_value = None
             suite_label_index = None
+            parent_suite_label_index = None
             
             for i, label in enumerate(labels):
                 if label.get('name') == 'epic' and label.get('value') == 'HomePage Tests':
@@ -219,16 +220,38 @@ for result_file in result_files:
                     test_class_value = label.get('value')
                 if label.get('name') == 'suite':
                     suite_label_index = i
+                if label.get('name') == 'parentSuite':
+                    parent_suite_label_index = i
             
             # If this is a Selenide test (has HomePage Tests epic and HomePageTests class)
-            # Update the suite label to "Selenide Tests" for better visibility
+            # Update both parentSuite and suite labels to "Selenide Tests" for proper grouping
+            # Allure uses parentSuite for top-level grouping in Suites view
             if epic_value == 'HomePage Tests' and test_class_value and 'HomePageTests' in test_class_value:
+                # Update or remove parentSuite to make Selenide tests appear as top-level suite
+                if parent_suite_label_index is not None:
+                    # Remove parentSuite label so tests appear at top level (like other frameworks)
+                    labels.pop(parent_suite_label_index)
+                # Update suite label to "Selenide Tests"
                 if suite_label_index is not None:
                     labels[suite_label_index]['value'] = 'Selenide Tests'
                 else:
                     # Add suite label if it doesn't exist
                     labels.append({'name': 'suite', 'value': 'Selenide Tests'})
                 data['labels'] = labels
+                
+                # Also update fullName to include "Selenide" for additional grouping hints
+                # This helps Allure group tests properly and makes them easier to find
+                if 'fullName' in data:
+                    full_name = data.get('fullName', '')
+                    # Only update if "Selenide" is not already in the fullName
+                    if 'Selenide' not in full_name:
+                        # Prepend "Selenide." to the fullName (similar to how other frameworks are named)
+                        data['fullName'] = f"Selenide.{full_name}"
+                elif 'name' in data:
+                    # If fullName doesn't exist, create it from name
+                    test_name = data.get('name', '')
+                    if 'Selenide' not in test_name:
+                        data['fullName'] = f"Selenide.{test_name}"
         
         # Update historyId to include environment to prevent cross-environment deduplication
         # This allows the same test from different environments to be shown separately

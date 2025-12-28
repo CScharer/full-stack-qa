@@ -12,7 +12,12 @@ After the CI pipeline completes, verify:
 - [ ] **Executors Section**: Shows GitHub Actions build information
 - [ ] **Categories Section**: Shows "Skipped Tests" with 9 Playwright tests
 - [ ] **Features By Stories**: Shows Playwright, Cypress, Robot Framework, Vibium, Selenide
-- [ ] **Suites View**: Shows all frameworks including Selenide under "Selenide Tests"
+- [ ] **Suites View**: Shows all frameworks
+  - [ ] Cypress Tests (2 tests)
+  - [ ] Robot Framework Tests (5 tests)
+  - [ ] Vibium Tests (6 tests)
+  - [ ] Playwright Tests (X tests)
+  - [ ] ⚠️ **Selenide Tests** - Currently grouped under "Surefire suite", fix pending verification
 - [ ] **Individual Test Results**: All framework tests appear as individual results (not summaries)
   - [ ] Cypress: 2 individual tests (not 1 suite)
   - [ ] Robot Framework: 5 individual tests (not 1 suite)
@@ -352,12 +357,12 @@ All fixes are verified when:
 1. ✅ **Executors section** appears with build information
 2. ✅ **Categories section** shows "Skipped Tests" with 9 Playwright tests
 3. ✅ **All framework tests** appear as individual results (not summaries):
-   - Cypress: 2 individual tests
-   - Robot Framework: 5 individual tests
-   - Vibium: 6 individual tests (all passed, not skipped)
-   - Playwright: Individual tests
+   - Cypress: 2 individual tests ✅
+   - Robot Framework: 5 individual tests ✅
+   - Vibium: 6 individual tests (all passed, not skipped) ✅
+   - Playwright: Individual tests ✅
 4. ✅ **Framework tests** appear in Features By Stories (Playwright, Cypress, Robot, Vibium, Selenide)
-5. ✅ **Selenide tests** appear in Suites view under "Selenide Tests" (was missing before)
+5. ⚠️ **Selenide tests** appear in Suites view under "Selenide Tests" (currently grouped under "Surefire suite" - fix pending verification)
 6. ✅ **Environment labels** visible in test names/parameters
 7. ✅ **Trend section** appears after 2nd run
 
