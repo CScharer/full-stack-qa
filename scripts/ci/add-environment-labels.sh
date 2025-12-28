@@ -482,7 +482,7 @@ print(f"   Processed: {processed} files")
 print(f"   Skipped (already labeled): {skipped} files")
 print(f"   Errors: {errors} files")
 print(f"   Selenide tests updated: {selenide_updated} files")
-if 'name_fixed_count' in locals() and name_fixed_count > 0:
+if name_fixed_count > 0:
     print(f"   Files with invalid 'name' field fixed: {name_fixed_count} files")
 print(f"   Total: {len(all_files)} files ({len(result_files)} result files, {len(container_files)} container files)")
 print(f"   Environments found: {', '.join(sorted(envs_found)) if envs_found else 'none'}")
