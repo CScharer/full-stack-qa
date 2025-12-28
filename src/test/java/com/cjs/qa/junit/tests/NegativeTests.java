@@ -88,7 +88,8 @@ public class NegativeTests {
       elementNotFound = true;
     }
 
-    AllureHelper.captureScreenshot(driver, "NonExistent-Element");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "NonExistent-Element");
 
     Allure.step("Verify exception was thrown");
     Assert.assertTrue(
@@ -120,7 +121,8 @@ public class NegativeTests {
       LOGGER.info("Current URL after invalid navigation: {}", currentUrl);
       LOGGER.info("Current Title: {}", title);
 
-      AllureHelper.captureScreenshot(driver, "Invalid-URL");
+      // DEBUG: Screenshot capture commented out - only capture on failure
+      // AllureHelper.captureScreenshot(driver, "Invalid-URL");
 
       // Browser should handle the error (might show error page)
       Assert.assertNotNull(currentUrl, "Should have some URL even if invalid");
@@ -130,7 +132,8 @@ public class NegativeTests {
       if (LOGGER.isInfoEnabled()) {
         LOGGER.info("Exception caught during invalid URL navigation: {}", e.getMessage());
       }
-      AllureHelper.captureScreenshot(driver, "Invalid-URL-Exception");
+      // DEBUG: Screenshot capture commented out - only capture on failure
+      // AllureHelper.captureScreenshot(driver, "Invalid-URL-Exception");
       // This is acceptable behavior
     }
   }
@@ -154,7 +157,8 @@ public class NegativeTests {
 
     Assert.assertTrue(isEnabled, "Search box should be enabled");
 
-    AllureHelper.captureScreenshot(driver, "Element-State");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Element-State");
 
     LOGGER.info("✅ Element state verified");
   }
@@ -184,7 +188,8 @@ public class NegativeTests {
       timeoutOccurred = true;
     }
 
-    AllureHelper.captureScreenshot(driver, "Timeout-Test");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Timeout-Test");
 
     Allure.step("Verify timeout occurred");
     Assert.assertTrue(timeoutOccurred, "TimeoutException should occur when element doesn't appear");
@@ -214,7 +219,8 @@ public class NegativeTests {
 
     LOGGER.info("Successfully recovered and performed action");
 
-    AllureHelper.captureScreenshot(driver, "After-Recovery");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "After-Recovery");
 
     Allure.step("Verify recovery successful");
     String currentUrl = driver.getCurrentUrl();
@@ -243,7 +249,8 @@ public class NegativeTests {
     Allure.step("Verify element is enabled");
     Assert.assertTrue(searchBox.isEnabled(), "Search box should be enabled");
 
-    AllureHelper.captureScreenshot(driver, "Element-State");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Element-State");
 
     LOGGER.info("✅ Element state verified");
   }
@@ -280,7 +287,8 @@ public class NegativeTests {
       staleElementCaught = true;
     }
 
-    AllureHelper.captureScreenshot(driver, "Stale-Element");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Stale-Element");
 
     // Verify we're on the new page
     String currentUrl = driver.getCurrentUrl();

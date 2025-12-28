@@ -89,7 +89,8 @@ public class AdvancedFeaturesTests {
             + "if (searchBox) searchBox.style.border = '3px solid red';");
     LOGGER.info("Modified element style via JS");
 
-    AllureHelper.captureScreenshot(driver, "JS-Execution");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "JS-Execution");
 
     LOGGER.info("✅ JavaScript execution successful");
   }
@@ -129,7 +130,8 @@ public class AdvancedFeaturesTests {
     Assert.assertNull(deletedCookie, "Cookie should be deleted");
     LOGGER.info("Cookie deleted successfully");
 
-    AllureHelper.captureScreenshot(driver, "Cookie-Management");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Cookie-Management");
 
     LOGGER.info("✅ Cookie management successful");
   }
@@ -157,14 +159,16 @@ public class AdvancedFeaturesTests {
     Dimension newSize = driver.manage().window().getSize();
     LOGGER.info("New size: {}x{}", newSize.width, newSize.height);
 
-    AllureHelper.captureScreenshot(driver, "Window-Resized");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Window-Resized");
 
     Allure.step("Maximize window");
     driver.manage().window().maximize();
     Dimension maxSize = driver.manage().window().getSize();
     LOGGER.info("Maximized size: {}x{}", maxSize.width, maxSize.height);
 
-    AllureHelper.captureScreenshot(driver, "Window-Maximized");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Window-Maximized");
 
     // Verify resize worked - check that at least one dimension changed
     boolean widthChanged = initialSize.width != newSize.width;
@@ -202,7 +206,8 @@ public class AdvancedFeaturesTests {
     searchBox.sendKeys("m");
     LOGGER.info("Typed: Selenium");
 
-    AllureHelper.captureScreenshot(driver, "After-Typing");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "After-Typing");
 
     Allure.step("Clear with keyboard shortcut");
     searchBox.sendKeys(Keys.chord(Keys.CONTROL, "a"));
@@ -219,7 +224,8 @@ public class AdvancedFeaturesTests {
       LOGGER.warn("Sleep interrupted", e);
     }
 
-    AllureHelper.captureScreenshot(driver, "Keyboard-Actions");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Keyboard-Actions");
 
     LOGGER.info("✅ Keyboard actions successful");
   }
@@ -241,7 +247,8 @@ public class AdvancedFeaturesTests {
     String secondUrl = driver.getCurrentUrl();
     LOGGER.info("Second URL: {}", secondUrl);
 
-    AllureHelper.captureScreenshot(driver, "Second-Page");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Second-Page");
 
     Allure.step("Navigate back");
     driver.navigate().back();
@@ -259,7 +266,8 @@ public class AdvancedFeaturesTests {
     driver.navigate().refresh();
     LOGGER.info("Page refreshed");
 
-    AllureHelper.captureScreenshot(driver, "After-Refresh");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "After-Refresh");
 
     LOGGER.info("✅ Browser navigation successful");
   }
@@ -290,7 +298,8 @@ public class AdvancedFeaturesTests {
     LOGGER.info("Size: {}x{}", size.width, size.height);
     LOGGER.info("Location: ({}, {})", location.x, location.y);
 
-    AllureHelper.captureScreenshot(driver, "Element-Properties");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Element-Properties");
 
     Allure.step("Verify properties");
     Assert.assertEquals(tagName, "textarea", "Should be textarea element");
@@ -322,7 +331,8 @@ public class AdvancedFeaturesTests {
 
     LOGGER.info("Element find time: {}ms", findTime);
 
-    AllureHelper.captureScreenshot(driver, "Performance-Test");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Performance-Test");
 
     Allure.step("Verify performance acceptable");
     Assert.assertTrue(loadTime < 10000, "Page should load within 10 seconds");
