@@ -26,8 +26,27 @@ echo ""
 
 # Step 1: Merge Allure results
 echo "🔄 Step 1: Merging Allure results..."
+echo "   Note: This merges TestNG-based tests (Smoke, Grid, Mobile, Responsive, Selenide)"
+echo "   Framework-specific conversions happen in Step 3"
 chmod +x scripts/ci/merge-allure-results.sh
 ./scripts/ci/merge-allure-results.sh
+
+# Debug: Check if Selenide results were merged
+echo ""
+echo "🔍 Checking for Selenide results in merged results..."
+SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "HomePage\|Selenide" {} \; 2>/dev/null | wc -l | tr -d ' ')
+if [ "$SELENIDE_COUNT" -gt 0 ]; then
+    echo "   ✅ Found $SELENIDE_COUNT Selenide test result(s) in merged results"
+else
+    echo "   ⚠️  No Selenide results found in merged results"
+    echo "   🔍 Checking for selenide-results artifacts..."
+    if find "$SOURCE_DIR" -path "*/selenide-results-*/target/allure-results/*-result.json" 2>/dev/null | head -1 | read selenide_file; then
+        echo "   ✅ Found Selenide results in artifacts: $selenide_file"
+        echo "   ℹ️  They should be merged by merge-allure-results.sh"
+    else
+        echo "   ⚠️  No Selenide result files found in artifacts"
+    fi
+fi
 
 # Step 2: Verify merged results
 echo ""
@@ -111,15 +130,26 @@ fi
 # Convert Vibium results
 if [ -d "$SOURCE_DIR/vibium-results" ]; then
     echo "   Converting Vibium results..."
+    echo "   🔍 Searching for Vibium result files..."
     chmod +x scripts/ci/convert-vibium-to-allure.sh
+    VIBIUM_FOUND=0
     # Try test-results directory first
     if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
+        echo "   ✅ Found Vibium test-results directory: $SOURCE_DIR/vibium-results/test-results"
         ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$ENV_FOR_CONVERSION" || true
+        VIBIUM_FOUND=1
     else
         # Fallback: search for any result files
         find "$SOURCE_DIR/vibium-results" -type d -name "test-results" | while read vibium_dir; do
+            echo "   ✅ Found Vibium directory: $vibium_dir"
             ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$vibium_dir" "$ENV_FOR_CONVERSION" || true
+            VIBIUM_FOUND=1
         done
+    fi
+    if [ "$VIBIUM_FOUND" -eq 0 ]; then
+        echo "   ⚠️  No Vibium result files found in $SOURCE_DIR/vibium-results"
+        echo "   🔍 Directory structure:"
+        find "$SOURCE_DIR/vibium-results" -type f \( -name "*.json" -o -name "*.xml" -o -name "*.txt" \) 2>/dev/null | head -5 | while read f; do echo "      - $f"; done || echo "      (no result files found)"
     fi
 fi
 
