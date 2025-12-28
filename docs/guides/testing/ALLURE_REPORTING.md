@@ -627,6 +627,12 @@ Backend test results are converted to Allure format:
   - Updated suite label from generic "Surefire test" to "Selenide Tests" ✅
   - Removed `parentSuite` label so tests appear as top-level suite (like other frameworks) ✅
   - Updated `fullName` field to include "Selenide." prefix for additional grouping hints ✅
+  - Process container files (`*-container.json`) to fix suite grouping in Allure's Suites view ✅
+  - Improved detection: uses `epic="HomePage Tests"` as primary, with fallbacks to `feature="HomePage Navigation"` or `testClass` containing `"HomePageTests"` ✅
   - Tests visible in Features By Stories view ✅
   - ⏳ Pending: Verify tests appear in Suites view under "Selenide Tests" (currently under "Surefire suite")
+- ✅ **Multi-Environment Framework Processing**: Fixed framework conversions to process all environments (dev, test, prod)
+  - Updated `prepare-combined-allure-results.sh` to loop through all environments ✅
+  - Framework results now processed for each environment separately ✅
+  - Prevents missing test/prod environment results in combined report ✅
 - ✅ **Improved Test Status Detection**: Fixed Vibium status logic to properly detect passed tests

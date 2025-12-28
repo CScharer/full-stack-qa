@@ -87,7 +87,8 @@ public class EnhancedGridTests {
     LOGGER.info(">>> Test: Google Homepage");
     Allure.step("Navigate to Google homepage");
     driver.get("https://www.google.com");
-    AllureHelper.captureScreenshot(driver, "Google-Homepage");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Google-Homepage");
 
     String title = driver.getTitle();
     LOGGER.info("Page title: {}", title);
@@ -128,7 +129,8 @@ public class EnhancedGridTests {
     // Verify URL changed
     String currentUrl = driver.getCurrentUrl();
     LOGGER.info("Results URL: {}", currentUrl);
-    AllureHelper.captureScreenshot(driver, "Google-Search-Results");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Google-Search-Results");
 
     Assert.assertNotEquals(currentUrl, initialUrl, "URL should have changed after search");
     Assert.assertTrue(currentUrl.contains("google.com"), "Should still be on Google");
@@ -159,7 +161,8 @@ public class EnhancedGridTests {
                     "[aria-label*='Homepage'], .octicon-mark-github,"
                         + " [data-testid='github-logo']")));
 
-    AllureHelper.captureScreenshot(driver, "GitHub-Homepage");
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "GitHub-Homepage");
 
     Assert.assertNotNull(logo, "GitHub logo should be present");
     LOGGER.info("✅ GitHub homepage verified");

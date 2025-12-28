@@ -219,7 +219,7 @@
 ---
 
 ### Step 5: Verify Selenide Results
-**Status**: ⚠️ **In Progress** - Suite visibility issue  
+**Status**: ⚠️ **In Progress** - Suite visibility issue (container file processing added)  
 **Priority**: 🟡 Medium
 
 **Description**: Verify Selenide tests are generating Allure results and appearing in combined report
@@ -237,17 +237,47 @@
 
 **Solution Implemented**:
 - ✅ Updated `scripts/ci/add-environment-labels.sh` to detect Selenide tests
-- ✅ Selenide tests identified by: `epic="HomePage Tests"` and `testClass` containing `"HomePageTests"`
+- ✅ Selenide tests identified by: `epic="HomePage Tests"` (primary) or `feature="HomePage Navigation"` (fallback) or `testClass` containing `"HomePageTests"`
 - ✅ Suite label automatically changed from "Surefire test" to "Selenide Tests"
 - ✅ **Remove `parentSuite` label**: So Selenide tests appear as top-level suite (like other frameworks)
 - ✅ **Update `fullName` field**: Prepend "Selenide." to fullName for additional grouping hints (e.g., "Selenide.com.cjs.qa.junit.tests.HomePageTests.testHomePageLoads")
+- ✅ **Process container files**: Updated script to also process `*-container.json` files which control test grouping in Allure's Suites view
 - ⏳ Pending verification: Tests should now appear in Suites view under "Selenide Tests" (not under "Surefire suite")
 
 **Testing**:
-- ✅ Verified Selenide tests appear in combined report (8 tests found)
+- ✅ Verified Selenide tests appear in combined report (8 tests found per environment, 24 total)
 - ✅ Verified Selenide tests have proper suite labels ("Selenide Tests")
+- ✅ Container files are now processed to fix suite grouping
 - ⏳ **Pending**: Verify tests visible in Suites view under "Selenide Tests" (currently grouped under "Surefire suite")
 - ✅ Verified tests visible in Features By Stories under "HomePage Tests" → "HomePage Navigation"
+
+---
+
+### Step 6: Multi-Environment Framework Processing
+**Status**: ✅ **Complete**  
+**Priority**: 🔴 High
+
+**Description**: Framework test results (Cypress, Playwright, Robot Framework, Vibium) were only being processed for one environment (dev), causing test and prod environment results to be missing from the combined Allure report.
+
+**Root Cause**:
+- `prepare-combined-allure-results.sh` used `elif` statements that stopped at the first environment match
+- Only detected and processed "dev" environment, skipping "test" and "prod"
+- Framework artifacts are downloaded with `merge-multiple: true`, merging all environments into single directories
+
+**Solution Implemented**:
+- ✅ Updated `scripts/ci/prepare-combined-allure-results.sh` to loop through all environments (dev, test, prod)
+- ✅ Process framework results for each environment separately
+- ✅ Check environment-specific directories first (`results-dev`, `results-test`, `results-prod`)
+- ✅ Fall back to merged directories and process them for each environment (since same tests run in each environment, processing merged directory 3 times creates separate results for each environment)
+- ✅ Updated Cypress, Playwright, Robot Framework, and Vibium conversions to process all environments
+
+**Files Modified**:
+- `scripts/ci/prepare-combined-allure-results.sh` - Added environment loop and multi-environment processing
+
+**Testing**:
+- ✅ Verified all three environments' artifacts are downloaded (dev, test, prod)
+- ✅ Verified framework conversions process all environments
+- ⏳ **Pending**: Verify all environments appear in combined Allure report after next CI run
 
 ---
 

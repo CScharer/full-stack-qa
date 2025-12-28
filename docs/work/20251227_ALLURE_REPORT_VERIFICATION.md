@@ -24,6 +24,9 @@ After the CI pipeline completes, verify:
   - [ ] Vibium: 6 individual tests with correct status (not 1 skipped)
   - [ ] Playwright: Individual tests (not summary)
 - [ ] **Environment Labels**: Tests show [DEV], [TEST], [PROD] in names/parameters
+- [ ] **Multi-Environment Results**: All three environments (dev, test, prod) appear in the report
+  - [ ] Framework tests (Cypress, Playwright, Robot, Vibium) show results for all environments
+  - [ ] TestNG-based tests (Smoke, Grid, Mobile, Responsive, Selenide) show results for all environments
 - [ ] **Trend Section**: Will appear after 2nd pipeline run
 
 ---
@@ -187,19 +190,20 @@ Categories:
 **What to Check**:
 
 **In Features By Stories**:
-- [ ] **Playwright**: "Playwright E2E Testing" epic appears with individual tests
-- [ ] **Cypress**: "Cypress E2E Testing" epic appears with 2 individual tests
-- [ ] **Robot Framework**: "Robot Framework Acceptance Testing" epic appears with 5 individual tests
-- [ ] **Vibium**: "Vibium Visual Regression Testing" epic appears with 6 individual tests (all passed)
-- [ ] **Selenide**: "HomePage Tests" epic appears with individual tests under "HomePage Navigation"
+- [ ] **Playwright**: "Playwright E2E Testing" epic appears with individual tests (for all environments: dev, test, prod)
+- [ ] **Cypress**: "Cypress E2E Testing" epic appears with 2 individual tests per environment (6 total: 2 dev + 2 test + 2 prod)
+- [ ] **Robot Framework**: "Robot Framework Acceptance Testing" epic appears with 5 individual tests per environment (15 total: 5 dev + 5 test + 5 prod)
+- [ ] **Vibium**: "Vibium Visual Regression Testing" epic appears with 6 individual tests per environment (18 total: 6 dev + 6 test + 6 prod)
+- [ ] **Selenide**: "HomePage Tests" epic appears with individual tests under "HomePage Navigation" (for all environments)
 - [ ] Each epic has features and individual tests (not summaries)
+- [ ] Tests from all environments (dev, test, prod) are visible with proper environment labels
 
 **In Suites View**:
-- [ ] **Cypress Tests**: Shows 2 individual test results
-- [ ] **Robot Framework Tests**: Shows 5 individual test results
-- [ ] **Vibium Tests**: Shows 6 individual test results (all passed)
-- [ ] **Playwright Tests**: Shows individual test results
-- [ ] **Selenide Tests**: Shows individual test results (was missing before, now visible)
+- [ ] **Cypress Tests**: Shows 2 individual test results per environment (6 total: 2 dev + 2 test + 2 prod)
+- [ ] **Robot Framework Tests**: Shows 5 individual test results per environment (15 total: 5 dev + 5 test + 5 prod)
+- [ ] **Vibium Tests**: Shows 6 individual test results per environment (18 total: 6 dev + 6 test + 6 prod, all passed)
+- [ ] **Playwright Tests**: Shows individual test results for all environments
+- [ ] **Selenide Tests**: Shows individual test results for all environments (was missing before, now visible)
 
 **Expected Result**:
 ```
@@ -228,9 +232,9 @@ Features By Stories:
         └── testNavigationPanel [DEV] (passed)
 
 Suites:
-├── Cypress Tests (2 tests)
-├── Robot Framework Tests (5 tests)
-├── Vibium Tests (6 tests)
+├── Cypress Tests (6 tests: 2 dev + 2 test + 2 prod)
+├── Robot Framework Tests (15 tests: 5 dev + 5 test + 5 prod)
+├── Vibium Tests (18 tests: 6 dev + 6 test + 6 prod)
 ├── Playwright Tests (X tests)
 └── Selenide Tests (8 tests) ← Now visible!
 ```

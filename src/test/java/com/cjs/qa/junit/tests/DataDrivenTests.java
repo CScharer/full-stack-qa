@@ -103,7 +103,8 @@ public class DataDrivenTests {
     String currentUrl = driver.getCurrentUrl();
     LOGGER.info("Results URL: {}", currentUrl);
 
-    AllureHelper.captureScreenshot(driver, "Search-" + searchTerm.replace(" ", "-"));
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Search-" + searchTerm.replace(" ", "-"));
 
     if (shouldSucceed) {
       Assert.assertTrue(
@@ -140,7 +141,8 @@ public class DataDrivenTests {
     LOGGER.info("Title: {}", title);
     LOGGER.info("URL: {}", currentUrl);
 
-    AllureHelper.captureScreenshot(driver, "Website-" + expectedTitleFragment);
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(driver, "Website-" + expectedTitleFragment);
 
     Allure.step("Verify title contains expected text");
     Assert.assertTrue(
@@ -194,8 +196,9 @@ public class DataDrivenTests {
       }
     }
 
-    AllureHelper.captureScreenshot(
-        driver, "EdgeCase-" + (searchTerm.isEmpty() ? "Empty" : "Special"));
+    // DEBUG: Screenshot capture commented out - only capture on failure
+    // AllureHelper.captureScreenshot(
+    //     driver, "EdgeCase-" + (searchTerm.isEmpty() ? "Empty" : "Special"));
 
     // Verify we're still on a valid page
     String currentUrl = driver.getCurrentUrl();
