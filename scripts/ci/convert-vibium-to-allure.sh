@@ -95,74 +95,151 @@ if total_tests > 0 and test_results:
     # Process each test file/suite from Vitest results
     for test_suite in test_results:
         suite_name = test_suite.get('name', 'Unknown Test Suite')
-        suite_status = test_suite.get('status', 'unknown')
         suite_duration = test_suite.get('duration', 0)
         
-        # Determine overall status for this suite
-        suite_num_passed = test_suite.get('numPassingTests', 0)
-        suite_num_failed = test_suite.get('numFailingTests', 0)
-        suite_num_total = test_suite.get('numPassingTests', 0) + test_suite.get('numFailingTests', 0)
+        # Get individual test cases from the suite
+        test_cases = test_suite.get('assertionResults', [])
         
-        if suite_num_failed > 0:
-            status = "failed"
-        elif suite_num_passed > 0:
-            status = "passed"
+        # If no assertionResults, try to get from tasks
+        if not test_cases:
+            tasks = test_suite.get('tasks', [])
+            for task in tasks:
+                task_cases = task.get('assertionResults', [])
+                test_cases.extend(task_cases)
+        
+        # If still no test cases, create one result for the suite
+        if not test_cases:
+            suite_num_passed = test_suite.get('numPassingTests', 0)
+            suite_num_failed = test_suite.get('numFailingTests', 0)
+            suite_num_skipped = test_suite.get('numSkippedTests', 0)
+            suite_num_total = suite_num_passed + suite_num_failed + suite_num_skipped
+            
+            # Determine status based on suite-level stats
+            if suite_num_failed > 0:
+                status = "failed"
+            elif suite_num_passed > 0:
+                status = "passed"
+            elif suite_num_skipped > 0:
+                status = "skipped"
+            else:
+                status = "passed"  # Default to passed
+            
+            test_uuid = uuid.uuid4().hex[:32]
+            timestamp = int(datetime.now().timestamp() * 1000)
+            test_name = suite_name.replace('.spec.ts', '').replace('tests/', '').replace('/', ' › ')
+            full_name = f"Vibium.{test_name}"
+            history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+            
+            labels = [
+                {"name": "suite", "value": "Vibium Tests"},
+                {"name": "testClass", "value": "Vibium"},
+                {"name": "epic", "value": "Vibium Visual Regression Testing"},
+                {"name": "feature", "value": "Vibium Tests"}
+            ]
+            
+            if env and env not in ["unknown", "combined"]:
+                labels.append({"name": "environment", "value": env})
+            
+            params = []
+            if env and env not in ["unknown", "combined"]:
+                params.append({"name": "Environment", "value": env.upper()})
+            
+            description = f"Vibium Visual Regression Test Suite: {test_name}"
+            if suite_num_total > 0:
+                description += f" - {suite_num_total} tests ({suite_num_passed} passed, {suite_num_failed} failed)"
+            
+            duration_ms = int(suite_duration * 1000) if suite_duration > 0 else 1000
+            
+            result = {
+                "uuid": test_uuid,
+                "historyId": history_id,
+                "fullName": full_name,
+                "labels": labels,
+                "name": test_name + (f" ({suite_num_passed} passed, {suite_num_failed} failed)" if suite_num_total > 0 else ""),
+                "status": status,
+                "statusDetails": {
+                    "known": False,
+                    "muted": False,
+                    "flaky": False
+                },
+                "stage": "finished",
+                "description": description,
+                "steps": [],
+                "attachments": [],
+                "parameters": params,
+                "start": timestamp,
+                "stop": timestamp + duration_ms
+            }
+            
+            output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+            with open(output_file, 'w') as f:
+                json.dump(result, f, indent=2)
+            
+            converted += 1
         else:
-            status = "skipped"
-        
-        # Create Allure result for this test suite
-        test_uuid = uuid.uuid4().hex[:32]
-        timestamp = int(datetime.now().timestamp() * 1000)
-        test_name = suite_name.replace('.spec.ts', '').replace('tests/', '').replace('/', ' › ')
-        full_name = f"Vibium.{test_name}"
-        history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
-        
-        labels = [
-            {"name": "suite", "value": "Vibium Tests"},
-            {"name": "testClass", "value": "Vibium"},
-            {"name": "epic", "value": "Vibium Visual Regression Testing"},
-            {"name": "feature", "value": "Vibium Tests"}
-        ]
-        
-        if env and env not in ["unknown", "combined"]:
-            labels.append({"name": "environment", "value": env})
-        
-        params = []
-        if env and env not in ["unknown", "combined"]:
-            params.append({"name": "Environment", "value": env.upper()})
-        
-        description = f"Vibium Visual Regression Test Suite: {test_name}"
-        if suite_num_total > 0:
-            description += f" - {suite_num_total} tests ({suite_num_passed} passed, {suite_num_failed} failed)"
-        
-        duration_ms = int(suite_duration * 1000) if suite_duration > 0 else 1000
-        
-        result = {
-            "uuid": test_uuid,
-            "historyId": history_id,
-            "fullName": full_name,
-            "labels": labels,
-            "name": test_name + (f" ({suite_num_passed} passed, {suite_num_failed} failed)" if suite_num_total > 0 else ""),
-            "status": status,
-            "statusDetails": {
-                "known": False,
-                "muted": False,
-                "flaky": False
-            },
-            "stage": "finished",
-            "description": description,
-            "steps": [],
-            "attachments": [],
-            "parameters": params,
-            "start": timestamp,
-            "stop": timestamp + duration_ms
-        }
-        
-        output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
-        with open(output_file, 'w') as f:
-            json.dump(result, f, indent=2)
-        
-        converted += 1
+            # Create individual Allure results for each test case
+            print(f"📊 Found {len(test_cases)} individual test(s) in suite: {suite_name}")
+            
+            for test_case in test_cases:
+                test_title = test_case.get('title', 'Unknown Test')
+                test_status = test_case.get('status', 'unknown')
+                test_duration = test_case.get('duration', 0) or 0.001  # seconds, default to 1ms
+                
+                # Map Vitest status to Allure status
+                if test_status == 'passed':
+                    status = "passed"
+                elif test_status == 'failed':
+                    status = "failed"
+                elif test_status in ['skipped', 'pending', 'todo']:
+                    status = "skipped"
+                else:
+                    status = "passed"  # Default to passed
+                
+                test_uuid = uuid.uuid4().hex[:32]
+                timestamp = int(datetime.now().timestamp() * 1000)
+                full_name = f"Vibium.{suite_name}.{test_title}"
+                history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+                
+                labels = [
+                    {"name": "suite", "value": "Vibium Tests"},
+                    {"name": "testClass", "value": "Vibium"},
+                    {"name": "epic", "value": "Vibium Visual Regression Testing"},
+                    {"name": "feature", "value": "Vibium Tests"}
+                ]
+                
+                if env and env not in ["unknown", "combined"]:
+                    labels.append({"name": "environment", "value": env})
+                
+                params = []
+                if env and env not in ["unknown", "combined"]:
+                    params.append({"name": "Environment", "value": env.upper()})
+                
+                result = {
+                    "uuid": test_uuid,
+                    "historyId": history_id,
+                    "fullName": full_name,
+                    "labels": labels,
+                    "name": test_title,
+                    "status": status,
+                    "statusDetails": {
+                        "known": False,
+                        "muted": False,
+                        "flaky": False
+                    },
+                    "stage": "finished",
+                    "description": f"Vibium test: {test_title}",
+                    "steps": [],
+                    "attachments": [],
+                    "parameters": params,
+                    "start": timestamp,
+                    "stop": timestamp + int(test_duration * 1000)
+                }
+                
+                output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+                with open(output_file, 'w') as f:
+                    json.dump(result, f, indent=2)
+                
+                converted += 1
     
     print(f"✅ Created {converted} Allure result(s) from Vitest output")
     print(f"   Total: {total_tests} tests ({passed_tests} passed, {failed_tests} failed)")

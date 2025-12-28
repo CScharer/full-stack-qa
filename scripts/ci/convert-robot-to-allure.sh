@@ -90,18 +90,107 @@ try:
     
     print(f"📊 Robot Framework Stats: {total} tests, {passed} passed, {failed} failed")
     
-    if total > 0:
-        status = "passed" if failed == 0 else "failed"
+    converted = 0
+    
+    # Find all test elements and create individual Allure results
+    all_tests = root.findall('.//test')
+    
+    if all_tests and len(all_tests) > 0:
+        print(f"📊 Found {len(all_tests)} individual test(s) to convert")
         
-        # Get duration from robot XML (in milliseconds)
+        # Create individual Allure results for each test
+        for test_elem in all_tests:
+            test_name = test_elem.get('name', 'Unknown Test')
+            test_id = test_elem.get('id', '')
+            
+            # Get test status
+            status_elem = test_elem.find('status')
+            if status_elem is not None:
+                robot_status = status_elem.get('status', 'UNKNOWN')
+                if robot_status == 'PASS':
+                    status = "passed"
+                elif robot_status == 'FAIL':
+                    status = "failed"
+                else:
+                    status = "skipped"
+                
+                # Get duration (Robot Framework uses elapsed time in format "HH:MM:SS.mmm" or seconds)
+                elapsed = status_elem.get('elapsed', '0')
+                # Try to parse elapsed time (could be seconds or HH:MM:SS format)
+                try:
+                    if ':' in elapsed:
+                        # Format: HH:MM:SS.mmm
+                        parts = elapsed.split(':')
+                        if len(parts) == 3:
+                            hours, minutes, seconds = map(float, parts)
+                            duration_ms = int((hours * 3600 + minutes * 60 + seconds) * 1000)
+                        else:
+                            duration_ms = 1000
+                    else:
+                        # Assume seconds
+                        duration_ms = int(float(elapsed) * 1000)
+                except:
+                    duration_ms = 1000
+            else:
+                status = "passed"
+                duration_ms = 1000
+            
+            # Get suite name for full path
+            suite = test_elem.find('..')
+            suite_name = suite.get('name', '') if suite is not None and suite.tag == 'suite' else ''
+            full_name = f"RobotFramework.{suite_name}.{test_name}" if suite_name else f"RobotFramework.{test_name}"
+            
+            test_uuid = uuid.uuid4().hex[:32]
+            timestamp = int(datetime.now().timestamp() * 1000)
+            history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+            
+            labels = [
+                {"name": "suite", "value": "Robot Framework Tests"},
+                {"name": "testClass", "value": "RobotFramework"},
+                {"name": "epic", "value": "Robot Framework Acceptance Testing"},
+                {"name": "feature", "value": "Robot Framework Tests"}
+            ]
+            
+            if env and env not in ["unknown", "combined"]:
+                labels.append({"name": "environment", "value": env})
+            
+            params = []
+            if env and env not in ["unknown", "combined"]:
+                params.append({"name": "Environment", "value": env.upper()})
+            
+            result = {
+                "uuid": test_uuid,
+                "historyId": history_id,
+                "fullName": full_name,
+                "labels": labels,
+                "name": test_name,
+                "status": status,
+                "statusDetails": {
+                    "known": False,
+                    "muted": False,
+                    "flaky": False
+                },
+                "stage": "finished",
+                "description": f"Robot Framework test: {test_name}",
+                "steps": [],
+                "attachments": [],
+                "parameters": params,
+                "start": timestamp,
+                "stop": timestamp + duration_ms
+            }
+            
+            output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+            with open(output_file, 'w') as f:
+                import json
+                json.dump(result, f, indent=2)
+            
+            converted += 1
+        
+        print(f"✅ Created {converted} individual Allure result(s)")
+    elif total > 0:
+        # Fallback: Create summary result if we can't find individual tests
+        status = "passed" if failed == 0 else "failed"
         duration = 60000  # Default 1 minute
-        suite = root.find('suite')
-        if suite is not None:
-            suite_status = suite.find('status')
-            if suite_status is not None:
-                # Robot Framework duration is in format "HH:MM:SS.mmm"
-                duration_str = suite_status.get('endtime', '') or suite_status.get('starttime', '')
-                # Try to parse if available, otherwise use default
         
         test_uuid = uuid.uuid4().hex[:32]
         timestamp = int(datetime.now().timestamp() * 1000)
@@ -149,8 +238,8 @@ try:
             import json
             json.dump(result, f, indent=2)
         
-        print(f"✅ Created Allure result: {output_file}")
-        print(f"   Status: {status}, Tests: {total}, Passed: {passed}, Failed: {failed}")
+        converted = 1
+        print(f"✅ Created summary Allure result (individual tests not found)")
     else:
         print("ℹ️  No tests found in Robot Framework output")
         

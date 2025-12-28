@@ -159,30 +159,67 @@ try:
     # Cypress/Mochawesome structure varies, try to extract test information
     # Common structure: { "stats": { "tests": N, "passes": X, "failures": Y }, "results": [...] }
     
-    if 'stats' in data:
-        stats = data['stats']
-        total = stats.get('tests', 0)
-        passes = stats.get('passes', 0)
-        failures = stats.get('failures', 0)
-        pending = stats.get('pending', 0)
+    import uuid
+    import hashlib
+    from datetime import datetime
+    
+    converted = 0
+    
+    # Try to find individual test results
+    def find_tests(obj, tests_list=None):
+        """Recursively find all test objects in Cypress results"""
+        if tests_list is None:
+            tests_list = []
         
-        print(f"📊 Cypress Stats: {total} tests, {passes} passed, {failures} failed, {pending} pending")
+        if isinstance(obj, dict):
+            # Check if this looks like a test object
+            if 'title' in obj and ('state' in obj or 'status' in obj):
+                tests_list.append(obj)
+            # Recursively search nested structures
+            for value in obj.values():
+                find_tests(value, tests_list)
+        elif isinstance(obj, list):
+            for item in obj:
+                find_tests(item, tests_list)
         
-        # Create summary result
-        if total > 0:
-            status = "passed" if failures == 0 else "failed"
-            duration = stats.get('duration', 0) or 60000  # Default 1 minute if not available
+        return tests_list
+    
+    # Extract stats for summary
+    stats = data.get('stats', {})
+    total = stats.get('tests', 0)
+    passes = stats.get('passes', 0)
+    failures = stats.get('failures', 0)
+    pending = stats.get('pending', 0)
+    
+    print(f"📊 Cypress Stats: {total} tests, {passes} passed, {failures} failed, {pending} pending")
+    
+    # Find all individual tests
+    all_tests = find_tests(data)
+    
+    if all_tests and len(all_tests) > 0:
+        print(f"📊 Found {len(all_tests)} individual test(s) to convert")
+        
+        # Create individual Allure results for each test
+        for test in all_tests:
+            test_title = test.get('title', 'Unknown Test')
+            test_state = test.get('state', test.get('status', 'unknown'))
+            test_duration = test.get('duration', 0) or 1000  # milliseconds
+            test_full_title = test.get('fullTitle', test_title)
             
-            # Create a summary test result
-            import uuid
-            import hashlib
-            from datetime import datetime
+            # Map Cypress states to Allure statuses
+            if test_state in ['passed', 'PASS']:
+                status = "passed"
+            elif test_state in ['failed', 'FAIL']:
+                status = "failed"
+            elif test_state in ['pending', 'PENDING', 'skipped', 'SKIPPED']:
+                status = "skipped"
+            else:
+                status = "passed"  # Default to passed
             
             test_uuid = uuid.uuid4().hex[:32]
             timestamp = int(datetime.now().timestamp() * 1000)
-            test_name = f"Cypress Test Suite"
-            full_name = f"Cypress.{test_name}"
-            history_id = hashlib.md5(full_name.encode()).hexdigest()
+            full_name = f"Cypress.{test_full_title}"
+            history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
             
             labels = [
                 {"name": "suite", "value": "Cypress Tests"},
@@ -203,7 +240,7 @@ try:
                 "historyId": history_id,
                 "fullName": full_name,
                 "labels": labels,
-                "name": f"{test_name} ({passes} passed, {failures} failed)",
+                "name": test_title,
                 "status": status,
                 "statusDetails": {
                     "known": False,
@@ -211,26 +248,73 @@ try:
                     "flaky": False
                 },
                 "stage": "finished",
-                "description": f"Cypress Test Suite: {total} tests total, {passes} passed, {failures} failed, {pending} pending",
+                "description": f"Cypress test: {test_full_title}",
                 "steps": [],
                 "attachments": [],
                 "parameters": params,
                 "start": timestamp,
-                "stop": timestamp + duration
+                "stop": timestamp + int(test_duration)
             }
             
             output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
             with open(output_file, 'w') as f:
                 json.dump(result, f, indent=2)
             
-            print(f"✅ Created Allure result: {output_file}")
-            print(f"   Status: {status}, Tests: {total}, Passed: {passes}, Failed: {failures}")
-    
-    elif 'results' in data:
-        # Alternative structure with results array
-        results = data.get('results', [])
-        print(f"📊 Found {len(results)} test results")
-        # Process individual test results if needed
+            converted += 1
+        
+        print(f"✅ Created {converted} individual Allure result(s)")
+    elif total > 0:
+        # Fallback: Create summary result if we can't find individual tests
+        status = "passed" if failures == 0 else "failed"
+        duration = stats.get('duration', 0) or 60000
+        
+        test_uuid = uuid.uuid4().hex[:32]
+        timestamp = int(datetime.now().timestamp() * 1000)
+        test_name = f"Cypress Test Suite"
+        full_name = f"Cypress.{test_name}"
+        history_id = hashlib.md5(full_name.encode()).hexdigest()
+        
+        labels = [
+            {"name": "suite", "value": "Cypress Tests"},
+            {"name": "testClass", "value": "Cypress"},
+            {"name": "epic", "value": "Cypress E2E Testing"},
+            {"name": "feature", "value": "Cypress Tests"}
+        ]
+        
+        if env and env not in ["unknown", "combined"]:
+            labels.append({"name": "environment", "value": env})
+        
+        params = []
+        if env and env not in ["unknown", "combined"]:
+            params.append({"name": "Environment", "value": env.upper()})
+        
+        result = {
+            "uuid": test_uuid,
+            "historyId": history_id,
+            "fullName": full_name,
+            "labels": labels,
+            "name": f"{test_name} ({passes} passed, {failures} failed)",
+            "status": status,
+            "statusDetails": {
+                "known": False,
+                "muted": False,
+                "flaky": False
+            },
+            "stage": "finished",
+            "description": f"Cypress Test Suite: {total} tests total, {passes} passed, {failures} failed, {pending} pending",
+            "steps": [],
+            "attachments": [],
+            "parameters": params,
+            "start": timestamp,
+            "stop": timestamp + duration
+        }
+        
+        output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+        with open(output_file, 'w') as f:
+            json.dump(result, f, indent=2)
+        
+        converted = 1
+        print(f"✅ Created summary Allure result (individual tests not found)")
         
 except Exception as e:
     print(f"⚠️  Error parsing Cypress results: {e}", file=sys.stderr)
