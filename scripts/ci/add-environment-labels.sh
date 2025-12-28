@@ -378,6 +378,65 @@ for result_file in all_files:
         print(f"❌ Error processing {result_file}: {e}", file=sys.stderr)
         errors += 1
 
+# SECOND PASS: Find and update all containers with name="Surefire test" or suite="Surefire test"
+# These are parent containers that create the hierarchy, even if they don't have epic/feature labels
+print("\n🔍 Second pass: Finding and updating parent 'Surefire test' containers...")
+parent_containers_updated = 0
+for container_file in container_files:
+    try:
+        with open(container_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Check if this is a container with "Surefire test" in name or suite
+        is_surefire_parent = False
+        if 'name' in data and data.get('name') == 'Surefire test':
+            is_surefire_parent = True
+        elif 'labels' in data:
+            for label in data['labels']:
+                if label.get('name') == 'suite' and label.get('value') == 'Surefire test':
+                    is_surefire_parent = True
+                    break
+                elif label.get('name') == 'parentSuite' and 'Surefire' in label.get('value', ''):
+                    is_surefire_parent = True
+                    break
+        
+        if is_surefire_parent:
+            # Update this container to "Selenide Tests"
+            updated = False
+            if 'labels' in data:
+                labels = data['labels']
+                for i, label in enumerate(labels):
+                    if label.get('name') == 'suite' and label.get('value') == 'Surefire test':
+                        labels[i]['value'] = 'Selenide Tests'
+                        updated = True
+                    elif label.get('name') == 'parentSuite':
+                        # Remove parentSuite to make it top-level
+                        labels.pop(i)
+                        updated = True
+                        break
+                
+                if updated:
+                    data['labels'] = labels
+            
+            # Update container name
+            if 'name' in data and data.get('name') == 'Surefire test':
+                data['name'] = 'Selenide Tests'
+                updated = True
+            
+            if updated:
+                with open(container_file, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+                parent_containers_updated += 1
+                if parent_containers_updated <= 3:
+                    name_val = data.get('name', 'N/A')
+                    suite_val = next((l.get('value', '') for l in data.get('labels', []) if l.get('name') == 'suite'), 'N/A')
+                    print(f"   🔧 Updated parent container: {container_file.name[:50]}... (name={name_val}, suite={suite_val})")
+    except Exception as e:
+        print(f"⚠️  Error processing container {container_file}: {e}", file=sys.stderr)
+
+if parent_containers_updated > 0:
+    print(f"✅ Updated {parent_containers_updated} parent 'Surefire test' container(s) to 'Selenide Tests'")
+
 # Create environment.properties file for Allure report ENVIRONMENT section
 env_properties_file = Path(results_dir) / "environment.properties"
 envs_found = set()
