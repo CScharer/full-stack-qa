@@ -509,13 +509,16 @@ for container_file in container_files:
                 updated = True
             
             # If this container has "Selenide Tests" as a child, we need to flatten the hierarchy
-            # by removing the nested "Selenide Tests" container and moving its children up
+            # by removing the nested "Selenide Tests" container UUIDs from childrenUuid
+            # This breaks the parent-child relationship so "Selenide Tests" appears as top-level
             if has_selenide_child and 'childrenUuid' in data:
                 children_uuids = data.get('childrenUuid', [])
-                # Remove "Selenide Tests" container UUIDs from children
-                # We'll let Allure handle the flattening, but renaming the parent should help
-                # The nested "Selenide Tests" container will be updated separately
-                updated = True
+                # Remove "Selenide Tests" container UUIDs from children to break the hierarchy
+                original_count = len(children_uuids)
+                children_uuids = [uid for uid in children_uuids if uid not in selenide_container_uids]
+                if len(children_uuids) < original_count:
+                    data['childrenUuid'] = children_uuids
+                    updated = True
             
             if updated:
                 with open(container_file, 'w', encoding='utf-8') as f:
@@ -529,12 +532,67 @@ for container_file in container_files:
     except Exception as e:
         print(f"⚠️  Error processing container {container_file}: {e}", file=sys.stderr)
 
+# THIRD PASS: Update nested "Selenide Tests" containers to remove parentSuite and make them top-level
+# This breaks the hierarchy so "Selenide Tests" appears as a top-level suite
+print("\n🔍 Third pass: Updating nested 'Selenide Tests' containers to be top-level...")
+nested_selenide_updated = 0
+for container_file in container_files:
+    try:
+        with open(container_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Find containers with name="Selenide Tests" that might have parentSuite
+        if data.get('name') == 'Selenide Tests':
+            updated = False
+            if 'labels' in data:
+                labels = data['labels']
+                # Remove parentSuite to make it top-level
+                labels_to_remove = []
+                for i, label in enumerate(labels):
+                    if label.get('name') == 'parentSuite':
+                        labels_to_remove.append(i)
+                        updated = True
+                
+                # Remove parentSuite labels (in reverse order)
+                for i in reversed(labels_to_remove):
+                    labels.pop(i)
+                
+                # Ensure suite label is "Selenide Tests"
+                suite_found = False
+                for label in labels:
+                    if label.get('name') == 'suite':
+                        suite_found = True
+                        if label.get('value') != 'Selenide Tests':
+                            label['value'] = 'Selenide Tests'
+                            updated = True
+                        break
+                
+                if not suite_found:
+                    labels.append({'name': 'suite', 'value': 'Selenide Tests'})
+                    updated = True
+                
+                if updated:
+                    data['labels'] = labels
+            
+            if updated:
+                with open(container_file, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+                nested_selenide_updated += 1
+                if nested_selenide_updated <= 3:
+                    suite_val = next((l.get('value', '') for l in data.get('labels', []) if l.get('name') == 'suite'), 'N/A')
+                    parent_val = next((l.get('value', '') for l in data.get('labels', []) if l.get('name') == 'parentSuite'), 'N/A')
+                    print(f"   🔧 Updated nested Selenide container: {container_file.name[:50]}... (suite={suite_val}, parentSuite={parent_val})")
+    except Exception as e:
+        print(f"⚠️  Error processing nested Selenide container {container_file}: {e}", file=sys.stderr)
+
 if surefire_containers_found > 0:
     print(f"   📊 Found {surefire_containers_found} container(s) with 'Surefire test'")
 if parent_containers_updated > 0:
     print(f"✅ Updated {parent_containers_updated} parent 'Surefire test' container(s) to 'Selenide Tests'")
 else:
     print(f"   ℹ️  No parent 'Surefire test' containers found to update")
+if nested_selenide_updated > 0:
+    print(f"✅ Updated {nested_selenide_updated} nested 'Selenide Tests' container(s) to be top-level")
 
 # Create environment.properties file for Allure report ENVIRONMENT section
 env_properties_file = Path(results_dir) / "environment.properties"
