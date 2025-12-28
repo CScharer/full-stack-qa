@@ -519,10 +519,11 @@ for container_file in container_files:
                 if updated:
                     data['labels'] = labels
             
-            # Update container name
-            if container_name == 'Surefire test' or has_selenide_child:
-                data['name'] = 'Selenide Tests'
-                updated = True
+            # Update container name - ALWAYS update if it's a Surefire parent
+            if container_name == 'Surefire test' or has_selenide_child or container_suite == 'Surefire test':
+                if data.get('name') != 'Selenide Tests':
+                    data['name'] = 'Selenide Tests'
+                    updated = True
             
             # If this container has "Selenide Tests" as a child, we need to flatten the hierarchy
             # by removing the nested "Selenide Tests" container UUIDs from children/childrenUuid
@@ -549,11 +550,29 @@ for container_file in container_files:
             if updated:
                 with open(container_file, 'w', encoding='utf-8') as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
+                
+                # Rename the container file to match the new name (if it contains "Surefire")
+                # This helps Allure recognize it as "Selenide Tests" container
+                # Note: container_file is already a Path object from the glob
+                if 'Surefire' in container_file.name or 'surefire' in container_file.name.lower():
+                    new_filename = container_file.name.replace('Surefire', 'Selenide').replace('surefire', 'selenide')
+                    if new_filename != container_file.name:
+                        new_filepath = container_file.parent / new_filename
+                        try:
+                            container_file.rename(new_filepath)
+                            # Update the container_files list reference for subsequent passes
+                            container_file = new_filepath
+                            if parent_containers_updated < 3:
+                                print(f"   📝 Renamed container file: {new_filepath.name[:50]}...")
+                        except Exception as e:
+                            if parent_containers_updated < 3:
+                                print(f"   ⚠️  Could not rename container file: {e}")
+                
                 parent_containers_updated += 1
                 if parent_containers_updated <= 5:
                     name_val = data.get('name', 'N/A')
                     suite_val = next((l.get('value', '') for l in data.get('labels', []) if l.get('name') == 'suite'), 'N/A')
-                    children_info = f", children={len(data.get('childrenUuid', []))}" if 'childrenUuid' in data else ""
+                    children_info = f", children={len(data.get('childrenUuid', []))}" if 'childrenUuid' in data else f", children={len(data.get('children', []))}" if 'children' in data else ""
                     print(f"   🔧 Updated parent container: {container_file.name[:50]}... (name={name_val}, suite={suite_val}{children_info})")
     except Exception as e:
         print(f"⚠️  Error processing container {container_file}: {e}", file=sys.stderr)
