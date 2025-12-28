@@ -58,7 +58,8 @@ create_allure_result() {
     
     local uuid=$(generate_uuid)
     local timestamp=$(date +%s)000
-    local history_id=$(generate_hash "$full_name")
+    # Include environment in historyId to prevent deduplication across environments
+    local history_id=$(generate_hash "${full_name}:${environment:-}")
     
     # Build labels array
     local labels_json='[

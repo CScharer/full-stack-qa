@@ -228,6 +228,12 @@ echo "🏷️  Step 4: Adding environment labels..."
 chmod +x scripts/ci/add-environment-labels.sh
 ./scripts/ci/add-environment-labels.sh "$TARGET_DIR" "$SOURCE_DIR"
 
+# Step 4.5: Create framework container files for Suites section
+echo ""
+echo "📦 Step 4.5: Creating framework container files..."
+chmod +x scripts/ci/create-framework-containers.sh
+./scripts/ci/create-framework-containers.sh "$TARGET_DIR"
+
 # Step 5: Preserve history from previous report
 echo ""
 echo "📊 Step 5: Preserving history from previous report..."
