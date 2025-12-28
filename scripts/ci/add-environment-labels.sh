@@ -289,10 +289,6 @@ for result_file in all_files:
                     labels.append({'name': 'suite', 'value': 'Selenide Tests'})
                     selenide_file_updated = True
                 
-                if selenide_file_updated:
-                    data['labels'] = labels
-                    selenide_updated += 1
-                
                 # Also update fullName to include "Selenide" for additional grouping hints
                 # This helps Allure group tests properly and makes them easier to find
                 if 'fullName' in data:
@@ -301,18 +297,38 @@ for result_file in all_files:
                     if 'Selenide' not in full_name:
                         # Prepend "Selenide." to the fullName (similar to how other frameworks are named)
                         data['fullName'] = f"Selenide.{full_name}"
+                        selenide_file_updated = True
                 elif 'name' in data:
                     # If fullName doesn't exist, create it from name
                     test_name = data.get('name', '')
                     if 'Selenide' not in test_name:
                         data['fullName'] = f"Selenide.{test_name}"
+                        selenide_file_updated = True
                 
-                # For container files, also update the name field if it contains "Surefire"
+                # For container files, also update the name field to match the suite label
+                # Allure uses container file names for grouping in Suites view
+                # This is critical - container file names control how tests are grouped
+                # We want the container name to be "Selenide Tests" to match the suite label
                 if is_container and 'name' in data:
                     container_name = data.get('name', '')
-                    if 'Surefire' in container_name and 'Selenide' not in container_name:
-                        # Replace "Surefire" with "Selenide" in container name
-                        data['name'] = container_name.replace('Surefire', 'Selenide').replace('surefire', 'Selenide')
+                    # If container name contains "Surefire" or doesn't contain "Selenide Tests", update it
+                    if 'Surefire' in container_name or ('Selenide Tests' not in container_name and is_selenide_test):
+                        # Set container name to "Selenide Tests" to match the suite label
+                        # This ensures Allure groups them correctly in the Suites view
+                        data['name'] = 'Selenide Tests'
+                        selenide_file_updated = True
+                
+                if selenide_file_updated:
+                    data['labels'] = labels
+                    selenide_updated += 1
+                    # Debug: Print info about updated files (only for first few to avoid spam)
+                    if selenide_updated <= 5:
+                        file_type = "container" if is_container else "result"
+                        file_name = current_file.name
+                        suite_val = next((l.get('value', '') for l in labels if l.get('name') == 'suite'), 'N/A')
+                        parent_val = next((l.get('value', '') for l in labels if l.get('name') == 'parentSuite'), 'N/A')
+                        name_val = data.get('name', 'N/A')
+                        print(f"   🔧 Updated {file_type} file: {file_name[:50]}... (suite={suite_val}, parentSuite={parent_val}, name={name_val[:50] if name_val != 'N/A' else 'N/A'})")
         
         # Update historyId to include environment to prevent cross-environment deduplication
         # This allows the same test from different environments to be shown separately
