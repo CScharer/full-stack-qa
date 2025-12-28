@@ -501,6 +501,15 @@ jobs:
       environment: 'dev'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
+      enable_smoke_tests: true
+      enable_grid_tests: true
+      enable_mobile_tests: true
+      enable_responsive_tests: true
+      enable_cypress_tests: true
+      enable_playwright_tests: true
+      enable_robot_tests: true
+      enable_selenide_tests: true
+      enable_vibium_tests: true
 
   deploy-dev:
     name: Deploy to DEV
@@ -585,6 +594,15 @@ jobs:
       environment: 'test'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_test }}
+      enable_smoke_tests: true
+      enable_grid_tests: true
+      enable_mobile_tests: true
+      enable_responsive_tests: true
+      enable_cypress_tests: true
+      enable_playwright_tests: true
+      enable_robot_tests: true
+      enable_selenide_tests: true
+      enable_vibium_tests: true
 
   deploy-test:
     name: Deploy (TEST)
@@ -670,6 +688,15 @@ jobs:
       environment: 'prod'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_prod }}
+      enable_smoke_tests: true
+      enable_grid_tests: true
+      enable_mobile_tests: true
+      enable_responsive_tests: true
+      enable_cypress_tests: true
+      enable_playwright_tests: true
+      enable_robot_tests: true
+      enable_selenide_tests: true
+      enable_vibium_tests: true
 
   deploy-prod:
     name: Deploy (PROD)
