@@ -182,4 +182,30 @@ echo "✅ Combined Allure results prepared successfully!"
 echo "   Results directory: $TARGET_DIR"
 RESULT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')
 echo "   Total result files: $RESULT_COUNT"
+echo ""
+echo "📊 Framework Summary:"
+echo "   TestNG-based (merged): Smoke, Grid, Mobile, Responsive, Selenide"
+echo "   Converted frameworks:"
+# Count results by framework (check labels in JSON files)
+PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Playwright"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Cypress"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Robot"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Vibium"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"HomePage\|Selenide"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+
+echo "   - Playwright: $PLAYWRIGHT_COUNT test(s)"
+echo "   - Cypress: $CYPRESS_COUNT test(s)"
+echo "   - Robot Framework: $ROBOT_COUNT test(s)"
+echo "   - Vibium: $VIBIUM_COUNT test(s)"
+echo "   - Selenide: $SELENIDE_COUNT test(s) (merged from TestNG results)"
+echo ""
+if [ "$CYPRESS_COUNT" -eq 0 ]; then
+    echo "   ⚠️  Cypress: No results found - check if Cypress tests ran and artifacts were uploaded"
+fi
+if [ "$VIBIUM_COUNT" -eq 0 ]; then
+    echo "   ⚠️  Vibium: No results found - check if Vibium tests ran and artifacts were uploaded"
+fi
+if [ "$SELENIDE_COUNT" -eq 0 ]; then
+    echo "   ⚠️  Selenide: No results found - check if Selenide tests ran and results were merged"
+fi
 
