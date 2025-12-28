@@ -248,11 +248,13 @@ echo "   Converted frameworks:"
 # Count results by framework (check labels in JSON files)
 # Use flexible grep patterns that account for JSON formatting with whitespace/newlines
 # Match on epic labels which are more consistent across frameworks
-# Also check testClass values as fallback
+# Patterns search for the epic/feature values anywhere in the JSON file
 PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Playwright E2E Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
 CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Cypress E2E Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
 ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Robot Framework Acceptance Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
 VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Vibium Visual Regression Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
+# Selenide uses @Epic("HomePage Tests") and @Feature("HomePage Navigation")
+# Match either epic or feature value (pattern searches for the string anywhere in JSON)
 SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -lE "HomePage Tests|HomePage Navigation" {} \; 2>/dev/null | wc -l | tr -d ' ')
 
 echo "   - Playwright: $PLAYWRIGHT_COUNT test(s)"
@@ -261,13 +263,23 @@ echo "   - Robot Framework: $ROBOT_COUNT test(s)"
 echo "   - Vibium: $VIBIUM_COUNT test(s)"
 echo "   - Selenide: $SELENIDE_COUNT test(s) (merged from TestNG results)"
 echo ""
-if [ "$CYPRESS_COUNT" -eq 0 ]; then
-    echo "   ⚠️  Cypress: No results found - check if Cypress tests ran and artifacts were uploaded"
+# Debug: Show sample matches for troubleshooting
+if [ "$SELENIDE_COUNT" -eq 0 ]; then
+    echo "   ⚠️  Selenide: No results found - check if Selenide tests ran and results were merged"
+    echo "   🔍 Debug: Searching for Selenide patterns in result files..."
+    SELENIDE_SAMPLE=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "HomePage" {} \; 2>/dev/null | head -1)
+    if [ -n "$SELENIDE_SAMPLE" ]; then
+        echo "   💡 Found file with 'HomePage': $SELENIDE_SAMPLE"
+        echo "   💡 Checking labels in sample file..."
+        grep -o '"name":\s*"[^"]*",\s*"value":\s*"[^"]*"' "$SELENIDE_SAMPLE" 2>/dev/null | grep -i "homepage" | head -3 || echo "   (No HomePage labels found in expected format)"
+    fi
 fi
 if [ "$VIBIUM_COUNT" -eq 0 ]; then
     echo "   ⚠️  Vibium: No results found - check if Vibium tests ran and artifacts were uploaded"
+    echo "   💡 Note: Vibium tests only run if 'enable_vibium_tests' input is set to true"
+    echo "   💡 Check workflow inputs and vibium-tests job execution"
 fi
-if [ "$SELENIDE_COUNT" -eq 0 ]; then
-    echo "   ⚠️  Selenide: No results found - check if Selenide tests ran and results were merged"
+if [ "$CYPRESS_COUNT" -eq 0 ]; then
+    echo "   ⚠️  Cypress: No results found - check if Cypress tests ran and artifacts were uploaded"
 fi
 

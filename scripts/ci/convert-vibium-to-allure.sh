@@ -44,110 +44,128 @@ env = "$ENVIRONMENT" if "$ENVIRONMENT" else None
 
 converted = 0
 
-# Look for Vibium result files (JSON, XML, or other formats)
-# Vibium structure may vary, so we'll look for common patterns
-result_files = []
-for ext in ['*.json', '*.xml', '*.txt']:
-    result_files.extend(list(Path(vibium_dir).rglob(ext)))
+# Look for Vitest JSON result file (vitest-results.json)
+# Vitest outputs JSON to test-results/vitest-results.json when configured with JSON reporter
+vitest_json = Path(vibium_dir) / "test-results" / "vitest-results.json"
+if not vitest_json.exists():
+    # Try alternative locations
+    vitest_json = Path(vibium_dir) / "vitest-results.json"
+    if not vitest_json.exists():
+        # Look for any JSON file in test-results
+        test_results_dir = Path(vibium_dir) / "test-results"
+        if test_results_dir.exists():
+            json_files = list(test_results_dir.glob("*.json"))
+            if json_files:
+                vitest_json = json_files[0]
+            else:
+                print("ℹ️  No Vitest JSON result file found")
+                print("   Expected: test-results/vitest-results.json")
+                print("   This is expected if Vibium tests haven't run or JSON reporter isn't configured")
+                sys.exit(0)
+        else:
+            print("ℹ️  No Vitest result files found")
+            print("   This is expected if Vibium tests haven't run")
+            sys.exit(0)
 
-if not result_files:
-    print("ℹ️  No Vibium result files found")
-    print("   This is expected if Vibium tests haven't run")
-    sys.exit(0)
-
-# Try to find test result information
+# Parse Vitest JSON output
 total_tests = 0
 passed_tests = 0
 failed_tests = 0
+test_results = []
 
-for result_file in result_files:
-    try:
-        if result_file.suffix == '.json':
-            with open(result_file, 'r') as f:
-                data = json.load(f)
-                
-                # Try to extract test statistics (structure may vary)
-                if isinstance(data, dict):
-                    # Look for common test result fields
-                    if 'tests' in data:
-                        total_tests += data.get('tests', 0)
-                        passed_tests += data.get('passed', data.get('pass', 0))
-                        failed_tests += data.get('failed', data.get('fail', 0))
-                    elif 'total' in data:
-                        total_tests += data.get('total', 0)
-                        passed_tests += data.get('passed', 0)
-                        failed_tests += data.get('failed', 0)
+try:
+    with open(vitest_json, 'r') as f:
+        data = json.load(f)
         
-        elif result_file.suffix == '.xml':
-            # Could parse XML if needed
-            pass
+        # Vitest JSON format: { numTotalTests, numPassedTests, numFailedTests, testResults: [...] }
+        if isinstance(data, dict):
+            total_tests = data.get('numTotalTests', 0)
+            passed_tests = data.get('numPassedTests', 0)
+            failed_tests = data.get('numFailedTests', 0)
+            test_results = data.get('testResults', [])
             
-    except Exception as e:
-        # Skip files that can't be parsed
-        continue
+            print(f"📊 Found Vitest results: {total_tests} tests ({passed_tests} passed, {failed_tests} failed)")
+            
+except Exception as e:
+    print(f"⚠️  Error parsing Vitest JSON: {e}")
+    sys.exit(0)
 
-# If we found test statistics, create Allure result
-if total_tests > 0 or len(result_files) > 0:
-    status = "passed" if failed_tests == 0 and total_tests > 0 else "failed" if failed_tests > 0 else "passed"
-    duration = 60000  # Default 1 minute
+# Create Allure results for each test suite/file
+if total_tests > 0 and test_results:
+    # Process each test file/suite from Vitest results
+    for test_suite in test_results:
+        suite_name = test_suite.get('name', 'Unknown Test Suite')
+        suite_status = test_suite.get('status', 'unknown')
+        suite_duration = test_suite.get('duration', 0)
+        
+        # Determine overall status for this suite
+        suite_num_passed = test_suite.get('numPassingTests', 0)
+        suite_num_failed = test_suite.get('numFailingTests', 0)
+        suite_num_total = test_suite.get('numPassingTests', 0) + test_suite.get('numFailingTests', 0)
+        
+        if suite_num_failed > 0:
+            status = "failed"
+        elif suite_num_passed > 0:
+            status = "passed"
+        else:
+            status = "skipped"
+        
+        # Create Allure result for this test suite
+        test_uuid = uuid.uuid4().hex[:32]
+        timestamp = int(datetime.now().timestamp() * 1000)
+        test_name = suite_name.replace('.spec.ts', '').replace('tests/', '').replace('/', ' › ')
+        full_name = f"Vibium.{test_name}"
+        history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+        
+        labels = [
+            {"name": "suite", "value": "Vibium Tests"},
+            {"name": "testClass", "value": "Vibium"},
+            {"name": "epic", "value": "Vibium Visual Regression Testing"},
+            {"name": "feature", "value": "Vibium Tests"}
+        ]
+        
+        if env and env not in ["unknown", "combined"]:
+            labels.append({"name": "environment", "value": env})
+        
+        params = []
+        if env and env not in ["unknown", "combined"]:
+            params.append({"name": "Environment", "value": env.upper()})
+        
+        description = f"Vibium Visual Regression Test Suite: {test_name}"
+        if suite_num_total > 0:
+            description += f" - {suite_num_total} tests ({suite_num_passed} passed, {suite_num_failed} failed)"
+        
+        duration_ms = int(suite_duration * 1000) if suite_duration > 0 else 1000
+        
+        result = {
+            "uuid": test_uuid,
+            "historyId": history_id,
+            "fullName": full_name,
+            "labels": labels,
+            "name": test_name + (f" ({suite_num_passed} passed, {suite_num_failed} failed)" if suite_num_total > 0 else ""),
+            "status": status,
+            "statusDetails": {
+                "known": False,
+                "muted": False,
+                "flaky": False
+            },
+            "stage": "finished",
+            "description": description,
+            "steps": [],
+            "attachments": [],
+            "parameters": params,
+            "start": timestamp,
+            "stop": timestamp + duration_ms
+        }
+        
+        output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+        with open(output_file, 'w') as f:
+            json.dump(result, f, indent=2)
+        
+        converted += 1
     
-    test_uuid = uuid.uuid4().hex[:32]
-    timestamp = int(datetime.now().timestamp() * 1000)
-    test_name = "Vibium Visual Regression Tests"
-    full_name = f"Vibium.{test_name}"
-    history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
-    
-    labels = [
-        {"name": "suite", "value": "Vibium Tests"},
-        {"name": "testClass", "value": "Vibium"},
-        {"name": "epic", "value": "Vibium Visual Regression Testing"},
-        {"name": "feature", "value": "Vibium Tests"}
-    ]
-    
-    if env and env not in ["unknown", "combined"]:
-        labels.append({"name": "environment", "value": env})
-    
-    params = []
-    if env and env not in ["unknown", "combined"]:
-        params.append({"name": "Environment", "value": env.upper()})
-    
-    description = f"Vibium Visual Regression Test Suite"
-    if total_tests > 0:
-        description += f": {total_tests} tests total, {passed_tests} passed, {failed_tests} failed"
-    else:
-        description += f": {len(result_files)} result file(s) found"
-    
-    result = {
-        "uuid": test_uuid,
-        "historyId": history_id,
-        "fullName": full_name,
-        "labels": labels,
-        "name": f"{test_name}" + (f" ({passed_tests} passed, {failed_tests} failed)" if total_tests > 0 else ""),
-        "status": status,
-        "statusDetails": {
-            "known": False,
-            "muted": False,
-            "flaky": False
-        },
-        "stage": "finished",
-        "description": description,
-        "steps": [],
-        "attachments": [],
-        "parameters": params,
-        "start": timestamp,
-        "stop": timestamp + duration
-    }
-    
-    output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
-    with open(output_file, 'w') as f:
-        json.dump(result, f, indent=2)
-    
-    print(f"✅ Created Allure result: {output_file}")
-    if total_tests > 0:
-        print(f"   Status: {status}, Tests: {total_tests}, Passed: {passed_tests}, Failed: {failed_tests}")
-    else:
-        print(f"   Status: {status}, Result files found: {len(result_files)}")
-    converted += 1
+    print(f"✅ Created {converted} Allure result(s) from Vitest output")
+    print(f"   Total: {total_tests} tests ({passed_tests} passed, {failed_tests} failed)")
 
 if converted == 0:
     print("ℹ️  No Vibium results were converted")

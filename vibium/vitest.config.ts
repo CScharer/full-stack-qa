@@ -5,6 +5,8 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['tests/**/*.spec.ts'],
+    // Output test results as JSON for Allure conversion
+    reporters: ['verbose', ['json', { outputFile: './test-results/vitest-results.json' }]],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
