@@ -76,140 +76,154 @@ chmod +x scripts/ci/verify-merged-allure-results.sh
 echo ""
 echo "🔄 Step 3: Converting framework test results to Allure format..."
 
-# Determine environment from artifact paths
-ENV_FOR_CONVERSION=""
-if [ -d "$SOURCE_DIR/results-dev" ] || ( [ -d "$SOURCE_DIR/cypress-results" ] && find "$SOURCE_DIR/cypress-results" -name "*dev*" 2>/dev/null | head -1 | grep -q . ); then
-    ENV_FOR_CONVERSION="dev"
-elif [ -d "$SOURCE_DIR/results-test" ] || find "$SOURCE_DIR" -name "*test*" 2>/dev/null | head -1 | grep -q .; then
-    ENV_FOR_CONVERSION="test"
-elif [ -d "$SOURCE_DIR/results-prod" ] || find "$SOURCE_DIR" -name "*prod*" 2>/dev/null | head -1 | grep -q .; then
-    ENV_FOR_CONVERSION="prod"
-fi
+# Process framework results for each environment
+# Framework artifacts may be in environment-specific directories or merged directories
+# We'll process both to ensure we catch all results
+ENVIRONMENTS=("dev" "test" "prod")
 
-if [ -n "$ENV_FOR_CONVERSION" ]; then
-    echo "   Detected environment: $ENV_FOR_CONVERSION"
-fi
+# Convert Cypress results for each environment
+for env in "${ENVIRONMENTS[@]}"; do
+    # Check environment-specific directory first
+    if [ -d "$SOURCE_DIR/results-$env/cypress-results-$env" ]; then
+        echo "   Converting Cypress results ($env)..."
+        chmod +x scripts/ci/convert-cypress-to-allure.sh
+        json_file=$(find "$SOURCE_DIR/results-$env/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
+        if [ -n "$json_file" ] && [ -f "$json_file" ]; then
+            json_dir=$(dirname "$json_file")
+            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
+        elif [ -d "$SOURCE_DIR/results-$env/cypress-results-$env/results" ]; then
+            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/cypress-results-$env/results" "$env" || true
+        fi
+    fi
+done
 
-# Convert Cypress results
-if [ -d "$SOURCE_DIR/cypress-results" ]; then
-    echo "   Converting Cypress results..."
-    echo "   🔍 Inspecting Cypress artifact contents..."
-    echo "   📂 Files in cypress-results:"
-    find "$SOURCE_DIR/cypress-results" -type f 2>/dev/null | head -10 | while read f; do 
-        size=$(du -h "$f" 2>/dev/null | cut -f1)
-        echo "      - $f ($size)"
-    done || echo "      (no files found)"
-    echo "   📁 Directories in cypress-results:"
-    find "$SOURCE_DIR/cypress-results" -type d 2>/dev/null | head -10 | while read d; do 
-        echo "      📁 $d"
-    done || echo "      (no directories found)"
-    
+# Check merged cypress-results directory only if no environment-specific directories were found
+# Merged directories contain all environments, so we need to process them for each environment
+CYPRESS_PROCESSED=0
+for env in "${ENVIRONMENTS[@]}"; do
+    if [ -d "$SOURCE_DIR/results-$env/cypress-results-$env" ]; then
+        CYPRESS_PROCESSED=1
+        break
+    fi
+done
+
+if [ "$CYPRESS_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/cypress-results" ]; then
+    echo "   Converting Cypress results (merged artifacts - processing for all environments)..."
     chmod +x scripts/ci/convert-cypress-to-allure.sh
-    # Try to find result JSON files in multiple locations
-    # Look for: mochawesome.json, cypress-results.json, or results/cypress-results.json
-    CYPRESS_FOUND=0
-    # Use a more reliable method to find JSON files
-    json_file=$(find "$SOURCE_DIR/cypress-results" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
-    if [ -n "$json_file" ] && [ -f "$json_file" ]; then
-        echo "   ✅ Found Cypress result file: $json_file"
-        json_dir=$(dirname "$json_file")
-        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$ENV_FOR_CONVERSION" || true
-        CYPRESS_FOUND=1
-    elif [ -d "$SOURCE_DIR/cypress-results/cypress/results" ]; then
-        echo "   ✅ Found Cypress results directory: $SOURCE_DIR/cypress-results/cypress/results"
-        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/results" "$ENV_FOR_CONVERSION" || true
-        CYPRESS_FOUND=1
-    elif [ -d "$SOURCE_DIR/cypress-results/cypress" ]; then
-        echo "   ✅ Found Cypress directory: $SOURCE_DIR/cypress-results/cypress"
-        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress" "$ENV_FOR_CONVERSION" || true
-        CYPRESS_FOUND=1
-    else
-        echo "   🔍 Trying root cypress-results directory as fallback..."
-        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results" "$ENV_FOR_CONVERSION" || true
-    fi
-    if [ "$CYPRESS_FOUND" -eq 0 ]; then
-        echo "   ⚠️  No Cypress result JSON files found"
-        echo "   💡 Possible causes:"
-        echo "      - Cypress tests didn't run"
-        echo "      - after:run hook didn't execute"
-        echo "      - Result file in different location"
-    fi
+    # Process merged directory for each environment (same tests run in each environment)
+    for env in "${ENVIRONMENTS[@]}"; do
+        json_file=$(find "$SOURCE_DIR/cypress-results" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
+        if [ -n "$json_file" ] && [ -f "$json_file" ]; then
+            json_dir=$(dirname "$json_file")
+            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
+        elif [ -d "$SOURCE_DIR/cypress-results/results" ]; then
+            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/results" "$env" || true
+        fi
+    done
 fi
 
-# Convert Playwright results
-if [ -d "$SOURCE_DIR/playwright-results" ]; then
-    echo "   Converting Playwright results..."
+# Convert Playwright results for each environment
+for env in "${ENVIRONMENTS[@]}"; do
+    # Check environment-specific directory first
+    if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env" ]; then
+        echo "   Converting Playwright results ($env)..."
+        chmod +x scripts/ci/convert-playwright-to-allure.sh
+        if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" ]; then
+            ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" "$env" || true
+        fi
+    fi
+done
+
+# Check merged playwright-results directory only if no environment-specific directories were found
+PLAYWRIGHT_PROCESSED=0
+for env in "${ENVIRONMENTS[@]}"; do
+    if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env" ]; then
+        PLAYWRIGHT_PROCESSED=1
+        break
+    fi
+done
+
+if [ "$PLAYWRIGHT_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/playwright-results" ]; then
+    echo "   Converting Playwright results (merged artifacts - processing for all environments)..."
     chmod +x scripts/ci/convert-playwright-to-allure.sh
-    # Try multiple locations: test-results directory, playwright-results root, or any directory with results.json
-    if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
-        ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$ENV_FOR_CONVERSION" || true
-    fi
-    # Also try the root playwright-results directory
-    if find "$SOURCE_DIR/playwright-results" -name "results.json" 2>/dev/null | head -1 | read results_file; then
-        results_dir=$(dirname "$results_file")
-        ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$results_dir" "$ENV_FOR_CONVERSION" || true
-    fi
+    # Process merged directory for each environment (same tests run in each environment)
+    for env in "${ENVIRONMENTS[@]}"; do
+        if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
+            ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$env" || true
+        fi
+    done
 fi
 
-# Convert Robot Framework results
-if [ -d "$SOURCE_DIR/robot-results" ]; then
-    echo "   Converting Robot Framework results..."
+# Convert Robot Framework results for each environment
+for env in "${ENVIRONMENTS[@]}"; do
+    # Check environment-specific directory first
+    if [ -d "$SOURCE_DIR/results-$env" ]; then
+        output_xml=$(find "$SOURCE_DIR/results-$env" -name "output.xml" 2>/dev/null | head -1)
+        if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
+            echo "   Converting Robot Framework results ($env)..."
+            chmod +x scripts/ci/convert-robot-to-allure.sh
+            output_dir=$(dirname "$output_xml")
+            ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env" || true
+        fi
+    fi
+done
+
+# Check merged robot-results directory only if no environment-specific directories were found
+ROBOT_PROCESSED=0
+for env in "${ENVIRONMENTS[@]}"; do
+    if [ -f "$SOURCE_DIR/results-$env/output.xml" ]; then
+        ROBOT_PROCESSED=1
+        break
+    fi
+done
+
+if [ "$ROBOT_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/robot-results" ]; then
+    echo "   Converting Robot Framework results (merged artifacts - processing for all environments)..."
     chmod +x scripts/ci/convert-robot-to-allure.sh
-    # Try to find output.xml in various locations
-    if find "$SOURCE_DIR/robot-results" -name "output.xml" 2>/dev/null | head -1 | read output_xml; then
-        output_dir=$(dirname "$output_xml")
-        ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$ENV_FOR_CONVERSION" || true
-    else
-        # Fallback: try common directory names
-        find "$SOURCE_DIR/robot-results" -type d \( -name "robot-reports" -o -name "target" \) | while read robot_dir; do
-            if [ -f "$robot_dir/output.xml" ] || [ -f "$robot_dir/robot-reports/output.xml" ]; then
-                OUTPUT_DIR="$robot_dir"
-                if [ -f "$robot_dir/robot-reports/output.xml" ]; then
-                    OUTPUT_DIR="$robot_dir/robot-reports"
-                fi
-                ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$OUTPUT_DIR" "$ENV_FOR_CONVERSION" || true
-            fi
-        done
-    fi
+    # Process merged directory for each environment (same tests run in each environment)
+    for env in "${ENVIRONMENTS[@]}"; do
+        output_xml=$(find "$SOURCE_DIR/robot-results" -name "output.xml" 2>/dev/null | head -1)
+        if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
+            output_dir=$(dirname "$output_xml")
+            ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env" || true
+        fi
+    done
 fi
 
-# Convert Vibium results
-if [ -d "$SOURCE_DIR/vibium-results" ]; then
-    echo "   Converting Vibium results..."
-    echo "   🔍 Searching for Vibium result files..."
-    echo "   📂 Contents of vibium-results:"
-    find "$SOURCE_DIR/vibium-results" -type f 2>/dev/null | head -10 | while read f; do 
-        size=$(du -h "$f" 2>/dev/null | cut -f1)
-        echo "      - $f ($size)"
-    done || echo "      (no files found)"
-    find "$SOURCE_DIR/vibium-results" -type d 2>/dev/null | head -10 | while read d; do 
-        echo "      📁 $d"
-    done || echo "      (no directories found)"
-    
+# Convert Vibium results for each environment
+for env in "${ENVIRONMENTS[@]}"; do
+    # Check environment-specific directory first
+    if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env" ]; then
+        echo "   Converting Vibium results ($env)..."
+        chmod +x scripts/ci/convert-vibium-to-allure.sh
+        if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" ]; then
+            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" "$env" || true
+        elif [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" ]; then
+            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" "$env" || true
+        fi
+    fi
+done
+
+# Check merged vibium-results directory only if no environment-specific directories were found
+VIBIUM_PROCESSED=0
+for env in "${ENVIRONMENTS[@]}"; do
+    if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env" ]; then
+        VIBIUM_PROCESSED=1
+        break
+    fi
+done
+
+if [ "$VIBIUM_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/vibium-results" ]; then
+    echo "   Converting Vibium results (merged artifacts - processing for all environments)..."
     chmod +x scripts/ci/convert-vibium-to-allure.sh
-    VIBIUM_FOUND=0
-    # Try test-results directory first
-    if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
-        echo "   ✅ Found Vibium test-results directory: $SOURCE_DIR/vibium-results/test-results"
-        ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$ENV_FOR_CONVERSION" || true
-        VIBIUM_FOUND=1
-    elif [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
-        echo "   ✅ Found Vibium .vitest directory: $SOURCE_DIR/vibium-results/.vitest"
-        ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/.vitest" "$ENV_FOR_CONVERSION" || true
-        VIBIUM_FOUND=1
-    else
-        # Fallback: search for any result files
-        find "$SOURCE_DIR/vibium-results" -type d \( -name "test-results" -o -name ".vitest" \) | while read vibium_dir; do
-            echo "   ✅ Found Vibium directory: $vibium_dir"
-            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$vibium_dir" "$ENV_FOR_CONVERSION" || true
-            VIBIUM_FOUND=1
-        done
-    fi
-    if [ "$VIBIUM_FOUND" -eq 0 ]; then
-        echo "   ⚠️  No Vibium result files found in $SOURCE_DIR/vibium-results"
-        echo "   💡 Note: Vitest may need reporter configuration to generate result files"
-        echo "   💡 Check if vibium/vitest.config.ts has JSON/XML reporter configured"
-    fi
+    # Process merged directory for each environment (same tests run in each environment)
+    for env in "${ENVIRONMENTS[@]}"; do
+        if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
+            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$env" || true
+        elif [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
+            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/.vitest" "$env" || true
+        fi
+    done
 fi
 
 # Step 4: Add environment labels
