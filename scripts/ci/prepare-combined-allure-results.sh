@@ -75,18 +75,44 @@ fi
 # Convert Cypress results
 if [ -d "$SOURCE_DIR/cypress-results" ]; then
     echo "   Converting Cypress results..."
+    echo "   🔍 Inspecting Cypress artifact contents..."
+    echo "   📂 Files in cypress-results:"
+    find "$SOURCE_DIR/cypress-results" -type f 2>/dev/null | head -10 | while read f; do 
+        size=$(du -h "$f" 2>/dev/null | cut -f1)
+        echo "      - $f ($size)"
+    done || echo "      (no files found)"
+    echo "   📁 Directories in cypress-results:"
+    find "$SOURCE_DIR/cypress-results" -type d 2>/dev/null | head -10 | while read d; do 
+        echo "      📁 $d"
+    done || echo "      (no directories found)"
+    
     chmod +x scripts/ci/convert-cypress-to-allure.sh
     # Try to find result JSON files in multiple locations
     # Look for: mochawesome.json, cypress-results.json, or results/cypress-results.json
+    CYPRESS_FOUND=0
     if find "$SOURCE_DIR/cypress-results" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1 | read json_file; then
+        echo "   ✅ Found Cypress result file: $json_file"
         json_dir=$(dirname "$json_file")
         ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$ENV_FOR_CONVERSION" || true
+        CYPRESS_FOUND=1
     elif [ -d "$SOURCE_DIR/cypress-results/cypress/results" ]; then
-        # Check for results directory structure
+        echo "   ✅ Found Cypress results directory: $SOURCE_DIR/cypress-results/cypress/results"
         ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/results" "$ENV_FOR_CONVERSION" || true
+        CYPRESS_FOUND=1
     elif [ -d "$SOURCE_DIR/cypress-results/cypress" ]; then
-        # Fallback: try cypress directory
+        echo "   ✅ Found Cypress directory: $SOURCE_DIR/cypress-results/cypress"
         ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress" "$ENV_FOR_CONVERSION" || true
+        CYPRESS_FOUND=1
+    else
+        echo "   🔍 Trying root cypress-results directory as fallback..."
+        ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results" "$ENV_FOR_CONVERSION" || true
+    fi
+    if [ "$CYPRESS_FOUND" -eq 0 ]; then
+        echo "   ⚠️  No Cypress result JSON files found"
+        echo "   💡 Possible causes:"
+        echo "      - Cypress tests didn't run"
+        echo "      - after:run hook didn't execute"
+        echo "      - Result file in different location"
     fi
 fi
 
