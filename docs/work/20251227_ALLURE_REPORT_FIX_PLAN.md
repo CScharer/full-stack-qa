@@ -194,22 +194,32 @@
 
 **Implementation Details**:
 - **Cypress**: Parses `mochawesome.json` or `cypress-results.json` files
+  - ✅ Creates individual Allure results for each test (not summary)
+  - Recursively searches for test objects in Cypress JSON structure
+  - Maps Cypress states (passed/failed/pending) to Allure statuses
 - **Playwright**: Parses `results.json` files from test-results directory
+  - ✅ Creates individual Allure results for each test
 - **Robot Framework**: Parses `output.xml` files
-- **Vibium**: Parses JSON/XML result files from test-results directory
+  - ✅ Creates individual Allure results for each test from `<test>` elements
+  - Extracts test name, status, and duration from XML
+- **Vibium**: Parses Vitest JSON result files from test-results directory
+  - ✅ Creates individual Allure results from `assertionResults` array
+  - ✅ Fixed status logic to properly detect passed tests (was showing skipped incorrectly)
+  - Maps Vitest statuses (passed/failed/skipped) to Allure statuses
 - All scripts create Allure JSON results with proper Epic/Feature/Story labels
 - Environment labels are added automatically
 - Scripts use Python for reliable JSON/XML parsing
 
 **Testing**:
-- ⏳ Verify all framework tests appear in combined report (pending next CI run)
-- ⏳ Verify tests appear in "Features By Stories" section (pending next CI run)
-- ⏳ Verify Epic/Feature/Story labels are properly assigned (pending next CI run)
+- ✅ Verified all framework tests appear in combined report
+- ✅ Verified tests appear in "Features By Stories" section
+- ✅ Verified Epic/Feature/Story labels are properly assigned
+- ✅ Verified individual test results (not summaries) for all frameworks
 
 ---
 
 ### Step 5: Verify Selenide Results
-**Status**: ⏳ **Pending Verification**  
+**Status**: ✅ **Completed**  
 **Priority**: 🟡 Medium
 
 **Description**: Verify Selenide tests are generating Allure results and appearing in combined report
@@ -219,13 +229,22 @@
 - ✅ Verified Selenide test results are uploaded with Allure results (line 1009-1010: uploads `target/allure-results/`)
 
 **Findings**:
-- Selenide uses TestNG with Allure listener (should generate Allure results automatically)
+- Selenide uses TestNG with Allure listener (generates Allure results automatically)
 - Results are uploaded as `selenide-results-{env}` artifact containing `target/allure-results/`
-- Results should be merged by `merge-allure-results.sh` script
+- Results are merged by `merge-allure-results.sh` script
+- **Issue Found**: Selenide tests had generic suite label "Surefire test" which made them hard to find in Suites view
+
+**Solution Implemented**:
+- ✅ Updated `scripts/ci/add-environment-labels.sh` to detect Selenide tests
+- ✅ Selenide tests identified by: `epic="HomePage Tests"` and `testClass` containing `"HomePageTests"`
+- ✅ Suite label automatically changed from "Surefire test" to "Selenide Tests"
+- ✅ Tests now appear in both Suites view and Features By Stories view
 
 **Testing**:
-- ⏳ Verify Selenide tests appear in combined report (pending next CI run)
-- ⏳ Verify Selenide tests have proper suite labels (pending next CI run)
+- ✅ Verified Selenide tests appear in combined report
+- ✅ Verified Selenide tests have proper suite labels ("Selenide Tests")
+- ✅ Verified tests visible in Suites view under "Selenide Tests"
+- ✅ Verified tests visible in Features By Stories under "HomePage Tests" → "HomePage Navigation"
 
 ---
 

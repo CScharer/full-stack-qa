@@ -11,8 +11,13 @@ After the CI pipeline completes, verify:
 
 - [ ] **Executors Section**: Shows GitHub Actions build information
 - [ ] **Categories Section**: Shows "Skipped Tests" with 9 Playwright tests
-- [ ] **Features By Stories**: Shows Playwright, Cypress, Robot Framework, Selenide
-- [ ] **Individual Test Results**: Playwright tests appear as individual results (not summary)
+- [ ] **Features By Stories**: Shows Playwright, Cypress, Robot Framework, Vibium, Selenide
+- [ ] **Suites View**: Shows all frameworks including Selenide under "Selenide Tests"
+- [ ] **Individual Test Results**: All framework tests appear as individual results (not summaries)
+  - [ ] Cypress: 2 individual tests (not 1 suite)
+  - [ ] Robot Framework: 5 individual tests (not 1 suite)
+  - [ ] Vibium: 6 individual tests with correct status (not 1 skipped)
+  - [ ] Playwright: Individual tests (not summary)
 - [ ] **Environment Labels**: Tests show [DEV], [TEST], [PROD] in names/parameters
 - [ ] **Trend Section**: Will appear after 2nd pipeline run
 
@@ -141,41 +146,55 @@ Categories:
 
 ---
 
-#### ✅ Fix 3: Playwright Individual Test Results
+#### ✅ Fix 3: Individual Test Results for All Frameworks
 
 **Location**: Multiple places in report
 
 **What to Check**:
 
-1. **In Categories → Skipped Tests**:
-   - [ ] See individual test names (not "Playwright Test Suite")
-   - [ ] Each test has its own entry
+1. **Cypress Tests**:
+   - [ ] In Suites: See "Cypress Tests" with 2 individual test results (not 1 summary)
+   - [ ] In Features By Stories: Individual test cases listed under "Cypress E2E Testing"
 
-2. **In Features By Stories**:
-   - [ ] Look for "Playwright E2E Testing" epic
-   - [ ] Under it, see "Playwright Tests" feature
-   - [ ] Individual test cases listed
+2. **Robot Framework Tests**:
+   - [ ] In Suites: See "Robot Framework Tests" with 5 individual test results (not 1 summary)
+   - [ ] In Features By Stories: Individual test cases listed under "Robot Framework Acceptance Testing"
 
-3. **In Suites**:
-   - [ ] See "Playwright Tests" suite
-   - [ ] Individual test cases listed with status (skipped/passed/failed)
+3. **Vibium Tests**:
+   - [ ] In Suites: See "Vibium Tests" with 6 individual test results (all showing "passed", not "skipped")
+   - [ ] In Features By Stories: Individual test cases listed under "Vibium Visual Regression Testing"
+
+4. **Playwright Tests**:
+   - [ ] In Categories → Skipped Tests: See individual test names (not "Playwright Test Suite")
+   - [ ] In Features By Stories: Individual test cases under "Playwright E2E Testing"
+   - [ ] In Suites: Individual test cases listed with status (skipped/passed/failed)
 
 **Expected Result**:
-- Before fix: 1 result named "Playwright Test Suite (X passed, Y failed, 9 skipped)"
-- After fix: 9+ individual results, each with its own name and status
+- Before fix: 1 summary result per framework (e.g., "Cypress Test Suite (2 passed, 0 failed)")
+- After fix: Individual results for each test case with proper status
 
 ---
 
-#### ✅ Fix 4: Framework Tests in Features By Stories
+#### ✅ Fix 4: Framework Tests in Features By Stories and Suites
 
-**Location**: Left sidebar → **Behaviors** (or **Features By Stories**)
+**Location**: Left sidebar → **Behaviors** (or **Features By Stories**) and **Suites**
 
 **What to Check**:
-- [ ] **Playwright**: "Playwright E2E Testing" epic appears
-- [ ] **Cypress**: "Cypress E2E Testing" epic appears (if Cypress tests ran)
-- [ ] **Robot Framework**: "Robot Framework Tests" epic appears (if Robot tests ran)
-- [ ] **Selenide**: "HomePage Tests" epic appears (if Selenide tests ran)
-- [ ] Each epic has features and individual tests
+
+**In Features By Stories**:
+- [ ] **Playwright**: "Playwright E2E Testing" epic appears with individual tests
+- [ ] **Cypress**: "Cypress E2E Testing" epic appears with 2 individual tests
+- [ ] **Robot Framework**: "Robot Framework Acceptance Testing" epic appears with 5 individual tests
+- [ ] **Vibium**: "Vibium Visual Regression Testing" epic appears with 6 individual tests (all passed)
+- [ ] **Selenide**: "HomePage Tests" epic appears with individual tests under "HomePage Navigation"
+- [ ] Each epic has features and individual tests (not summaries)
+
+**In Suites View**:
+- [ ] **Cypress Tests**: Shows 2 individual test results
+- [ ] **Robot Framework Tests**: Shows 5 individual test results
+- [ ] **Vibium Tests**: Shows 6 individual test results (all passed)
+- [ ] **Playwright Tests**: Shows individual test results
+- [ ] **Selenide Tests**: Shows individual test results (was missing before, now visible)
 
 **Expected Result**:
 ```
@@ -184,13 +203,31 @@ Features By Stories:
 │   └── Playwright Tests
 │       ├── Test 1 (skipped)
 │       ├── Test 2 (skipped)
-│       └── ... (9 skipped tests)
-├── Cypress E2E Testing (if ran)
+│       └── ... (individual tests)
+├── Cypress E2E Testing
 │   └── Cypress Tests
-├── Robot Framework Tests (if ran)
+│       ├── Test 1 (passed)
+│       └── Test 2 (passed)
+├── Robot Framework Acceptance Testing
 │   └── Robot Framework Tests
-└── HomePage Tests (Selenide, if ran)
+│       ├── Test 1 (passed)
+│       ├── Test 2 (passed)
+│       └── ... (5 individual tests)
+├── Vibium Visual Regression Testing
+│   └── Vibium Tests
+│       ├── Test 1 (passed)
+│       └── ... (6 individual tests, all passed)
+└── HomePage Tests (Selenide)
     └── HomePage Navigation
+        ├── testHomePageLoads [DEV] (passed)
+        └── testNavigationPanel [DEV] (passed)
+
+Suites:
+├── Cypress Tests (2 tests)
+├── Robot Framework Tests (5 tests)
+├── Vibium Tests (6 tests)
+├── Playwright Tests (X tests)
+└── Selenide Tests (8 tests) ← Now visible!
 ```
 
 **If Frameworks Missing**:
@@ -314,10 +351,15 @@ All fixes are verified when:
 
 1. ✅ **Executors section** appears with build information
 2. ✅ **Categories section** shows "Skipped Tests" with 9 Playwright tests
-3. ✅ **Playwright tests** appear as individual results (not summary)
-4. ✅ **Framework tests** appear in Features By Stories (Playwright, Cypress, etc.)
-5. ✅ **Environment labels** visible in test names/parameters
-6. ✅ **Trend section** appears after 2nd run
+3. ✅ **All framework tests** appear as individual results (not summaries):
+   - Cypress: 2 individual tests
+   - Robot Framework: 5 individual tests
+   - Vibium: 6 individual tests (all passed, not skipped)
+   - Playwright: Individual tests
+4. ✅ **Framework tests** appear in Features By Stories (Playwright, Cypress, Robot, Vibium, Selenide)
+5. ✅ **Selenide tests** appear in Suites view under "Selenide Tests" (was missing before)
+6. ✅ **Environment labels** visible in test names/parameters
+7. ✅ **Trend section** appears after 2nd run
 
 ---
 
