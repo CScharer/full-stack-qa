@@ -211,6 +211,7 @@ for result_file in all_files:
         # They currently have parentSuite="Surefire suite" and suite="Surefire test" which groups them incorrectly
         # Detection: Use epic="HomePage Tests" as primary identifier (most reliable)
         # Fallback: Also check for feature="HomePage Navigation" or testClass containing "HomePageTests"
+        # For container files: Check for "Surefire suite" or "Surefire test" in suite/parentSuite labels
         if 'labels' in data:
             labels = data.get('labels', [])
             epic_value = None
@@ -218,7 +219,23 @@ for result_file in all_files:
             test_class_value = None
             suite_label_index = None
             parent_suite_label_index = None
+            suite_value = None
+            parent_suite_value = None
             is_selenide_test = False
+            
+            # Check if this is a container file (has children or childrenUuid)
+            is_container = 'children' in data or 'childrenUuid' in data
+            
+            # Also check name/fullName fields for container files (might contain "Surefire" or "HomePage")
+            if is_container:
+                if 'name' in data:
+                    container_name = data.get('name', '')
+                    if 'Surefire' in container_name or 'HomePage' in container_name or 'HomePageTests' in container_name:
+                        is_selenide_test = True
+                if 'fullName' in data:
+                    container_fullname = data.get('fullName', '')
+                    if 'HomePage' in container_fullname or 'HomePageTests' in container_fullname:
+                        is_selenide_test = True
             
             for i, label in enumerate(labels):
                 label_name = label.get('name', '')
@@ -239,8 +256,16 @@ for result_file in all_files:
                         is_selenide_test = True
                 elif label_name == 'suite':
                     suite_label_index = i
+                    suite_value = label_value
+                    # For container files, check if suite contains "Surefire" (Selenide containers)
+                    if is_container and 'Surefire' in label_value:
+                        is_selenide_test = True
                 elif label_name == 'parentSuite':
                     parent_suite_label_index = i
+                    parent_suite_value = label_value
+                    # For container files, check if parentSuite contains "Surefire" (Selenide containers)
+                    if is_container and 'Surefire' in label_value:
+                        is_selenide_test = True
             
             # If this is a Selenide test, update labels for proper grouping
             # Allure uses parentSuite for top-level grouping in Suites view
@@ -281,6 +306,13 @@ for result_file in all_files:
                     test_name = data.get('name', '')
                     if 'Selenide' not in test_name:
                         data['fullName'] = f"Selenide.{test_name}"
+                
+                # For container files, also update the name field if it contains "Surefire"
+                if is_container and 'name' in data:
+                    container_name = data.get('name', '')
+                    if 'Surefire' in container_name and 'Selenide' not in container_name:
+                        # Replace "Surefire" with "Selenide" in container name
+                        data['name'] = container_name.replace('Surefire', 'Selenide').replace('surefire', 'Selenide')
         
         # Update historyId to include environment to prevent cross-environment deduplication
         # This allows the same test from different environments to be shown separately
