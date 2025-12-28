@@ -208,9 +208,9 @@ jobs:
         run: |
           chmod +x scripts/ci/setup-base-urls.sh
           ./scripts/ci/setup-base-urls.sh \
-            "${{ vars.BASE_URL_DEV }}" \
-            "${{ vars.BASE_URL_TEST }}" \
-            "${{ vars.BASE_URL_PROD }}"
+            "${{ env.BASE_URL_DEV }}" \
+            "${{ env.BASE_URL_TEST }}" \
+            "${{ env.BASE_URL_PROD }}"
 
   determine-envs:
     name: Determine Environments
