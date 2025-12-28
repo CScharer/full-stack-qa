@@ -39,12 +39,30 @@ if [ "$SELENIDE_COUNT" -gt 0 ]; then
     echo "   ✅ Found $SELENIDE_COUNT Selenide test result(s) in merged results"
 else
     echo "   ⚠️  No Selenide results found in merged results"
-    echo "   🔍 Checking for selenide-results artifacts..."
-    if find "$SOURCE_DIR" -path "*/selenide-results-*/target/allure-results/*-result.json" 2>/dev/null | head -1 | read selenide_file; then
-        echo "   ✅ Found Selenide results in artifacts: $selenide_file"
-        echo "   ℹ️  They should be merged by merge-allure-results.sh"
+    echo "   🔍 Checking for selenide-results artifacts in source..."
+    SELENIDE_IN_SOURCE=$(find "$SOURCE_DIR" -path "*/selenide-results-*/*" -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$SELENIDE_IN_SOURCE" -gt 0 ]; then
+        echo "   ✅ Found $SELENIDE_IN_SOURCE Selenide result file(s) in artifacts"
+        echo "   📂 Selenide artifact locations:"
+        find "$SOURCE_DIR" -path "*/selenide-results-*" -type d 2>/dev/null | head -5 | while read d; do
+            count=$(find "$d" -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')
+            echo "      - $d ($count result files)"
+        done
+        echo "   ⚠️  These should have been merged by merge-allure-results.sh"
+        echo "   💡 Checking if they're in target/allure-results/ directories..."
+        find "$SOURCE_DIR" -path "*/selenide-results-*/target/allure-results/*-result.json" 2>/dev/null | head -3 | while read f; do
+            echo "      Found: $f"
+        done || echo "      (none found in target/allure-results/)"
     else
         echo "   ⚠️  No Selenide result files found in artifacts"
+        echo "   💡 Possible causes:"
+        echo "      - Selenide tests didn't run (check if selenide-tests job executed)"
+        echo "      - Artifacts weren't uploaded (check selenide-results-* artifacts)"
+        echo "      - Results are in a different location"
+        echo "   🔍 Checking for selenide-results directories:"
+        find "$SOURCE_DIR" -type d -name "*selenide*" 2>/dev/null | head -5 | while read d; do
+            echo "      📁 $d"
+        done || echo "      (no selenide directories found)"
     fi
 fi
 
