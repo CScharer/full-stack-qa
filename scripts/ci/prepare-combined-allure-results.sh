@@ -108,7 +108,9 @@ if [ -d "$SOURCE_DIR/cypress-results" ]; then
     # Try to find result JSON files in multiple locations
     # Look for: mochawesome.json, cypress-results.json, or results/cypress-results.json
     CYPRESS_FOUND=0
-    if find "$SOURCE_DIR/cypress-results" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1 | read json_file; then
+    # Use a more reliable method to find JSON files
+    json_file=$(find "$SOURCE_DIR/cypress-results" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
+    if [ -n "$json_file" ] && [ -f "$json_file" ]; then
         echo "   ✅ Found Cypress result file: $json_file"
         json_dir=$(dirname "$json_file")
         ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$ENV_FOR_CONVERSION" || true
