@@ -227,15 +227,24 @@ for result_file in all_files:
             is_container = 'children' in data or 'childrenUuid' in data
             
             # Also check name/fullName fields for container files (might contain "Surefire" or "HomePage")
+            # CRITICAL: If a container has name="Surefire test", it's likely a parent container
+            # that's causing Selenide tests to nest under it. We need to update it.
             if is_container:
                 if 'name' in data:
                     container_name = data.get('name', '')
                     if 'Surefire' in container_name or 'HomePage' in container_name or 'HomePageTests' in container_name:
                         is_selenide_test = True
+                    # Special case: If container name is "Surefire test", it's a parent container for Selenide
+                    # We need to update it to "Selenide Tests" so tests don't nest under "Surefire test"
+                    if container_name == 'Surefire test':
+                        is_selenide_test = True
                 if 'fullName' in data:
                     container_fullname = data.get('fullName', '')
                     if 'HomePage' in container_fullname or 'HomePageTests' in container_fullname:
                         is_selenide_test = True
+                # Also check if container has suite="Surefire test" - this is a parent container
+                if suite_value == 'Surefire test':
+                    is_selenide_test = True
             
             for i, label in enumerate(labels):
                 label_name = label.get('name', '')
@@ -259,6 +268,9 @@ for result_file in all_files:
                     suite_value = label_value
                     # For container files, check if suite contains "Surefire" (Selenide containers)
                     if is_container and 'Surefire' in label_value:
+                        is_selenide_test = True
+                    # Special case: If suite is "Surefire test", it's a parent container that needs updating
+                    if is_container and label_value == 'Surefire test':
                         is_selenide_test = True
                 elif label_name == 'parentSuite':
                     parent_suite_label_index = i
@@ -317,6 +329,14 @@ for result_file in all_files:
                         # This ensures Allure groups them correctly in the Suites view
                         data['name'] = 'Selenide Tests'
                         selenide_file_updated = True
+                
+                # CRITICAL: Also ensure parentSuite is removed from container files
+                # If a container has parentSuite="Surefire test", it will nest under "Surefire test"
+                # We already removed parentSuite above, but double-check for containers
+                if is_container and parent_suite_label_index is not None:
+                    # Remove parentSuite from container to make it top-level
+                    labels.pop(parent_suite_label_index)
+                    selenide_file_updated = True
                 
                 if selenide_file_updated:
                     data['labels'] = labels
