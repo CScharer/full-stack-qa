@@ -47,9 +47,11 @@ if not os.path.isdir(results_dir):
     print(f"⚠️  Results directory not found: {results_dir}")
     sys.exit(0)
 
-# Find all result files (exclude .env.* marker files)
+# Find all result files and container files (exclude .env.* marker files)
 result_files = [f for f in Path(results_dir).glob("*-result.json") if not f.name.startswith(".env.")]
-print(f"📊 Processing {len(result_files)} result files...")
+container_files = [f for f in Path(results_dir).glob("*-container.json") if not f.name.startswith(".env.")]
+all_files = result_files + container_files
+print(f"📊 Processing {len(result_files)} result files and {len(container_files)} container files...")
 
 processed = 0
 skipped = 0
@@ -111,7 +113,7 @@ if marker_files_found > 0:
     print(f"📋 Found {marker_files_found} marker files, successfully read {marker_files_read}")
     print(f"   Environment mapping contains {len(env_mapping)} entries")
 
-for result_file in result_files:
+for result_file in all_files:
     try:
         with open(result_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -335,7 +337,7 @@ print(f"   Processed: {processed} files")
 print(f"   Skipped (already labeled): {skipped} files")
 print(f"   Errors: {errors} files")
 print(f"   Selenide tests updated: {selenide_updated} files")
-print(f"   Total: {len(result_files)} files")
+print(f"   Total: {len(all_files)} files ({len(result_files)} result files, {len(container_files)} container files)")
 print(f"   Environments found: {', '.join(sorted(envs_found)) if envs_found else 'none'}")
 
 sys.exit(0)
