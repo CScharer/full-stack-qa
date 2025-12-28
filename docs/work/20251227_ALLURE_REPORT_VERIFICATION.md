@@ -13,11 +13,30 @@ After the CI pipeline completes, verify:
 - [ ] **Categories Section**: Shows "Skipped Tests" with 9 Playwright tests
 - [ ] **Features By Stories**: Shows Playwright, Cypress, Robot Framework, Vibium, Selenide
 - [ ] **Suites View**: Shows all frameworks
-  - [ ] Cypress Tests (2 tests)
-  - [ ] Robot Framework Tests (5 tests)
-  - [ ] Vibium Tests (6 tests)
-  - [ ] Playwright Tests (X tests)
-  - [ ] ⚠️ **Selenide Tests** - Currently grouped under "Surefire suite", fix pending verification
+  - [ ] Cypress Tests (2 tests per environment × 3 = 6 total)
+    - [ ] Cypress Tests [DEV]
+    - [ ] Cypress Tests [TEST]
+    - [ ] Cypress Tests [PROD]
+  - [ ] Robot Framework Tests (5 tests per environment × 3 = 15 total)
+    - [ ] Robot Framework Tests [DEV]
+    - [ ] Robot Framework Tests [TEST]
+    - [ ] Robot Framework Tests [PROD]
+  - [ ] Vibium Tests (6 tests per environment × 3 = 18 total)
+    - [ ] Vibium Tests [DEV]
+    - [ ] Vibium Tests [TEST]
+    - [ ] Vibium Tests [PROD]
+  - [ ] Playwright Tests (33 tests per environment × 3 = 99 total)
+    - [ ] Playwright Tests [DEV]
+    - [ ] Playwright Tests [TEST]
+    - [ ] Playwright Tests [PROD]
+  - [ ] **Selenide Tests** (8 tests per environment × 3 = 24 total) ✅
+    - [ ] Selenide Tests [DEV]
+    - [ ] Selenide Tests [TEST]
+    - [ ] Selenide Tests [PROD]
+  - [ ] **Surefire test** (TestNG-based: Smoke, Grid, Mobile, Responsive)
+    - [ ] Surefire test [DEV]
+    - [ ] Surefire test [TEST]
+    - [ ] Surefire test [PROD]
 - [ ] **Individual Test Results**: All framework tests appear as individual results (not summaries)
   - [ ] Cypress: 2 individual tests (not 1 suite)
   - [ ] Robot Framework: 5 individual tests (not 1 suite)
@@ -25,8 +44,9 @@ After the CI pipeline completes, verify:
   - [ ] Playwright: Individual tests (not summary)
 - [ ] **Environment Labels**: Tests show [DEV], [TEST], [PROD] in names/parameters
 - [ ] **Multi-Environment Results**: All three environments (dev, test, prod) appear in the report
-  - [ ] Framework tests (Cypress, Playwright, Robot, Vibium) show results for all environments
-  - [ ] TestNG-based tests (Smoke, Grid, Mobile, Responsive, Selenide) show results for all environments
+  - [ ] Framework tests (Cypress, Playwright, Robot, Vibium) show results for all environments ✅
+  - [ ] TestNG-based tests (Smoke, Grid, Mobile, Responsive, Selenide) show results for all environments ✅
+  - [ ] Each framework shows separate containers for [DEV], [TEST], [PROD] in Suites section ✅
 - [ ] **Trend Section**: Will appear after 2nd pipeline run
 
 ---
