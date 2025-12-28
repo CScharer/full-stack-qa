@@ -294,6 +294,8 @@ allure.link.tms.pattern=https://github.com/CScharer/full-stack-qa/issues/{}
 
 ## 📸 Adding Screenshots
 
+**Note**: Screenshots are only captured on test failures to reduce storage and improve report performance. Passing tests do not generate screenshots.
+
 ### On Test Failure
 ```java
 @AfterMethod

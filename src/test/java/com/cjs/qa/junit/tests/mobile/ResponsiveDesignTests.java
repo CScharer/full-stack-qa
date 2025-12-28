@@ -65,8 +65,7 @@ public class ResponsiveDesignTests {
     if (driver != null) {
       try {
         if (result.isSuccess()) {
-          LOG.info("✅ Test passed - capturing success screenshot...");
-          captureScreenshot("SUCCESS-" + result.getMethod().getMethodName());
+          LOG.info("✅ Test passed");
         } else {
           LOG.info("❌ Test failed - capturing failure screenshot...");
           captureScreenshot("FAILURE-" + result.getMethod().getMethodName());

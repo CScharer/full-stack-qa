@@ -1011,6 +1011,14 @@ jobs:
           path: all-test-results/robot-results
           merge-multiple: true
 
+      - name: Download Selenide results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "selenide-results-*"
+          path: all-test-results/selenide-results
+          merge-multiple: true
+
       - name: Download Vibium results
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -1026,11 +1034,18 @@ jobs:
           echo ""
           echo "🔍 TestNG-based results (should include Selenide):"
           echo "  DEV environment:"
-          find all-test-results/results-dev -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results: {} files"
+          find all-test-results/results-dev -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results (in results-dev): {} files"
+          find all-test-results/selenide-results -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results (explicit download): {} files"
           find all-test-results/results-dev -type d -path "*/selenide-results-*" 2>/dev/null | while read d; do
             echo "    📁 Found: $d"
             find "$d" -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "      Results: {} files"
           done
+          if [ -d "all-test-results/selenide-results" ]; then
+            find all-test-results/selenide-results -type d 2>/dev/null | head -5 | while read d; do
+              echo "    📁 Selenide artifact: $d"
+              find "$d" -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "      Results: {} files"
+            done
+          fi
           echo ""
           echo "  TEST environment:"
           find all-test-results/results-test -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results: {} files"

@@ -293,10 +293,7 @@ public class EnhancedGridTests {
         AllureHelper.attachBrowserLogs(driver);
         AllureHelper.logBrowserInfo(driver);
       } else if (result.getStatus() == ITestResult.SUCCESS) {
-        LOGGER.info("✅ Test passed - capturing success screenshot...");
-        if (LOGGER.isInfoEnabled()) {
-          AllureHelper.captureScreenshot(driver, "SUCCESS-" + result.getName());
-        }
+        LOGGER.info("✅ Test passed");
       } else if (result.getStatus() == ITestResult.SKIP) {
         LOGGER.info("⏭️  Test skipped");
       }

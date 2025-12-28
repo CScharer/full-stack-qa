@@ -63,10 +63,9 @@ public class MobileBrowserTests {
   public void tearDown(ITestResult result) {
     if (driver != null) {
       try {
-        // Capture screenshot on test completion
+        // Capture screenshot on test failure only
         if (result.isSuccess()) {
-          LOG.info("✅ Test passed - capturing success screenshot...");
-          captureScreenshot("SUCCESS-" + result.getMethod().getMethodName());
+          LOG.info("✅ Test passed");
         } else {
           LOG.info("❌ Test failed - capturing failure screenshot...");
           captureScreenshot("FAILURE-" + result.getMethod().getMethodName());

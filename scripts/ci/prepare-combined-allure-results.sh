@@ -177,6 +177,15 @@ fi
 if [ -d "$SOURCE_DIR/vibium-results" ]; then
     echo "   Converting Vibium results..."
     echo "   🔍 Searching for Vibium result files..."
+    echo "   📂 Contents of vibium-results:"
+    find "$SOURCE_DIR/vibium-results" -type f 2>/dev/null | head -10 | while read f; do 
+        size=$(du -h "$f" 2>/dev/null | cut -f1)
+        echo "      - $f ($size)"
+    done || echo "      (no files found)"
+    find "$SOURCE_DIR/vibium-results" -type d 2>/dev/null | head -10 | while read d; do 
+        echo "      📁 $d"
+    done || echo "      (no directories found)"
+    
     chmod +x scripts/ci/convert-vibium-to-allure.sh
     VIBIUM_FOUND=0
     # Try test-results directory first
@@ -184,9 +193,13 @@ if [ -d "$SOURCE_DIR/vibium-results" ]; then
         echo "   ✅ Found Vibium test-results directory: $SOURCE_DIR/vibium-results/test-results"
         ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$ENV_FOR_CONVERSION" || true
         VIBIUM_FOUND=1
+    elif [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
+        echo "   ✅ Found Vibium .vitest directory: $SOURCE_DIR/vibium-results/.vitest"
+        ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/.vitest" "$ENV_FOR_CONVERSION" || true
+        VIBIUM_FOUND=1
     else
         # Fallback: search for any result files
-        find "$SOURCE_DIR/vibium-results" -type d -name "test-results" | while read vibium_dir; do
+        find "$SOURCE_DIR/vibium-results" -type d \( -name "test-results" -o -name ".vitest" \) | while read vibium_dir; do
             echo "   ✅ Found Vibium directory: $vibium_dir"
             ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$vibium_dir" "$ENV_FOR_CONVERSION" || true
             VIBIUM_FOUND=1
@@ -194,8 +207,8 @@ if [ -d "$SOURCE_DIR/vibium-results" ]; then
     fi
     if [ "$VIBIUM_FOUND" -eq 0 ]; then
         echo "   ⚠️  No Vibium result files found in $SOURCE_DIR/vibium-results"
-        echo "   🔍 Directory structure:"
-        find "$SOURCE_DIR/vibium-results" -type f \( -name "*.json" -o -name "*.xml" -o -name "*.txt" \) 2>/dev/null | head -5 | while read f; do echo "      - $f"; done || echo "      (no result files found)"
+        echo "   💡 Note: Vitest may need reporter configuration to generate result files"
+        echo "   💡 Check if vibium/vitest.config.ts has JSON/XML reporter configured"
     fi
 fi
 
@@ -233,11 +246,12 @@ echo "📊 Framework Summary:"
 echo "   TestNG-based (merged): Smoke, Grid, Mobile, Responsive, Selenide"
 echo "   Converted frameworks:"
 # Count results by framework (check labels in JSON files)
-PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Playwright"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Cypress"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Robot"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Vibium"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"HomePage\|Selenide"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+# Use more flexible grep patterns to match JSON structure
+PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Playwright"\|"epic".*"Playwright E2E Testing"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Cypress"\|"epic".*"Cypress E2E Testing"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Robot"\|"epic".*"Robot Framework"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Vibium"\|"epic".*"Vibium Visual Regression"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"HomePage\|"epic".*"HomePage Tests"\|"feature".*"HomePage Navigation"' {} \; 2>/dev/null | wc -l | tr -d ' ')
 
 echo "   - Playwright: $PLAYWRIGHT_COUNT test(s)"
 echo "   - Cypress: $CYPRESS_COUNT test(s)"

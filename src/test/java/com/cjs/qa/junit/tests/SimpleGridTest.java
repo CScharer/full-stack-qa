@@ -108,8 +108,7 @@ public class SimpleGridTest {
         AllureHelper.attachPageSource(driver);
         AllureHelper.logBrowserInfo(driver);
       } else if (result.getStatus() == ITestResult.SUCCESS) {
-        LOGGER.info("✅ Test passed - capturing success screenshot...");
-        AllureHelper.captureScreenshot(driver, "SUCCESS-" + result.getName());
+        LOGGER.info("✅ Test passed");
       }
 
       LOGGER.info("Closing browser...");
