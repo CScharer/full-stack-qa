@@ -430,6 +430,10 @@ for container_file in container_files:
         pass
 
 print(f"   📊 Found {len(selenide_container_uids)} container(s) with name='Selenide Tests'")
+if len(selenide_container_uids) > 0:
+    print(f"   🔍 Selenide container UUIDs: {list(selenide_container_uids)[:5]}...")  # Show first 5
+
+print(f"   📊 Processing {len(container_files)} container files in second pass...")
 
 for container_file in container_files:
     try:
@@ -456,10 +460,15 @@ for container_file in container_files:
             has_selenide_child = True
             is_surefire_parent = True
             surefire_containers_found += 1
+            if surefire_containers_found <= 3:  # Debug: show first few
+                matching_uuids = [uid for uid in children_uuids if uid in selenide_container_uids]
+                print(f"   🔍 Found parent container with Selenide children: {container_file.name[:50]}... (has {len(matching_uuids)} Selenide children)")
         
         if container_name == 'Surefire test':
             is_surefire_parent = True
             surefire_containers_found += 1
+            if surefire_containers_found <= 3:  # Debug: show first few
+                print(f"   🔍 Found 'Surefire test' container: {container_file.name[:50]}...")
         
         if 'labels' in data:
             labels = data['labels']
@@ -519,6 +528,8 @@ for container_file in container_files:
             # by removing the nested "Selenide Tests" container UUIDs from children/childrenUuid
             # This breaks the parent-child relationship so "Selenide Tests" appears as top-level
             if has_selenide_child:
+                if parent_containers_updated < 3:  # Debug output
+                    print(f"   🔧 Processing parent container with Selenide children: {container_file.name[:50]}...")
                 # Check both 'childrenUuid' and 'children' fields
                 if 'childrenUuid' in data:
                     children_uuids = data.get('childrenUuid', [])
@@ -551,6 +562,7 @@ for container_file in container_files:
 # This breaks the hierarchy so "Selenide Tests" appears as a top-level suite
 print("\n🔍 Third pass: Updating nested 'Selenide Tests' containers to be top-level...")
 nested_selenide_updated = 0
+selenide_containers_found = 0
 for container_file in container_files:
     try:
         with open(container_file, 'r', encoding='utf-8') as f:
@@ -558,7 +570,12 @@ for container_file in container_files:
         
         # Find containers with name="Selenide Tests" that might have parentSuite
         if data.get('name') == 'Selenide Tests':
+            selenide_containers_found += 1
             updated = False
+            has_parent_suite = any(l.get('name') == 'parentSuite' for l in data.get('labels', []))
+            if nested_selenide_updated < 3 and has_parent_suite:  # Debug output
+                parent_suite_val = next((l.get('value', '') for l in data.get('labels', []) if l.get('name') == 'parentSuite'), 'N/A')
+                print(f"   🔍 Found nested Selenide container with parentSuite: {container_file.name[:50]}... (parentSuite={parent_suite_val})")
             if 'labels' in data:
                 labels = data['labels']
                 # Remove parentSuite to make it top-level
@@ -606,8 +623,12 @@ if parent_containers_updated > 0:
     print(f"✅ Updated {parent_containers_updated} parent 'Surefire test' container(s) to 'Selenide Tests'")
 else:
     print(f"   ℹ️  No parent 'Surefire test' containers found to update")
+print(f"   📊 Found {selenide_containers_found} container(s) with name='Selenide Tests' in third pass")
 if nested_selenide_updated > 0:
     print(f"✅ Updated {nested_selenide_updated} nested 'Selenide Tests' container(s) to be top-level")
+else:
+    if selenide_containers_found > 0:
+        print(f"   ℹ️  Found {selenide_containers_found} 'Selenide Tests' container(s) but none needed updating (parentSuite already removed)")
 
 # Create environment.properties file for Allure report ENVIRONMENT section
 env_properties_file = Path(results_dir) / "environment.properties"

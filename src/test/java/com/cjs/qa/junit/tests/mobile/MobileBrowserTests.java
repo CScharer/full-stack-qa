@@ -2,15 +2,12 @@ package com.cjs.qa.junit.tests.mobile;
 
 import static com.cjs.qa.junit.tests.mobile.MobileTestsConfiguration.MobileDevice;
 
-import java.io.ByteArrayInputStream;
 import java.time.Duration;
 
 import org.apache.logging.log4j.LogManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -22,6 +19,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.cjs.qa.utilities.AllureHelper;
 import com.cjs.qa.utilities.GuardedLogger;
 
 import io.qameta.allure.Allure;
@@ -68,7 +66,9 @@ public class MobileBrowserTests {
           LOG.info("✅ Test passed");
         } else {
           LOG.info("❌ Test failed - capturing failure screenshot...");
-          captureScreenshot("FAILURE-" + result.getMethod().getMethodName());
+          AllureHelper.captureScreenshot(driver, "FAILURE-" + result.getMethod().getMethodName());
+          AllureHelper.attachPageSource(driver);
+          AllureHelper.logBrowserInfo(driver);
         }
       } catch (Exception e) {
         LOG.error("Failed to capture screenshot: " + e.getMessage());
@@ -306,20 +306,5 @@ public class MobileBrowserTests {
 
     LOG.info("✅ Mobile form input verified");
     Allure.step("Form input on mobile validated");
-  }
-
-  /**
-   * Capture screenshot and attach to Allure report.
-   *
-   * @param name Screenshot name
-   */
-  private void captureScreenshot(String name) {
-    try {
-      byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-      Allure.addAttachment(name, "image/png", new ByteArrayInputStream(screenshot), "png");
-      LOG.info("📸 Screenshot captured: " + name);
-    } catch (Exception e) {
-      LOG.error("Failed to capture screenshot: " + e.getMessage());
-    }
   }
 }
