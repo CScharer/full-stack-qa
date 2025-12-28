@@ -294,6 +294,8 @@ allure.link.tms.pattern=https://github.com/CScharer/full-stack-qa/issues/{}
 
 ## 📸 Adding Screenshots
 
+**Note**: Screenshots are only captured on test failures to reduce storage and improve report performance. Passing tests do not generate screenshots.
+
 ### On Test Failure
 ```java
 @AfterMethod
@@ -522,12 +524,24 @@ Your browser will automatically open showing:
 
 The CI/CD pipeline generates combined Allure reports that merge test results from:
 - **Frontend (FE) Tests**: UI tests from multiple environments (dev, test, prod)
+  - **TestNG-based**: Smoke, Grid, Mobile, Responsive, Selenide tests (native Allure support)
+  - **Cypress**: E2E tests converted to Allure format
+  - **Playwright**: E2E tests converted to Allure format
+  - **Robot Framework**: Acceptance tests converted to Allure format
+  - **Vibium**: Visual regression tests converted to Allure format
 - **Backend (BE) Tests**: Performance tests (Locust, Gatling, JMeter) converted to Allure format
 
 ### Key Features
 
 - ✅ **Multi-Environment Support**: Tests from dev, test, and prod environments are combined into a single report
 - ✅ **Environment Labeling**: Each test is labeled with its environment (dev/test/prod) to prevent deduplication
+- ✅ **Multi-Framework Support**: All test frameworks are converted and included:
+  - TestNG-based tests (Smoke, Grid, Mobile, Responsive, Selenide) - Native Allure support
+  - Cypress - Individual test results converted from JSON
+  - Playwright - Individual test results converted from JSON
+  - Robot Framework - Individual test results converted from XML
+  - Vibium - Individual test results converted from Vitest JSON
+- ✅ **Individual Test Results**: All frameworks show individual test cases (not summaries)
 - ✅ **Performance Test Integration**: BE test results are automatically converted and included
 - ✅ **GitHub Pages Deployment**: Reports are automatically deployed to GitHub Pages on `main` branch
 - ✅ **Multi.Environment Flag**: Correctly identifies when tests ran in multiple environments
@@ -543,7 +557,11 @@ The system uses artifact name patterns to detect environments:
 
 **Scripts**:
 - `scripts/ci/merge-allure-results.sh` - Merges results from all environments
-- `scripts/ci/add-environment-labels.sh` - Adds environment labels to test results
+- `scripts/ci/add-environment-labels.sh` - Adds environment labels to test results and fixes Selenide suite labels
+- `scripts/ci/convert-cypress-to-allure.sh` - Converts Cypress results to Allure format (individual tests)
+- `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright results to Allure format (individual tests)
+- `scripts/ci/convert-robot-to-allure.sh` - Converts Robot Framework results to Allure format (individual tests)
+- `scripts/ci/convert-vibium-to-allure.sh` - Converts Vibium/Vitest results to Allure format (individual tests)
 
 #### Environment Labeling
 
@@ -551,6 +569,27 @@ To prevent Allure from deduplicating the same test across different environments
 1. Environment labels are added to all test result files
 2. `historyId` is updated to include environment: `md5(fullName:environment)`
 3. Handles cases where `fullName` doesn't exist (fallback to `name` field)
+
+#### Framework Test Conversion
+
+Frontend framework test results are converted to Allure format:
+- **Cypress**: Parses `cypress-results.json` or `mochawesome.json` files
+  - Creates individual Allure results for each test
+  - Recursively searches for test objects in JSON structure
+- **Playwright**: Parses `results.json` files from test-results directory
+  - Creates individual Allure results for each test case
+- **Robot Framework**: Parses `output.xml` files
+  - Creates individual Allure results from `<test>` elements
+  - Extracts test name, status, and duration
+- **Vibium**: Parses Vitest JSON result files
+  - Creates individual Allure results from `assertionResults` array
+  - Properly maps test statuses (passed/failed/skipped)
+
+**Scripts**: 
+- `scripts/ci/convert-cypress-to-allure.sh`
+- `scripts/ci/convert-playwright-to-allure.sh`
+- `scripts/ci/convert-robot-to-allure.sh`
+- `scripts/ci/convert-vibium-to-allure.sh`
 
 #### Performance Test Conversion
 
@@ -575,4 +614,19 @@ Backend test results are converted to Allure format:
 
 ---
 
-**Last Updated**: December 25, 2025
+**Last Updated**: December 27, 2025
+
+### Recent Updates (2025-12-27)
+
+- ✅ **Fixed Framework Conversions**: All frameworks now create individual test results (not summaries)
+  - Cypress: 2 individual tests ✅
+  - Robot Framework: 5 individual tests ✅
+  - Vibium: 6 individual tests with correct status (was showing as skipped, now shows passed) ✅
+  - Playwright: Individual tests ✅
+- ⚠️ **Selenide Visibility Fix (In Progress)**: Selenide tests suite grouping
+  - Updated suite label from generic "Surefire test" to "Selenide Tests" ✅
+  - Removed `parentSuite` label so tests appear as top-level suite (like other frameworks) ✅
+  - Updated `fullName` field to include "Selenide." prefix for additional grouping hints ✅
+  - Tests visible in Features By Stories view ✅
+  - ⏳ Pending: Verify tests appear in Suites view under "Selenide Tests" (currently under "Surefire suite")
+- ✅ **Improved Test Status Detection**: Fixed Vibium status logic to properly detect passed tests

@@ -108,8 +108,47 @@ find "$SOURCE_DIR" -name "*-attachment.*" -exec cp {} "$TARGET_DIR/" \; 2>/dev/n
 
 # Also look for results in nested allure-results directories
 # Some artifacts might have structure: artifact-name/target/allure-results/
+# Also check explicit framework download directories (selenide-results, etc.)
 if [ -d "$SOURCE_DIR" ]; then
-    for allure_dir in $(find "$SOURCE_DIR" -type d -name "allure-results" 2>/dev/null); do
+    # First, check explicit framework download directories
+    # These are downloaded separately (selenide-results, etc.)
+    for framework_dir in selenide-results; do
+        if [ -d "$SOURCE_DIR/$framework_dir" ]; then
+            for allure_dir in $(find "$SOURCE_DIR/$framework_dir" -type d -name "allure-results" 2>/dev/null); do
+                echo "📂 Found framework allure-results: $allure_dir"
+                
+                # Determine environment from the path
+                env="unknown"
+                allure_path=$(echo "$allure_dir" | tr '[:upper:]' '[:lower:]')
+                
+                # Check for explicit -results-{env} pattern in path
+                if echo "$allure_path" | grep -qiE "-results-dev[/-]"; then
+                    env="dev"
+                elif echo "$allure_path" | grep -qiE "-results-test[/-]"; then
+                    env="test"
+                elif echo "$allure_path" | grep -qiE "-results-prod[/-]"; then
+                    env="prod"
+                fi
+                
+                # Copy result files
+                find "$allure_dir" -name "*-result.json" | while read -r result_file; do
+                    cp "$result_file" "$TARGET_DIR/" 2>/dev/null || true
+                    
+                    if [ "$env" != "unknown" ]; then
+                        basename_file=$(basename "$result_file")
+                        marker_file="${basename_file%-result.json}.marker"
+                        echo "$env" > "$TARGET_DIR/.env.${marker_file}" 2>/dev/null || true
+                    fi
+                done
+                
+                find "$allure_dir" -name "*-container.json" -exec cp {} "$TARGET_DIR/" \; 2>/dev/null || true
+                find "$allure_dir" -name "*-attachment.*" -exec cp {} "$TARGET_DIR/" \; 2>/dev/null || true
+            done
+        fi
+    done
+    
+    # Then check all other allure-results directories (from *-results-dev pattern)
+    for allure_dir in $(find "$SOURCE_DIR" -type d -name "allure-results" 2>/dev/null | grep -v "/selenide-results/" | grep -v "/vibium-results/" | grep -v "/cypress-results/" | grep -v "/playwright-results/" | grep -v "/robot-results/"); do
         echo "📂 Found nested allure-results: $allure_dir"
         
         # Determine environment from the path containing this allure-results directory

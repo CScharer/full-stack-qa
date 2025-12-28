@@ -208,9 +208,9 @@ jobs:
         run: |
           chmod +x scripts/ci/setup-base-urls.sh
           ./scripts/ci/setup-base-urls.sh \
-            "${{ vars.BASE_URL_DEV }}" \
-            "${{ vars.BASE_URL_TEST }}" \
-            "${{ vars.BASE_URL_PROD }}"
+            "${{ env.BASE_URL_DEV }}" \
+            "${{ env.BASE_URL_TEST }}" \
+            "${{ env.BASE_URL_PROD }}"
 
   determine-envs:
     name: Determine Environments
@@ -501,6 +501,15 @@ jobs:
       environment: 'dev'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
+      enable_smoke_tests: true
+      enable_grid_tests: true
+      enable_mobile_tests: true
+      enable_responsive_tests: true
+      enable_cypress_tests: true
+      enable_playwright_tests: true
+      enable_robot_tests: true
+      enable_selenide_tests: true
+      enable_vibium_tests: true
 
   deploy-dev:
     name: Deploy to DEV
@@ -585,6 +594,15 @@ jobs:
       environment: 'test'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_test }}
+      enable_smoke_tests: true
+      enable_grid_tests: true
+      enable_mobile_tests: true
+      enable_responsive_tests: true
+      enable_cypress_tests: true
+      enable_playwright_tests: true
+      enable_robot_tests: true
+      enable_selenide_tests: true
+      enable_vibium_tests: true
 
   deploy-test:
     name: Deploy (TEST)
@@ -670,6 +688,15 @@ jobs:
       environment: 'prod'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_prod }}
+      enable_smoke_tests: true
+      enable_grid_tests: true
+      enable_mobile_tests: true
+      enable_responsive_tests: true
+      enable_cypress_tests: true
+      enable_playwright_tests: true
+      enable_robot_tests: true
+      enable_selenide_tests: true
+      enable_vibium_tests: true
 
   deploy-prod:
     name: Deploy (PROD)
@@ -987,24 +1014,88 @@ jobs:
           path: all-test-results/be-results-prod
           merge-multiple: true
 
+      - name: Download Cypress results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "cypress-results-*"
+          path: all-test-results/cypress-results
+          merge-multiple: true
+
+      - name: Download Playwright results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "playwright-results-*"
+          path: all-test-results/playwright-results
+          merge-multiple: true
+
+      - name: Download Robot Framework results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "robot-results-*"
+          path: all-test-results/robot-results
+          merge-multiple: true
+
+      - name: Download Selenide results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "selenide-results-*"
+          path: all-test-results/selenide-results
+          merge-multiple: true
+
+      - name: Download Vibium results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "vibium-results-*"
+          path: all-test-results/vibium-results
+          merge-multiple: true
+
       - name: "Debug: Show downloaded artifact structure"
         if: always()
         run: |
+          echo "📊 Downloaded artifact summary:"
+          echo ""
+          echo "🔍 TestNG-based results (should include Selenide):"
+          echo "  DEV environment:"
+          find all-test-results/results-dev -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results (in results-dev): {} files"
+          find all-test-results/selenide-results -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results (explicit download): {} files"
+          find all-test-results/results-dev -type d -path "*/selenide-results-*" 2>/dev/null | while read d; do
+            echo "    📁 Found: $d"
+            find "$d" -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "      Results: {} files"
+          done
+          if [ -d "all-test-results/selenide-results" ]; then
+            find all-test-results/selenide-results -type d 2>/dev/null | head -5 | while read d; do
+              echo "    📁 Selenide artifact: $d"
+              find "$d" -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "      Results: {} files"
+            done
+          fi
+          echo ""
+          echo "  TEST environment:"
+          find all-test-results/results-test -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results: {} files"
+          echo ""
+          echo "  PROD environment:"
+          find all-test-results/results-prod -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results: {} files"
+          echo ""
+          echo "🔍 Framework-specific results:"
+          echo "  Cypress: $(find all-test-results/cypress-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo "  Playwright: $(find all-test-results/playwright-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo "  Robot: $(find all-test-results/robot-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo "  Vibium: $(find all-test-results/vibium-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo ""
+          echo "📂 All artifact directories:"
+          find all-test-results -type d -maxdepth 2 2>/dev/null | sort
           chmod +x scripts/ci/debug-artifact-structure.sh
           ./scripts/ci/debug-artifact-structure.sh "all-test-results"
 
       - name: Prepare combined Allure results
         if: always()
         run: |
-          chmod +x scripts/ci/merge-allure-results.sh
-          ./scripts/ci/merge-allure-results.sh
-          
-          chmod +x scripts/ci/verify-merged-allure-results.sh
-          ./scripts/ci/verify-merged-allure-results.sh "allure-results-combined"
-          
-          # Add environment labels to prevent Allure deduplication across environments
-          chmod +x scripts/ci/add-environment-labels.sh
-          ./scripts/ci/add-environment-labels.sh "allure-results-combined" "all-test-results"
+          chmod +x scripts/ci/prepare-combined-allure-results.sh
+          ./scripts/ci/prepare-combined-allure-results.sh "all-test-results" "allure-results-combined"
 
       - name: Install Allure CLI
         if: always()
@@ -1015,38 +1106,8 @@ jobs:
       - name: Generate Combined Allure Report
         if: always()
         run: |
-          echo "Generating combined Allure report (all environments)..."
-          
-          # Verify results directory exists and has files
-          if [ ! -d "allure-results-combined" ]; then
-            echo "❌ Error: allure-results-combined directory not found"
-            exit 1
-          fi
-          
-          RESULT_COUNT=$(find allure-results-combined -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')
-          echo "📊 Found $RESULT_COUNT result files to process"
-          
-          if [ "$RESULT_COUNT" -eq 0 ]; then
-            echo "⚠️  Warning: No result files found, but continuing..."
-          fi
-          
-          # Generate report
-          allure generate allure-results-combined --clean -o allure-report-combined
-          
-          # Verify report was generated
-          if [ ! -d "allure-report-combined" ]; then
-            echo "❌ Error: Report directory was not created"
-            exit 1
-          fi
-          
-          if [ ! -f "allure-report-combined/index.html" ]; then
-            echo "❌ Error: Report index.html was not created"
-            exit 1
-          fi
-          
-          echo "✅ Combined report generated successfully!"
-          echo "   Report location: allure-report-combined/"
-          echo "   Report size: $(du -sh allure-report-combined | cut -f1)"
+          chmod +x scripts/ci/generate-combined-allure-report.sh
+          ./scripts/ci/generate-combined-allure-report.sh "allure-results-combined" "allure-report-combined"
 
       - name: Upload Combined Allure Report
         uses: actions/upload-artifact@v4
@@ -1135,98 +1196,27 @@ jobs:
     if: always()
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Generate Pipeline Summary
         run: |
-          {
-            echo "═══════════════════════════════════════════════════════════════"
-            echo "## 📊 PIPELINE EXECUTION SUMMARY"
-            echo "═══════════════════════════════════════════════════════════════"
-            echo ""
-          } >> "$GITHUB_STEP_SUMMARY"
-
-          if [ "${{ needs.determine-schedule-type.outputs.code-changed }}" = "true" ]; then
-            {
-              echo "**Change Type**: CODE CHANGES DETECTED"
-              echo ""
-              echo "**Test Type**: ${{ github.event.inputs.test_type || 'fe-only' }}"
-              echo "**Environment Selection**: ${{ needs.determine-envs.outputs.selected_env }}"
-              echo "**Test Suite**: ${{ needs.determine-envs.outputs.test_suite }}"
-            } >> "$GITHUB_STEP_SUMMARY"
-            if [ "${{ needs.determine-test-execution.outputs.run_be_tests }}" = "true" ]; then
-              echo "**BE Test Type**: ${{ needs.determine-test-execution.outputs.be_test_mode }}" >> "$GITHUB_STEP_SUMMARY"
-            fi
-            echo "" >> "$GITHUB_STEP_SUMMARY"
-
-            echo "### FE Tests - Environments Tested:" >> "$GITHUB_STEP_SUMMARY"
-
-            if [ "${{ needs.determine-envs.outputs.run_dev }}" = "true" ]; then
-              if [ "${{ needs.test-fe-dev.result }}" = "success" ]; then
-                echo "- ✅ **DEV**: Tests passed, Deployed" >> "$GITHUB_STEP_SUMMARY"
-              else
-                echo "- ❌ **DEV**: ${{ needs.test-fe-dev.result }}" >> "$GITHUB_STEP_SUMMARY"
-              fi
-            fi
-
-            if [ "${{ needs.determine-envs.outputs.run_test }}" = "true" ]; then
-              if [ "${{ needs.test-fe-test.result }}" = "success" ]; then
-                echo "- ✅ **TEST**: Tests passed, Deployed" >> "$GITHUB_STEP_SUMMARY"
-              else
-                echo "- ❌ **TEST**: ${{ needs.test-fe-test.result }}" >> "$GITHUB_STEP_SUMMARY"
-              fi
-            fi
-
-            if [ "${{ needs.determine-envs.outputs.run_prod }}" = "true" ]; then
-              if [ "${{ needs.test-fe-prod.result }}" = "success" ]; then
-                echo "- ✅ **PROD**: Tests passed, Deployed" >> "$GITHUB_STEP_SUMMARY"
-              else
-                echo "- ❌ **PROD**: ${{ needs.test-fe-prod.result }}" >> "$GITHUB_STEP_SUMMARY"
-              fi
-            fi
-
-            if [ "${{ needs.determine-test-execution.outputs.run_be_tests }}" = "true" ]; then
-              echo "" >> "$GITHUB_STEP_SUMMARY"
-              echo "### BE Tests:" >> "$GITHUB_STEP_SUMMARY"
-              
-              if [ "${{ needs.determine-envs.outputs.run_dev }}" = "true" ] && [ "${{ needs.determine-test-execution.outputs.be_env_dev }}" = "true" ]; then
-                if [ "${{ needs.test-be-dev.result }}" = "success" ]; then
-                  echo "- ✅ **BE (DEV)**: Tests passed" >> "$GITHUB_STEP_SUMMARY"
-                else
-                  echo "- ❌ **BE (DEV)**: ${{ needs.test-be-dev.result }}" >> "$GITHUB_STEP_SUMMARY"
-                fi
-              fi
-
-              if [ "${{ needs.determine-envs.outputs.run_test }}" = "true" ] && [ "${{ needs.determine-test-execution.outputs.be_env_test }}" = "true" ]; then
-                if [ "${{ needs.test-be-test.result }}" = "success" ]; then
-                  echo "- ✅ **BE (TEST)**: Tests passed" >> "$GITHUB_STEP_SUMMARY"
-                else
-                  echo "- ❌ **BE (TEST)**: ${{ needs.test-be-test.result }}" >> "$GITHUB_STEP_SUMMARY"
-                fi
-              fi
-            fi
-
-            {
-              echo ""
-              echo "### Reports:"
-              echo "- 📊 Combined Allure Report: Download artifact 'allure-report-combined-all-environments'"
-              echo "- 📊 Individual Environment Reports: Download 'allure-report-{env}' artifacts"
-            } >> "$GITHUB_STEP_SUMMARY"
-            if [ "${{ needs.determine-test-execution.outputs.run_be_tests }}" = "true" ]; then
-              echo "- 📊 BE Test Results: Download '*-be-results' artifacts" >> "$GITHUB_STEP_SUMMARY"
-            fi
-          else
-            {
-              echo "**Change Type**: DOCUMENTATION-ONLY"
-              echo ""
-              echo "⏭️  Skipped: Build, tests, quality checks (not needed for docs)"
-              echo "✅ Documentation changes processed successfully"
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          {
-            echo ""
-            echo "**Commit**: ${{ github.sha }}"
-            echo "**Branch**: ${{ github.ref_name }}"
-            echo "**Author**: ${{ github.actor }}"
-            echo ""
-            echo "═══════════════════════════════════════════════════════════════"
-          } >> "$GITHUB_STEP_SUMMARY"
+          chmod +x scripts/ci/generate-pipeline-summary.sh
+          ./scripts/ci/generate-pipeline-summary.sh \
+            "$GITHUB_STEP_SUMMARY" \
+            "${{ needs.determine-schedule-type.outputs.code-changed }}" \
+            "${{ github.event.inputs.test_type || 'fe-only' }}" \
+            "${{ needs.determine-envs.outputs.selected_env }}" \
+            "${{ needs.determine-envs.outputs.test_suite }}" \
+            "${{ needs.determine-test-execution.outputs.run_be_tests }}" \
+            "${{ needs.determine-test-execution.outputs.be_test_mode }}" \
+            "${{ needs.determine-envs.outputs.run_dev }}" \
+            "${{ needs.determine-envs.outputs.run_test }}" \
+            "${{ needs.determine-envs.outputs.run_prod }}" \
+            "${{ needs.determine-test-execution.outputs.be_env_dev }}" \
+            "${{ needs.determine-test-execution.outputs.be_env_test }}" \
+            "${{ needs.test-fe-dev.result }}" \
+            "${{ needs.test-fe-test.result }}" \
+            "${{ needs.test-fe-prod.result }}" \
+            "${{ needs.test-be-dev.result }}" \
+            "${{ needs.test-be-test.result }}"

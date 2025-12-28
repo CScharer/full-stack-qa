@@ -119,7 +119,7 @@ graph LR
 For each test:
 - ✅ Status (passed/failed/broken)
 - ⏱️ Duration
-- 📸 Screenshots (success and failure)
+- 📸 Screenshots (on failure only)
 - 🌐 Browser info
 - 📄 Page source (on failure)
 - 📝 Console logs (on failure)

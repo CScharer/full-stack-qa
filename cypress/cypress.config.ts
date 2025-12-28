@@ -22,6 +22,29 @@ export default defineConfig({
       if (process.env.CYPRESS_BASE_URL) {
         config.baseUrl = process.env.CYPRESS_BASE_URL
       }
+      
+      // Generate JSON results for Allure conversion
+      on('after:run', (results) => {
+        // Write results summary to JSON file for Allure conversion
+        const fs = require('fs')
+        const path = require('path')
+        const resultsDir = path.join(__dirname, 'cypress', 'results')
+        if (!fs.existsSync(resultsDir)) {
+          fs.mkdirSync(resultsDir, { recursive: true })
+        }
+        const resultsFile = path.join(resultsDir, 'cypress-results.json')
+        fs.writeFileSync(resultsFile, JSON.stringify({
+          stats: {
+            tests: results.totalTests || 0,
+            passes: results.totalPassed || 0,
+            failures: results.totalFailed || 0,
+            pending: results.totalPending || 0,
+            duration: results.totalDuration || 0
+          },
+          results: results.runs || []
+        }, null, 2))
+      })
+      
       return config
     },
   },

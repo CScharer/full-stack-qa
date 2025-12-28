@@ -108,7 +108,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - 🐳 **Fully Containerized** - Docker + Docker Compose with 3 environments
 - 🤖 **CI/CD Automated** - GitHub Actions pipeline with fail-fast smoke tests
 - 🎨 **Page Object Model** - Clean, maintainable test architecture
-- 📸 **Visual Evidence** - Screenshots on every test (success & failure)
+- 📸 **Visual Evidence** - Screenshots on test failures only
 - 🧪 **Professional Testing** - Log4j 2, Allure, TestNG, REST Assured
 
 ### Modern Technology Stack
@@ -818,7 +818,7 @@ docker-compose down
 
 **Features:**
 - 📊 Interactive dashboards with graphs
-- 📸 Screenshots automatically captured
+- 📸 Screenshots automatically captured on failures
 - 📈 Historical trends (track improvements)
 - 🏷️ Organized by Epic/Feature/Story
 - ⏱️ Performance metrics
@@ -1005,7 +1005,7 @@ Every push to `main` or `develop` triggers:
 
 **Matrix Testing:**
 - 11 tests × 2 browsers = **22 test executions**
-- Automatic screenshot capture (22 screenshots per run)
+- Automatic screenshot capture on test failures only
 - Allure report with graphs and trends
 - GitHub Pages deployment
 
@@ -1199,7 +1199,7 @@ cp XML/UserSettings.xml.template XML/UserSettings.xml
 
 **✅ Allure Reporting with Screenshots**
 - Allure Framework 2.31.0 integration
-- Automatic screenshot capture on every test
+- Automatic screenshot capture on test failures only
 - Beautiful HTML dashboards with graphs
 - Epic/Feature/Story organization
 - Historical trend tracking
