@@ -1022,6 +1022,30 @@ jobs:
       - name: "Debug: Show downloaded artifact structure"
         if: always()
         run: |
+          echo "📊 Downloaded artifact summary:"
+          echo ""
+          echo "🔍 TestNG-based results (should include Selenide):"
+          echo "  DEV environment:"
+          find all-test-results/results-dev -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results: {} files"
+          find all-test-results/results-dev -type d -path "*/selenide-results-*" 2>/dev/null | while read d; do
+            echo "    📁 Found: $d"
+            find "$d" -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "      Results: {} files"
+          done
+          echo ""
+          echo "  TEST environment:"
+          find all-test-results/results-test -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results: {} files"
+          echo ""
+          echo "  PROD environment:"
+          find all-test-results/results-prod -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results: {} files"
+          echo ""
+          echo "🔍 Framework-specific results:"
+          echo "  Cypress: $(find all-test-results/cypress-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo "  Playwright: $(find all-test-results/playwright-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo "  Robot: $(find all-test-results/robot-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo "  Vibium: $(find all-test-results/vibium-results -type f 2>/dev/null | wc -l | tr -d ' ') files"
+          echo ""
+          echo "📂 All artifact directories:"
+          find all-test-results -type d -maxdepth 2 2>/dev/null | sort
           chmod +x scripts/ci/debug-artifact-structure.sh
           ./scripts/ci/debug-artifact-structure.sh "all-test-results"
 
