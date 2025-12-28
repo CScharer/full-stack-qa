@@ -36,6 +36,25 @@ result_files = list(Path(results_dir).glob("*-result.json"))
 
 print(f"📊 Found {len(result_files)} result files")
 
+# Debug: Count results by suite name before grouping
+suite_counts = defaultdict(int)
+for result_file in result_files[:100]:  # Sample first 100 for debugging
+    try:
+        with open(result_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if 'labels' in data:
+            for label in data['labels']:
+                if label.get('name') == 'suite':
+                    suite_counts[label.get('value', 'N/A')] += 1
+                    break
+    except:
+        pass
+
+if suite_counts:
+    print(f"🔍 Sample suite distribution (first 100 files):")
+    for suite, count in sorted(suite_counts.items()):
+        print(f"   - {suite}: {count} file(s)")
+
 # Group results by framework suite and environment
 # Structure: {suite_name: {env: [result_files]}}
 suite_groups = defaultdict(lambda: defaultdict(list))
@@ -58,11 +77,16 @@ for result_file in result_files:
         
         # Skip if no suite name found
         if not suite_name:
+            # Debug: Log files without suite labels (first 10)
+            if len([f for f in result_files if f == result_file]) <= 10:
+                print(f"   ⚠️  Skipping file without suite label: {result_file.name[:50]}...", file=sys.stderr)
             continue
         
         # Default environment if not found
-        if not env or env == 'unknown' or env == 'combined':
+        # IMPORTANT: Don't skip "combined" - we'll try to infer environment from other sources
+        if not env or env == 'unknown':
             env = 'unknown'
+        # Keep "combined" as-is for now - we'll handle it below
         
         # Group by suite and environment
         suite_groups[suite_name][env].append({
@@ -82,6 +106,65 @@ for suite_name, env_groups in suite_groups.items():
         if not results:
             continue
         
+        # Skip "unknown" environment - these tests don't have environment info
+        if env == 'unknown':
+            continue
+        
+        # For "combined" environment, try to split by environment from test names
+        # Test names should have [DEV], [TEST], or [PROD] appended by add-environment-labels.sh
+        if env == 'combined':
+            # Try to split combined results by environment based on test names
+            env_split_results = {'dev': [], 'test': [], 'prod': []}
+            for r in results:
+                test_name = r.get('name', '')
+                if '[DEV]' in test_name:
+                    env_split_results['dev'].append(r)
+                elif '[TEST]' in test_name:
+                    env_split_results['test'].append(r)
+                elif '[PROD]' in test_name:
+                    env_split_results['prod'].append(r)
+            
+            # If we successfully split by environment, create separate containers
+            if any(env_split_results.values()):
+                for split_env, split_results in env_split_results.items():
+                    if not split_results:
+                        continue
+                    split_uuids = [r['uuid'] for r in split_results if r['uuid']]
+                    if not split_uuids:
+                        continue
+                    
+                    container_uuid = uuid.uuid4().hex
+                    container_name = f"{suite_name} [{split_env.upper()}]"
+                    
+                    container_data = {
+                        "uuid": container_uuid,
+                        "name": container_name,
+                        "children": split_uuids,
+                        "description": f"{suite_name} test suite - {split_env.upper()} environment",
+                        "labels": [
+                            {"name": "suite", "value": suite_name},
+                            {"name": "environment", "value": split_env}
+                        ],
+                        "befores": [],
+                        "afters": [],
+                        "start": 0,
+                        "stop": 0
+                    }
+                    
+                    container_file = Path(results_dir) / f"{container_uuid}-container.json"
+                    with open(container_file, 'w', encoding='utf-8') as f:
+                        json.dump(container_data, f, indent=2, ensure_ascii=False)
+                    
+                    containers_created += 1
+                    print(f"   ✅ Created container: {container_name} ({len(split_uuids)} tests) [from combined]")
+                continue  # Skip creating a "combined" container since we split it
+            else:
+                # Couldn't split, create a single container without environment suffix
+                container_name = suite_name
+        else:
+            # Normal environment (dev/test/prod) - create container with environment suffix
+            container_name = f"{suite_name} [{env.upper()}]"
+        
         # Generate container UUID
         container_uuid = uuid.uuid4().hex
         
@@ -91,18 +174,12 @@ for suite_name, env_groups in suite_groups.items():
         if not result_uuids:
             continue
         
-        # Create container name (include environment if not unknown)
-        if env != 'unknown':
-            container_name = f"{suite_name} [{env.upper()}]"
-        else:
-            container_name = suite_name
-        
         # Create container file
         container_data = {
             "uuid": container_uuid,
             "name": container_name,
             "children": result_uuids,
-            "description": f"{suite_name} test suite" + (f" - {env.upper()} environment" if env != 'unknown' else ""),
+            "description": f"{suite_name} test suite" + (f" - {env.upper()} environment" if env != 'unknown' and env != 'combined' else ""),
             "labels": [
                 {"name": "suite", "value": suite_name}
             ],
@@ -112,8 +189,8 @@ for suite_name, env_groups in suite_groups.items():
             "stop": 0
         }
         
-        # Add environment label if not unknown
-        if env != 'unknown':
+        # Add environment label if not unknown or combined
+        if env != 'unknown' and env != 'combined':
             container_data["labels"].append({"name": "environment", "value": env})
         
         # Write container file
@@ -122,10 +199,17 @@ for suite_name, env_groups in suite_groups.items():
             json.dump(container_data, f, indent=2, ensure_ascii=False)
         
         containers_created += 1
-        if containers_created <= 10:  # Debug output for first 10
-            print(f"   ✅ Created container: {container_name} ({len(result_uuids)} tests)")
+        # Always show debug output for framework containers (not just first 10)
+        print(f"   ✅ Created container: {container_name} ({len(result_uuids)} tests)")
 
 print(f"\n✅ Created {containers_created} container file(s)")
+
+# Debug: Show what suite/environment combinations we found
+print(f"\n🔍 Suite/Environment groups found:")
+for suite_name, env_groups in suite_groups.items():
+    env_list = list(env_groups.keys())
+    total_tests = sum(len(results) for results in env_groups.values())
+    print(f"   - {suite_name}: {total_tests} test(s) across {len(env_list)} environment(s) {env_list}")
 
 # Also create top-level containers for each framework (grouping all environments)
 print("\n📦 Creating top-level framework containers...")

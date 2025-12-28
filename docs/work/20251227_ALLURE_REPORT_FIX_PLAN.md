@@ -405,25 +405,26 @@ The environment differentiation issue is considered fixed. Tests are properly la
 ---
 
 #### 4. **Suites Section** - Missing or Incomplete
-**Status**: ⚠️ **Partially Working**
+**Status**: ✅ **Fixed**
 
 **Root Cause**:
-- Allure Suites section requires tests to have proper `suite` labels
+- Allure Suites section requires container files (`*-container.json`) to group tests
 - TestNG tests (Selenium Grid) have suite labels from TestNG suite files
-- Other frameworks (Cypress, Playwright, Robot, Selenide, Vibium) may not be generating Allure results with suite labels
+- Other frameworks (Cypress, Playwright, Robot, Selenide, Vibium) were not generating container files
+
+**Solution Applied**:
+- ✅ Created `create-framework-containers.sh` script to generate container files for all frameworks
+- ✅ Script creates both environment-specific containers (e.g., "Cypress Tests [DEV]") and top-level containers
+- ✅ Handles "combined" environment by splitting based on test names ([DEV], [TEST], [PROD])
+- ✅ All frameworks now appear in Suites section with proper environment grouping
 
 **Current Implementation**:
-- TestNG tests: ✅ Have suite labels (from `testng-*-suite.xml` files)
-- Cypress tests: ❌ Not generating Allure results
-- Playwright tests: ❌ Not generating Allure results
-- Robot Framework tests: ❌ Not generating Allure results
-- Selenide tests: ✅ May have suite labels (uses TestNG)
-- Vibium tests: ❌ Not generating Allure results
-
-**Solution**:
-- Ensure all test frameworks generate Allure results with proper suite labels
-- Integrate Allure reporting into Cypress, Playwright, Robot Framework, and Vibium tests
-- Or convert their results to Allure format (similar to BE performance tests)
+- TestNG tests: ✅ Have suite labels and containers (from `testng-*-suite.xml` files)
+- Cypress tests: ✅ Have suite labels and containers (converted to Allure format)
+- Playwright tests: ✅ Have suite labels and containers (converted to Allure format)
+- Robot Framework tests: ✅ Have suite labels and containers (converted to Allure format)
+- Selenide tests: ✅ Have suite labels ("Selenide Tests") and containers (updated by add-environment-labels.sh)
+- Vibium tests: ✅ Have suite labels and containers (converted to Allure format)
 
 **Files to Review**:
 - `.github/workflows/env-fe.yml`: Check if Cypress/Playwright/Robot/Vibium generate Allure results

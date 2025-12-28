@@ -623,16 +623,27 @@ Backend test results are converted to Allure format:
   - Robot Framework: 5 individual tests ✅
   - Vibium: 6 individual tests with correct status (was showing as skipped, now shows passed) ✅
   - Playwright: Individual tests ✅
-- ⚠️ **Selenide Visibility Fix (In Progress)**: Selenide tests suite grouping
+- ✅ **Selenide Visibility Fix (Complete)**: Selenide tests suite grouping
   - Updated suite label from generic "Surefire test" to "Selenide Tests" ✅
   - Removed `parentSuite` label so tests appear as top-level suite (like other frameworks) ✅
   - Updated `fullName` field to include "Selenide." prefix for additional grouping hints ✅
   - Process container files (`*-container.json`) to fix suite grouping in Allure's Suites view ✅
   - Improved detection: uses `epic="HomePage Tests"` as primary, with fallbacks to `feature="HomePage Navigation"` or `testClass` containing `"HomePageTests"` ✅
   - Tests visible in Features By Stories view ✅
-  - ⏳ Pending: Verify tests appear in Suites view under "Selenide Tests" (currently under "Surefire suite")
+  - Tests appear in Suites view under "Selenide Tests" with environment-specific containers ✅
+- ✅ **Suites Section Fix (Complete)**: All frameworks now appear in Suites section
+  - Created `create-framework-containers.sh` to generate container files for all frameworks ✅
+  - Creates environment-specific containers (e.g., "Cypress Tests [DEV]") ✅
+  - Creates top-level containers for each framework ✅
+  - Handles "combined" environment by splitting based on test names ([DEV], [TEST], [PROD]) ✅
+  - All frameworks (Cypress, Playwright, Robot, Vibium, Selenide, Surefire) now have proper containers ✅
 - ✅ **Multi-Environment Framework Processing**: Fixed framework conversions to process all environments (dev, test, prod)
-  - Updated `prepare-combined-allure-results.sh` to loop through all environments ✅
+  - Updated `prepare-combined-allure-results.sh` to detect active environments and only process those ✅
   - Framework results now processed for each environment separately ✅
   - Prevents missing test/prod environment results in combined report ✅
+  - Prevents duplicate results when only dev runs (was creating dev/test/prod for all) ✅
+- ✅ **Environment-Specific Containers**: All frameworks show separate containers for each environment
+  - Container creation script handles "combined" environment by splitting based on test names ✅
+  - Surefire and Selenide tests now show [DEV], [TEST], [PROD] containers in Suites section ✅
+  - All frameworks have both environment-specific and top-level containers ✅
 - ✅ **Improved Test Status Detection**: Fixed Vibium status logic to properly detect passed tests
