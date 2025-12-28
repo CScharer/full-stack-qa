@@ -203,6 +203,33 @@ for result_file in result_files:
             if f"[{env.upper()}]" not in test_name and f"({env})" not in test_name:
                 data['name'] = f"{test_name} [{env.upper()}]"
         
+        # Update suite label for Selenide tests to make them more visible
+        # Selenide tests have epic="HomePage Tests" and testClass containing "HomePageTests"
+        # They currently have suite="Surefire test" which is too generic
+        if 'labels' in data:
+            labels = data.get('labels', [])
+            epic_value = None
+            test_class_value = None
+            suite_label_index = None
+            
+            for i, label in enumerate(labels):
+                if label.get('name') == 'epic' and label.get('value') == 'HomePage Tests':
+                    epic_value = label.get('value')
+                if label.get('name') == 'testClass' and 'HomePageTests' in label.get('value', ''):
+                    test_class_value = label.get('value')
+                if label.get('name') == 'suite':
+                    suite_label_index = i
+            
+            # If this is a Selenide test (has HomePage Tests epic and HomePageTests class)
+            # Update the suite label to "Selenide Tests" for better visibility
+            if epic_value == 'HomePage Tests' and test_class_value and 'HomePageTests' in test_class_value:
+                if suite_label_index is not None:
+                    labels[suite_label_index]['value'] = 'Selenide Tests'
+                else:
+                    # Add suite label if it doesn't exist
+                    labels.append({'name': 'suite', 'value': 'Selenide Tests'})
+                data['labels'] = labels
+        
         # Update historyId to include environment to prevent cross-environment deduplication
         # This allows the same test from different environments to be shown separately
         # Note: Allure will still group executions with the same historyId (same test+env) for trend tracking
