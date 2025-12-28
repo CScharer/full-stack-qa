@@ -242,9 +242,6 @@ for result_file in all_files:
                     container_fullname = data.get('fullName', '')
                     if 'HomePage' in container_fullname or 'HomePageTests' in container_fullname:
                         is_selenide_test = True
-                # Also check if container has suite="Surefire test" - this is a parent container
-                if suite_value == 'Surefire test':
-                    is_selenide_test = True
             
             for i, label in enumerate(labels):
                 label_name = label.get('name', '')
@@ -272,6 +269,11 @@ for result_file in all_files:
                     # Special case: If suite is "Surefire test", it's a parent container that needs updating
                     if is_container and label_value == 'Surefire test':
                         is_selenide_test = True
+            
+            # After processing all labels, check if container has suite="Surefire test"
+            # This needs to be checked after suite_value is set in the loop above
+            if is_container and suite_value == 'Surefire test':
+                is_selenide_test = True
                 elif label_name == 'parentSuite':
                     parent_suite_label_index = i
                     parent_suite_value = label_value
@@ -344,7 +346,7 @@ for result_file in all_files:
                     # Debug: Print info about updated files (only for first few to avoid spam)
                     if selenide_updated <= 5:
                         file_type = "container" if is_container else "result"
-                        file_name = current_file.name
+                        file_name = result_file.name
                         suite_val = next((l.get('value', '') for l in labels if l.get('name') == 'suite'), 'N/A')
                         parent_val = next((l.get('value', '') for l in labels if l.get('name') == 'parentSuite'), 'N/A')
                         name_val = data.get('name', 'N/A')
