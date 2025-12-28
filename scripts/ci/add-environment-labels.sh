@@ -442,13 +442,20 @@ for container_file in container_files:
         container_suite = None
         has_selenide_child = False
         
-        # Check if this container has "Selenide Tests" as a child (via childrenUuid)
+        # Check if this container has "Selenide Tests" as a child
+        # Allure uses both 'children' (array of UUIDs) and 'childrenUuid' (array of UUIDs)
+        # We need to check both fields
+        children_uuids = []
         if 'childrenUuid' in data:
             children_uuids = data.get('childrenUuid', [])
-            if any(uid in selenide_container_uids for uid in children_uuids):
-                has_selenide_child = True
-                is_surefire_parent = True
-                surefire_containers_found += 1
+        elif 'children' in data:
+            # 'children' field contains array of UUIDs (strings)
+            children_uuids = data.get('children', [])
+        
+        if children_uuids and any(uid in selenide_container_uids for uid in children_uuids):
+            has_selenide_child = True
+            is_surefire_parent = True
+            surefire_containers_found += 1
         
         if container_name == 'Surefire test':
             is_surefire_parent = True
@@ -509,16 +516,24 @@ for container_file in container_files:
                 updated = True
             
             # If this container has "Selenide Tests" as a child, we need to flatten the hierarchy
-            # by removing the nested "Selenide Tests" container UUIDs from childrenUuid
+            # by removing the nested "Selenide Tests" container UUIDs from children/childrenUuid
             # This breaks the parent-child relationship so "Selenide Tests" appears as top-level
-            if has_selenide_child and 'childrenUuid' in data:
-                children_uuids = data.get('childrenUuid', [])
-                # Remove "Selenide Tests" container UUIDs from children to break the hierarchy
-                original_count = len(children_uuids)
-                children_uuids = [uid for uid in children_uuids if uid not in selenide_container_uids]
-                if len(children_uuids) < original_count:
-                    data['childrenUuid'] = children_uuids
-                    updated = True
+            if has_selenide_child:
+                # Check both 'childrenUuid' and 'children' fields
+                if 'childrenUuid' in data:
+                    children_uuids = data.get('childrenUuid', [])
+                    original_count = len(children_uuids)
+                    children_uuids = [uid for uid in children_uuids if uid not in selenide_container_uids]
+                    if len(children_uuids) < original_count:
+                        data['childrenUuid'] = children_uuids
+                        updated = True
+                elif 'children' in data:
+                    children_uuids = data.get('children', [])
+                    original_count = len(children_uuids)
+                    children_uuids = [uid for uid in children_uuids if uid not in selenide_container_uids]
+                    if len(children_uuids) < original_count:
+                        data['children'] = children_uuids
+                        updated = True
             
             if updated:
                 with open(container_file, 'w', encoding='utf-8') as f:
