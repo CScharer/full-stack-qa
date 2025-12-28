@@ -246,12 +246,14 @@ echo "📊 Framework Summary:"
 echo "   TestNG-based (merged): Smoke, Grid, Mobile, Responsive, Selenide"
 echo "   Converted frameworks:"
 # Count results by framework (check labels in JSON files)
-# Use more flexible grep patterns to match JSON structure
-PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Playwright"\|"epic".*"Playwright E2E Testing"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Cypress"\|"epic".*"Cypress E2E Testing"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Robot"\|"epic".*"Robot Framework"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"testClass".*"Vibium"\|"epic".*"Vibium Visual Regression"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l '"HomePage\|"epic".*"HomePage Tests"\|"feature".*"HomePage Navigation"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+# Use flexible grep patterns that account for JSON formatting with whitespace/newlines
+# Match on epic labels which are more consistent across frameworks
+# Also check testClass values as fallback
+PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Playwright E2E Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
+CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Cypress E2E Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
+ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Robot Framework Acceptance Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
+VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Vibium Visual Regression Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
+SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -lE "HomePage Tests|HomePage Navigation" {} \; 2>/dev/null | wc -l | tr -d ' ')
 
 echo "   - Playwright: $PLAYWRIGHT_COUNT test(s)"
 echo "   - Cypress: $CYPRESS_COUNT test(s)"

@@ -48,6 +48,8 @@ RUN apt-get update && apt-get install -y \
     # Node.js 20 (for Cypress and Playwright)
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
+    # Update npm to latest version (suppress notice about new version)
+    && npm install -g npm@latest \
     # Python 3.13 (for Robot Framework) - use python3 if 3.13 not available
     && (apt-get install -y python3.13 python3.13-venv python3-pip || apt-get install -y python3 python3-venv python3-pip) \
     # System dependencies for Cypress and Playwright (matching CI/CD)
