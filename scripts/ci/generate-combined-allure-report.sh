@@ -52,6 +52,30 @@ else
     echo "⚠️  Warning: executor.json not found in results directory"
 fi
 
+# Count container files (critical for Suites tab)
+CONTAINER_COUNT=$(find "$RESULTS_DIR" -name "*-container.json" 2>/dev/null | wc -l | tr -d ' ')
+echo "📦 Found $CONTAINER_COUNT container files (required for Suites tab)"
+
+if [ "$CONTAINER_COUNT" -eq 0 ]; then
+    echo "⚠️  WARNING: No container files found!"
+    echo "   This will cause Suites tab to be empty or incomplete"
+    echo "   Container files should be created by create-framework-containers.sh in Step 4.5"
+else
+    echo "   ✅ Container files present - Suites tab should display correctly"
+    # Show container file breakdown by framework
+    echo "   📊 Container breakdown:"
+    find "$RESULTS_DIR" -name "*-container.json" -exec basename {} \; 2>/dev/null | head -20 | while read -r container_file; do
+        # Try to extract framework name from container file content
+        if [ -f "$RESULTS_DIR/$container_file" ]; then
+            container_name=$(grep -o '"name"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESULTS_DIR/$container_file" 2>/dev/null | head -1 | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "unknown")
+            echo "      - $container_file: $container_name"
+        fi
+    done
+    if [ "$CONTAINER_COUNT" -gt 20 ]; then
+        echo "      ... and $((CONTAINER_COUNT - 20)) more container files"
+    fi
+fi
+
 # Generate report
 # Note: We preserve history manually, so we can use --clean for fresh report
 echo ""

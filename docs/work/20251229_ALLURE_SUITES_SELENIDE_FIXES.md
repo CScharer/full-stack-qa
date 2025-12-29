@@ -856,12 +856,54 @@ After fix implementation:
 
 ---
 
+### Additional Issue: Only Playwright Shows in Suites Tab (Deployed Report)
+
+**User Report**: "Also, note that the results that display here https://cscharer.github.io/full-stack-qa/# Only show the Playwright Tests in the Suites tab. I wonder if it's a timing issue and they just aren't all available yet because they all show up on the Overview and the Behaviors tab?"
+
+**Observation**: 
+- ✅ All frameworks show in **Overview** tab
+- ✅ All frameworks show in **Behaviors** tab  
+- ❌ Only Playwright shows in **Suites** tab
+- This suggests result files are correct, but container files may not be processed correctly
+
+**Root Cause Analysis**:
+
+1. **Container File Validation Missing**: 
+   - `generate-combined-allure-report.sh` doesn't verify container files exist before report generation
+   - Only checks for result files, not container files
+   - **Impact**: Report generated even if containers are missing
+
+2. **Possible Container File Issues**:
+   - Container files may not be created for all frameworks
+   - Container files may be created but with incorrect structure
+   - Container files may be created but Allure isn't processing them correctly
+   - **Question**: Why does Playwright work but others don't?
+
+3. **Timing Issue Unlikely**:
+   - Container creation happens in Step 4.5, before report generation
+   - All frameworks show in Overview/Behaviors, so result files are present
+   - **More likely**: Container files aren't being created correctly for non-Playwright frameworks
+
+**Solution**: Add container file validation to `generate-combined-allure-report.sh`
+- ✅ **IMPLEMENTED**: Added container file count and validation
+- ✅ **IMPLEMENTED**: Added container file breakdown by framework name
+- ✅ **IMPLEMENTED**: Added warning if no container files found
+
+**Next Steps**:
+1. Check pipeline logs for container creation output
+2. Verify container files exist in `allure-results-combined-all-environments` artifact
+3. Compare Playwright container structure with other frameworks
+4. Check if container UUID references are correct
+
+---
+
 ### Next Steps
 
 1. **Implement Solution 1** - Fix environment detection in merge step (CRITICAL)
-2. **Add logging for skipped containers** - Identify which containers are being skipped and why
-3. **Add validation checks** - Verify prerequisites before container creation
-4. **Improve error handling** - Make container creation more defensive
-5. **Monitor pipeline logs** - Watch for warnings about skipped containers
-6. **Analyze artifacts** - Use analysis script to identify patterns in inconsistent runs
+2. **Verify container files in deployed report** - Check if containers are present in GitHub Pages deployment
+3. **Add logging for skipped containers** - Identify which containers are being skipped and why
+4. **Add validation checks** - Verify prerequisites before container creation
+5. **Improve error handling** - Make container creation more defensive
+6. **Monitor pipeline logs** - Watch for warnings about skipped containers
+7. **Analyze artifacts** - Use analysis script to identify patterns in inconsistent runs
 
