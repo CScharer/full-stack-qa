@@ -610,13 +610,13 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 | Suite | Parallel | Thread Count | Notes |
 |-------|----------|--------------|-------|
-| `testng-smoke-suite.xml` | ❌ No | N/A | Sequential execution |
+| `testng-smoke-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
 | `testng-ci-suite.xml` | ❌ No | N/A | Sequential execution |
 | `testng-extended-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
 | `testng-grid-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
-| `testng-mobile-browser-suite.xml` | ❌ No | N/A | Sequential execution |
-| `testng-responsive-suite.xml` | ❌ No | N/A | Sequential execution |
-| `testng-selenide-suite.xml` | ❌ No | N/A | Sequential execution |
+| `testng-mobile-browser-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
+| `testng-responsive-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
+| `testng-selenide-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
 | `testng-api-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
 | `testng-mobile-suite.xml` | ✅ Yes | 2 | `parallel="tests"` |
 

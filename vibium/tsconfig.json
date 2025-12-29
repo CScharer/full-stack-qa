@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "types": ["node", "vitest"],
+    "types": ["node"],
     "typeRoots": ["./types", "./node_modules/@types"],
     "baseUrl": ".",
     "paths": {
