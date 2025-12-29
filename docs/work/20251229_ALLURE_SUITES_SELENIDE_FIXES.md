@@ -907,8 +907,55 @@ After fix implementation:
    - ✅ Will help diagnose Surefire/Selenide DEV-only issue
    - **Useful for**: Diagnosing environment detection issues
 
-**Current Pipeline Run**: https://github.com/CScharer/full-stack-qa/actions/runs/20581888044 (DEV only)
+**Current Pipeline Run**: https://github.com/CScharer/full-stack-qa/actions/runs/20582311148 (DEV only)
 **After Merge**: Full pipeline with all environments will provide complete diagnostic data
+
+---
+
+## Pipeline Run Analysis (Run #143 - 20582311148)
+
+**Status**: ✅ Pipeline completed successfully (1 Selenide test failed - unrelated to fixes)
+
+### What to Review
+
+1. **Container Validation Output** (in "Generate Combined Allure Report" step):
+   - Look for: "📦 Found X container files"
+   - Check framework breakdown: "📊 Container breakdown:"
+   - Verify which frameworks have containers: "Found frameworks:"
+   - Check sample containers: "📋 Sample container files"
+
+2. **Container Creation Output** (in "Step 4.5: Creating framework container files..."):
+   - Look for: "📊 DEBUG: Found X result files"
+   - Check: "✅ DEBUG: Created X environment-specific container file(s)"
+   - Check: "✅ DEBUG: Created X top-level container file(s)"
+   - Review: "📊 DEBUG: Container Creation Summary"
+
+3. **Environment Detection** (in "Merging Allure results" step):
+   - Look for: "🔍 Environment Detection Sample"
+   - Check: "🔍 Marker files created"
+   - Watch for warnings: "⚠️ WARNING: Only DEV markers found"
+
+### Next Steps Based on Findings
+
+**If containers are being created for all frameworks:**
+- Issue may be with Allure report generation or container structure
+- Need to compare container structures between frameworks
+- May need to investigate Allure's container processing
+
+**If containers are missing for some frameworks:**
+- Check why those frameworks aren't getting containers
+- Review suite label detection
+- Check environment labels
+
+**If only DEV markers found (expected for branch run):**
+- This is normal for branch runs
+- Full environment detection will be visible after merge
+
+**After reviewing logs, we can:**
+1. Download the artifact to analyze container files directly
+2. Compare working vs non-working container structures
+3. Implement fixes based on findings
+4. Wait for merge to see full environment detection
 
 ---
 
