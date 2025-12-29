@@ -1178,7 +1178,7 @@ jobs:
             echo ""
             echo "🔍 Checking for framework-specific data..."
             for framework in "Cypress" "Playwright" "Robot" "Vibium" "Selenide" "Surefire"; do
-              count=$(find allure-report-combined/data -name "*-container.json" 2>/dev/null | xargs grep -l "$framework" 2>/dev/null | wc -l | tr -d ' ')
+              count=$(find allure-report-combined/data -name "*-container.json" -type f -exec grep -l "$framework" {} + 2>/dev/null | wc -l | tr -d ' ')
               if [ "$count" -gt 0 ]; then
                 echo "   ✅ $framework: $count container file(s) found"
               else
