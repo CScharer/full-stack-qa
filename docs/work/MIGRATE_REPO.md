@@ -210,7 +210,7 @@ test -f .git/hooks/pre-commit && echo "âœ… pre-commit hook installed" || echo "â
 
 **This will be done in Phase 3** (Review and Prepare for First Commit) before the first commit.
 
-### Step 1.5: Verify .gitignore is Present
+### Step 1.6: Verify .gitignore is Present
 Ensure `.gitignore` is present and includes all build artifacts (should already be copied from Step 1.2).
 
 ---
