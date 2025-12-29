@@ -12,7 +12,9 @@ if [ ! -d "$RESULTS_DIR" ]; then
     exit 0
 fi
 
-echo "📦 Creating framework container files..."
+echo "═══════════════════════════════════════════════════════════════"
+echo "📦 Step 4.5: Creating framework container files..."
+echo "═══════════════════════════════════════════════════════════════"
 echo "   Results directory: $RESULTS_DIR"
 echo ""
 
@@ -27,14 +29,21 @@ from collections import defaultdict
 
 results_dir = os.environ.get('RESULTS_DIR', 'allure-results-combined')
 
+print("🔍 DEBUG: Starting container creation script")
+print(f"   Results directory: {results_dir}")
+print(f"   Directory exists: {os.path.isdir(results_dir)}")
+
 if not os.path.isdir(results_dir):
-    print(f"⚠️  Results directory not found: {results_dir}")
-    exit(0)
+    print(f"❌ ERROR: Results directory not found: {results_dir}")
+    sys.exit(1)
 
 # Find all result files
 result_files = list(Path(results_dir).glob("*-result.json"))
-
-print(f"📊 Found {len(result_files)} result files")
+print(f"")
+print(f"📊 DEBUG: Found {len(result_files)} result files")
+if len(result_files) == 0:
+    print("⚠️  WARNING: No result files found - cannot create containers")
+    sys.exit(0)
 
 # Debug: Count results by suite name before grouping
 suite_counts = defaultdict(int)
@@ -292,10 +301,12 @@ for suite_name, env_groups in suite_groups.items():
         # Always show debug output for framework containers (not just first 10)
         print(f"   ✅ Created container: {container_name} ({len(result_uuids)} tests)")
 
-print(f"\n✅ Created {containers_created} container file(s)")
+print(f"")
+print(f"✅ DEBUG: Created {containers_created} environment-specific container file(s)")
 
 # Debug: Show what suite/environment combinations we found
-print(f"\n🔍 Suite/Environment groups found:")
+print(f"")
+print(f"🔍 DEBUG: Suite/Environment groups found:")
 for suite_name, env_groups in suite_groups.items():
     env_list = list(env_groups.keys())
     total_tests = sum(len(results) for results in env_groups.values())
@@ -374,15 +385,57 @@ for suite_name, env_groups in suite_groups.items():
         except Exception as e:
             print(f"⚠️  Error updating parentSuite for {container_file_path.name}: {e}", file=sys.stderr)
 
-print(f"✅ Created {top_level_containers} top-level container file(s)")
+print(f"✅ DEBUG: Created {top_level_containers} top-level container file(s)")
+
+# Final summary
+print(f"")
+print(f"═══════════════════════════════════════════════════════════════")
+print(f"📊 DEBUG: Container Creation Summary")
+print(f"═══════════════════════════════════════════════════════════════")
+print(f"   Result files processed: {len(result_files)}")
+print(f"   Environment-specific containers: {containers_created}")
+print(f"   Top-level containers: {top_level_containers}")
+print(f"   Total container files created: {containers_created + top_level_containers}")
+
+# Verify container files exist
+container_files = list(Path(results_dir).glob("*-container.json"))
+print(f"   Container files found in directory: {len(container_files)}")
+
+if len(container_files) != (containers_created + top_level_containers):
+    print(f"⚠️  WARNING: Expected {containers_created + top_level_containers} container files, but found {len(container_files)}")
+    print(f"   This may indicate some containers were not created or were deleted")
+
+# List container files for debugging
+if len(container_files) > 0:
+    print(f"")
+    print(f"🔍 DEBUG: Container files created:")
+    for container_file in sorted(container_files)[:10]:  # Show first 10
+        try:
+            with open(container_file, 'r', encoding='utf-8') as f:
+                container_data = json.load(f)
+                container_name = container_data.get('name', 'N/A')
+                children_count = len(container_data.get('children', []))
+                print(f"   - {container_file.name}: name='{container_name}', children={children_count}")
+        except Exception as e:
+            print(f"   - {container_file.name}: ERROR reading file - {e}")
+    if len(container_files) > 10:
+        print(f"   ... and {len(container_files) - 10} more container files")
+
+print(f"═══════════════════════════════════════════════════════════════")
+print(f"✅ Container creation script completed")
+print(f"═══════════════════════════════════════════════════════════════")
 
 PYTHON_SCRIPT
 
-if [ $? -ne 0 ]; then
-    echo "⚠️  Error creating container files"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ ERROR: Container creation script failed with exit code $EXIT_CODE"
     exit 1
 fi
 
 echo ""
 echo "✅ Framework container files created successfully!"
+echo "   Check debug output above for details"
 
