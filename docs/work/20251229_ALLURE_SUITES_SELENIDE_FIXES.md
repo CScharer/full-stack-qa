@@ -462,17 +462,23 @@ All frameworks detected:
 
 **Next Steps for Investigation**
 
-1. **FIRST STEP: Add Debug Output to Container Creation Script** ⚠️ **START HERE**
+1. **FIRST STEP: Add Debug Output to Container Creation Script** ✅ **COMPLETED**
    - **Problem**: Cannot verify from logs if containers are being created
-   - **Solution**: Add explicit debug output to `create-framework-containers.sh` to verify:
-     - Script execution start/end
+   - **Solution**: Added explicit debug output to `create-framework-containers.sh` to verify:
+     - Script execution start/end markers
      - Number of result files found
      - Number of containers created (env-specific and top-level)
-     - Container file paths
+     - Container file paths and structure
+     - Summary with verification of created files
      - Any errors or warnings
-   - **Action**: Modify `scripts/ci/create-framework-containers.sh` to add debug logging
-   - **Expected Output**: Should see clear messages about container creation in pipeline logs
-   - **Why This First**: Need to verify the script is actually running and creating files
+   - **Action**: Modified `scripts/ci/create-framework-containers.sh` with comprehensive debug logging
+   - **Expected Output**: Should see clear messages about container creation in pipeline logs:
+     - "📦 Step 4.5: Creating framework container files..."
+     - "📊 DEBUG: Found X result files"
+     - "✅ DEBUG: Created X environment-specific container file(s)"
+     - "✅ DEBUG: Created X top-level container file(s)"
+     - "📊 DEBUG: Container Creation Summary"
+   - **Status**: ✅ Debug output added, ready for next pipeline run
 
 2. **SECOND STEP: Verify Container Files Exist in Artifact**
    - Download a recent Allure results artifact from a successful pipeline run
