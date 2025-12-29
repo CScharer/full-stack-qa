@@ -1,7 +1,8 @@
 # Allure Report, Suites Tab, and Selenide Fixes - Complete History
 
 **Created**: 2025-12-29  
-**Status**: ✅ **Complete** - All fixes implemented and verified  
+**Last Updated**: 2025-12-29  
+**Status**: 🔄 **In Progress** - Most fixes implemented, GitHub Pages deployment issue being addressed  
 **Purpose**: Comprehensive documentation of all Allure report fixes, Suites tab issues, and Selenide visibility problems
 
 ---
@@ -15,7 +16,12 @@ This document consolidates all work related to:
 4. **Selenide Visibility**: Fixing Selenide tests to appear as a separate suite (not nested under Surefire)
 5. **Multi-Environment Support**: Ensuring all environments (dev, test, prod) are visible for all frameworks
 
-**Final Status**: ✅ All issues resolved and verified working
+**Final Status**: 
+- ✅ Container creation fixes: Implemented and working
+- ✅ Framework integration: Complete
+- ✅ Suites tab fixes: Implemented (pending full verification on GitHub Pages)
+- ⚠️ GitHub Pages deployment: Issue identified, fix in PR #22 (pending merge and verification)
+- ⚠️ Environment detection: Needs improvement (most containers marked as "combined")
 
 ---
 
@@ -1193,7 +1199,7 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 
 **Problem**: Suites tab on GitHub Pages (https://cscharer.github.io/full-stack-qa/#) does not show all frameworks, but local report (downloaded artifact) shows all frameworks correctly.
 
-**Status**: 🔍 **INVESTIGATING**
+**Status**: ✅ **FIX IMPLEMENTED** - Pending merge to main for verification
 
 **Symptoms**:
 - ✅ Local report (downloaded artifact viewed at http://localhost:8080/#): All frameworks visible in Suites tab
@@ -1212,21 +1218,36 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 **Investigation Steps**:
 1. ✅ Add verification step before deployment to check report structure
 2. ✅ Change `force_orphan: false` to preserve history and file references
-3. ⚠️ Add diagnostic output to show what files are being deployed
-4. ⚠️ Verify container files are present in deployed report
-5. ⚠️ Check if there are any file size or path issues
+3. ✅ Add diagnostic output to show what files are being deployed
+4. ✅ Verify container files are present in deployed report
+5. ⚠️ Check if there are any file size or path issues (pending pipeline run on main)
 
 **Changes Made**:
 - Added "Verify Report Before Deployment" step to check report structure
+  - Verifies critical files (index.html, data/, widgets/)
+  - Counts container and result files
+  - Lists sample container files
+  - Checks for framework-specific data (Cypress, Playwright, Robot, Vibium, Selenide, Surefire)
 - Changed `force_orphan: false` to preserve file references
+  - May fix issue where file references are broken with `force_orphan: true`
+  - Preserves history and file structure
 - Added diagnostic output for container files and framework detection
 - Added verification of critical directories (data/, widgets/)
+- Fixed shellcheck issue: Changed `find ... | xargs grep` to `find ... -exec grep` for compliance
+
+**Implementation Status**:
+- ✅ PR #22 created: https://github.com/CScharer/full-stack-qa/pull/22
+- ✅ Changes committed and pushed to `fix-github-pages-suites-display` branch
+- ✅ Pipeline run #146 (20584034405) completed successfully on branch
+- ⚠️ **Pending**: Merge to main and full pipeline run to verify fix on GitHub Pages
+- ⚠️ **Note**: Branch runs only execute DEV tests, so full verification requires merge to main
 
 **Next Steps**:
-1. Test deployment with new verification step
-2. Compare deployed report structure with local report
-3. Check browser console for any 404 errors or missing file references
-4. Verify container files are accessible in deployed report
+1. ✅ Test deployment with new verification step (PR #22)
+2. ⚠️ **After merge**: Compare deployed report structure with local report
+3. ⚠️ **After merge**: Check browser console for any 404 errors or missing file references
+4. ⚠️ **After merge**: Verify container files are accessible in deployed report
+5. ⚠️ **After merge**: Verify Suites tab shows all frameworks on GitHub Pages
 
 #### Immediate Actions (Before Merge)
 
@@ -1241,12 +1262,36 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
    - Run: `./scripts/test/analyze-allure-containers.sh <artifact-path>`
    - This will show container structure and identify issues
 
-3. **Review Deployed Report** ⚠️ **ISSUE FOUND**
+3. **Review Deployed Report** ⚠️ **ISSUE FOUND - FIX IN PROGRESS**
    - Check: https://cscharer.github.io/full-stack-qa/#
    - **Problem**: Suites tab does not show all frameworks on GitHub Pages
    - **Local report works**: When downloaded and viewed locally, all frameworks appear
    - **Root cause**: Likely GitHub Pages deployment issue (file references, caching, or deployment configuration)
-   - **Status**: Investigating deployment process and configuration
+   - **Status**: Fix implemented in PR #22, pending merge to main for verification
+   - **Pipeline Run #146**: https://github.com/CScharer/full-stack-qa/actions/runs/20584034405
+     - ✅ Verification step executed successfully
+     - ⚠️ Deployment skipped (branch run, not main - expected behavior)
+     - ✅ Report structure verified before deployment would occur
+
+---
+
+#### Pipeline Run #146 (20584034405) - Branch Results ✅
+
+**Status**: ✅ **SUCCESS** - Pipeline completed successfully (DEV only - expected for branch)
+
+**Pipeline URL**: https://github.com/CScharer/full-stack-qa/actions/runs/20584034405
+
+**Verification Step Results**:
+- ✅ Verification step executed successfully
+- ✅ Report structure verified before deployment
+- ⚠️ Deployment skipped (branch run, not main - expected behavior)
+- ✅ All verification checks passed
+
+**Note**: Branch runs only execute DEV tests and skip GitHub Pages deployment. Full verification requires merge to main where:
+- All environments (dev, test, prod) will run
+- GitHub Pages deployment will occur
+- Verification step will show full report structure
+- Suites tab fix can be verified on live GitHub Pages site
 
 #### After Reviewing Logs/Artifacts
 
