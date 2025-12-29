@@ -176,6 +176,9 @@ for result_file in result_files:
 # Store env-specific container UUIDs for top-level containers
 # Structure: {suite_name: [env_container_uuids]}
 env_container_uuids_by_suite = defaultdict(list)
+# Store container file paths for adding parentSuite labels later
+# Structure: {suite_name: [(container_file_path, container_uuid)]}
+env_container_files_by_suite = defaultdict(list)
 
 containers_created = 0
 for suite_name, env_groups in suite_groups.items():
@@ -271,6 +274,9 @@ for suite_name, env_groups in suite_groups.items():
         if env != 'unknown' and env != 'combined':
             container_data["labels"].append({"name": "environment", "value": env})
         
+        # Store container file path and suite name for adding parentSuite later
+        # We need to add parentSuite after top-level containers are created
+        
         # Write container file
         container_file = Path(results_dir) / f"{container_uuid}-container.json"
         with open(container_file, 'w', encoding='utf-8') as f:
@@ -278,6 +284,9 @@ for suite_name, env_groups in suite_groups.items():
         
         containers_created += 1
         env_container_uuids_by_suite[suite_name].append(container_uuid)
+        # Store container file path for adding parentSuite later (only for env-specific containers)
+        if env != 'unknown' and env != 'combined' and container_name != suite_name:
+            env_container_files_by_suite[suite_name].append((container_file, container_uuid))
         # Always show debug output for framework containers (not just first 10)
         print(f"   ✅ Created container: {container_name} ({len(result_uuids)} tests)")
 
@@ -344,6 +353,36 @@ for suite_name, env_groups in suite_groups.items():
         env_count = len([e for e in env_groups.keys() if e != 'unknown'])
         child_type = "env containers" if env_container_uuids else "test results"
         print(f"   ✅ Created top-level container: {suite_name} ({len(children_uuids)} {child_type}, {env_count} environment(s))")
+    
+    # CRITICAL: Add parentSuite labels to env-specific containers
+    # Allure's Suites tab requires parentSuite to build the hierarchy
+    # Update env-specific containers to have parentSuite pointing to the top-level suite
+    if env_container_uuids:
+        container_files = env_container_files_by_suite.get(suite_name, [])
+        for container_file_path, container_uuid in container_files:
+            try:
+                with open(container_file_path, 'r', encoding='utf-8') as f:
+                    container_data = json.load(f)
+                
+                # Add parentSuite label if it doesn't exist or update it
+                labels = container_data.get('labels', [])
+                parent_suite_found = False
+                for i, label in enumerate(labels):
+                    if label.get('name') == 'parentSuite':
+                        labels[i]['value'] = suite_name
+                        parent_suite_found = True
+                        break
+                
+                if not parent_suite_found:
+                    labels.append({"name": "parentSuite", "value": suite_name})
+                
+                container_data['labels'] = labels
+                
+                # Write updated container file
+                with open(container_file_path, 'w', encoding='utf-8') as f:
+                    json.dump(container_data, f, indent=2, ensure_ascii=False)
+            except Exception as e:
+                print(f"⚠️  Error updating parentSuite for {container_file_path.name}: {e}", file=sys.stderr)
 
 print(f"✅ Created {top_level_containers} top-level container file(s)")
 
