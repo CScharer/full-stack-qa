@@ -173,10 +173,14 @@ for result_file in result_files:
         continue
 
 # Create container files for each suite/environment combination
+# We create BOTH env-specific containers AND top-level containers
+# This ensures Allure's Suites tab can properly display all frameworks
+# Structure: Top-level container → Env-specific containers → Test results
+
 # Store env-specific container UUIDs for top-level containers
 # Structure: {suite_name: [env_container_uuids]}
 env_container_uuids_by_suite = defaultdict(list)
-# Store container file paths for adding parentSuite labels later
+# Store container file paths for adding parentSuite labels
 # Structure: {suite_name: [(container_file_path, container_uuid)]}
 env_container_files_by_suite = defaultdict(list)
 
@@ -237,6 +241,7 @@ for suite_name, env_groups in suite_groups.items():
                     
                     containers_created += 1
                     env_container_uuids_by_suite[suite_name].append(container_uuid)
+                    env_container_files_by_suite[suite_name].append((container_file, container_uuid))
                     print(f"   ✅ Created container: {container_name} ({len(split_uuids)} tests) [from combined]")
                 continue  # Skip creating a "combined" container since we split it
             else:
@@ -274,9 +279,6 @@ for suite_name, env_groups in suite_groups.items():
         if env != 'unknown' and env != 'combined':
             container_data["labels"].append({"name": "environment", "value": env})
         
-        # Store container file path and suite name for adding parentSuite later
-        # We need to add parentSuite after top-level containers are created
-        
         # Write container file
         container_file = Path(results_dir) / f"{container_uuid}-container.json"
         with open(container_file, 'w', encoding='utf-8') as f:
@@ -299,9 +301,10 @@ for suite_name, env_groups in suite_groups.items():
     total_tests = sum(len(results) for results in env_groups.values())
     print(f"   - {suite_name}: {total_tests} test(s) across {len(env_list)} environment(s) {env_list}")
 
-# Also create top-level containers for each framework (grouping all environments)
+# Create top-level containers for each framework (grouping all environments)
 # CRITICAL: Top-level containers should reference env-specific container UUIDs, not result UUIDs
-# This creates the proper hierarchy: Top-level -> Env-specific -> Results
+# This creates the proper hierarchy: Top-level → Env-specific → Results
+# This ensures Allure's Suites tab can properly display all frameworks
 print("\n📦 Creating top-level framework containers...")
 top_level_containers = 0
 
@@ -309,30 +312,19 @@ for suite_name, env_groups in suite_groups.items():
     # Get env-specific container UUIDs for this suite
     env_container_uuids = env_container_uuids_by_suite.get(suite_name, [])
     
-    # If no env-specific containers were created (shouldn't happen), fall back to result UUIDs
+    # If no env-specific containers were created, skip top-level container
+    # (This shouldn't happen, but handle gracefully)
     if not env_container_uuids:
-        # Fallback: collect all result UUIDs across all environments
-        all_result_uuids = []
-        for env, results in env_groups.items():
-            if env != 'unknown':
-                all_result_uuids.extend([r['uuid'] for r in results if r['uuid']])
-        
-        if not all_result_uuids:
-            continue
-        
-        # Use result UUIDs as children (flat structure)
-        children_uuids = all_result_uuids
-    else:
-        # Use env-specific container UUIDs as children (proper hierarchy)
-        children_uuids = env_container_uuids
+        continue
     
     # Create top-level container (no environment suffix)
+    # The name should match the suite name exactly for Allure to recognize it
     top_container_uuid = uuid.uuid4().hex
     
     top_container_data = {
         "uuid": top_container_uuid,
-        "name": suite_name,
-        "children": children_uuids,
+        "name": suite_name,  # e.g., "Cypress Tests" (no environment suffix)
+        "children": env_container_uuids,  # References env containers, not results
         "description": f"{suite_name} test suite (all environments)",
         "labels": [
             {"name": "suite", "value": suite_name}
@@ -351,38 +343,36 @@ for suite_name, env_groups in suite_groups.items():
     top_level_containers += 1
     if top_level_containers <= 10:  # Debug output
         env_count = len([e for e in env_groups.keys() if e != 'unknown'])
-        child_type = "env containers" if env_container_uuids else "test results"
-        print(f"   ✅ Created top-level container: {suite_name} ({len(children_uuids)} {child_type}, {env_count} environment(s))")
+        print(f"   ✅ Created top-level container: {suite_name} ({len(env_container_uuids)} env containers, {env_count} environment(s))")
     
     # CRITICAL: Add parentSuite labels to env-specific containers
-    # Allure's Suites tab requires parentSuite to build the hierarchy
-    # Update env-specific containers to have parentSuite pointing to the top-level suite
-    if env_container_uuids:
-        container_files = env_container_files_by_suite.get(suite_name, [])
-        for container_file_path, container_uuid in container_files:
-            try:
-                with open(container_file_path, 'r', encoding='utf-8') as f:
-                    container_data = json.load(f)
-                
-                # Add parentSuite label if it doesn't exist or update it
-                labels = container_data.get('labels', [])
-                parent_suite_found = False
-                for i, label in enumerate(labels):
-                    if label.get('name') == 'parentSuite':
-                        labels[i]['value'] = suite_name
-                        parent_suite_found = True
-                        break
-                
-                if not parent_suite_found:
-                    labels.append({"name": "parentSuite", "value": suite_name})
-                
-                container_data['labels'] = labels
-                
-                # Write updated container file
-                with open(container_file_path, 'w', encoding='utf-8') as f:
-                    json.dump(container_data, f, indent=2, ensure_ascii=False)
-            except Exception as e:
-                print(f"⚠️  Error updating parentSuite for {container_file_path.name}: {e}", file=sys.stderr)
+    # This creates the explicit hierarchy that Allure's Suites tab requires
+    # Env containers should have parentSuite pointing to the top-level suite
+    container_files = env_container_files_by_suite.get(suite_name, [])
+    for container_file_path, container_uuid in container_files:
+        try:
+            with open(container_file_path, 'r', encoding='utf-8') as f:
+                container_data = json.load(f)
+            
+            # Add or update parentSuite label to point to top-level suite
+            labels = container_data.get('labels', [])
+            parent_suite_found = False
+            for i, label in enumerate(labels):
+                if label.get('name') == 'parentSuite':
+                    labels[i]['value'] = suite_name
+                    parent_suite_found = True
+                    break
+            
+            if not parent_suite_found:
+                labels.append({"name": "parentSuite", "value": suite_name})
+            
+            container_data['labels'] = labels
+            
+            # Write updated container file
+            with open(container_file_path, 'w', encoding='utf-8') as f:
+                json.dump(container_data, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            print(f"⚠️  Error updating parentSuite for {container_file_path.name}: {e}", file=sys.stderr)
 
 print(f"✅ Created {top_level_containers} top-level container file(s)")
 
