@@ -38,22 +38,76 @@ print(f"📊 Found {len(result_files)} result files")
 
 # Debug: Count results by suite name before grouping
 suite_counts = defaultdict(int)
-for result_file in result_files[:100]:  # Sample first 100 for debugging
+files_without_suite = []
+selenide_files_found = []
+
+for result_file in result_files:
     try:
         with open(result_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
+        
+        # Check for Selenide indicators
+        is_selenide = False
         if 'labels' in data:
             for label in data['labels']:
                 if label.get('name') == 'suite':
-                    suite_counts[label.get('value', 'N/A')] += 1
+                    suite_value = label.get('value', 'N/A')
+                    suite_counts[suite_value] += 1
+                    if 'Selenide' in suite_value or suite_value == 'Selenide Tests':
+                        is_selenide = True
                     break
-    except:
-        pass
+                elif label.get('name') == 'epic' and label.get('value') == 'HomePage Tests':
+                    is_selenide = True
+                elif label.get('name') == 'testClass' and 'HomePageTests' in str(label.get('value', '')):
+                    is_selenide = True
+        
+        # Check fullName for Selenide
+        if 'fullName' in data and 'Selenide' in data.get('fullName', ''):
+            is_selenide = True
+        
+        if is_selenide:
+            selenide_files_found.append(result_file)
+        
+        # Track files without suite labels
+        if 'labels' not in data or not any(l.get('name') == 'suite' for l in data.get('labels', [])):
+            if len(files_without_suite) < 10:
+                files_without_suite.append(result_file)
+    except Exception as e:
+        if len(files_without_suite) < 10:
+            files_without_suite.append((result_file, str(e)))
 
 if suite_counts:
-    print(f"🔍 Sample suite distribution (first 100 files):")
+    print(f"🔍 Suite distribution (all files):")
     for suite, count in sorted(suite_counts.items()):
         print(f"   - {suite}: {count} file(s)")
+
+if selenide_files_found:
+    print(f"\n🔍 Found {len(selenide_files_found)} potential Selenide result file(s)")
+    # Check suite labels on Selenide files
+    selenide_suite_labels = defaultdict(int)
+    for sel_file in selenide_files_found[:10]:  # Check first 10
+        try:
+            with open(sel_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if 'labels' in data:
+                    for label in data['labels']:
+                        if label.get('name') == 'suite':
+                            selenide_suite_labels[label.get('value', 'N/A')] += 1
+                            break
+        except:
+            pass
+    if selenide_suite_labels:
+        print(f"   Selenide files have suite labels: {dict(selenide_suite_labels)}")
+    else:
+        print(f"   ⚠️  Selenide files are missing suite labels!")
+
+if files_without_suite:
+    print(f"\n⚠️  Found {len(files_without_suite)} file(s) without suite labels (showing first 10):")
+    for item in files_without_suite[:10]:
+        if isinstance(item, tuple):
+            print(f"   - {item[0].name[:50]}... (error: {item[1]})")
+        else:
+            print(f"   - {item.name[:50]}...")
 
 # Group results by framework suite and environment
 # Structure: {suite_name: {env: [result_files]}}
@@ -100,6 +154,10 @@ for result_file in result_files:
         continue
 
 # Create container files for each suite/environment combination
+# Store env-specific container UUIDs for top-level containers
+# Structure: {suite_name: [env_container_uuids]}
+env_container_uuids_by_suite = defaultdict(list)
+
 containers_created = 0
 for suite_name, env_groups in suite_groups.items():
     for env, results in env_groups.items():
@@ -156,6 +214,7 @@ for suite_name, env_groups in suite_groups.items():
                         json.dump(container_data, f, indent=2, ensure_ascii=False)
                     
                     containers_created += 1
+                    env_container_uuids_by_suite[suite_name].append(container_uuid)
                     print(f"   ✅ Created container: {container_name} ({len(split_uuids)} tests) [from combined]")
                 continue  # Skip creating a "combined" container since we split it
             else:
@@ -199,6 +258,7 @@ for suite_name, env_groups in suite_groups.items():
             json.dump(container_data, f, indent=2, ensure_ascii=False)
         
         containers_created += 1
+        env_container_uuids_by_suite[suite_name].append(container_uuid)
         # Always show debug output for framework containers (not just first 10)
         print(f"   ✅ Created container: {container_name} ({len(result_uuids)} tests)")
 
@@ -212,17 +272,31 @@ for suite_name, env_groups in suite_groups.items():
     print(f"   - {suite_name}: {total_tests} test(s) across {len(env_list)} environment(s) {env_list}")
 
 # Also create top-level containers for each framework (grouping all environments)
+# CRITICAL: Top-level containers should reference env-specific container UUIDs, not result UUIDs
+# This creates the proper hierarchy: Top-level -> Env-specific -> Results
 print("\n📦 Creating top-level framework containers...")
 top_level_containers = 0
 
 for suite_name, env_groups in suite_groups.items():
-    # Collect all result UUIDs across all environments
-    all_result_uuids = []
-    for env, results in env_groups.items():
-        all_result_uuids.extend([r['uuid'] for r in results if r['uuid']])
+    # Get env-specific container UUIDs for this suite
+    env_container_uuids = env_container_uuids_by_suite.get(suite_name, [])
     
-    if not all_result_uuids:
-        continue
+    # If no env-specific containers were created (shouldn't happen), fall back to result UUIDs
+    if not env_container_uuids:
+        # Fallback: collect all result UUIDs across all environments
+        all_result_uuids = []
+        for env, results in env_groups.items():
+            if env != 'unknown':
+                all_result_uuids.extend([r['uuid'] for r in results if r['uuid']])
+        
+        if not all_result_uuids:
+            continue
+        
+        # Use result UUIDs as children (flat structure)
+        children_uuids = all_result_uuids
+    else:
+        # Use env-specific container UUIDs as children (proper hierarchy)
+        children_uuids = env_container_uuids
     
     # Create top-level container (no environment suffix)
     top_container_uuid = uuid.uuid4().hex
@@ -230,7 +304,7 @@ for suite_name, env_groups in suite_groups.items():
     top_container_data = {
         "uuid": top_container_uuid,
         "name": suite_name,
-        "children": all_result_uuids,
+        "children": children_uuids,
         "description": f"{suite_name} test suite (all environments)",
         "labels": [
             {"name": "suite", "value": suite_name}
@@ -248,8 +322,9 @@ for suite_name, env_groups in suite_groups.items():
     
     top_level_containers += 1
     if top_level_containers <= 10:  # Debug output
-        env_count = len(env_groups)
-        print(f"   ✅ Created top-level container: {suite_name} ({len(all_result_uuids)} tests, {env_count} environment(s))")
+        env_count = len([e for e in env_groups.keys() if e != 'unknown'])
+        child_type = "env containers" if env_container_uuids else "test results"
+        print(f"   ✅ Created top-level container: {suite_name} ({len(children_uuids)} {child_type}, {env_count} environment(s))")
 
 print(f"✅ Created {top_level_containers} top-level container file(s)")
 
