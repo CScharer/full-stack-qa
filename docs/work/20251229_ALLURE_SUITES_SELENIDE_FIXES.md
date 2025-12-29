@@ -479,6 +479,15 @@ All frameworks detected:
      - "✅ DEBUG: Created X top-level container file(s)"
      - "📊 DEBUG: Container Creation Summary"
    - **Status**: ✅ Debug output added, ready for next pipeline run
+   - **What to Look For in Next Pipeline Run**:
+     - Look for "📦 Step 4.5: Creating framework container files..." in logs
+     - Check "📊 DEBUG: Found X result files" - should be > 0
+     - Check "✅ DEBUG: Created X environment-specific container file(s)" - should be > 0
+     - Check "✅ DEBUG: Created X top-level container file(s)" - should be > 0
+     - Check "📊 DEBUG: Container Creation Summary" section for totals
+     - Check "🔍 DEBUG: Container files created:" list - should show container names and children counts
+     - Verify "Container files found in directory" matches expected count
+     - If counts don't match, there may be a file creation or deletion issue
 
 2. **SECOND STEP: Verify Container Files Exist in Artifact**
    - Download a recent Allure results artifact from a successful pipeline run
