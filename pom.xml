@@ -772,14 +772,24 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<skip>${maven.compiler.skip}</skip>
-					<skipMain>${maven.compiler.skip}</skipMain>
-					<skipTest>${maven.compiler.skip}</skipTest>
 					<release>${java.version}</release>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
 					<meminitial>${meminitial}</meminitial>
 					<maxmem>${maxmem}</maxmem>
 				</configuration>
+				<executions>
+					<execution>
+						<id>default-testCompile</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<configuration>
+							<skip>${maven.compiler.skip}</skip>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugin</groupId>
