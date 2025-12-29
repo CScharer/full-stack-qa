@@ -347,9 +347,17 @@ After implementing optimizations:
   - `pre-compiled-classes/classes/` (if contents flattened)
 - **Status**: ✅ Fixed with fallback logic and debugging output
 
-**Issue 3**: JMeter plugin doesn't support `skip` parameter in configuration.
-- **Root Cause**: JMeter maven plugin has different skip mechanism
-- **Fix**: Added skip property to execution block configuration
+**Issue 3**: JMeter plugin's `configure` goal doesn't support `skip` parameter.
+- **Root Cause**: The `configure` goal of `jmeter-maven-plugin` doesn't recognize the `skip` parameter in its configuration
+- **Fix**: Set execution phase to `none` to prevent it from running during the normal lifecycle. The execution is already ignored by the compiler plugin's ignore configuration.
+- **Status**: ✅ Fixed (JMeter configure will not run during test execution)
+
+**Issue 4**: Maven still compiling even with pre-compiled classes.
+- **Root Cause**: Maven checks timestamps and dependencies, and may recompile if it detects changes
+- **Fix**: 
+  - Added `-Dmaven.compiler.skip=true` when classes are successfully reused
+  - Touch class files to update their timestamps (makes them appear newer than sources)
+  - Added `maven.compiler.skip` property to `pom.xml`
 - **Status**: ✅ Fixed
 
 **Debugging**: Comprehensive debugging output added to show actual artifact structure on each run, which will help verify the correct path structure.
