@@ -514,6 +514,27 @@ All frameworks detected:
      - Specific issues found
    - **Benefits**: Can diagnose issues immediately using existing artifacts
    - **Status**: ✅ Script created and ready to use
+   - **Quick Start**:
+     ```bash
+     # Option 1: Download artifact from recent pipeline run
+     gh run download <run-id> --name 'allure-results-combined-all-environments'
+     ./scripts/test/analyze-allure-containers.sh allure-results-combined-all-environments
+     
+     # Option 2: Use local directory (if you have one)
+     ./scripts/test/analyze-allure-containers.sh allure-results-combined
+     
+     # Option 3: Analyze downloaded report artifact (extract results first)
+     unzip -q allure-report-combined-all-environments.zip -d temp-artifact
+     ./scripts/test/analyze-allure-containers.sh temp-artifact/data
+     ```
+   - **What the Analysis Shows**:
+     - ✅ File counts (results vs containers)
+     - ✅ Suite and environment distribution
+     - ✅ Container type breakdown (top-level vs env-specific)
+     - ✅ Container structure validation
+     - ✅ Allure requirements check (pass/fail for each requirement)
+     - ✅ Specific issues found (missing containers, structure problems, etc.)
+     - ✅ Root cause identification
 
 3. **THIRD STEP: Verify Container Files Exist in Artifact** (if analysis shows issues)
    - Download a recent Allure results artifact from a successful pipeline run
