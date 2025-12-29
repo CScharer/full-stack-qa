@@ -62,7 +62,13 @@ if [ -d "pre-compiled-classes" ]; then
     fi
     # Verify we have the essential compiled classes
     if [ -d "target/classes" ] && [ -n "$(ls -A target/classes 2>/dev/null)" ]; then
-      echo "✅ Successfully reused compiled classes - compilation will be skipped"
+      echo "✅ Successfully reused compiled classes"
+      # Touch class files to make them appear newer than sources (prevents Maven from recompiling)
+      find target/classes -type f -name "*.class" -exec touch {} \; 2>/dev/null || true
+      if [ -d "target/test-classes" ] && [ -n "$(ls -A target/test-classes 2>/dev/null)" ]; then
+        find target/test-classes -type f -name "*.class" -exec touch {} \; 2>/dev/null || true
+      fi
+      echo "   Updated timestamps - compilation will be skipped"
     else
       echo "⚠️  Classes incomplete, will compile"
     fi
@@ -82,11 +88,19 @@ MAVEN_CMD="./mvnw -ntp test"
 MAVEN_CMD="$MAVEN_CMD -Dtest.environment=$ENVIRONMENT"
 MAVEN_CMD="$MAVEN_CMD -Dtest.retry.max.count=$RETRY_COUNT"
 MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$SUITE_FILE"
+
+# Skip compilation if we successfully reused classes
+if [ -d "target/classes" ] && [ -n "$(ls -A target/classes 2>/dev/null)" ] && [ -d "target/test-classes" ] && [ -n "$(ls -A target/test-classes 2>/dev/null)" ]; then
+  echo "   Skipping compilation phases (classes already available)"
+  MAVEN_CMD="$MAVEN_CMD -Dmaven.compiler.skip=true"
+fi
+
 # Skip checkstyle (runs in code-quality-analysis job)
 MAVEN_CMD="$MAVEN_CMD -Dcheckstyle.skip=true"
 # Skip formatting plugins (fmt-maven-plugin runs during format goal, not test)
 MAVEN_CMD="$MAVEN_CMD -Dfmt.skip=true"
 # Skip JMeter configuration (not needed for test execution)
+# Note: JMeter plugin may not support skip, but we try anyway
 MAVEN_CMD="$MAVEN_CMD -Djmeter.skip=true"
 
 # Add browser parameter if provided

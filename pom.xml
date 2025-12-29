@@ -23,6 +23,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<checkstyle.skip>false</checkstyle.skip>
 		<fmt.skip>false</fmt.skip>
 		<jmeter.skip>false</jmeter.skip>
+		<maven.compiler.skip>false</maven.compiler.skip>
 		<meminitial>128m</meminitial>
 		<maxmem>512m</maxmem>
 		<maven.version>3.9.11</maven.version>
@@ -1002,11 +1003,11 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<executions>
 					<execution>
 						<id>configuration</id>
+						<phase>none</phase>
 						<goals>
 							<goal>configure</goal>
 						</goals>
 						<configuration>
-							<skip>${jmeter.skip}</skip>
 							<testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
 							<resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
 							<testFilesIncluded>
@@ -1083,7 +1084,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 									<ignore />
 								</action>
 							</pluginExecution>
-							<!-- Ignore jmeter-maven-plugin configure goal -->
+							<!-- Ignore jmeter-maven-plugin configure goal when jmeter.skip=true -->
 							<pluginExecution>
 								<pluginExecutionFilter>
 									<groupId>com.lazerycode.jmeter</groupId>
