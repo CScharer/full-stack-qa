@@ -1115,13 +1115,41 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 
 ### Next Steps
 
+#### Pipeline Run #144 (20582910075) - Results ✅
+
+**Status**: ✅ **SUCCESS** - Pipeline completed successfully
+
+**Container Creation Results**:
+- ✅ **7 environment-specific containers created** (DEV only - expected for branch run)
+  - Playwright Tests [DEV]: 33 tests
+  - Surefire test [DEV]: 388 tests
+  - Vibium Tests [DEV]: 6 tests
+  - Cypress Tests [DEV]: 2 tests
+  - Selenide Tests [DEV]: 8 tests
+  - Robot Framework Tests [DEV]: 5 tests
+  - Performance Tests [DEV]: 1 test
+- ✅ **7 top-level containers created**
+- ✅ **718 total container files found** (includes existing containers from previous runs)
+- ✅ **443 result files processed**
+
+**Container Validation**:
+- ✅ Container files present - Suites tab should display correctly
+- ⚠️ **Issue Found**: Many individual test class names appearing as separate frameworks in container breakdown (e.g., `com.cjs.qa.junit.tests.AdvancedFeaturesTests.setUp`)
+- This suggests some tests are getting individual containers instead of being grouped under "Surefire test"
+- Likely cause: Suite name inference from `testClass` labels is creating suite names for setUp/tearDown methods
+
+**Next Actions**:
+1. Review deployed report to see if Suites tab displays correctly
+2. After merge to main, verify all environments (dev, test, prod) show up
+3. Consider refining suite name inference to avoid creating suites for setUp/tearDown methods
+
 #### Immediate Actions (Before Merge)
 
-1. **Review Pipeline Logs Manually** ⚠️ **REQUIRED**
-   - Check: https://github.com/CScharer/full-stack-qa/actions/runs/20582311148
-   - Look for container validation and creation output
-   - Note which frameworks have containers vs. which don't
-   - Check for any warnings about skipped containers or environment detection
+1. **Review Pipeline Logs Manually** ✅ **COMPLETE**
+   - Checked: https://github.com/CScharer/full-stack-qa/actions/runs/20582910075
+   - Container creation working correctly
+   - All main frameworks have containers
+   - Minor issue with individual test class containers (non-blocking)
 
 2. **Download Artifact (If Available)** ⚠️ **RECOMMENDED**
    - Download `allure-results-combined-all-environments` artifact from run #143
