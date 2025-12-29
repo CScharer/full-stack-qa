@@ -147,7 +147,57 @@ git branch -M main
 
 **Expected result**: New git repository initialized with `main` as default branch (no commits yet).
 
-### Step 1.4: Update Repository References
+### Step 1.4: Install Git Hooks (⚡ REQUIRED)
+
+**⚠️ CRITICAL**: Git hooks MUST be installed to enforce local testing before pushing changes.
+
+**Why this is required**:
+- Pre-push hooks automatically run validation checks before allowing pushes
+- Prevents pushing code that fails compilation or validation
+- Catches issues locally before they reach the pipeline
+- Saves time by catching errors early
+
+**Installation**:
+```bash
+cd /Users/christopherscharer/dev/full-stack-qa
+chmod +x scripts/install-git-hooks.sh
+./scripts/install-git-hooks.sh
+```
+
+**What gets installed**:
+- **Pre-commit hook**: Automatically formats code (skips for documentation-only changes)
+- **Pre-push hook**: Formats code AND runs validation checks (compilation, tests, etc.)
+- **Post-checkout hook**: Auto-installs hooks when checking out branches
+
+**Pre-push hook behavior**:
+- **Documentation-only changes**: Skips all checks (<1 second)
+- **Code changes**: 
+  - Formats code using `scripts/format-code.sh`
+  - Validates code using `scripts/validate-pre-commit.sh` (compilation, Node.js, security)
+  - **Blocks push if validation fails**
+  - Takes ~30-60 seconds for code changes
+
+**Bypassing hooks** (not recommended):
+- Pre-commit: `git commit --no-verify`
+- Pre-push: `git push --no-verify`
+- **⚠️ Only use bypass in emergencies - hooks are there to prevent pipeline failures**
+
+**Verification**:
+```bash
+# Verify hooks are installed
+test -f .git/hooks/pre-push && echo "✅ pre-push hook installed" || echo "❌ pre-push hook NOT installed"
+test -f .git/hooks/pre-commit && echo "✅ pre-commit hook installed" || echo "❌ pre-commit hook NOT installed"
+```
+
+**Expected result**: All three hooks installed and executable. Future pushes will automatically validate code before allowing the push.
+
+**⚠️ IMPORTANT**: Always test changes locally before pushing:
+- Run `./mvnw validate` or `./mvnw compile` to verify Maven changes
+- Run `npm ci` in affected Node.js projects
+- Run relevant tests if test code is changed
+- The pre-push hook will catch most issues, but manual testing is still recommended
+
+### Step 1.5: Update Repository References
 
 **⚠️ IMPORTANT**: Before committing, we need to replace all instances of `full-stack-testing` with `full-stack-qa` in the new repository.
 
@@ -160,7 +210,7 @@ git branch -M main
 
 **This will be done in Phase 3** (Review and Prepare for First Commit) before the first commit.
 
-### Step 1.5: Verify .gitignore is Present
+### Step 1.6: Verify .gitignore is Present
 Ensure `.gitignore` is present and includes all build artifacts (should already be copied from Step 1.2).
 
 ---

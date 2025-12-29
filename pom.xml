@@ -19,13 +19,18 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<!-- Maven Dependencies-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>21</java.version>
+		<!-- Skip properties for test execution optimization (default: false, can be overridden) -->
+		<checkstyle.skip>false</checkstyle.skip>
+		<fmt.skip>false</fmt.skip>
+		<jmeter.skip>false</jmeter.skip>
+		<maven.compiler.skip>false</maven.compiler.skip>
 		<meminitial>128m</meminitial>
 		<maxmem>512m</maxmem>
 		<maven.version>3.9.11</maven.version>
 		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
 		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 		<!-- Cucumber Dependencies-->
@@ -762,16 +767,29 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugin</groupId>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
+					<skip>${maven.compiler.skip}</skip>
 					<release>${java.version}</release>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
 					<meminitial>${meminitial}</meminitial>
 					<maxmem>${maxmem}</maxmem>
 				</configuration>
+				<executions>
+					<execution>
+						<id>default-testCompile</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<configuration>
+							<skip>${maven.compiler.skip}</skip>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugin</groupId>
@@ -842,6 +860,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<failOnViolation>false</failOnViolation>
 					<violationSeverity>warning</violationSeverity>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<skip>${checkstyle.skip}</skip>
 				</configuration>
 				<executions>
 					<execution>
@@ -850,6 +869,9 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 						<goals>
 							<goal>check</goal>
 						</goals>
+						<configuration>
+							<skip>${checkstyle.skip}</skip>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -920,7 +942,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<artifactId>fmt-maven-plugin</artifactId>
 				<version>${fmt-maven-plugin.version}</version>
 				<configuration>
-					<skip>false</skip>
+					<skip>${fmt.skip}</skip>
 					<!-- Skip import sorting - Spotless handles import ordering (java,javax,org,com) -->
 					<skipSortingImports>true</skipSortingImports>
 					<!-- Skip removing unused imports - Spotless handles this -->
@@ -994,6 +1016,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<executions>
 					<execution>
 						<id>configuration</id>
+						<phase>none</phase>
 						<goals>
 							<goal>configure</goal>
 						</goals>
@@ -1074,7 +1097,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 									<ignore />
 								</action>
 							</pluginExecution>
-							<!-- Ignore jmeter-maven-plugin configure goal -->
+							<!-- Ignore jmeter-maven-plugin configure goal when jmeter.skip=true -->
 							<pluginExecution>
 								<pluginExecutionFilter>
 									<groupId>com.lazerycode.jmeter</groupId>
@@ -1082,6 +1105,20 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 									<versionRange>[0,)</versionRange>
 									<goals>
 										<goal>configure</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore />
+								</action>
+							</pluginExecution>
+							<!-- Ignore maven-compiler-plugin testCompile execution (skip controlled by maven.compiler.skip) -->
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-compiler-plugin</artifactId>
+									<versionRange>[0,)</versionRange>
+									<goals>
+										<goal>testCompile</goal>
 									</goals>
 								</pluginExecutionFilter>
 								<action>

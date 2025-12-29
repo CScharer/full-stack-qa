@@ -56,7 +56,7 @@
 | Attribute | Values | Effect | Example |
 |-----------|--------|--------|---------|
 | `parallel` | `none`, `methods`, `tests`, `classes`, `instances` | Parallel execution strategy | `parallel="tests"` |
-| `thread-count` | Integer (1+) | Number of parallel threads | `thread-count="3"` |
+| `thread-count` | Integer (1+) | Number of parallel threads | `thread-count="4"` |
 | `preserve-order` | `true`, `false` | Maintain test execution order | `preserve-order="true"` |
 | `verbose` | Integer (0-10) | Logging verbosity level | `verbose="1"` |
 | `name` | String | Suite/test name | `name="Smoke Test Suite"` |
@@ -125,10 +125,10 @@
 |------------|------|---------|-------------|---------|
 | `smoke_tests_timeout_minutes` | number | 5 | Timeout in minutes for smoke tests | `7` |
 | `smoke_tests_parallel` | string | `none` | Parallel execution strategy for smoke tests | `tests` |
-| `smoke_tests_thread_count` | number | 1 | Number of threads for parallel execution | `3` |
+| `smoke_tests_thread_count` | number | 1 | Number of threads for parallel execution | `4` |
 | `grid_tests_timeout_minutes` | number | 5 | Timeout in minutes for grid tests | `5` |
 | `grid_tests_parallel` | string | `tests` | Parallel execution strategy for grid tests | `methods` |
-| `grid_tests_thread_count` | number | 3 | Number of threads for parallel execution | `5` |
+| `grid_tests_thread_count` | number | 4 | Number of threads for parallel execution | `4` |
 | `mobile_tests_timeout_minutes` | number | 5 | Timeout in minutes for mobile tests | `5` |
 | `mobile_tests_parallel` | string | `none` | Parallel execution strategy for mobile tests | `tests` |
 | `mobile_tests_thread_count` | number | 1 | Number of threads for parallel execution | `2` |
@@ -141,7 +141,7 @@
 | `robot_tests_timeout_minutes` | number | 5 | Timeout in minutes for Robot Framework tests | `5` |
 | `selenide_tests_timeout_minutes` | number | 5 | Timeout in minutes for Selenide tests | `5` |
 | `selenide_tests_parallel` | string | `none` | Parallel execution strategy for Selenide tests | `tests` |
-| `selenide_tests_thread_count` | number | 1 | Number of threads for parallel execution | `3` |
+| `selenide_tests_thread_count` | number | 1 | Number of threads for parallel execution | `4` |
 | `vibium_tests_timeout_minutes` | number | 5 | Timeout in minutes for Vibium tests | `5` |
 
 **⚠️ Tests That Cannot Use Timeout/Parallel Configuration**:
@@ -223,7 +223,7 @@ All TestNG suite files are located in: `src/test/resources/`
    <suite name="Smoke Test Suite" verbose="1">
    
    <!-- After -->
-   <suite name="Smoke Test Suite" verbose="1" parallel="tests" thread-count="3">
+   <suite name="Smoke Test Suite" verbose="1" parallel="tests" thread-count="4">
    ```
 
 3. **Choose parallel strategy**:
@@ -232,7 +232,7 @@ All TestNG suite files are located in: `src/test/resources/`
    - `parallel="classes"` - Run test classes in parallel
 
 4. **Set thread count**:
-   - Start with `thread-count="3"` for most suites
+   - Start with `thread-count="4"` for most suites (proven to work well in practice)
    - Increase to `5` for larger suites
    - Monitor resource usage and adjust
 
@@ -774,7 +774,7 @@ with:
    with:
      environment: 'test'
      smoke_tests_parallel: 'tests'
-     smoke_tests_thread_count: 3
+     smoke_tests_thread_count: 4
    ```
 
 **Note**: TestNG suite XML files may override Maven properties. If the suite XML has a hardcoded `parallel` attribute, you may need to:

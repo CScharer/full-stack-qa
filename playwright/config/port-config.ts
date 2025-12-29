@@ -148,13 +148,17 @@ export function getDatabaseConfig(): { directory: string; schemaDatabase: string
  * Get all port configurations (backward compatibility)
  */
 export function getAllPortConfigs(): Record<Environment, PortConfig> {
-  const result: Record<string, PortConfig> = {};
-  for (const env in envConfig.environments) {
-    const envData = envConfig.environments[env];
-    result[env] = {
-      frontend: envData.frontend,
-      backend: envData.backend,
-    };
+  const result: Partial<Record<Environment, PortConfig>> = {};
+  // Iterate over known environments to ensure type safety
+  const environments: Environment[] = ['dev', 'test', 'prod'];
+  for (const env of environments) {
+    if (env in envConfig.environments) {
+      const envData = envConfig.environments[env as keyof typeof envConfig.environments];
+      result[env] = {
+        frontend: envData.frontend,
+        backend: envData.backend,
+      };
+    }
   }
   return result as Record<Environment, PortConfig>;
 }

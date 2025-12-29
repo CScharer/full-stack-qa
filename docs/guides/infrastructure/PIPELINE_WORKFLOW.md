@@ -2,7 +2,7 @@
 **Type**: Guide
 **Purpose**: Complete reference for GitHub Actions CI/CD pipeline workflow and job dependencies
 **Created**: 2025-11-13
-**Last Updated**: 2025-12-21
+**Last Updated**: 2025-12-29
 **Maintained By**: CJS QA Team
 **Status**: Active
 **Related To**: GITHUB_ACTIONS.md, CI_TROUBLESHOOTING.md, WORKFLOW_TEST_ORGANIZATION.md
@@ -190,6 +190,7 @@ STAGE 7: PIPELINE SUMMARY
 - **Dependencies**: `determine-schedule-type`, `docker-build`
 - **Action**: JDK 21 setup, Maven compile, and artifact upload of `compiled-classes`.
 - **Execution**: **Waits for docker-build to complete**, then runs. This is the only Stage 2 job that doesn't run in the initial parallel group.
+- **Optimization**: The `compiled-classes` artifact is downloaded by test jobs to avoid redundant compilation, saving ~2.5-3.5 minutes per Java-based test job.
 
 #### **Job 8: code-quality**
 - **Dependencies**: `determine-schedule-type` only

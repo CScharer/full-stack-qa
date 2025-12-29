@@ -67,8 +67,8 @@ All TestNG suite files are located in: `src/test/resources/`
 **File**: `testng-smoke-suite.xml`
 
 **Configuration**:
-- **Parallel**: ❌ No (sequential execution)
-- **Thread Count**: N/A
+- **Parallel**: ✅ Yes (`parallel="tests"`, 4 threads)
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -94,18 +94,20 @@ All TestNG suite files are located in: `src/test/resources/`
 **File**: `testng-ci-suite.xml`
 
 **Configuration**:
-- **Parallel**: ❌ No (sequential execution)
-- **Thread Count**: N/A
-- **Preserve Order**: ✅ Yes
+- **Parallel**: ✅ Yes (`parallel="tests"`, 4 threads)
+- **Thread Count**: 4
+- **Preserve Order**: ✅ Yes (within each test)
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
 **Test Classes**:
-- `com.cjs.qa.junit.tests.SimpleGridTest`
-- `com.cjs.qa.junit.tests.EnhancedGridTests`
+- `com.cjs.qa.junit.tests.SimpleGridTest` (separate test group)
+- `com.cjs.qa.junit.tests.EnhancedGridTests` (separate test group)
 
 **CI/CD Usage**: 
 - Used when `test_suite: ci` is selected
 - Command: `./mvnw -ntp test -DsuiteXmlFile=testng-ci-suite.xml`
+
+**Note**: Test classes are split into separate `<test>` elements to enable parallel execution at the test group level.
 
 ---
 
@@ -115,7 +117,7 @@ All TestNG suite files are located in: `src/test/resources/`
 
 **Configuration**:
 - **Parallel**: ✅ Yes (`parallel="tests"`)
-- **Thread Count**: 3
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes (within each test)
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -138,7 +140,7 @@ All TestNG suite files are located in: `src/test/resources/`
 
 **Configuration**:
 - **Parallel**: ✅ Yes (`parallel="tests"`)
-- **Thread Count**: 3
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes (within each test)
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -160,8 +162,8 @@ All TestNG suite files are located in: `src/test/resources/`
 **File**: `testng-mobile-browser-suite.xml`
 
 **Configuration**:
-- **Parallel**: ❌ No (sequential execution)
-- **Thread Count**: N/A
+- **Parallel**: ✅ Yes (`parallel="tests"`, 4 threads)
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -180,8 +182,8 @@ All TestNG suite files are located in: `src/test/resources/`
 **File**: `testng-responsive-suite.xml`
 
 **Configuration**:
-- **Parallel**: ❌ No (sequential execution)
-- **Thread Count**: N/A
+- **Parallel**: ✅ Yes (`parallel="tests"`, 4 threads)
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -200,8 +202,8 @@ All TestNG suite files are located in: `src/test/resources/`
 **File**: `testng-selenide-suite.xml`
 
 **Configuration**:
-- **Parallel**: ❌ No (sequential execution)
-- **Thread Count**: N/A
+- **Parallel**: ✅ Yes (`parallel="tests"`, 4 threads)
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -221,7 +223,7 @@ All TestNG suite files are located in: `src/test/resources/`
 
 **Configuration**:
 - **Parallel**: ✅ Yes (`parallel="tests"`)
-- **Thread Count**: 3
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes (within each test)
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -243,7 +245,7 @@ All TestNG suite files are located in: `src/test/resources/`
 
 **Configuration**:
 - **Parallel**: ✅ Yes (`parallel="tests"`)
-- **Thread Count**: 2
+- **Thread Count**: 4
 - **Preserve Order**: ✅ Yes (within each test)
 - **Listeners**: AllureTestNg, GlobalRetryListener
 
@@ -358,7 +360,7 @@ All TestNG suite files are located in: `src/test/resources/`
 - Command: `./mvnw -ntp test -DsuiteXmlFile=testng-selenide-suite.xml`
 
 **Parallel Execution**:
-- ❌ **Sequential** (suite has no parallel configuration)
+- ✅ **Parallel** (`parallel="tests"`, 4 threads)
 
 ---
 
@@ -431,7 +433,7 @@ All test jobs run in **parallel** (no dependencies between them):
 - `smoke_tests_parallel` (default: `none`) - Strategy: `none`, `tests`, `methods`, `classes`
 - `smoke_tests_thread_count` (default: 1)
 - `grid_tests_parallel` (default: `tests`)
-- `grid_tests_thread_count` (default: 3)
+- `grid_tests_thread_count` (default: 4)
 - `mobile_tests_parallel` (default: `none`)
 - `mobile_tests_thread_count` (default: 1)
 - `responsive_tests_parallel` (default: `none`)
@@ -466,7 +468,7 @@ with:
   docker_shm_size: '4gb'
   # Parallel Configuration (planned)
   smoke_tests_parallel: 'tests'
-  smoke_tests_thread_count: 3
+  smoke_tests_thread_count: 4
   playwright_tests_workers: 4
 ```
 
@@ -586,16 +588,18 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 ### Job Configuration Summary
 
+> **Note**: This table shows jobs that run by default in CI/CD. Some TestNG suites (`testng-ci-suite.xml`, `testng-extended-suite.xml`, `testng-api-suite.xml`, `testng-mobile-suite.xml`) are only used conditionally when `test_suite` input is set to `ci`, `extended`, or `all` in workflow_dispatch. See individual suite sections above for details.
+
 | Job | Framework | Timeout | Parallel in CI? | Parallel Within? | Notes |
 |-----|-----------|---------|----------------|------------------|-------|
-| `smoke-tests` | TestNG | 5 min ✅ | ✅ Yes | ❌ No | Standard timeout |
-| `grid-tests` | TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (3 threads) | Will update to 5 min |
-| `mobile-browser-tests` | TestNG | 5 min 🔧 | ✅ Yes | ❌ No | Will update to 5 min |
-| `responsive-design-tests` | TestNG | 5 min 🔧 | ✅ Yes | ❌ No | Will update to 5 min |
+| `smoke-tests` | TestNG | 5 min ✅ | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-smoke-suite.xml` |
+| `grid-tests` | TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-grid-suite.xml` (or `testng-ci-suite.xml` if `test_suite=ci`) |
+| `mobile-browser-tests` | TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-mobile-browser-suite.xml` |
+| `responsive-design-tests` | TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-responsive-suite.xml` |
 | `cypress-tests` | Cypress | 5 min 🔧 | ✅ Yes | ❌ No | Will update to 5 min |
 | `playwright-tests` | Playwright | 5 min 🔧 | ✅ Yes | ❌ No (workers: 1) | Will update to 5 min; Limited parallel due to shared services |
 | `robot-tests` | Robot Framework | 5 min 🔧 | ✅ Yes | ❌ No | Will update to 5 min |
-| `selenide-tests` | Selenide/TestNG | 5 min 🔧 | ✅ Yes | ❌ No | Will update to 5 min |
+| `selenide-tests` | Selenide/TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-selenide-suite.xml` |
 | `vibium-tests` | Vibium | 5 min 🔧 | ✅ Yes | ❓ Unknown | Will update to 5 min |
 
 **Legend**:
@@ -608,17 +612,19 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 ### TestNG Suites - Parallel Configuration
 
-| Suite | Parallel | Thread Count | Notes |
-|-------|----------|--------------|-------|
-| `testng-smoke-suite.xml` | ❌ No | N/A | Sequential execution |
-| `testng-ci-suite.xml` | ❌ No | N/A | Sequential execution |
-| `testng-extended-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
-| `testng-grid-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
-| `testng-mobile-browser-suite.xml` | ❌ No | N/A | Sequential execution |
-| `testng-responsive-suite.xml` | ❌ No | N/A | Sequential execution |
-| `testng-selenide-suite.xml` | ❌ No | N/A | Sequential execution |
-| `testng-api-suite.xml` | ✅ Yes | 3 | `parallel="tests"` |
-| `testng-mobile-suite.xml` | ✅ Yes | 2 | `parallel="tests"` |
+> **Note**: This table shows ALL TestNG suite files and their parallel configuration. Some suites are only used conditionally (see "CI/CD Usage" in individual suite sections above). The "Job Configuration Summary" table above shows which jobs run by default in CI/CD.
+
+| Suite | Parallel | Thread Count | CI/CD Usage | Notes |
+|-------|----------|--------------|-------------|-------|
+| `testng-smoke-suite.xml` | ✅ Yes | 4 | ✅ Always (`smoke-tests` job) | `parallel="tests"` |
+| `testng-grid-suite.xml` | ✅ Yes | 4 | ✅ Always (`grid-tests` job) | `parallel="tests"` |
+| `testng-mobile-browser-suite.xml` | ✅ Yes | 4 | ✅ Always (`mobile-browser-tests` job) | `parallel="tests"` |
+| `testng-responsive-suite.xml` | ✅ Yes | 4 | ✅ Always (`responsive-design-tests` job) | `parallel="tests"` |
+| `testng-selenide-suite.xml` | ✅ Yes | 4 | ✅ Always (`selenide-tests` job) | `parallel="tests"` |
+| `testng-ci-suite.xml` | ✅ Yes | 4 | ⚠️ Conditional (`test_suite=ci`) | `parallel="tests"` |
+| `testng-extended-suite.xml` | ✅ Yes | 4 | ⚠️ Conditional (`test_suite=extended`) | `parallel="tests"` |
+| `testng-api-suite.xml` | ✅ Yes | 4 | ⚠️ Conditional (not directly used in CI/CD) | `parallel="tests"` |
+| `testng-mobile-suite.xml` | ✅ Yes | 4 | ⚠️ Conditional (not directly used in CI/CD) | `parallel="tests"` |
 
 ### Maven Surefire Default
 

@@ -9,13 +9,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "types": ["node"],
+    "types": ["node", "cypress"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./cypress/*"]
     }
   },
-  "include": ["cypress/**/*.ts", "cypress/**/*.js"],
+  "include": ["cypress/**/*.ts", "cypress/**/*.js", "cypress.config.ts"],
   "exclude": ["node_modules"]
 }
-

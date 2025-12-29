@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="CI Test Suite" verbose="1">
+<suite name="CI Test Suite" parallel="tests" thread-count="4" verbose="1">
     <listeners>
         <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
         <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
     </listeners>
     
-    <test name="Grid Tests" preserve-order="true">
+    <test name="Simple Grid Tests" preserve-order="true">
         <classes>
             <class name="com.cjs.qa.junit.tests.SimpleGridTest"/>
+        </classes>
+    </test>
+    
+    <test name="Enhanced Grid Tests" preserve-order="true">
+        <classes>
             <class name="com.cjs.qa.junit.tests.EnhancedGridTests"/>
         </classes>
     </test>

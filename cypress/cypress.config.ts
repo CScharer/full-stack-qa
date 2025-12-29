@@ -33,15 +33,17 @@ export default defineConfig({
           fs.mkdirSync(resultsDir, { recursive: true })
         }
         const resultsFile = path.join(resultsDir, 'cypress-results.json')
+        // Handle both CypressRunResult and CypressFailedRunResult types
+        const stats = {
+          tests: ('totalTests' in results ? results.totalTests : 0) || 0,
+          passes: ('totalPassed' in results ? results.totalPassed : 0) || 0,
+          failures: ('totalFailed' in results ? results.totalFailed : 0) || 0,
+          pending: ('totalPending' in results ? results.totalPending : 0) || 0,
+          duration: ('totalDuration' in results ? results.totalDuration : 0) || 0
+        }
         fs.writeFileSync(resultsFile, JSON.stringify({
-          stats: {
-            tests: results.totalTests || 0,
-            passes: results.totalPassed || 0,
-            failures: results.totalFailed || 0,
-            pending: results.totalPending || 0,
-            duration: results.totalDuration || 0
-          },
-          results: results.runs || []
+          stats,
+          results: ('runs' in results ? results.runs : []) || []
         }, null, 2))
       })
       
@@ -50,7 +52,7 @@ export default defineConfig({
   },
   component: {
     devServer: {
-      framework: 'create-react-app',
+      framework: 'react',
       bundler: 'webpack',
     },
   },

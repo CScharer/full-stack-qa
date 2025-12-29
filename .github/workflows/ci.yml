@@ -1063,12 +1063,12 @@ jobs:
           echo "  DEV environment:"
           find all-test-results/results-dev -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results (in results-dev): {} files"
           find all-test-results/selenide-results -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results (explicit download): {} files"
-          find all-test-results/results-dev -type d -path "*/selenide-results-*" 2>/dev/null | while read d; do
+          find all-test-results/results-dev -type d -path "*/selenide-results-*" 2>/dev/null | while read -r d; do
             echo "    📁 Found: $d"
             find "$d" -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "      Results: {} files"
           done
           if [ -d "all-test-results/selenide-results" ]; then
-            find all-test-results/selenide-results -type d 2>/dev/null | head -5 | while read d; do
+            find all-test-results/selenide-results -type d 2>/dev/null | head -5 | while read -r d; do
               echo "    📁 Selenide artifact: $d"
               find "$d" -name "*-result.json" 2>/dev/null | wc -l | xargs -I {} echo "      Results: {} files"
             done
