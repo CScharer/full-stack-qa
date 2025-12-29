@@ -1147,6 +1147,49 @@ jobs:
           echo ""
           echo "📥 Report is still available as artifact: 'allure-report-combined-all-environments'"
 
+      - name: Verify Report Before Deployment
+        if: always() && github.ref == 'refs/heads/main' && needs.determine-schedule-type.outputs.code-changed == 'true'
+        run: |
+          echo "🔍 Verifying report structure before deployment..."
+          echo ""
+          if [ -d "allure-report-combined" ]; then
+            echo "✅ Report directory exists"
+            echo "   Total files: $(find allure-report-combined -type f | wc -l | tr -d ' ')"
+            echo "   Total size: $(du -sh allure-report-combined | cut -f1)"
+            echo ""
+            echo "📊 Checking critical files..."
+            echo "   index.html: $([ -f "allure-report-combined/index.html" ] && echo "✅ exists" || echo "❌ missing")"
+            echo "   data/ directory: $([ -d "allure-report-combined/data" ] && echo "✅ exists ($(find allure-report-combined/data -type f | wc -l | tr -d ' ') files)" || echo "❌ missing")"
+            echo "   widgets/ directory: $([ -d "allure-report-combined/widgets" ] && echo "✅ exists ($(find allure-report-combined/widgets -type f | wc -l | tr -d ' ') files)" || echo "❌ missing")"
+            echo ""
+            echo "📦 Checking container files in data..."
+            if [ -d "allure-report-combined/data" ]; then
+              container_count=$(find allure-report-combined/data -name "*-container.json" 2>/dev/null | wc -l | tr -d ' ')
+              result_count=$(find allure-report-combined/data -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')
+              echo "   Container files: $container_count"
+              echo "   Result files: $result_count"
+              echo ""
+              echo "   Sample container files (first 10):"
+              find allure-report-combined/data -name "*-container.json" 2>/dev/null | head -10 | while read -r f; do
+                name=$(jq -r '.name' "$f" 2>/dev/null || echo "unknown")
+                echo "     - $(basename "$f"): $name"
+              done
+            fi
+            echo ""
+            echo "🔍 Checking for framework-specific data..."
+            for framework in "Cypress" "Playwright" "Robot" "Vibium" "Selenide" "Surefire"; do
+              count=$(find allure-report-combined/data -name "*-container.json" -type f -exec grep -l "$framework" {} + 2>/dev/null | wc -l | tr -d ' ')
+              if [ "$count" -gt 0 ]; then
+                echo "   ✅ $framework: $count container file(s) found"
+              else
+                echo "   ⚠️  $framework: No container files found"
+              fi
+            done
+          else
+            echo "❌ Report directory does not exist!"
+            exit 1
+          fi
+
       - name: Deploy to GitHub Pages
         if: always() && github.ref == 'refs/heads/main' && needs.determine-schedule-type.outputs.code-changed == 'true'
         uses: peaceiris/actions-gh-pages@v4
@@ -1154,7 +1197,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report-combined
           keep_files: false
-          force_orphan: true
+          force_orphan: false
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
 
