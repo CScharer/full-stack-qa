@@ -829,23 +829,23 @@ After fix implementation:
 - Pattern matching needs to handle this nested structure
 
 **Action Items**:
-1. **Add debug logging** to `merge-allure-results.sh`:
-   - Log each file path being processed
-   - Log the detected environment for each file
-   - Log marker file creation success/failure
-   - Count marker files created per environment
+1. ✅ **Add debug logging** to `merge-allure-results.sh`:
+   - ✅ Log sample of file paths being processed (first 20 files)
+   - ✅ Log the detected environment for each file
+   - ✅ Count marker files created per environment
+   - ✅ Add warnings if only DEV markers found (indicates test/prod detection failure)
 
-2. **Fix path pattern matching**:
+2. **Fix path pattern matching** (if needed after reviewing logs):
    - Ensure patterns match both direct paths (`*-results-dev/`) and nested paths (`results-dev/*-results-dev/`)
    - Verify the grep patterns are case-insensitive and match correctly
    - Add explicit checks for `results-dev/`, `results-test/`, `results-prod/` parent directories
 
-3. **Validate marker file creation**:
-   - After processing, verify marker files exist for each environment
-   - Log counts: "Created X dev markers, Y test markers, Z prod markers"
-   - Fail if expected marker files are missing
+3. ✅ **Validate marker file creation**:
+   - ✅ After processing, verify marker files exist for each environment
+   - ✅ Log counts: "Created X dev markers, Y test markers, Z prod markers"
+   - ✅ Warn if expected marker files are missing or only DEV found
 
-4. **Improve environment detection logic**:
+4. **Improve environment detection logic** (if needed after reviewing logs):
    - Check parent directory structure first (e.g., `results-dev/` in path)
    - Then check artifact name pattern (e.g., `smoke-results-dev`)
    - Use most specific match (artifact name > parent directory)
@@ -886,14 +886,21 @@ After fix implementation:
 
 **Solution**: Add container file validation to `generate-combined-allure-report.sh`
 - ✅ **IMPLEMENTED**: Added container file count and validation
-- ✅ **IMPLEMENTED**: Added container file breakdown by framework name
+- ✅ **IMPLEMENTED**: Added container file breakdown by framework name (with counts per framework)
+- ✅ **IMPLEMENTED**: Added sample container files with children counts
+- ✅ **IMPLEMENTED**: Added expected vs found frameworks comparison
 - ✅ **IMPLEMENTED**: Added warning if no container files found
 
 **Next Steps**:
-1. Check pipeline logs for container creation output
-2. Verify container files exist in `allure-results-combined-all-environments` artifact
-3. Compare Playwright container structure with other frameworks
-4. Check if container UUID references are correct
+1. ✅ **Check pipeline logs** - Review run #141 (20581888044) for:
+   - Container validation output in "Generate Combined Allure Report" step
+   - Container creation output in "Step 4.5: Creating framework container files..."
+   - Framework counts and container breakdown
+2. ✅ **Verify container files in artifact** - Check `allure-results-combined-all-environments` artifact
+3. ✅ **Compare container structures** - Verify all frameworks have containers created
+4. ✅ **Check environment detection** - Verify marker files were created for all environments
+
+**Pipeline Run to Review**: https://github.com/CScharer/full-stack-qa/actions/runs/20581888044
 
 ---
 

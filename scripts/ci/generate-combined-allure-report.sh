@@ -60,20 +60,51 @@ if [ "$CONTAINER_COUNT" -eq 0 ]; then
     echo "⚠️  WARNING: No container files found!"
     echo "   This will cause Suites tab to be empty or incomplete"
     echo "   Container files should be created by create-framework-containers.sh in Step 4.5"
+    echo "   Check pipeline logs for 'Step 4.5: Creating framework container files...' output"
 else
     echo "   ✅ Container files present - Suites tab should display correctly"
     # Show container file breakdown by framework
     echo "   📊 Container breakdown:"
-    find "$RESULTS_DIR" -name "*-container.json" -exec basename {} \; 2>/dev/null | head -20 | while read -r container_file; do
-        # Try to extract framework name from container file content
-        if [ -f "$RESULTS_DIR/$container_file" ]; then
-            container_name=$(grep -o '"name"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESULTS_DIR/$container_file" 2>/dev/null | head -1 | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "unknown")
-            echo "      - $container_file: $container_name"
+    
+    # Count containers by framework/environment
+    # Extract framework names from all container files
+    FRAMEWORK_COUNT_FILE=$(mktemp)
+    find "$RESULTS_DIR" -name "*-container.json" 2>/dev/null | head -50 | while read -r container_file; do
+        if [ -f "$container_file" ]; then
+            container_name=$(grep -o '"name"[[:space:]]*:[[:space:]]*"[^"]*"' "$container_file" 2>/dev/null | head -1 | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "unknown")
+            # Extract framework name (remove [ENV] suffix if present)
+            framework=$(echo "$container_name" | sed 's/ \[.*\]$//' || echo "$container_name")
+            echo "$framework" >> "$FRAMEWORK_COUNT_FILE"
         fi
     done
-    if [ "$CONTAINER_COUNT" -gt 20 ]; then
-        echo "      ... and $((CONTAINER_COUNT - 20)) more container files"
+    
+    # Show framework counts
+    if [ -f "$FRAMEWORK_COUNT_FILE" ] && [ -s "$FRAMEWORK_COUNT_FILE" ]; then
+        sort "$FRAMEWORK_COUNT_FILE" | uniq -c | while read -r count framework; do
+            echo "      - $framework: $count container(s)"
+        done
+        found_frameworks=$(sort "$FRAMEWORK_COUNT_FILE" | uniq | tr '\n' ', ' | sed 's/, $//')
+        rm -f "$FRAMEWORK_COUNT_FILE"
+    else
+        found_frameworks="none"
     fi
+    
+    # Show sample container files
+    echo "   📋 Sample container files (first 10):"
+    find "$RESULTS_DIR" -name "*-container.json" -exec basename {} \; 2>/dev/null | head -10 | while read -r container_file; do
+        if [ -f "$RESULTS_DIR/$container_file" ]; then
+            container_name=$(grep -o '"name"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESULTS_DIR/$container_file" 2>/dev/null | head -1 | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "unknown")
+            children_count=$(grep -o '"children"[[:space:]]*:[[:space:]]*\[[^]]*\]' "$RESULTS_DIR/$container_file" 2>/dev/null | grep -o '"[^"]*"' | wc -l | tr -d ' ' || echo "0")
+            echo "      - $container_file: '$container_name' ($children_count children)"
+        fi
+    done
+    if [ "$CONTAINER_COUNT" -gt 10 ]; then
+        echo "      ... and $((CONTAINER_COUNT - 10)) more container files"
+    fi
+    
+    # Expected frameworks check
+    echo "   🔍 Expected frameworks: Cypress, Playwright, Robot, Vibium, Selenide, Surefire"
+    echo "   📊 Found frameworks: ${found_frameworks:-none}"
 fi
 
 # Generate report
