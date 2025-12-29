@@ -664,3 +664,116 @@ After fix implementation:
 - This is unrelated to Suites tab functionality
 - Should be investigated separately
 
+---
+
+## Potential Causes of Occasional Inconsistencies
+
+### Issue Description
+
+**User Report**: "The report looks ok, so I'm wondering what's causing the occasional inconsistencies?"
+
+**Status**: 🔍 **INVESTIGATING** - Suites tab works but occasionally doesn't display correctly
+
+### Potential Root Causes
+
+#### 1. **Environment Label Detection Failures** ⚠️ **MOST LIKELY**
+- **Problem**: If environment labels aren't set correctly in Step 4, containers won't be created in Step 4.5
+- **Code Location**: `scripts/ci/create-framework-containers.sh` lines 202-204
+- **Behavior**: Script skips containers for `env == 'unknown'`
+- **Impact**: If environment detection fails, no containers are created for those tests
+- **Possible Causes**:
+  - Artifact path doesn't match expected patterns (`-results-dev`, `-results-test`, `-results-prod`)
+  - Marker files (`.env.*.marker`) not created during merge
+  - Environment labels overwritten or removed by subsequent processing
+  - Tests from frameworks that don't have clear environment indicators
+
+#### 2. **Missing Result UUIDs** ⚠️ **LIKELY**
+- **Problem**: If result files don't have UUIDs, containers can't reference them
+- **Code Location**: `scripts/ci/create-framework-containers.sh` lines 267-270
+- **Behavior**: Script skips creating containers if `result_uuids` is empty
+- **Impact**: No containers created for tests without UUIDs
+- **Possible Causes**:
+  - Framework conversion scripts not generating UUIDs correctly
+  - UUIDs lost during merge or processing
+  - Result files corrupted or incomplete
+
+#### 3. **Timing/Order Dependencies** ⚠️ **POSSIBLE**
+- **Problem**: Container creation depends on environment labels being set first
+- **Execution Order**:
+  1. Step 4: Add environment labels (`add-environment-labels.sh`)
+  2. Step 4.5: Create framework containers (`create-framework-containers.sh`)
+- **Impact**: If Step 4 fails partially or has timing issues, Step 4.5 may not create all containers
+- **Possible Causes**:
+  - Race conditions in file processing
+  - Environment labels not fully written before container creation reads them
+  - Partial failures in environment label assignment
+
+#### 4. **"Combined" Environment Handling** ⚠️ **POSSIBLE**
+- **Problem**: Tests with `env="combined"` require special splitting logic
+- **Code Location**: `scripts/ci/create-framework-containers.sh` lines 206-255
+- **Behavior**: Script tries to split "combined" by test name patterns (`[DEV]`, `[TEST]`, `[PROD]`)
+- **Impact**: If splitting fails, containers may not be created correctly
+- **Possible Causes**:
+  - Test names don't have environment suffixes (`[DEV]`, `[TEST]`, `[PROD]`)
+  - Environment labels not appended to test names in Step 4
+  - Multiple environments detected but can't be split
+
+#### 5. **Missing Suite Labels** ⚠️ **POSSIBLE**
+- **Problem**: Tests without suite labels are skipped
+- **Code Location**: `scripts/ci/create-framework-containers.sh` lines 151-156
+- **Behavior**: Script skips result files without suite labels
+- **Impact**: No containers created for tests without suite labels
+- **Possible Causes**:
+  - Framework conversion scripts not adding suite labels
+  - Suite labels removed or overwritten during processing
+  - Tests from frameworks that don't have suite information
+
+#### 6. **Allure Report Generation Timing** ⚠️ **LESS LIKELY**
+- **Problem**: Containers created but Allure doesn't process them correctly
+- **Code Location**: `scripts/ci/generate-combined-allure-report.sh` line 59
+- **Behavior**: `allure generate --clean` may have timing issues with container files
+- **Impact**: Containers exist but don't appear in Suites tab
+- **Possible Causes**:
+  - Allure version compatibility issues
+  - Container files not fully written when Allure reads them
+  - File system caching issues
+
+### Recommended Solutions
+
+#### Solution 1: Add Validation and Fallbacks ⚠️ **RECOMMENDED**
+- **Action**: Add validation in `create-framework-containers.sh` to:
+  - Log warnings for skipped containers (unknown env, missing UUIDs, missing suite labels)
+  - Create fallback containers for tests with "unknown" environment if they have suite labels
+  - Verify all result files have UUIDs before container creation
+- **Impact**: Better visibility into why containers aren't created, fallback handling
+
+#### Solution 2: Improve Environment Detection Robustness ⚠️ **RECOMMENDED**
+- **Action**: Enhance `add-environment-labels.sh` to:
+  - Add more fallback methods for environment detection
+  - Ensure environment labels are always set (default to "combined" if truly unknown)
+  - Verify environment labels are set correctly before container creation
+- **Impact**: More reliable environment detection, fewer "unknown" cases
+
+#### Solution 3: Add Pre-Container Creation Validation ⚠️ **RECOMMENDED**
+- **Action**: Add validation step before container creation:
+  - Verify all result files have UUIDs
+  - Verify all result files have suite labels
+  - Verify all result files have environment labels
+  - Log statistics about missing data
+- **Impact**: Early detection of issues, better debugging
+
+#### Solution 4: Make Container Creation More Defensive ⚠️ **RECOMMENDED**
+- **Action**: Modify `create-framework-containers.sh` to:
+  - Create containers even for "unknown" environment (group them separately)
+  - Handle missing UUIDs gracefully (generate UUIDs if missing)
+  - Create containers even without suite labels (use default suite name)
+- **Impact**: More robust container creation, fewer skipped containers
+
+### Next Steps
+
+1. **Add logging for skipped containers** - Identify which containers are being skipped and why
+2. **Add validation checks** - Verify prerequisites before container creation
+3. **Improve error handling** - Make container creation more defensive
+4. **Monitor pipeline logs** - Watch for warnings about skipped containers
+5. **Analyze artifacts** - Use analysis script to identify patterns in inconsistent runs
+
