@@ -767,7 +767,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugin</groupId>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
