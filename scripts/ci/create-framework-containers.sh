@@ -121,13 +121,32 @@ for result_file in result_files:
         # Extract suite name from labels
         suite_name = None
         env = None
+        is_selenide = False
         
+        # Check for Selenide indicators (same logic as debug section)
         if 'labels' in data:
             for label in data['labels']:
-                if label.get('name') == 'suite':
-                    suite_name = label.get('value')
+                if label.get('name') == 'epic' and label.get('value') == 'HomePage Tests':
+                    is_selenide = True
+                elif label.get('name') == 'testClass' and 'HomePageTests' in str(label.get('value', '')):
+                    is_selenide = True
+                elif label.get('name') == 'suite':
+                    suite_value = label.get('value', '')
+                    if 'Selenide' in suite_value or suite_value == 'Selenide Tests':
+                        is_selenide = True
+                    suite_name = suite_value
                 elif label.get('name') == 'environment':
                     env = label.get('value', 'unknown')
+        
+        # Check fullName for Selenide
+        if 'fullName' in data and 'Selenide' in data.get('fullName', ''):
+            is_selenide = True
+        
+        # CRITICAL: If this is a Selenide test but suite label says "Surefire test", override it
+        # This handles cases where add-environment-labels.sh hasn't updated the suite label yet
+        # or the result file was missed
+        if is_selenide and suite_name == 'Surefire test':
+            suite_name = 'Selenide Tests'
         
         # Skip if no suite name found
         if not suite_name:
