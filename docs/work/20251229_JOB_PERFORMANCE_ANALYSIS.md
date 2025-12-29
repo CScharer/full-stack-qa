@@ -42,6 +42,23 @@ Some test jobs are performing redundant build, style-check, formatting, compile,
 | robot-tests | Chrome | 1m 28s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 88 | -3 |
 | selenide-tests | Chrome | 4m 26s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 266 | 18 |
 | vibium-tests | Chrome | 0m 49s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 49 | -5 |
+
+| Job (New-Parallel) | Browser | Time | Builds | Style-Check | Formats | Compiles | Configures Jmeter | Seconds | Diff |
+|---| ---| ---| ---| ---| ---| ---| ---| ---| ---| 
+| smoke-tests | Chrome | 4m 32s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 272 | 0 |
+| grid-tests | Chrome | 4m 42s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 282 | 27 |
+| grid-tests | Edge | 4m 40s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 280 | 8 |
+| grid-tests | Firefox | 5m 21s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 321 | -24 |
+| mobile-browser-tests | Chrome | 4m 51s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 291 | -28 |
+| responsive-design-tests | Chrome | 4m 22s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 262 | -12 |
+| cypress-tests | Chrome | 1m 41s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 101 | -12 |
+| playwright-tests | Chrome (Chromium) | 1m 6s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 66 | 4 |
+| robot-tests | Chrome | 1m 39s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 99 | -11 |
+| selenide-tests | Chrome | 4m 34s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 274 | -8 |
+| vibium-tests | Chrome | 0m 45s | ❌ False | ❌ False | ❌ False | ❌ False | ❌ False | 45 | 4 |
+|  |  |  |  |  |  |  |  |  |  |
+
+
 ---
 
 ## Key Observations
@@ -731,7 +748,7 @@ If you want to maximize savings, you can **safely combine Solution 1 + Solution 
    - Compilation is fast (~11 seconds), not slow (2-3 minutes)
    - Optimizations are working correctly, just smaller impact than estimated
 
-4. **Future Optimizations**: Consider test execution optimizations for larger savings
+4. **Parallel Execution Results**: Analysis of parallel execution impact
    - ✅ **Parallel execution enabled in all TestNG suites**: All TestNG suite files now have parallel execution enabled:
      - ✅ `testng-smoke-suite.xml` - `parallel="tests"`, 4 threads (updated)
      - ✅ `testng-ci-suite.xml` - `parallel="tests"`, 4 threads (updated - split into separate test groups)
@@ -742,7 +759,38 @@ If you want to maximize savings, you can **safely combine Solution 1 + Solution 
      - ✅ `testng-extended-suite.xml` - `parallel="tests"`, 4 threads (updated)
      - ✅ `testng-api-suite.xml` - `parallel="tests"`, 4 threads (updated)
      - ✅ `testng-mobile-suite.xml` - `parallel="tests"`, 4 threads (updated from 2)
-     - **Expected savings**: Parallel execution should reduce test execution time by 30-50% (from ~154-181 seconds to ~77-120 seconds per job)
-   - **Test suite optimization**: Review and optimize test execution patterns
-   - **Test execution time reduction**: Optimize individual test methods for faster execution
+   
+   - **Actual Results (Job New-Parallel vs Job New)**:
+     - **Improvements** (faster with parallel):
+       - grid-tests (Chrome): +27 seconds faster (309s → 282s)
+       - grid-tests (Edge): +8 seconds faster (288s → 280s)
+       - playwright-tests: +4 seconds faster (70s → 66s)
+       - vibium-tests: +4 seconds faster (49s → 45s)
+     - **No Change**:
+       - smoke-tests: 0 seconds difference (272s → 272s)
+     - **Regressions** (slower with parallel):
+       - mobile-browser-tests: -28 seconds slower (263s → 291s)
+       - grid-tests (Firefox): -24 seconds slower (297s → 321s)
+       - responsive-design-tests: -12 seconds slower (250s → 262s)
+       - cypress-tests: -12 seconds slower (89s → 101s)
+       - robot-tests: -11 seconds slower (88s → 99s)
+       - selenide-tests: -8 seconds slower (266s → 274s)
+   
+   - **Analysis**:
+     - **Net Impact**: Mixed results - some jobs faster, some slower
+     - **Possible Causes**:
+       - Resource contention: 4 threads may compete for limited resources (CPU, memory, Selenium Grid nodes)
+       - Test execution variance: Different test runs have natural variance
+       - Overhead: Parallel coordination overhead may outweigh benefits for smaller test suites
+       - Grid capacity: Selenium Grid may not have enough nodes to handle 4 parallel threads efficiently
+     - **Recommendation**: 
+       - Monitor over multiple runs to determine if patterns are consistent
+       - Consider reducing thread count (e.g., 2-3 threads) if resource contention is an issue
+       - Verify Selenium Grid has sufficient capacity for parallel execution
+       - Some test suites may benefit more from parallelization than others
+   
+   - **Expected vs Actual**:
+     - **Expected**: 30-50% reduction in test execution time (from ~154-181 seconds to ~77-120 seconds)
+     - **Actual**: Mixed results - some jobs improved, some regressed
+     - **Conclusion**: Parallel execution benefits may be limited by resource constraints and test suite characteristics
 
