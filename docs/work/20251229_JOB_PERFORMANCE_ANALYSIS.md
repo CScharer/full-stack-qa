@@ -333,6 +333,27 @@ After implementing optimizations:
 4. ✅ Maintain code quality by running checks in dedicated jobs
 5. ✅ Total pipeline time savings: ~17.5-24.5 minutes per run (7 jobs × 2.5-3.5 minutes)
 
+### Known Issues & Fixes
+
+**Issue 1**: Checkstyle, formatting, and JMeter were still running despite skip flags.
+- **Root Cause**: Plugin configurations in `pom.xml` didn't respect skip properties
+- **Fix**: Added skip properties to `pom.xml` (`checkstyle.skip`, `fmt.skip`, `jmeter.skip`) and updated plugin configurations to use them
+- **Status**: ✅ Fixed
+
+**Issue 2**: Pre-compiled classes path detection was failing.
+- **Root Cause**: Uncertainty about GitHub Actions artifact directory structure (whether `path: target/` preserves directory name or flattens contents)
+- **Fix**: Added checks for both possible structures:
+  - `pre-compiled-classes/target/classes/` (if directory structure preserved)
+  - `pre-compiled-classes/classes/` (if contents flattened)
+- **Status**: ✅ Fixed with fallback logic and debugging output
+
+**Issue 3**: JMeter plugin doesn't support `skip` parameter in configuration.
+- **Root Cause**: JMeter maven plugin has different skip mechanism
+- **Fix**: Added skip property to execution block configuration
+- **Status**: ✅ Fixed
+
+**Debugging**: Comprehensive debugging output added to show actual artifact structure on each run, which will help verify the correct path structure.
+
 ---
 
 ## Recommended Single Solution
