@@ -452,9 +452,29 @@ All frameworks detected:
    - Containers created in Step 4.5, but maybe Allure needs them earlier or later
    - **Question**: Should containers be created before or after environment labels are added?
 
-#### Next Steps for Investigation
+#### Investigation Results (2025-12-29)
 
-1. **FIRST STEP: Verify Container Files Exist** ⚠️ **START HERE**
+**Log Check Status**: ⚠️ **INCONCLUSIVE**
+- Checked pipeline run 20578945070 (successful run with Combined Allure Report job)
+- Container creation output not found in logs (may be due to log format or filtering)
+- Script is called in Step 4.5 of `prepare-combined-allure-results.sh`
+- Script should output: "📦 Step 4.5: Creating framework container files..."
+
+**Next Steps for Investigation**
+
+1. **FIRST STEP: Add Debug Output to Container Creation Script** ⚠️ **START HERE**
+   - **Problem**: Cannot verify from logs if containers are being created
+   - **Solution**: Add explicit debug output to `create-framework-containers.sh` to verify:
+     - Script execution start/end
+     - Number of result files found
+     - Number of containers created (env-specific and top-level)
+     - Container file paths
+     - Any errors or warnings
+   - **Action**: Modify `scripts/ci/create-framework-containers.sh` to add debug logging
+   - **Expected Output**: Should see clear messages about container creation in pipeline logs
+   - **Why This First**: Need to verify the script is actually running and creating files
+
+2. **SECOND STEP: Verify Container Files Exist in Artifact**
    - Download a recent Allure results artifact from a successful pipeline run
    - Check if `*-container.json` files exist in the artifact
    - Count how many container files are present
