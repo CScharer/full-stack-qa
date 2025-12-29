@@ -1187,6 +1187,47 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 3. Investigate why Selenide tests are not getting environment labels for TEST and PROD
 4. Consider improving the "combined" environment splitting to handle more cases
 
+---
+
+## GitHub Pages Deployment Issue (2025-12-29)
+
+**Problem**: Suites tab on GitHub Pages (https://cscharer.github.io/full-stack-qa/#) does not show all frameworks, but local report (downloaded artifact) shows all frameworks correctly.
+
+**Status**: 🔍 **INVESTIGATING**
+
+**Symptoms**:
+- ✅ Local report (downloaded artifact viewed at http://localhost:8080/#): All frameworks visible in Suites tab
+- ❌ GitHub Pages (https://cscharer.github.io/full-stack-qa/#): Not all frameworks visible in Suites tab
+- ✅ Report generation: Working correctly (local version confirms)
+- ⚠️ Deployment: Suspected issue with GitHub Pages deployment
+
+**Potential Root Causes**:
+1. **File deployment issue**: Container files or data files not being deployed correctly
+2. **GitHub Pages caching**: Browser or CDN caching old version
+3. **File path references**: Relative paths in generated report might not work on GitHub Pages
+4. **Deployment configuration**: `force_orphan: true` might be causing issues with file references
+5. **File size limits**: GitHub Pages might have limits on file sizes or total deployment size
+6. **Missing files**: Some container files might not be included in the deployment
+
+**Investigation Steps**:
+1. ✅ Add verification step before deployment to check report structure
+2. ✅ Change `force_orphan: false` to preserve history and file references
+3. ⚠️ Add diagnostic output to show what files are being deployed
+4. ⚠️ Verify container files are present in deployed report
+5. ⚠️ Check if there are any file size or path issues
+
+**Changes Made**:
+- Added "Verify Report Before Deployment" step to check report structure
+- Changed `force_orphan: false` to preserve file references
+- Added diagnostic output for container files and framework detection
+- Added verification of critical directories (data/, widgets/)
+
+**Next Steps**:
+1. Test deployment with new verification step
+2. Compare deployed report structure with local report
+3. Check browser console for any 404 errors or missing file references
+4. Verify container files are accessible in deployed report
+
 #### Immediate Actions (Before Merge)
 
 1. **Review Pipeline Logs Manually** ✅ **COMPLETE**
@@ -1200,11 +1241,12 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
    - Run: `./scripts/test/analyze-allure-containers.sh <artifact-path>`
    - This will show container structure and identify issues
 
-3. **Review Deployed Report** ⚠️ **RECOMMENDED**
+3. **Review Deployed Report** ⚠️ **ISSUE FOUND**
    - Check: https://cscharer.github.io/full-stack-qa/#
-   - Verify which frameworks appear in Suites tab
-   - Compare with Overview and Behaviors tabs
-   - Note any discrepancies
+   - **Problem**: Suites tab does not show all frameworks on GitHub Pages
+   - **Local report works**: When downloaded and viewed locally, all frameworks appear
+   - **Root cause**: Likely GitHub Pages deployment issue (file references, caching, or deployment configuration)
+   - **Status**: Investigating deployment process and configuration
 
 #### After Reviewing Logs/Artifacts
 
