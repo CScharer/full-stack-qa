@@ -952,20 +952,213 @@ After fix implementation:
 - Full environment detection will be visible after merge
 
 **After reviewing logs, we can:**
-1. Download the artifact to analyze container files directly
+1. Download the artifact to analyze container files directly (if available)
 2. Compare working vs non-working container structures
 3. Implement fixes based on findings
 4. Wait for merge to see full environment detection
 
 ---
 
+## Code Review Findings (Without Artifact Access)
+
+**Status**: ✅ **CODE REVIEW COMPLETE**
+
+### Potential Issues Identified
+
+#### Issue 1: "Combined" Environment Without Name Suffixes
+**Location**: `scripts/ci/create-framework-containers.sh` lines 208-258
+
+**Problem**: 
+- If environment is "combined" but test names don't have `[DEV]`, `[TEST]`, or `[PROD]` suffixes, splitting fails
+- Script creates a single container without environment suffix (line 258: `container_name = suite_name`)
+- This container may not display correctly in Suites tab (missing environment context)
+
+**When This Happens**:
+- Environment detection fails in `merge-allure-results.sh` (no marker files created)
+- `add-environment-labels.sh` defaults to "combined" (line 192)
+- Test names don't get environment suffixes appended (if already present or logic fails)
+- Container creation can't split "combined", creates single container
+
+**Impact**: Surefire/Selenide tests might get single containers without environment suffixes, which may not display in Suites tab correctly
+
+#### Issue 2: Tests Without Suite Labels Are Skipped
+**Location**: `scripts/ci/create-framework-containers.sh` line 161
+
+**Problem**: 
+- Tests without suite labels are completely skipped
+- No containers created for these tests
+- They won't appear in Suites tab at all
+
+**When This Happens**:
+- Framework conversion scripts don't add suite labels
+- Suite labels are removed during processing
+- Tests from frameworks that don't have suite information
+
+**Impact**: Some frameworks might not have containers created, won't appear in Suites tab
+
+#### Issue 3: "Unknown" Environment Tests Are Skipped
+**Location**: `scripts/ci/create-framework-containers.sh` line 203
+
+**Problem**:
+- Tests with `env == 'unknown'` are skipped entirely
+- No containers created for these tests
+
+**When This Happens**:
+- Environment detection completely fails
+- Marker files aren't created
+- Environment label assignment fails
+
+**Impact**: Tests with unknown environment won't appear in Suites tab
+
+### Recommended Fixes (Based on Code Review)
+
+#### Fix 1: Handle "Combined" Environment More Gracefully ✅ **IMPLEMENTED**
+**Action**: When "combined" can't be split, still create environment-specific containers if we can infer from other sources:
+- ✅ Check test names for environment indicators in fullName field
+- ✅ Try to infer environment from test content
+- ✅ Create container with inferred environment if found
+- ✅ Add warning logs about inference attempts
+- ✅ If still can't determine, create container without environment suffix (but log warning)
+
+**Status**: ✅ Implemented in `create-framework-containers.sh` lines 294-327
+
+#### Fix 2: Add Fallback for Missing Suite Labels ✅ **IMPLEMENTED**
+**Action**: Instead of skipping tests without suite labels:
+- ✅ Try to infer suite name from other labels (epic, feature, testClass)
+- ✅ Use framework-specific default suite names if inference fails
+- ✅ Log warnings about inferred suite names
+
+**Status**: ✅ Implemented in `create-framework-containers.sh` lines 160-200
+
+#### Fix 3: Handle "Unknown" Environment ✅ **IMPLEMENTED**
+**Action**: Instead of skipping "unknown" environment:
+- ✅ Create containers with "unknown" environment label
+- ✅ Add warning logs about unknown environment tests
+- ✅ Ensure tests still appear in Suites tab even if environment detection failed
+
+**Status**: ✅ Implemented in `create-framework-containers.sh` lines 236-240 and 354-360
+
+---
+
+## Analysis Performed (Run #143)
+
+**Status**: ✅ **ANALYSIS COMPLETE - FIXES IMPLEMENTED**
+
+### What We Can Check Without Artifacts
+
+1. **Code Review Findings**:
+   - ✅ Container creation script processes all result files with suite labels
+   - ✅ Script skips tests with `env == 'unknown'` (line 203)
+   - ✅ Script handles `env == 'combined'` by splitting based on test name patterns
+   - ⚠️ **Potential Issue**: If test names don't have `[DEV]`, `[TEST]`, `[PROD]` suffixes, "combined" environment can't be split
+   - ⚠️ **Potential Issue**: Tests without suite labels are skipped (line 161)
+
+2. **Environment Detection Flow**:
+   - `merge-allure-results.sh` creates marker files (`.env.*.marker`) for detected environments
+   - `add-environment-labels.sh` reads marker files and assigns environment labels
+   - If marker files are missing, environment defaults to "combined" (line 192)
+   - "Combined" environment requires test names to have environment suffixes for splitting
+
+3. **Container Creation Dependencies**:
+   - Requires suite labels (skips if missing)
+   - Requires environment labels (skips if "unknown")
+   - Requires result UUIDs (skips if missing)
+   - Handles "combined" by splitting, but only if test names have suffixes
+
+### Manual Review Required
+
+Since artifacts aren't easily accessible via CLI, manual review of pipeline logs is needed:
+
+**Pipeline Run**: https://github.com/CScharer/full-stack-qa/actions/runs/20582311148
+
+**Check These Sections**:
+
+1. **"Merging Allure results" step**:
+   - Look for: "🔍 Environment Detection Sample (first 20 files)"
+   - Look for: "🔍 Marker files created"
+   - Check if warnings appear: "⚠️ WARNING: Only DEV markers found"
+
+2. **"Step 4.5: Creating framework container files..."**:
+   - Look for: "📊 DEBUG: Found X result files"
+   - Look for: "✅ DEBUG: Created X environment-specific container file(s)"
+   - Look for: "✅ DEBUG: Created X top-level container file(s)"
+   - Check: "📊 DEBUG: Container Creation Summary"
+   - Review: "🔍 DEBUG: Container files created:" list
+
+3. **"Generate Combined Allure Report" step**:
+   - Look for: "📦 Found X container files"
+   - Check: "📊 Container breakdown:" (framework counts)
+   - Check: "Found frameworks:" (should list all frameworks)
+   - Review: "📋 Sample container files" (first 10)
+
+### Potential Issues to Look For
+
+1. **If container count is 0 or very low**:
+   - Container creation script may not be running
+   - Or containers are being deleted/overwritten
+
+2. **If only some frameworks have containers**:
+   - Those frameworks may be missing suite labels
+   - Or their environment is "unknown" and being skipped
+
+3. **If "combined" environment appears frequently**:
+   - Environment detection is failing
+   - Marker files aren't being created correctly
+   - Test names don't have environment suffixes
+
+4. **If only Playwright has containers**:
+   - Playwright may have different container structure
+   - Or Playwright containers are created differently
+   - Need to compare Playwright vs other frameworks
+
+---
+
 ### Next Steps
 
-1. **Implement Solution 1** - Fix environment detection in merge step (CRITICAL)
-2. **Verify container files in deployed report** - Check if containers are present in GitHub Pages deployment
-3. **Add logging for skipped containers** - Identify which containers are being skipped and why
-4. **Add validation checks** - Verify prerequisites before container creation
-5. **Improve error handling** - Make container creation more defensive
-6. **Monitor pipeline logs** - Watch for warnings about skipped containers
-7. **Analyze artifacts** - Use analysis script to identify patterns in inconsistent runs
+#### Immediate Actions (Before Merge)
+
+1. **Review Pipeline Logs Manually** ⚠️ **REQUIRED**
+   - Check: https://github.com/CScharer/full-stack-qa/actions/runs/20582311148
+   - Look for container validation and creation output
+   - Note which frameworks have containers vs. which don't
+   - Check for any warnings about skipped containers or environment detection
+
+2. **Download Artifact (If Available)** ⚠️ **RECOMMENDED**
+   - Download `allure-results-combined-all-environments` artifact from run #143
+   - Run: `./scripts/test/analyze-allure-containers.sh <artifact-path>`
+   - This will show container structure and identify issues
+
+3. **Review Deployed Report** ⚠️ **RECOMMENDED**
+   - Check: https://cscharer.github.io/full-stack-qa/#
+   - Verify which frameworks appear in Suites tab
+   - Compare with Overview and Behaviors tabs
+   - Note any discrepancies
+
+#### After Reviewing Logs/Artifacts
+
+**Based on findings, implement appropriate fixes:**
+
+1. **If containers missing for some frameworks**:
+   - Implement Fix 2 (fallback for missing suite labels)
+   - Implement Fix 3 (handle unknown environment)
+
+2. **If "combined" environment causing issues**:
+   - Implement Fix 1 (handle combined environment more gracefully)
+   - Improve environment detection in merge step
+
+3. **If environment detection failing**:
+   - Implement Solution 1 (fix environment detection in merge step)
+   - Add better path pattern matching
+
+#### After Merge to Main
+
+1. **Review Full Environment Detection**:
+   - Check marker file creation for all environments
+   - Verify test/prod detection is working
+   - Identify root cause of Surefire/Selenide DEV-only issue
+
+2. **Implement Remaining Fixes**:
+   - Based on full pipeline results
+   - Fix environment detection if needed
+   - Verify all frameworks show all environments in Suites tab
 
