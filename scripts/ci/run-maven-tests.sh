@@ -30,11 +30,24 @@ if [ -z "$ENVIRONMENT" ] || [ -z "$SUITE_FILE" ]; then
   exit 1
 fi
 
+# Solution 1: Reuse compiled classes from build-and-compile job if available
+# Check if pre-compiled classes exist (downloaded from compiled-classes artifact)
+if [ -d "pre-compiled-classes/target" ] && [ -n "$(ls -A pre-compiled-classes/target/classes 2>/dev/null)" ]; then
+  echo "✅ Found pre-compiled classes from build-and-compile job"
+  echo "📦 Reusing compiled classes to skip compilation..."
+  chmod +x scripts/ci/reuse-or-compile.sh
+  ./scripts/ci/reuse-or-compile.sh "pre-compiled-classes/target"
+else
+  echo "ℹ️  No pre-compiled classes found, will compile during test execution"
+fi
+
 # Build Maven command
+# Solution 2: Skip checkstyle since it already runs in code-quality-analysis job
 MAVEN_CMD="./mvnw -ntp test"
 MAVEN_CMD="$MAVEN_CMD -Dtest.environment=$ENVIRONMENT"
 MAVEN_CMD="$MAVEN_CMD -Dtest.retry.max.count=$RETRY_COUNT"
 MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$SUITE_FILE"
+MAVEN_CMD="$MAVEN_CMD -Dcheckstyle.skip=true"
 
 # Add browser parameter if provided
 if [ -n "$BROWSER" ]; then
@@ -53,6 +66,7 @@ echo "   Suite: $SUITE_FILE"
 echo "   Retry Count: $RETRY_COUNT"
 [ -n "$BROWSER" ] && echo "   Browser: $BROWSER"
 [ -n "$ADDITIONAL_ARGS" ] && echo "   Additional Args: $ADDITIONAL_ARGS"
+echo "   Optimizations: Checkstyle skipped (already run in code-quality-analysis job)"
 echo ""
 
 eval $MAVEN_CMD
