@@ -489,7 +489,33 @@ All frameworks detected:
      - Verify "Container files found in directory" matches expected count
      - If counts don't match, there may be a file creation or deletion issue
 
-2. **SECOND STEP: Verify Container Files Exist in Artifact**
+2. **SECOND STEP: Analyze Existing Artifacts (NO PIPELINE RUN NEEDED)** ✅ **AVAILABLE NOW**
+   - **Tool Created**: `scripts/test/analyze-allure-containers.sh`
+   - **Purpose**: Analyzes existing Allure results to diagnose Suites tab issues without running a new pipeline
+   - **What It Does**:
+     - Analyzes result files (suite labels, environment labels, UUIDs)
+     - Analyzes container files (structure, types, hierarchy)
+     - Validates Allure requirements (top-level containers, env-specific containers, suite labels)
+     - Identifies issues (missing containers, structure problems, missing labels)
+   - **Usage**:
+     ```bash
+     # Download artifact from recent pipeline run
+     gh run download <run-id> --name 'allure-results-combined-all-environments'
+     
+     # Or use local directory
+     ./scripts/test/analyze-allure-containers.sh allure-results-combined
+     ```
+   - **Output**: Comprehensive analysis report showing:
+     - File counts (results vs containers)
+     - Suite and environment distribution
+     - Container type distribution (top-level vs env-specific)
+     - Container structure validation
+     - Allure requirements check (pass/fail)
+     - Specific issues found
+   - **Benefits**: Can diagnose issues immediately using existing artifacts
+   - **Status**: ✅ Script created and ready to use
+
+3. **THIRD STEP: Verify Container Files Exist in Artifact** (if analysis shows issues)
    - Download a recent Allure results artifact from a successful pipeline run
    - Check if `*-container.json` files exist in the artifact
    - Count how many container files are present
@@ -535,11 +561,12 @@ All frameworks detected:
 
 #### Files to Review
 
-1. `scripts/ci/create-framework-containers.sh` - Container creation logic
+1. `scripts/ci/create-framework-containers.sh` - Container creation logic (✅ debug output added)
 2. `scripts/ci/prepare-combined-allure-results.sh` - Execution order
 3. `scripts/ci/add-environment-labels.sh` - Environment label assignment
 4. `.github/workflows/ci.yml` - Report generation step
 5. Recent pipeline logs - Actual execution output
+6. `scripts/test/analyze-allure-containers.sh` - **NEW**: Local analysis tool (✅ created)
 
 #### Research Needed
 
