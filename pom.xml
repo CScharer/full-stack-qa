@@ -771,6 +771,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
+					<skip>${maven.compiler.skip}</skip>
 					<release>${java.version}</release>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
