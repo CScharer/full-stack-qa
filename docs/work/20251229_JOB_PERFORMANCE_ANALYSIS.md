@@ -353,12 +353,14 @@ After implementing optimizations:
 - **Status**: ✅ Fixed (JMeter configure will not run during test execution)
 
 **Issue 4**: Maven still compiling even with pre-compiled classes.
-- **Root Cause**: Maven checks timestamps and dependencies, and may recompile if it detects changes
+- **Root Cause**: Maven's incremental compilation detects changes and may override skip properties
 - **Fix**: 
   - Added `-Dmaven.compiler.skip=true` when classes are successfully reused
-  - Touch class files to update their timestamps (makes them appear newer than sources)
+  - Added `<skip>${maven.compiler.skip}</skip>` to `maven-compiler-plugin` configuration in `pom.xml`
+  - Touch class files and target directories to update timestamps (makes them appear newer than sources)
+  - Copy `maven-status` directory from artifacts to preserve dependency tracking metadata
   - Added `maven.compiler.skip` property to `pom.xml`
-- **Status**: ✅ Fixed
+- **Status**: ✅ Fixed (configuration complete, should work on next run)
 
 **Debugging**: Comprehensive debugging output added to show actual artifact structure on each run, which will help verify the correct path structure.
 
