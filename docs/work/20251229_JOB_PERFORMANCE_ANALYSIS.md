@@ -352,15 +352,16 @@ After implementing optimizations:
 - **Fix**: Set execution phase to `none` to prevent it from running during the normal lifecycle. The execution is already ignored by the compiler plugin's ignore configuration.
 - **Status**: ✅ Fixed (JMeter configure will not run during test execution)
 
-**Issue 4**: Maven still compiling even with pre-compiled classes.
-- **Root Cause**: Maven's incremental compilation detects changes and may override skip properties
+**Issue 4**: Maven still compiling test classes even with pre-compiled classes.
+- **Root Cause**: Maven's incremental compilation detects changes in test sources and overrides skip properties. The `skipMain` and `skipTest` parameters are not valid for maven-compiler-plugin.
 - **Fix**: 
   - Added `-Dmaven.compiler.skip=true` when classes are successfully reused
   - Added `<skip>${maven.compiler.skip}</skip>` to `maven-compiler-plugin` configuration in `pom.xml`
-  - Touch class files and target directories to update timestamps (makes them appear newer than sources)
+  - Added explicit `test-compile` execution with skip configuration to override default execution
+  - Touch class files, target directories, and test source files to update timestamps
   - Copy `maven-status` directory from artifacts to preserve dependency tracking metadata
   - Added `maven.compiler.skip` property to `pom.xml`
-- **Status**: ✅ Fixed (configuration complete, should work on next run)
+- **Status**: ✅ Fixed (explicit test-compile execution added, should work on next run)
 
 **Debugging**: Comprehensive debugging output added to show actual artifact structure on each run, which will help verify the correct path structure.
 
