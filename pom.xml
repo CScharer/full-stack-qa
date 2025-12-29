@@ -19,6 +19,10 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<!-- Maven Dependencies-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>21</java.version>
+		<!-- Skip properties for test execution optimization (default: false, can be overridden) -->
+		<checkstyle.skip>false</checkstyle.skip>
+		<fmt.skip>false</fmt.skip>
+		<jmeter.skip>false</jmeter.skip>
 		<meminitial>128m</meminitial>
 		<maxmem>512m</maxmem>
 		<maven.version>3.9.11</maven.version>
@@ -842,6 +846,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<failOnViolation>false</failOnViolation>
 					<violationSeverity>warning</violationSeverity>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<skip>${checkstyle.skip}</skip>
 				</configuration>
 				<executions>
 					<execution>
@@ -920,7 +925,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<artifactId>fmt-maven-plugin</artifactId>
 				<version>${fmt-maven-plugin.version}</version>
 				<configuration>
-					<skip>false</skip>
+					<skip>${fmt.skip}</skip>
 					<!-- Skip import sorting - Spotless handles import ordering (java,javax,org,com) -->
 					<skipSortingImports>true</skipSortingImports>
 					<!-- Skip removing unused imports - Spotless handles this -->
@@ -982,6 +987,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<artifactId>jmeter-maven-plugin</artifactId>
 				<version>${jmeter-maven-plugin.version}</version>
 				<configuration>
+					<skip>${jmeter.skip}</skip>
 					<testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
 					<resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
 					<generateReports>true</generateReports>

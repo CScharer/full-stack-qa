@@ -32,22 +32,41 @@ fi
 
 # Solution 1: Reuse compiled classes from build-and-compile job if available
 # Check if pre-compiled classes exist (downloaded from compiled-classes artifact)
+# The artifact is uploaded as target/, so it will be in pre-compiled-classes/target/ after download
 if [ -d "pre-compiled-classes/target" ] && [ -n "$(ls -A pre-compiled-classes/target/classes 2>/dev/null)" ]; then
   echo "✅ Found pre-compiled classes from build-and-compile job"
   echo "📦 Reusing compiled classes to skip compilation..."
   chmod +x scripts/ci/reuse-or-compile.sh
   ./scripts/ci/reuse-or-compile.sh "pre-compiled-classes/target"
+elif [ -d "pre-compiled-classes" ] && [ -n "$(find pre-compiled-classes -name "classes" -type d 2>/dev/null | head -1)" ]; then
+  # Alternative: artifact might be structured differently
+  echo "✅ Found pre-compiled classes (alternative structure)"
+  echo "📦 Reusing compiled classes to skip compilation..."
+  chmod +x scripts/ci/reuse-or-compile.sh
+  # Find the target directory
+  TARGET_DIR=$(find pre-compiled-classes -name "target" -type d 2>/dev/null | head -1)
+  if [ -n "$TARGET_DIR" ]; then
+    ./scripts/ci/reuse-or-compile.sh "$TARGET_DIR"
+  else
+    echo "⚠️  Could not locate target directory in artifact, will compile"
+  fi
 else
   echo "ℹ️  No pre-compiled classes found, will compile during test execution"
+  echo "   (This is expected if artifact download failed or build-and-compile job didn't run)"
 fi
 
 # Build Maven command
-# Solution 2: Skip checkstyle since it already runs in code-quality-analysis job
+# Solution 2: Skip checkstyle, formatting, and JMeter since they already run in dedicated jobs
 MAVEN_CMD="./mvnw -ntp test"
 MAVEN_CMD="$MAVEN_CMD -Dtest.environment=$ENVIRONMENT"
 MAVEN_CMD="$MAVEN_CMD -Dtest.retry.max.count=$RETRY_COUNT"
 MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$SUITE_FILE"
+# Skip checkstyle (runs in code-quality-analysis job)
 MAVEN_CMD="$MAVEN_CMD -Dcheckstyle.skip=true"
+# Skip formatting plugins (fmt-maven-plugin runs during format goal, not test)
+MAVEN_CMD="$MAVEN_CMD -Dfmt.skip=true"
+# Skip JMeter configuration (not needed for test execution)
+MAVEN_CMD="$MAVEN_CMD -Djmeter.skip=true"
 
 # Add browser parameter if provided
 if [ -n "$BROWSER" ]; then
