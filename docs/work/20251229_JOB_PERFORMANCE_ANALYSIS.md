@@ -733,14 +733,15 @@ If you want to maximize savings, you can **safely combine Solution 1 + Solution 
 
 4. **Future Optimizations**: Consider test execution optimizations for larger savings
    - ✅ **Parallel execution enabled in all TestNG suites**: All TestNG suite files now have parallel execution enabled:
-     - ✅ `testng-smoke-suite.xml` - `parallel="tests"`, 3 threads (updated)
-     - ✅ `testng-grid-suite.xml` - `parallel="tests"`, 3 threads
-     - ✅ `testng-mobile-browser-suite.xml` - `parallel="tests"`, 3 threads (updated)
-     - ✅ `testng-responsive-suite.xml` - `parallel="tests"`, 3 threads (updated)
-     - ✅ `testng-selenide-suite.xml` - `parallel="tests"`, 3 threads (updated)
-     - ✅ `testng-extended-suite.xml` - `parallel="tests"`, 3 threads
-     - ✅ `testng-api-suite.xml` - `parallel="tests"`, 3 threads
-     - ✅ `testng-mobile-suite.xml` - `parallel="tests"`, 2 threads
+     - ✅ `testng-smoke-suite.xml` - `parallel="tests"`, 4 threads (updated)
+     - ✅ `testng-ci-suite.xml` - `parallel="tests"`, 4 threads (updated - split into separate test groups)
+     - ✅ `testng-grid-suite.xml` - `parallel="tests"`, 4 threads (updated)
+     - ✅ `testng-mobile-browser-suite.xml` - `parallel="tests"`, 4 threads (updated)
+     - ✅ `testng-responsive-suite.xml` - `parallel="tests"`, 4 threads (updated)
+     - ✅ `testng-selenide-suite.xml` - `parallel="tests"`, 4 threads (updated)
+     - ✅ `testng-extended-suite.xml` - `parallel="tests"`, 4 threads (updated)
+     - ✅ `testng-api-suite.xml` - `parallel="tests"`, 4 threads (updated)
+     - ✅ `testng-mobile-suite.xml` - `parallel="tests"`, 4 threads (updated from 2)
      - **Expected savings**: Parallel execution should reduce test execution time by 30-50% (from ~154-181 seconds to ~77-120 seconds per job)
    - **Test suite optimization**: Review and optimize test execution patterns
    - **Test execution time reduction**: Optimize individual test methods for faster execution
