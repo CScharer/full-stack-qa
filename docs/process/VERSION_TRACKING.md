@@ -313,9 +313,9 @@ This living document serves as a centralized tracking system for all dependency 
 
 ## 🔗 Related Documents
 
-- [Dependency Version Audit](../cleanup/20251219_DEPENDENCY_VERSION_AUDIT.md) - Comprehensive audit
-- [Pending Dependency Updates Summary (Archived)](../archive/2025-12/20251219_PENDING_DEPENDENCY_UPDATES_SUMMARY.md) - Update status
-- [Next Steps After PR #53](../archive/2025-12/20251220_NEXT_STEPS_AFTER_PR53.md) - Work plan (archived)
+- Dependency Version Audit (archived) - Comprehensive audit
+- Pending Dependency Updates Summary (archived) - Update status
+- Next Steps After PR #53 (archived) - Work plan
 - [Pre-Pipeline Validation Checklist](./PRE_PIPELINE_VALIDATION.md) - Validation process
 
 ---

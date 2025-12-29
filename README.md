@@ -611,7 +611,7 @@ Load and stress testing with industry-leading tools:
 ./scripts/compile.sh
 ```
 
-**💡 Tip**: Use `./scripts/run-tests-local.sh` to run tests without Docker (saves disk space!). See [docs/LOCAL_TESTING_GUIDE.md](docs/LOCAL_TESTING_GUIDE.md) for details.
+**💡 Tip**: Use `./scripts/run-tests-local.sh` to run tests without Docker (saves disk space!). See [Local Testing Guide](docs/guides/testing/LOCAL_TESTING.md) for details.
 
 ### Using Maven Wrapper Directly
 
@@ -676,7 +676,7 @@ full-stack-qa/
 │   └── compile.sh                          # Compile only
 ├── docs/                                   # Documentation
 │   ├── ANALYSIS.md                         # Project analysis
-│   ├── ANALYSIS_SUGGESTIONS.md             # 150-task roadmap
+│   └── (Analysis documents archived)
 │   └── (INTEGRATION_COMPLETE.md moved to PRIVATE/ folder)
 │   └── NEXT_STEPS.md                       # Quick action guide
 ├── XML/                                    # Configuration files
@@ -1033,20 +1033,20 @@ Comprehensive documentation available in `/docs`:
 - **[NAMING_STANDARDS.md](docs/process/NAMING_STANDARDS.md)** - Living document for naming conventions (CI/CD, documents, code)
 - **[VERSION_TRACKING.md](docs/process/VERSION_TRACKING.md)** - Living document for tracking dependency versions and scheduling updates
 - **[VERSION_MONITORING.md](docs/process/VERSION_MONITORING.md)** - Automated version monitoring and alerting system documentation
-- **[20251220_NEXT_STEPS_AFTER_PR53.md](docs/archive/2025-12/20251220_NEXT_STEPS_AFTER_PR53.md)** - Comprehensive work plan for post-PR #53 execution (archived)
+- **20251220_NEXT_STEPS_AFTER_PR53.md** - Comprehensive work plan for post-PR #53 execution (archived)
 - **[AI_WORKFLOW_RULES.md](docs/process/AI_WORKFLOW_RULES.md)** - Detailed workflow rules and guidelines for AI-assisted development
 
 ### Getting Started
-- **[NEXT_STEPS_SUMMARY.md](docs/NEXT_STEPS_SUMMARY.md)** - What to do next
+- **[NAVIGATION.md](docs/NAVIGATION.md)** - Documentation navigation guide
 - **INTEGRATION_COMPLETE.md** - Secret Manager setup (moved to PRIVATE/ folder)
 
 ### Planning & Analysis
-- **[ANALYSIS.md](docs/analysis/previous/ANALYSIS.md)** - Full project analysis
-- **[ANALYSIS_SUGGESTIONS.md](docs/analysis/previous/ANALYSIS_SUGGESTIONS.md)** - 150-task roadmap (65/150 complete)
+- **ANALYSIS.md** - Full project analysis (archived)
+- **ANALYSIS_SUGGESTIONS.md** - 150-task roadmap (archived)
 
 ### Implementation Guides
-- **[ANALYSIS_PS_RESULTS.md](docs/analysis/previous/ANALYSIS_PS_RESULTS.md)** - Password migration results
-- **[QUICK_WINS_COMPLETE.md](docs/archive/2025-11/QUICK_WINS_COMPLETE.md)** - Quick wins summary
+- **ANALYSIS_PS_RESULTS.md** - Password migration results (archived)
+- **QUICK_WINS_COMPLETE.md** - Quick wins summary (archived)
 
 ### Configuration
 - **[XML/README.md](XML/README.md)** - XML configuration setup
@@ -1296,7 +1296,7 @@ Copyright © 2025 CJS Consulting, L.L.C
 - **Security**: Google Cloud Secret Manager
 - **Build Tool**: Apache Maven
 - **Testing**: JUnit, TestNG
-- **CI/CD**: Travis CI, GitHub Actions (planned)
+- **CI/CD**: GitHub Actions
 
 ---
 
@@ -1310,7 +1310,7 @@ Copyright © 2025 CJS Consulting, L.L.C
 
 ## 🚀 What's Next?
 
-Check out our roadmap in `docs/analysis/previous/ANALYSIS_SUGGESTIONS.md`:
+Check out our roadmap (archived):
 - **65/150 tasks completed (43%)** 🎯
 - Phase 1 (Security): ✅ COMPLETE
 - Quick Wins: ✅ COMPLETE
@@ -1324,7 +1324,7 @@ Check out our roadmap in `docs/analysis/previous/ANALYSIS_SUGGESTIONS.md`:
 - Mobile browser emulation
 - Advanced security scanning (SAST/DAST)
 
-**Want to contribute?** See `docs/analysis/previous/ANALYSIS_SUGGESTIONS.md` for the full roadmap!
+**Want to contribute?** See [NAVIGATION.md](docs/NAVIGATION.md) for documentation structure and current work items!
 
 ---
 

@@ -1,10 +1,10 @@
 # Migrating to Public Repository
 
-**⚠️ IMPORTANT**: This document exists in both repositories and should be kept in sync:
-- **Old repo**: `/Users/christopherscharer/dev/full-stack-testing/docs/work/MIGRATE_REPO.md` (remote only - local deleted)
-- **New repo**: `/Users/christopherscharer/dev/full-stack-qa/docs/work/MIGRATE_REPO.md`
+> **Living Document** - This guide documents the process for migrating from a private repository to a public repository. Update repository references (`<migrate_repo_from>` and `<migrate_repo_to>`) as needed for your specific migration.
 
-**Sync Status**: Both documents should be updated together during the migration process.
+**Repository References**:
+- **Old repo**: `<migrate_repo_from>` (private on GitHub)
+- **New repo**: `<migrate_repo_to>` (public on GitHub)
 
 **✅ MIGRATION STATUS: 100% COMPLETE** (2025-12-26)
 - All phases completed
@@ -15,8 +15,8 @@
 ---
 
 ## Overview
-- **Current repo**: `/Users/christopherscharer/dev/full-stack-testing` (private on GitHub)
-- **New repo**: `/Users/christopherscharer/dev/full-stack-qa` (public on GitHub)
+- **Current repo**: `<migrate_repo_from>` (private on GitHub)
+- **New repo**: `<migrate_repo_to>` (public on GitHub)
 - **Current repo size**: ~2.7GB (2.6GB in .git, ~100MB working files)
 - **Available space**: <10GB
 - **Goal**: Create new public repo, copy files locally, set up exactly like current repo, then disable automatic jobs in old repo
@@ -113,9 +113,9 @@
 
 ### Step 1.1: Create New Local Directory
 ```bash
-cd /Users/christopherscharer/dev
-mkdir full-stack-qa
-cd full-stack-qa
+cd <parent_directory>
+mkdir <migrate_repo_to>
+cd <migrate_repo_to>
 ```
 
 ### Step 1.2: Copy Files from Current Repo (Space-Efficient)
@@ -132,15 +132,15 @@ rsync -av --exclude='.git' \
   --exclude='*.pyc' \
   --exclude='.pytest_cache' \
   --exclude='.mypy_cache' \
-  /Users/christopherscharer/dev/full-stack-testing/ \
-  /Users/christopherscharer/dev/full-stack-qa/
+  <parent_directory>/<migrate_repo_from>/ \
+  <parent_directory>/<migrate_repo_to>/
 ```
 
 **Estimated size after copy**: ~100-200MB (source code, configs, docs only)
 
 ### Step 1.3: Initialize New Git Repository
 ```bash
-cd /Users/christopherscharer/dev/full-stack-qa
+cd <parent_directory>/<migrate_repo_to>
 git init
 git branch -M main
 ```
@@ -159,7 +159,7 @@ git branch -M main
 
 **Installation**:
 ```bash
-cd /Users/christopherscharer/dev/full-stack-qa
+cd <parent_directory>/<migrate_repo_to>
 chmod +x scripts/install-git-hooks.sh
 ./scripts/install-git-hooks.sh
 ```
@@ -199,7 +199,7 @@ test -f .git/hooks/pre-commit && echo "✅ pre-commit hook installed" || echo "�
 
 ### Step 1.5: Update Repository References
 
-**⚠️ IMPORTANT**: Before committing, we need to replace all instances of `full-stack-testing` with `full-stack-qa` in the new repository.
+**⚠️ IMPORTANT**: Before committing, we need to replace all instances of `<migrate_repo_from>` with `<migrate_repo_to>` in the new repository.
 
 **What needs to be changed:**
 - Repository URLs in documentation
@@ -223,7 +223,7 @@ Ensure `.gitignore` is present and includes all build artifacts (should already 
 
 1. Go to https://github.com/new
 2. **Owner**: Select your account (CScharer)
-3. **Repository name**: `full-stack-qa`
+3. **Repository name**: `<migrate_repo_to>`
 4. **Description**: `Full Stack QA Automation Framework - Public Repository`
 5. **Visibility**: Select **Public** ⚠️
 6. **DO NOT** check any of these boxes:
@@ -241,7 +241,7 @@ Ensure `.gitignore` is present and includes all build artifacts (should already 
 **Goal**: Set up the new repository to match the current repository's configuration exactly.
 
 1. **Go to Repository Settings**: 
-   - Navigate to https://github.com/CScharer/full-stack-qa/settings
+   - Navigate to https://github.com/CScharer/<migrate_repo_to>/settings
    - Or: Click "Settings" tab in the new repository
 
 2. **General Settings** (Match Current Repo):
@@ -260,7 +260,7 @@ Ensure `.gitignore` is present and includes all build artifacts (should already 
    - **Source**: Select **"GitHub Actions"** ⚠️ **This is required**
    - **Why**: The `ci.yml` workflow uses `peaceiris/actions-gh-pages@v4` to deploy Allure reports automatically
    - **Current repo setup**: Uses GitHub Actions deployment (not branch-based deployment)
-   - **Result**: Allure reports will be available at `https://cscharer.github.io/full-stack-qa/` after first successful workflow run
+   - **Result**: Allure reports will be available at `https://cscharer.github.io/<migrate_repo_to>/` after first successful workflow run
 
 4. **Actions Settings** (⚡ REQUIRED - Matches Current Repo):
    - Navigate to **Settings → Actions → General**
@@ -313,8 +313,8 @@ Ensure `.gitignore` is present and includes all build artifacts (should already 
 **After creating the repository on GitHub, connect your local repo:**
 
 ```bash
-cd /Users/christopherscharer/dev/full-stack-qa
-git remote add origin https://github.com/CScharer/full-stack-qa.git
+cd <parent_directory>/<migrate_repo_to>
+git remote add origin https://github.com/CScharer/<migrate_repo_to>.git
 git remote -v  # Verify remote is set correctly
 ```
 
@@ -330,12 +330,12 @@ git remote -v  # Verify remote is set correctly
 
 ### Step 3.1: Replace Repository Name References
 
-**⚠️ CRITICAL**: Replace all instances of `full-stack-testing` with `full-stack-qa` in the new repository.
+**⚠️ CRITICAL**: Replace all instances of `<migrate_repo_from>` with `<migrate_repo_to>` in the new repository.
 
 **What I'll do:**
-1. Search for all occurrences of `full-stack-testing` in the new repo
+1. Search for all occurrences of `<migrate_repo_from>` in the new repo
 2. Review each occurrence to determine if it needs to be changed
-3. Replace repository name references with `full-stack-qa`
+3. Replace repository name references with `<migrate_repo_to>`
 4. Update GitHub URLs, documentation references, etc.
 
 **Files likely to need updates:**
@@ -347,13 +347,13 @@ git remote -v  # Verify remote is set correctly
 
 **Command to find all occurrences:**
 ```bash
-cd /Users/christopherscharer/dev/full-stack-qa
-grep -r "full-stack-testing" . --exclude-dir=.git 2>/dev/null | head -20
+cd <parent_directory>/<migrate_repo_to>
+grep -r "<migrate_repo_from>" . --exclude-dir=.git 2>/dev/null | head -20
 ```
 
 ### Step 3.2: Review What Will Be Committed
 ```bash
-cd /Users/christopherscharer/dev/full-stack-qa
+cd <parent_directory>/<migrate_repo_to>
 git status
 git add .
 git status  # Review what's staged
@@ -377,9 +377,9 @@ Before committing, verify no sensitive data is included:
 
 ### Step 4.1: Create Initial Commit
 ```bash
-cd /Users/christopherscharer/dev/full-stack-qa
+cd <parent_directory>/<migrate_repo_to>
 git add .
-git commit -m "Initial commit: Migrate from private full-stack-testing repository"
+git commit -m "Initial commit: Migrate from private <migrate_repo_from> repository"
 ```
 
 ### Step 4.2: Push to GitHub
@@ -392,7 +392,7 @@ git push -u origin main
 **⚠️ Perform these verification steps on GitHub directly:**
 
 1. **Verify Files**: ✅ **COMPLETED**
-   - Visit https://github.com/CScharer/full-stack-qa
+   - Visit https://github.com/CScharer/<migrate_repo_to>
    - Browse the repository structure
    - ✅ Verified: All expected files and directories are present
    - ✅ Verified: Sensitive files are NOT visible (`.env`, `*-key.json`, etc.)
@@ -487,7 +487,7 @@ Error report
 3. **Why this is required**: 
    - The `ci.yml` workflow uses `peaceiris/actions-gh-pages@v4` to deploy
    - This matches your current repository's setup exactly
-   - Allure reports will be available at `https://cscharer.github.io/full-stack-qa/` after first successful run
+   - Allure reports will be available at `https://cscharer.github.io/<migrate_repo_to>/` after first successful run
 4. **Current repo setup**: Uses GitHub Actions deployment (not branch-based)
 
 ### Step 4.5.3: Test Workflow Execution ✅ **COMPLETED**
@@ -502,7 +502,7 @@ Error report
    - ⚠️ BE tests: Failing (500 errors on API endpoints)
 
 ### Step 4.5.4: Review Repository Readme
-1. Go to repository main page: https://github.com/CScharer/full-stack-qa
+1. Go to repository main page: https://github.com/CScharer/<migrate_repo_to>
 2. Verify README.md displays correctly
 3. Check that all links work
 4. Update README if it references the old repository name
@@ -516,12 +516,12 @@ Error report
 ### Step 5.1: Verify CI/CD Pipeline
 
 1. **Check PR Status**:
-   - Go to PR #1: https://github.com/CScharer/full-stack-qa/pull/1
+   - Go to PR #1: https://github.com/CScharer/<migrate_repo_to>/pull/1
    - Verify all CI checks are passing (green checkmarks)
    - Review any failed jobs and address issues
 
 2. **Verify Workflow Execution**:
-   - Go to **Actions** tab: https://github.com/CScharer/full-stack-qa/actions
+   - Go to **Actions** tab: https://github.com/CScharer/<migrate_repo_to>/actions
    - Check that all workflows run successfully:
      - `ci.yml` - Main CI pipeline
      - `env-fe.yml` - Frontend environment tests
@@ -554,7 +554,7 @@ Error report
 **⚠️ IMPORTANT**: GitHub Pages only deploys on `main` branch, so PR must be merged first.
 
 1. **Merge PR to main** (required for GitHub Pages deployment):
-   - Merge PR #1: https://github.com/CScharer/full-stack-qa/pull/1
+   - Merge PR #1: https://github.com/CScharer/<migrate_repo_to>/pull/1
    - This will trigger a new CI run on `main` branch
    - GitHub Pages deployment will happen automatically on `main`
 
@@ -564,7 +564,7 @@ Error report
      - Download artifact: `allure-report-combined-all-environments`
      - Extract and open `index.html` in a browser
    - **For main branch**: Reports are deployed to GitHub Pages
-     - Visit: https://cscharer.github.io/full-stack-qa/
+     - Visit: https://cscharer.github.io/<migrate_repo_to>/
      - Verify reports are generated and accessible
      - Check that test results are displayed correctly
    - **Note**: GitHub Pages only deploys on `main` branch when code changes are detected
@@ -586,7 +586,7 @@ Error report
 - [x] PR #1 merged to main ✅ **COMPLETED**
 - [x] PR #2 merged to main ✅ **COMPLETED**
 - [x] GitHub Pages deployed and accessible ✅ **VERIFIED**
-- [x] Allure Reports accessible at https://cscharer.github.io/full-stack-qa/ ✅ **VERIFIED**
+- [x] Allure Reports accessible at https://cscharer.github.io/<migrate_repo_to>/ ✅ **VERIFIED**
 - [x] Database connections working ✅ **VERIFIED**
 - [x] All features accessible ✅ **VERIFIED**
 - [x] No critical errors in logs ✅ **VERIFIED**
@@ -601,7 +601,7 @@ Error report
 **Status**: 
 - All PRs merged to `main`
 - GitHub Pages deployed and accessible
-- Allure Reports live at: https://cscharer.github.io/full-stack-qa/
+- Allure Reports live at: https://cscharer.github.io/<migrate_repo_to>/
 - All tests passing
 - All fixes applied and verified
 
@@ -635,14 +635,14 @@ The following workflows run automatically in the old repo:
 **⚠️ Perform these steps on GitHub directly:**
 
 1. **Navigate to Repository Settings**:
-   - Go to https://github.com/CScharer/full-stack-testing/settings/actions
+   - Go to https://github.com/CScharer/<migrate_repo_from>/settings/actions
 
 2. **Disable Workflow Runs**:
    - Scroll to **"Workflow permissions"** section
    - You can temporarily disable all workflows, but a better approach is Method 2 or 3 below
 
 3. **Alternative: Disable Individual Workflows**:
-   - Go to **Actions** tab: https://github.com/CScharer/full-stack-testing/actions
+   - Go to **Actions** tab: https://github.com/CScharer/<migrate_repo_from>/actions
    - For each workflow (`ci.yml`, `version-monitoring.yml`, `verify-formatting.yml`):
      - Click on the workflow name
      - Click **"..." (three dots) → Disable workflow**
@@ -710,7 +710,7 @@ jobs:
 
 **Method C: Rename workflow files** (temporarily disable):
 ```bash
-cd /Users/christopherscharer/dev/full-stack-testing
+cd <parent_directory>/<migrate_repo_from>
 mv .github/workflows/ci.yml .github/workflows/ci.yml.disabled
 mv .github/workflows/version-monitoring.yml .github/workflows/version-monitoring.yml.disabled
 mv .github/workflows/verify-formatting.yml .github/workflows/verify-formatting.yml.disabled
@@ -721,7 +721,7 @@ mv .github/workflows/verify-formatting.yml .github/workflows/verify-formatting.y
 **If you chose to modify workflow files (Method B or C from Step 5.3):**
 
 ```bash
-cd /Users/christopherscharer/dev/full-stack-testing
+cd <parent_directory>/<migrate_repo_from>
 git checkout -b disable-automatic-workflows
 # Make changes to workflow files (comment out triggers or rename files)
 git add .github/workflows/
@@ -730,7 +730,7 @@ git push origin disable-automatic-workflows
 ```
 
 **Then create PR on GitHub:**
-1. Go to https://github.com/CScharer/full-stack-testing/pulls
+1. Go to https://github.com/CScharer/<migrate_repo_from>/pulls
 2. Click **"New pull request"**
 3. Select `disable-automatic-workflows` branch
 4. Review changes
@@ -811,16 +811,16 @@ git push origin disable-automatic-workflows
 
 **Migration Status**: ✅ **COMPLETE**
 
-**New Repository (`full-stack-qa`)**:
+**New Repository (`<migrate_repo_to>`)**:
 - ✅ All workflows passing
 - ✅ All tests passing (Backend, Frontend, Cypress, Performance)
 - ✅ Code Quality Analysis passing
 - ✅ GitHub Pages deployed and accessible
-- ✅ Allure Reports live at: https://cscharer.github.io/full-stack-qa/
+- ✅ Allure Reports live at: https://cscharer.github.io/<migrate_repo_to>/
 - ✅ Scheduled jobs active (nightly/weekly)
 - ✅ All fixes applied and verified
 
-**Old Repository (`full-stack-testing`)**:
+**Old Repository (`<migrate_repo_from>`)**:
 - ✅ Scheduled jobs disabled (cron triggers commented out)
 - ⚠️ Push/PR triggers still active (intentional - can disable later)
 - ✅ Manual triggers available via `workflow_dispatch`
@@ -828,20 +828,20 @@ git push origin disable-automatic-workflows
 
 ### Step 7.2: Local Repository Cleanup ✅ **COMPLETED**
 
-**Local Old Repository** (`/Users/christopherscharer/dev/full-stack-testing`):
+**Local Old Repository** (`<parent_directory>/<migrate_repo_from>`):
 - **Status**: ✅ **DELETED** - Local copy has been removed
 - **Remote repository**: ✅ **KEPT** - Remote repo remains as private backup on GitHub
-- **Reason**: All code is in new repo (`full-stack-qa`), old repo remote serves as backup
+- **Reason**: All code is in new repo (`<migrate_repo_to>`), old repo remote serves as backup
 
 **Action Taken**:
-- ✅ **Local old repo deleted**: Removed `/Users/christopherscharer/dev/full-stack-testing` (~2.9GB saved)
-- ✅ **Remote old repo kept**: Remains as private backup on GitHub (`CScharer/full-stack-testing`)
+- ✅ **Local old repo deleted**: Removed `<parent_directory>/<migrate_repo_from>` (~2.9GB saved)
+- ✅ **Remote old repo kept**: Remains as private backup on GitHub (`CScharer/<migrate_repo_from>`)
 - ✅ **New repo verified**: All functionality confirmed working before deletion
 
 **Deletion Command Used**:
 ```bash
-cd /Users/christopherscharer/dev
-rm -rf full-stack-testing
+cd <parent_directory>
+rm -rf <migrate_repo_from>
 ```
 
 **Note**: Only the local copy was deleted. The remote repository on GitHub remains intact as a backup and can be cloned again if needed.
@@ -865,10 +865,10 @@ Use the status legend symbols to track progress:
 
 ### Required Steps (Match Current Repo)
 - [ ] [🔍] Phase 1: Create new local directory and copy files
-  - [✅] Step 1.1: Create new local directory `/Users/christopherscharer/dev/full-stack-qa`
+  - [✅] Step 1.1: Create new local directory `<parent_directory>/<migrate_repo_to>`
   - [✅] Step 1.2: Copy files from current repo (excluding .git, build artifacts, dependencies)
   - [✅] Step 1.3: Initialize new Git repository with `main` branch
-  - [✅] Step 1.4: Note added - Need to replace `full-stack-testing` with `full-stack-qa` in Phase 3
+  - [✅] Step 1.4: Note added - Need to replace `<migrate_repo_from>` with `<migrate_repo_to>` in Phase 3
 - [ ] [🔍] Phase 2: Create GitHub repository
   - [✅] Step 2.1: Create public GitHub repository using GitHub CLI
   - [✅] Step 2.2: Configure repository settings on GitHub (Pages, Actions permissions)
@@ -880,7 +880,7 @@ Use the status legend symbols to track progress:
   - [ ] 💡 Branch Protection (optional - for future)
   - [ ] 💡 Variables: Skip (not used in current repo)
 - [ ] [🔍] Phase 3: Review files and make necessary changes
-  - [✅] Step 3.1: Replace all instances of `full-stack-testing` with `full-stack-qa` (updated all text files, kept MIGRATE_REPO.md unchanged)
+  - [✅] Step 3.1: Replace all instances of `<migrate_repo_from>` with `<migrate_repo_to>` (updated all text files, kept MIGRATE_REPO.md unchanged)
   - [✅] Step 3.2: Cleaned up test results and build artifacts that shouldn't have been copied
   - [✅] Step 3.3: Review what will be committed and verify no sensitive files (55 files ready, sensitive files properly ignored)
   - [✅] Step 3.4: Fixed remaining references in Data/Core/README.md and src/test/robot/README.md, renamed database file (full_stack_testing.db → full_stack_qa.db), updated seed script and conftest.py
@@ -926,8 +926,8 @@ Use the status legend symbols to track progress:
 8. **Settings for future benefit are marked with 💡 (Optional)**
 9. **✅ Can fix things as we go** - Repository settings, file updates, and configurations can be adjusted at any point during the migration process. Don't worry about getting everything perfect on the first try.
 10. **📄 Document Sync**: This document exists in both repositories and should be kept in sync:
-    - **Old repo**: `/Users/christopherscharer/dev/full-stack-testing/docs/work/MIGRATE_REPO.md`
-    - **New repo**: `/Users/christopherscharer/dev/full-stack-qa/docs/work/MIGRATE_REPO.md`
+    - **Old repo**: `<parent_directory>/<migrate_repo_from>/docs/work/MIGRATE_REPO.md` (if applicable)
+    - **New repo**: `<parent_directory>/<migrate_repo_to>/docs/guides/setup/MIGRATE_REPO.md`
     - **Sync process**: Update both documents when making changes during migration
     - **Purpose**: Ensures the migration process is fully documented in both locations
     - **Status**: ✅ Both documents currently match (649 lines each)

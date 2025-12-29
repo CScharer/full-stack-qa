@@ -77,7 +77,7 @@ The script automates the Fast Path checks above. See the script for details.
 
 - **[PRE_PIPELINE_VALIDATION.md](./PRE_PIPELINE_VALIDATION.md)** - Complete validation checklist
 - **[AI_WORKFLOW_RULES.md](./AI_WORKFLOW_RULES.md)** - Detailed workflow rules (includes Rule 0: NEVER commit to main)
-- **[20251220_NEXT_STEPS_AFTER_PR53.md](../archive/2025-12/20251220_NEXT_STEPS_AFTER_PR53.md)** - Work plan and priorities (archived)
+- **20251220_NEXT_STEPS_AFTER_PR53.md** (archived) - Work plan and priorities
 
 ---
 

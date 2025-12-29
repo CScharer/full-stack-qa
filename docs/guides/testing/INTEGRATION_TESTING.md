@@ -57,7 +57,7 @@ This script will:
   ENVIRONMENT=prod ./scripts/run-integration-tests.sh  # Uses prod environment
   ```
 
-**Note**: See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+**Note**: See [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ---
 
@@ -114,7 +114,7 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT:-8003}
 ./scripts/start-be.sh --env prod
 ```
 
-**Note**: Setting `ENVIRONMENT` automatically makes the backend use the correct database and port. See [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) for more options.
+**Note**: Setting `ENVIRONMENT` automatically makes the backend use the correct database and port. See [Service Scripts Guide](../infrastructure/SERVICE_SCRIPTS.md) for more options.
 
 ### 3. Start Frontend Server
 
@@ -137,7 +137,7 @@ PORT=${FRONTEND_PORT:-3003} npm run dev
 ./scripts/start-fe.sh --env prod
 ```
 
-**Note**: Ports are automatically selected based on environment. See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+**Note**: Ports are automatically selected based on environment. See [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ### 4. Run Integration Tests
 
@@ -210,7 +210,7 @@ The integration test configuration (`playwright.integration.config.ts`) automati
   ENVIRONMENT=prod npm run test:integration  # Uses prod environment (8005/3005)
   ```
 
-**Note**: See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+**Note**: See [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ### Environment Variables
 
@@ -358,5 +358,5 @@ npx playwright test --config=playwright.integration.config.ts tests/integration/
 ## 📚 Related Documentation
 
 - [Local Development Guide](../setup/LOCAL_DEVELOPMENT.md) - How to run the application locally
-- [Backend API Tests](../backend/tests/) - Unit tests for backend API
-- [Frontend Unit Tests](../frontend/__tests__/) - Unit tests for frontend components
+- Backend API Tests - Unit tests for backend API (located in `backend/tests/`)
+- Frontend Unit Tests - Unit tests for frontend components (located in `frontend/__tests__/`)

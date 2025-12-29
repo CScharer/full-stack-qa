@@ -311,7 +311,7 @@ For each Node.js project (`cypress/`, `playwright/`, `vibium/`, `frontend/`) **t
   - Check `.github/workflows/test-environment.yml` for `selenium_version` input default value
   - **Required**: Versions must match (e.g., client 4.39.0 = server 4.39.0)
   - **Note**: Server version is now centralized in workflow input variable `selenium_version` (default: 4.39.0)
-  - **Reference**: See `docs/issues/20251220_SELENIUM_GRID_INTERMITTENT_FAILURES.md`
+  - **Reference**: See troubleshooting documentation for Selenium Grid issues
 
 #### 5.2 npm Audit (Security)
 
@@ -665,7 +665,7 @@ Copy this template for each commit/push session:
 
 - [Quick Reference Guide](./QUICK_REFERENCE.md) - One-page summary of critical checks
 - [AI Workflow Rules](./AI_WORKFLOW_RULES.md) - Detailed workflow rules and guidelines for AI-assisted development (includes commit/push approval requirements)
-- [Selenium Grid Intermittent Failures](../issues/20251220_SELENIUM_GRID_INTERMITTENT_FAILURES.md) - Version alignment reference and Selenium client/server version matching
+- Selenium Grid Intermittent Failures (archived) - Version alignment reference and Selenium client/server version matching
 - [Local Testing Guide](../guides/testing/LOCAL_TESTING.md) - How to run tests locally and debug pipeline failures
 - [Version Tracking](./VERSION_TRACKING.md) - Dependency version tracking and update scheduling
 

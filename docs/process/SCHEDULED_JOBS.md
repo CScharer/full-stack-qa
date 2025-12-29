@@ -202,7 +202,7 @@ jobs:
 - Weekly runs execute **all performance tests** (full suite: Gatling + JMeter + Locust)
 - Performance tests also run conditionally based on PRs/pushes to main
 - Performance tests use reusable workflow `env-be.yml` called by `ci.yml`
-- See [Document and Cron Job Cleanup](../cleanup/20251221_DOCUMENT_AND_CRON_JOB_CLEANUP.md) for details
+- See archived cleanup documentation for details
 
 ### Resource Considerations
 - Scheduled jobs consume GitHub Actions minutes
@@ -221,7 +221,7 @@ jobs:
 ## 🔗 Related Documents
 
 - [Version Monitoring & Alerting](VERSION_MONITORING.md) - Detailed documentation for version monitoring
-- [Document and Cron Job Cleanup](../cleanup/20251221_DOCUMENT_AND_CRON_JOB_CLEANUP.md) - Investigation and cleanup of workflow references
+- Document and Cron Job Cleanup (archived) - Investigation and cleanup of workflow references
 - [GitHub Actions CI/CD Pipeline](../guides/infrastructure/GITHUB_ACTIONS.md) - Main CI/CD pipeline documentation
 - [Pipeline Workflow Reference](../guides/infrastructure/PIPELINE_WORKFLOW.md) - Detailed pipeline job reference
 

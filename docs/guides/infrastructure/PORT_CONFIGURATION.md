@@ -37,7 +37,7 @@ The `config/ports.json` file is maintained for backward compatibility (ports onl
 
 **See Also**: 
 - [Service Scripts Guide](./SERVICE_SCRIPTS.md) for information on how service management scripts use port configuration
-- [config/README.md](../../config/README.md) for configuration file documentation
+- Configuration files are documented in `config/environments.json` and `config/ports.json` (see inline comments)
 
 ### Usage
 

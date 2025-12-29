@@ -7,7 +7,7 @@
 **Related Documents:**
 - [Pre-Pipeline Validation Checklist](./PRE_PIPELINE_VALIDATION.md) - Comprehensive validation steps before committing/pushing
 - [Version Tracking](./VERSION_TRACKING.md) - Dependency version management
-- [Next Steps After PR #53](../archive/2025-12/20251220_NEXT_STEPS_AFTER_PR53.md) - Work plan and priorities (archived)
+- Next Steps After PR #53 (archived) - Work plan and priorities
 
 ---
 
