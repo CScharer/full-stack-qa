@@ -351,5 +351,5 @@ Each job:
 ## 📝 **Related Documentation**
 
 - [Performance Testing Guide](../testing/PERFORMANCE_TESTING.md) - Detailed tool usage
-- [Performance Tests CI Integration Plan](../../archive/2025-12/20251201_PERFORMANCE_TESTS_CI_INTEGRATION_PLAN.md) - Integration plan
-- [Performance Tests Environment Awareness Plan](../../archive/2025-12/20251201_PERFORMANCE_TESTS_ENVIRONMENT_AWARENESS_PLAN.md) - Environment awareness implementation
+- Performance Tests CI Integration Plan (archived) - Integration plan
+- Performance Tests Environment Awareness Plan (archived) - Environment awareness implementation

@@ -291,6 +291,6 @@ All Checkstyle violations have been resolved:
 ---
 
 **See Also**:
-- [Git Hooks Installation](../README.md#5--automatic-git-hooks-installation) - Automatic code formatting
+- [Git Hooks Installation](../setup/MIGRATE_REPO.md#step-14-install-git-hooks--required) - Automatic code formatting
 - [GitHub Actions CI/CD](../infrastructure/GITHUB_ACTIONS.md) - Code quality in CI pipeline
-- [@SuppressWarnings Inventory](../../work/20251225_SUPPRESS_WARNINGS_INVENTORY.md) - Complete inventory of suppressions
+- [@SuppressWarnings Inventory](../../work/20251229_SUPPRESS_WARNINGS_INVENTORY.md) - Complete inventory of suppressions

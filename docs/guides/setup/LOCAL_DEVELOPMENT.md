@@ -117,7 +117,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8003
 ../scripts/start-be.sh -e test          # Test environment
 ```
 
-**Note**: The default dev port is **8003** (not 8008). See [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) for all port assignments.
+**Note**: The default dev port is **8003** (not 8008). See [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) for all port assignments.
 
 ### 6. Verify Backend is Running
 
@@ -136,7 +136,7 @@ curl http://localhost:8003/health
 curl http://localhost:8003/api/v1/applications
 ```
 
-**See Also**: [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) for service management scripts.
+**See Also**: [Service Scripts Guide](../infrastructure/SERVICE_SCRIPTS.md) for service management scripts.
 
 ---
 

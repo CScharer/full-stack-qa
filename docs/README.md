@@ -39,7 +39,7 @@ This directory contains all project documentation and analysis reports for the C
 - Security best practices
 - Complete implementation reference
 
-**[COMMIT_SAFETY_REPORT.md](COMMIT_SAFETY_REPORT.md)** - Safety Analysis
+**COMMIT_SAFETY_REPORT.md** - Safety Analysis (archived)
 - Git commit safety verification
 - .gitignore protection rules
 - Sensitive file checklist
@@ -49,13 +49,13 @@ This directory contains all project documentation and analysis reports for the C
 
 ### ✅ Quick Wins & Milestones
 
-**[20251108_QUICK_WINS_COMPLETE.md](archive/2025-11/20251108_QUICK_WINS_COMPLETE.md)** - Quick Wins Summary
+**20251108_QUICK_WINS_COMPLETE.md** - Quick Wins Summary (archived)
 - 10 quick wins implemented and tested
 - Maven wrapper, EditorConfig, Git attributes
 - GitHub templates, Pre-commit hooks
 - Code of Conduct, License, Scripts
 
-**[ALL_QUICK_WINS_SUMMARY.md](ALL_QUICK_WINS_SUMMARY.md)** - Comprehensive Summary
+**ALL_QUICK_WINS_SUMMARY.md** - Comprehensive Summary (archived)
 - Detailed breakdown of all 10 quick wins
 - Before/After comparison
 - Testing results
@@ -65,7 +65,7 @@ This directory contains all project documentation and analysis reports for the C
 
 ### 🚀 Next Steps
 
-**[20251108_NEXT_STEPS.md](archive/2025-11/20251108_NEXT_STEPS.md)** - Action Guide
+**20251108_NEXT_STEPS.md** - Action Guide (archived)
 - Immediate next steps
 - Quick action items
 - Prioritized recommendations
@@ -78,17 +78,17 @@ This directory contains all project documentation and analysis reports for the C
 ### For New Team Members
 1. Start with **[README.md](../README.md)** (root) for project overview
 2. Read **INTEGRATION_COMPLETE.md** (moved to PRIVATE/ folder) for Google Cloud setup
-3. Review **[NEXT_STEPS.md](NEXT_STEPS.md)** for what to do first
+3. Review **NAVIGATION.md** for documentation structure
 
 ### For Developers
 1. **ANALYSIS_SUGGESTIONS.md** (moved to PRIVATE/ folder) - Full roadmap
-2. **[20251108_QUICK_WINS_COMPLETE.md](archive/2025-11/20251108_QUICK_WINS_COMPLETE.md)** - Recent improvements
+2. **NAVIGATION.md** - Documentation navigation guide
 3. **ANALYSIS.md** (moved to PRIVATE/ folder) - Technical deep dive
 
 ### For Security/DevOps
 1. **INTEGRATION_COMPLETE.md** (moved to PRIVATE/ folder) - Secret Manager architecture
 2. **ANALYSIS_PS_RESULTS.md** (moved to PRIVATE/ folder) - Migration results
-3. **[COMMIT_SAFETY_REPORT.md](COMMIT_SAFETY_REPORT.md)** - Safety checks
+3. **NAVIGATION.md** - Documentation structure
 
 ---
 
@@ -126,12 +126,12 @@ This directory contains all project documentation and analysis reports for the C
 **First Time Setup**:
 1. [Root README.md](../README.md) - Project overview
 2. INTEGRATION_COMPLETE.md (moved to PRIVATE/ folder) - Google Cloud setup
-3. [20251108_NEXT_STEPS.md](archive/2025-11/20251108_NEXT_STEPS.md) - What to do next
+3. [NAVIGATION.md](NAVIGATION.md) - Documentation navigation
 
 **Understanding the Project**:
 1. ANALYSIS.md (moved to PRIVATE/ folder) - What we have
 2. ANALYSIS_SUGGESTIONS.md (moved to PRIVATE/ folder) - Where we're going
-3. [QUICK_WINS_COMPLETE.md](QUICK_WINS_COMPLETE.md) - What we've done
+3. [NAVIGATION.md](NAVIGATION.md) - Documentation overview
 
 **Technical Deep Dive**:
 1. INTEGRATION_COMPLETE.md (moved to PRIVATE/ folder) - Security architecture
@@ -160,7 +160,7 @@ When adding new documentation:
 
 ### Root Files
 - [README.md](../README.md) - Main project README
-- [CHANGE.log](../CHANGE.log) - Complete change history
+- Change history is tracked in git commits and PRs
 - [LICENSE](../LICENSE) - MIT License
 - [.editorconfig](../.editorconfig) - Code style rules
 - [.pre-commit-config.yaml](../.pre-commit-config.yaml) - Quality hooks
@@ -184,6 +184,6 @@ When adding new documentation:
 
 <div align="center">
 
-**Need help?** Check [20251108_NEXT_STEPS.md](archive/2025-11/20251108_NEXT_STEPS.md) or open a GitHub issue!
+**Need help?** Check [NAVIGATION.md](NAVIGATION.md) or open a GitHub issue!
 
 </div>

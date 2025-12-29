@@ -175,7 +175,7 @@ timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,
 
 - [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking
 - [Pre-Pipeline Validation](PRE_PIPELINE_VALIDATION.md) - Local validation checklist
-- [Next Steps After PR #53](../archive/2025-12/20251220_NEXT_STEPS_AFTER_PR53.md) - Work plan and status (archived)
+- Next Steps After PR #53 (archived) - Work plan and status
 
 ---
 

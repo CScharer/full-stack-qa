@@ -2,7 +2,7 @@
 
 **Last Updated**: 2025-12-27  
 **Status**: ✅ Active  
-**Related**: [Environment Databases Work Plan](../../work/20251226_ENVIRONMENT_DATABASES.md)
+**Related**: Database configuration is documented in this guide
 
 ---
 
@@ -233,7 +233,7 @@ This verifies:
 
 ## 📚 Related Documentation
 
-- **[Environment Databases Work Plan](../../work/20251226_ENVIRONMENT_DATABASES.md)** - Detailed implementation plan
+- Database configuration details are documented in this guide
 - **[Database Schema Source](../../new_app/SCHEMA_SOURCE_OF_TRUTH.md)** - Schema database documentation
 - **[Local Development Guide](../setup/LOCAL_DEVELOPMENT.md)** - Development setup
 - **[Integration Testing Guide](../testing/INTEGRATION_TESTING.md)** - Testing setup
@@ -270,7 +270,7 @@ echo $DATABASE_NAME
 ## 🔄 Next Steps
 
 For implementation details and update plans, see:
-- **[Environment Databases Work Plan](../../work/20251226_ENVIRONMENT_DATABASES.md)**
+- Database configuration details are documented in this guide
 
 ---
 

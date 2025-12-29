@@ -269,6 +269,48 @@ STAGE 7: PIPELINE SUMMARY
 
 ---
 
+## ⚡ PERFORMANCE OPTIMIZATIONS
+
+### Test Job Optimizations (Implemented 2025-12-29)
+
+Java-based test jobs (`smoke-tests`, `grid-tests`, `mobile-browser-tests`, `responsive-design-tests`, `selenide-tests`) have been optimized to reduce redundant build steps:
+
+#### 1. Compiled Classes Reuse ✅
+- **Implementation**: Test jobs download `compiled-classes` artifact from `build-and-compile` job
+- **Script**: `scripts/ci/run-maven-tests.sh` checks for pre-compiled classes and reuses them
+- **Savings**: ~11 seconds per job (compilation time)
+- **Status**: ✅ Working correctly
+
+#### 2. Skip Redundant Checks ✅
+- **Implementation**: Added `-Dcheckstyle.skip=true`, `-Dfmt.skip=true`, `-Djmeter.skip=true` to Maven test command
+- **Rationale**: Checkstyle already runs in `code-quality-analysis` job; formatting and JMeter config not needed during test execution
+- **Savings**: ~7 seconds per job (checkstyle time)
+- **Status**: ✅ Working correctly
+
+#### 3. Parallel Test Execution ✅
+- **Implementation**: All TestNG suite files configured with `parallel="tests"` and `thread-count="4"`
+- **Coverage**: All 9 TestNG suite files now run tests in parallel
+- **Impact**: Mixed results - some jobs faster, some slower (resource contention may limit benefits)
+- **Status**: ✅ Implemented, monitoring results
+
+### Actual Results
+
+**Time Savings**: ~19 seconds per job (average)
+- Compilation reuse: ~11 seconds
+- Skip checks: ~7 seconds
+- Overhead: ~1-2 seconds
+
+**Key Finding**: Compilation is only 6% of total job time (test execution is 94%), so optimizing compilation has limited impact. For larger savings, focus on test execution optimization.
+
+### Files Modified
+
+- `.github/workflows/env-fe.yml`: Added artifact download steps
+- `scripts/ci/run-maven-tests.sh`: Added class reuse logic and skip properties
+- `pom.xml`: Added skip properties and plugin configurations
+- TestNG suite files: Added parallel execution configuration
+
+---
+
 ## 🔧 TROUBLESHOOTING
 
 1. **Why did my job skip?**

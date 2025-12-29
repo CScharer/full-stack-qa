@@ -272,8 +272,8 @@ After enabling GitHub Pages, verify:
 
 - [Allure Documentation](https://docs.qameta.io/allure/)
 - [GitHub Pages Docs](https://docs.github.com/en/pages)
-- [Our Allure Implementation](ALLURE_REPORTING.md)
-- [CI/CD Troubleshooting](CI_TROUBLESHOOTING.md)
+- [Our Allure Implementation](../testing/ALLURE_REPORTING.md)
+- [CI/CD Troubleshooting](../troubleshooting/CI_TROUBLESHOOTING.md)
 
 ---
 

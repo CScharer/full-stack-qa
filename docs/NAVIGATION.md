@@ -17,7 +17,7 @@ docs/
 ├── README.md                            📖 Main documentation overview
 │
 ├── work/                                📋 Work & Planning Documents
-│   ├── MIGRATE_REPO.md                  📦 Repository migration history
+│   ├── MIGRATE_REPO.md                  📦 Repository migration guide (in setup/)
 │   └── [date-prefixed documents]        📅 Planning and analysis documents
 │
 ├── guides/                              📚 How-To Guides & Documentation
