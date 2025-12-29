@@ -45,6 +45,10 @@ echo ""
 ENV_COUNT_FILE=$(mktemp)
 echo "0 0 0 0" > "$ENV_COUNT_FILE"  # dev test prod unknown
 
+# Debug: Track environment detection for analysis
+ENV_DETECTION_LOG=$(mktemp)
+echo "🔍 Environment detection debug log: $ENV_DETECTION_LOG"
+
 find "$SOURCE_DIR" -name "*-result.json" | while read -r result_file; do
     # Determine environment from path
     # Look for artifact patterns: *-results-dev, *-results-test, *-results-prod
@@ -81,6 +85,11 @@ find "$SOURCE_DIR" -name "*-result.json" | while read -r result_file; do
         env="prod"
     fi
     
+    # Debug: Log environment detection (sample first 20 files to avoid log spam)
+    if [ "$(wc -l < "$ENV_DETECTION_LOG" 2>/dev/null || echo 0)" -lt 20 ]; then
+        echo "$env|$rel_path" >> "$ENV_DETECTION_LOG"
+    fi
+    
     # Copy file
     cp "$result_file" "$TARGET_DIR/" 2>/dev/null || true
     
@@ -94,14 +103,35 @@ find "$SOURCE_DIR" -name "*-result.json" | while read -r result_file; do
     fi
 done
 
+# Debug: Show environment detection summary
+if [ -f "$ENV_DETECTION_LOG" ] && [ -s "$ENV_DETECTION_LOG" ]; then
+    echo ""
+    echo "🔍 Environment Detection Sample (first 20 files):"
+    while IFS='|' read -r detected_env file_path; do
+        echo "   $detected_env: ${file_path:0:80}..."
+    done < "$ENV_DETECTION_LOG"
+    rm -f "$ENV_DETECTION_LOG"
+fi
+
 # Debug: Count marker files created
 MARKER_DEV=$(find "$TARGET_DIR" -name ".env.*.marker" -exec grep -l "^dev$" {} \; 2>/dev/null | wc -l | tr -d ' ')
 MARKER_TEST=$(find "$TARGET_DIR" -name ".env.*.marker" -exec grep -l "^test$" {} \; 2>/dev/null | wc -l | tr -d ' ')
 MARKER_PROD=$(find "$TARGET_DIR" -name ".env.*.marker" -exec grep -l "^prod$" {} \; 2>/dev/null | wc -l | tr -d ' ')
-echo "🔍 Marker files created:"
+echo ""
+echo "🔍 Marker files created (for environment detection):"
 echo "   Dev: $MARKER_DEV marker files"
 echo "   Test: $MARKER_TEST marker files"
 echo "   Prod: $MARKER_PROD marker files"
+
+# Warn if marker files are missing for any environment (could indicate detection issues)
+TOTAL_MARKERS=$((MARKER_DEV + MARKER_TEST + MARKER_PROD))
+if [ "$TOTAL_MARKERS" -eq 0 ]; then
+    echo "   ⚠️  WARNING: No marker files created - environment detection may have failed"
+    echo "   This could cause all tests to be labeled as 'combined' or 'unknown'"
+elif [ "$MARKER_TEST" -eq 0 ] && [ "$MARKER_PROD" -eq 0 ] && [ "$MARKER_DEV" -gt 0 ]; then
+    echo "   ⚠️  WARNING: Only DEV markers found - test/prod environment detection may have failed"
+    echo "   This could cause Surefire/Selenide tests to only show DEV environment"
+fi
 
 find "$SOURCE_DIR" -name "*-container.json" -exec cp {} "$TARGET_DIR/" \; 2>/dev/null || true
 find "$SOURCE_DIR" -name "*-attachment.*" -exec cp {} "$TARGET_DIR/" \; 2>/dev/null || true
@@ -173,6 +203,12 @@ if [ -d "$SOURCE_DIR" ]; then
         fi
         
         # Copy result files and create marker files for environment tracking
+        FILES_IN_DIR=$(find "$allure_dir" -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')
+        if [ "$FILES_IN_DIR" -gt 0 ]; then
+            echo "   📂 Processing $FILES_IN_DIR result file(s) from: $allure_dir"
+            echo "   🏷️  Detected environment: $env"
+        fi
+        
         find "$allure_dir" -name "*-result.json" | while read -r result_file; do
             cp "$result_file" "$TARGET_DIR/" 2>/dev/null || true
             

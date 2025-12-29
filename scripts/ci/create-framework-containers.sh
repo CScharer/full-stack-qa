@@ -157,12 +157,47 @@ for result_file in result_files:
         if is_selenide and suite_name == 'Surefire test':
             suite_name = 'Selenide Tests'
         
-        # Skip if no suite name found
+        # Try to infer suite name if missing (Fix 2: Add fallback for missing suite labels)
         if not suite_name:
-            # Debug: Log files without suite labels (first 10)
-            if len([f for f in result_files if f == result_file]) <= 10:
-                print(f"   ⚠️  Skipping file without suite label: {result_file.name[:50]}...", file=sys.stderr)
-            continue
+            # Try to infer from other labels
+            if 'labels' in data:
+                for label in data['labels']:
+                    label_name = label.get('name', '')
+                    label_value = label.get('value', '')
+                    # Try epic, feature, or testClass as fallback
+                    if label_name == 'epic' and label_value:
+                        suite_name = f"{label_value} Tests"
+                        print(f"   ℹ️  Inferred suite name from epic: '{suite_name}' for {result_file.name[:50]}...", file=sys.stderr)
+                        break
+                    elif label_name == 'feature' and label_value:
+                        suite_name = f"{label_value} Tests"
+                        print(f"   ℹ️  Inferred suite name from feature: '{suite_name}' for {result_file.name[:50]}...", file=sys.stderr)
+                        break
+                    elif label_name == 'testClass' and label_value:
+                        # Extract class name and create suite name
+                        class_name = str(label_value).split('.')[-1] if '.' in str(label_value) else str(label_value)
+                        suite_name = f"{class_name} Tests"
+                        print(f"   ℹ️  Inferred suite name from testClass: '{suite_name}' for {result_file.name[:50]}...", file=sys.stderr)
+                        break
+            
+            # If still no suite name, use default based on file path or framework
+            if not suite_name:
+                # Try to infer from file path or other indicators
+                file_path_str = str(result_file).lower()
+                if 'selenide' in file_path_str or 'homepage' in file_path_str:
+                    suite_name = 'Selenide Tests'
+                elif 'cypress' in file_path_str:
+                    suite_name = 'Cypress Tests'
+                elif 'playwright' in file_path_str:
+                    suite_name = 'Playwright Tests'
+                elif 'robot' in file_path_str:
+                    suite_name = 'Robot Framework Tests'
+                elif 'vibium' in file_path_str:
+                    suite_name = 'Vibium Tests'
+                else:
+                    suite_name = 'Surefire test'  # Default for TestNG tests
+                
+                print(f"   ⚠️  Using default suite name '{suite_name}' for {result_file.name[:50]}...", file=sys.stderr)
         
         # Default environment if not found
         # IMPORTANT: Don't skip "combined" - we'll try to infer environment from other sources
@@ -199,9 +234,12 @@ for suite_name, env_groups in suite_groups.items():
         if not results:
             continue
         
-        # Skip "unknown" environment - these tests don't have environment info
+        # Handle "unknown" environment (Fix 3: Don't skip, create container with warning)
         if env == 'unknown':
-            continue
+            print(f"   ⚠️  WARNING: Tests with 'unknown' environment found for suite '{suite_name}'", file=sys.stderr)
+            print(f"      Creating container with 'unknown' environment label - {len(results)} test(s)", file=sys.stderr)
+            # Continue processing - we'll create a container with "unknown" environment
+            # This ensures tests still appear in Suites tab even if environment detection failed
         
         # For "combined" environment, try to split by environment from test names
         # Test names should have [DEV], [TEST], or [PROD] appended by add-environment-labels.sh
@@ -254,8 +292,36 @@ for suite_name, env_groups in suite_groups.items():
                     print(f"   ✅ Created container: {container_name} ({len(split_uuids)} tests) [from combined]")
                 continue  # Skip creating a "combined" container since we split it
             else:
-                # Couldn't split, create a single container without environment suffix
-                container_name = suite_name
+                # Fix 1: Handle "combined" environment more gracefully
+                # Couldn't split by test name patterns, try to infer from other sources
+                print(f"   ⚠️  WARNING: Could not split 'combined' environment for '{suite_name}' by test name patterns", file=sys.stderr)
+                print(f"      Test names don't have [DEV]/[TEST]/[PROD] suffixes - {len(results)} test(s)", file=sys.stderr)
+                
+                # Try to infer environment from result file paths or other indicators
+                inferred_env = None
+                for r in results[:5]:  # Check first 5 results as sample
+                    # Check if we can infer from fullName or other fields
+                    full_name = r.get('fullName', '')
+                    if full_name:
+                        if '[DEV]' in full_name or 'dev' in full_name.lower():
+                            inferred_env = 'dev'
+                            break
+                        elif '[TEST]' in full_name or 'test' in full_name.lower():
+                            inferred_env = 'test'
+                            break
+                        elif '[PROD]' in full_name or 'prod' in full_name.lower():
+                            inferred_env = 'prod'
+                            break
+                
+                if inferred_env:
+                    print(f"      ℹ️  Inferred environment '{inferred_env}' from test names, creating container", file=sys.stderr)
+                    container_name = f"{suite_name} [{inferred_env.upper()}]"
+                    # Update environment for this group
+                    env = inferred_env
+                else:
+                    # Still can't determine, create container without environment suffix but log warning
+                    print(f"      ⚠️  Could not infer environment, creating container without environment suffix", file=sys.stderr)
+                    container_name = suite_name
         else:
             # Normal environment (dev/test/prod) - create container with environment suffix
             container_name = f"{suite_name} [{env.upper()}]"
@@ -284,8 +350,14 @@ for suite_name, env_groups in suite_groups.items():
             "stop": 0
         }
         
-        # Add environment label if not unknown or combined
-        if env != 'unknown' and env != 'combined':
+        # Add environment label (include "unknown" and "combined" for visibility)
+        if env == 'unknown':
+            container_data["labels"].append({"name": "environment", "value": "unknown"})
+            container_data["description"] += " (environment detection failed)"
+        elif env == 'combined':
+            container_data["labels"].append({"name": "environment", "value": "combined"})
+            container_data["description"] += " (could not determine specific environment)"
+        else:
             container_data["labels"].append({"name": "environment", "value": env})
         
         # Write container file
