@@ -72,7 +72,11 @@ if [ -d "pre-compiled-classes" ]; then
         find target/test-classes -type f -name "*.class" -exec touch {} \; 2>/dev/null || true
         # Touch test source files to make them appear older than compiled classes
         # This prevents Maven from detecting them as changed
-        find src/test/java -type f -name "*.java" -exec touch -r target/test-classes {} \; 2>/dev/null || true
+        # Find a class file to use as timestamp reference
+        REF_CLASS=$(find target/test-classes -type f -name "*.class" | head -1)
+        if [ -n "$REF_CLASS" ] && [ -f "$REF_CLASS" ]; then
+          find src/test/java -type f -name "*.java" -exec touch -r "$REF_CLASS" {} \; 2>/dev/null || true
+        fi
       fi
       # Also copy maven-status to prevent dependency checking
       if [ -d "pre-compiled-classes/maven-status" ]; then
