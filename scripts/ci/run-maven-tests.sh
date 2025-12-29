@@ -70,11 +70,16 @@ if [ -d "pre-compiled-classes" ]; then
       if [ -d "target/test-classes" ] && [ -n "$(ls -A target/test-classes 2>/dev/null)" ]; then
         touch target/test-classes 2>/dev/null || true
         find target/test-classes -type f -name "*.class" -exec touch {} \; 2>/dev/null || true
+        # Touch test source files to make them appear older than compiled classes
+        # This prevents Maven from detecting them as changed
+        find src/test/java -type f -name "*.java" -exec touch -r target/test-classes {} \; 2>/dev/null || true
       fi
-      # Also touch maven-status to prevent dependency checking
+      # Also copy maven-status to prevent dependency checking
       if [ -d "pre-compiled-classes/maven-status" ]; then
         mkdir -p target/maven-status
         cp -r pre-compiled-classes/maven-status/* target/maven-status/ 2>/dev/null || true
+        # Ensure maven-status timestamps are updated
+        find target/maven-status -type f -exec touch {} \; 2>/dev/null || true
       fi
       echo "   Updated timestamps - compilation will be skipped"
     else
