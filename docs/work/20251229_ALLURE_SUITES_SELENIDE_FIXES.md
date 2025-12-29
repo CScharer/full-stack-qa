@@ -460,6 +460,14 @@ All frameworks detected:
 - Script is called in Step 4.5 of `prepare-combined-allure-results.sh`
 - Script should output: "📦 Step 4.5: Creating framework container files..."
 
+**Artifact Analysis Status**: ⚠️ **BLOCKED**
+- Attempted to download artifact `allure-report-combined-all-environments` from run 20578945070
+- **Issue Found**: Only the generated HTML report is uploaded as an artifact, NOT the raw results (`allure-results-combined`)
+- The analysis script needs the raw results directory with `*-result.json` and `*-container.json` files
+- **Current Workflow**: Only uploads `allure-report-combined/` (generated HTML report)
+- **Missing**: Raw results directory `allure-results-combined/` is not uploaded
+- **Impact**: Cannot analyze existing artifacts without modifying workflow to upload raw results
+
 **Next Steps for Investigation**
 
 1. **FIRST STEP: Add Debug Output to Container Creation Script** ✅ **COMPLETED**
@@ -489,9 +497,12 @@ All frameworks detected:
      - Verify "Container files found in directory" matches expected count
      - If counts don't match, there may be a file creation or deletion issue
 
-2. **SECOND STEP: Analyze Existing Artifacts (NO PIPELINE RUN NEEDED)** ✅ **AVAILABLE NOW**
+2. **SECOND STEP: Analyze Existing Artifacts (NO PIPELINE RUN NEEDED)** ⚠️ **REQUIRES WORKFLOW UPDATE**
    - **Tool Created**: `scripts/test/analyze-allure-containers.sh`
    - **Purpose**: Analyzes existing Allure results to diagnose Suites tab issues without running a new pipeline
+   - **Status**: ⚠️ **BLOCKED** - Raw results not uploaded as artifact
+   - **Issue**: Current workflow only uploads generated HTML report, not raw results directory
+   - **Solution Needed**: Modify workflow to also upload `allure-results-combined/` directory as artifact
    - **What It Does**:
      - Analyzes result files (suite labels, environment labels, UUIDs)
      - Analyzes container files (structure, types, hierarchy)
@@ -514,27 +525,6 @@ All frameworks detected:
      - Specific issues found
    - **Benefits**: Can diagnose issues immediately using existing artifacts
    - **Status**: ✅ Script created and ready to use
-   - **Quick Start**:
-     ```bash
-     # Option 1: Download artifact from recent pipeline run
-     gh run download <run-id> --name 'allure-results-combined-all-environments'
-     ./scripts/test/analyze-allure-containers.sh allure-results-combined-all-environments
-     
-     # Option 2: Use local directory (if you have one)
-     ./scripts/test/analyze-allure-containers.sh allure-results-combined
-     
-     # Option 3: Analyze downloaded report artifact (extract results first)
-     unzip -q allure-report-combined-all-environments.zip -d temp-artifact
-     ./scripts/test/analyze-allure-containers.sh temp-artifact/data
-     ```
-   - **What the Analysis Shows**:
-     - ✅ File counts (results vs containers)
-     - ✅ Suite and environment distribution
-     - ✅ Container type breakdown (top-level vs env-specific)
-     - ✅ Container structure validation
-     - ✅ Allure requirements check (pass/fail for each requirement)
-     - ✅ Specific issues found (missing containers, structure problems, etc.)
-     - ✅ Root cause identification
 
 3. **THIRD STEP: Verify Container Files Exist in Artifact** (if analysis shows issues)
    - Download a recent Allure results artifact from a successful pipeline run
@@ -582,12 +572,11 @@ All frameworks detected:
 
 #### Files to Review
 
-1. `scripts/ci/create-framework-containers.sh` - Container creation logic (✅ debug output added)
+1. `scripts/ci/create-framework-containers.sh` - Container creation logic
 2. `scripts/ci/prepare-combined-allure-results.sh` - Execution order
 3. `scripts/ci/add-environment-labels.sh` - Environment label assignment
 4. `.github/workflows/ci.yml` - Report generation step
 5. Recent pipeline logs - Actual execution output
-6. `scripts/test/analyze-allure-containers.sh` - **NEW**: Local analysis tool (✅ created)
 
 #### Research Needed
 
