@@ -738,42 +738,130 @@ After fix implementation:
   - Container files not fully written when Allure reads them
   - File system caching issues
 
+### Specific Issue: Surefire and Selenide Only Show DEV
+
+**User Report**: "I do see that the Surefire and Selenide tests only show dev."
+
+**Root Cause Analysis**:
+
+1. **Environment Detection in Merge Step** (`merge-allure-results.sh`):
+   - Surefire/Selenide tests come from paths like: `smoke-results-dev/target/allure-results/`, `selenide-results-test/target/allure-results/`
+   - The script detects environment from path patterns (lines 62-82)
+   - **Issue**: If path detection fails, all tests default to "unknown" or the first environment found
+
+2. **Marker File Creation** (`merge-allure-results.sh` lines 89-94):
+   - Creates `.env.{uuid}.marker` files to track environment
+   - **Issue**: If environment detection fails during merge, marker files won't be created correctly
+
+3. **Environment Label Assignment** (`add-environment-labels.sh`):
+   - Reads marker files (lines 99-111) and builds env_mapping
+   - Also walks source directory (lines 67-92) to build mapping
+   - **Issue**: If marker files are missing or source directory structure doesn't match, environment detection fails
+   - **Default behavior**: Falls back to "combined" (line 192), which then requires splitting by test name
+
+4. **Container Creation** (`create-framework-containers.sh`):
+   - If environment is "combined", tries to split by test name patterns `[DEV]`, `[TEST]`, `[PROD]` (lines 208-255)
+   - **Issue**: If test names don't have environment suffixes, splitting fails and only one container is created (likely DEV)
+
+**Most Likely Cause**: 
+- Environment detection in `merge-allure-results.sh` is failing for test/prod environments
+- Marker files aren't being created for test/prod tests
+- `add-environment-labels.sh` can't determine environment, defaults to "combined"
+- Test names don't have `[TEST]` or `[PROD]` suffixes, so splitting fails
+- All tests end up in DEV container
+
 ### Recommended Solutions
 
-#### Solution 1: Add Validation and Fallbacks ⚠️ **RECOMMENDED**
+#### Solution 1: Fix Environment Detection in Merge Step ⚠️ **CRITICAL - HIGHEST PRIORITY**
+- **Problem**: `merge-allure-results.sh` environment detection may not be matching all path patterns correctly
+- **Action**: 
+  1. Add debug logging to show which paths are being matched
+  2. Verify path patterns match actual artifact structure (e.g., `smoke-results-test/target/allure-results/`)
+  3. Ensure marker files are created for ALL environments, not just dev
+  4. Add validation to verify marker files were created for each environment
+- **Files to Modify**: `scripts/ci/merge-allure-results.sh`
+- **Impact**: Fixes root cause - ensures all environments are detected during merge
+
+#### Solution 2: Improve Marker File Reading ⚠️ **HIGH PRIORITY**
+- **Problem**: `add-environment-labels.sh` may not be reading marker files correctly
+- **Action**:
+  1. Add debug logging to show how many marker files were found vs. read
+  2. Verify marker file naming matches result file UUIDs
+  3. Add fallback to re-detect environment from result file paths if marker files are missing
+  4. Log warnings when marker files are missing for result files
+- **Files to Modify**: `scripts/ci/add-environment-labels.sh`
+- **Impact**: Ensures environment information is preserved from merge to label assignment
+
+#### Solution 3: Enhance Source Directory Environment Detection ⚠️ **MEDIUM PRIORITY**
+- **Problem**: Source directory walk (lines 67-92) may not find files in nested structures
+- **Action**:
+  1. Improve path pattern matching to handle nested artifact structures
+  2. Add recursive search for `-results-{env}` patterns in all subdirectories
+  3. Verify the source directory structure matches what's actually downloaded
+- **Files to Modify**: `scripts/ci/add-environment-labels.sh`
+- **Impact**: Provides fallback if marker files are missing
+
+#### Solution 4: Add Validation and Fallbacks ⚠️ **RECOMMENDED**
 - **Action**: Add validation in `create-framework-containers.sh` to:
   - Log warnings for skipped containers (unknown env, missing UUIDs, missing suite labels)
   - Create fallback containers for tests with "unknown" environment if they have suite labels
   - Verify all result files have UUIDs before container creation
 - **Impact**: Better visibility into why containers aren't created, fallback handling
 
-#### Solution 2: Improve Environment Detection Robustness ⚠️ **RECOMMENDED**
-- **Action**: Enhance `add-environment-labels.sh` to:
-  - Add more fallback methods for environment detection
-  - Ensure environment labels are always set (default to "combined" if truly unknown)
-  - Verify environment labels are set correctly before container creation
-- **Impact**: More reliable environment detection, fewer "unknown" cases
-
-#### Solution 3: Add Pre-Container Creation Validation ⚠️ **RECOMMENDED**
-- **Action**: Add validation step before container creation:
-  - Verify all result files have UUIDs
-  - Verify all result files have suite labels
-  - Verify all result files have environment labels
-  - Log statistics about missing data
-- **Impact**: Early detection of issues, better debugging
-
-#### Solution 4: Make Container Creation More Defensive ⚠️ **RECOMMENDED**
+#### Solution 5: Make Container Creation More Defensive ⚠️ **RECOMMENDED**
 - **Action**: Modify `create-framework-containers.sh` to:
   - Create containers even for "unknown" environment (group them separately)
   - Handle missing UUIDs gracefully (generate UUIDs if missing)
   - Create containers even without suite labels (use default suite name)
 - **Impact**: More robust container creation, fewer skipped containers
 
+### Immediate Fix for Surefire/Selenide DEV-Only Issue
+
+**Root Cause**: Environment detection in `merge-allure-results.sh` is failing for test/prod environments, causing all Surefire/Selenide tests to be labeled as "dev" or "combined".
+
+**Solution Priority**: **CRITICAL - Implement Solution 1 First**
+
+#### Solution 1: Fix Environment Detection in Merge Step (CRITICAL)
+
+**Problem**: The merge script's environment detection may not be correctly matching the artifact path structure:
+- Artifacts are downloaded to: `all-test-results/results-dev/`, `all-test-results/results-test/`, `all-test-results/results-prod/`
+- Actual paths: `all-test-results/results-dev/smoke-results-dev/target/allure-results/`
+- Pattern matching needs to handle this nested structure
+
+**Action Items**:
+1. **Add debug logging** to `merge-allure-results.sh`:
+   - Log each file path being processed
+   - Log the detected environment for each file
+   - Log marker file creation success/failure
+   - Count marker files created per environment
+
+2. **Fix path pattern matching**:
+   - Ensure patterns match both direct paths (`*-results-dev/`) and nested paths (`results-dev/*-results-dev/`)
+   - Verify the grep patterns are case-insensitive and match correctly
+   - Add explicit checks for `results-dev/`, `results-test/`, `results-prod/` parent directories
+
+3. **Validate marker file creation**:
+   - After processing, verify marker files exist for each environment
+   - Log counts: "Created X dev markers, Y test markers, Z prod markers"
+   - Fail if expected marker files are missing
+
+4. **Improve environment detection logic**:
+   - Check parent directory structure first (e.g., `results-dev/` in path)
+   - Then check artifact name pattern (e.g., `smoke-results-dev`)
+   - Use most specific match (artifact name > parent directory)
+
+**Files to Modify**: `scripts/ci/merge-allure-results.sh`
+
+**Expected Outcome**: All Surefire/Selenide tests get correct environment labels (dev/test/prod), and containers are created for all three environments.
+
+---
+
 ### Next Steps
 
-1. **Add logging for skipped containers** - Identify which containers are being skipped and why
-2. **Add validation checks** - Verify prerequisites before container creation
-3. **Improve error handling** - Make container creation more defensive
-4. **Monitor pipeline logs** - Watch for warnings about skipped containers
-5. **Analyze artifacts** - Use analysis script to identify patterns in inconsistent runs
+1. **Implement Solution 1** - Fix environment detection in merge step (CRITICAL)
+2. **Add logging for skipped containers** - Identify which containers are being skipped and why
+3. **Add validation checks** - Verify prerequisites before container creation
+4. **Improve error handling** - Make container creation more defensive
+5. **Monitor pipeline logs** - Watch for warnings about skipped containers
+6. **Analyze artifacts** - Use analysis script to identify patterns in inconsistent runs
 
