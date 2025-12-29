@@ -389,5 +389,177 @@ All frameworks detected:
 ---
 
 **Last Updated**: 2025-12-29  
-**Status**: ✅ All fixes complete and verified working
+**Status**: ⚠️ **ONGOING ISSUE** - Suites tab not displaying frameworks consistently
+
+---
+
+## Current Issue: Suites Tab Not Displaying (2025-12-29)
+
+### Problem Description
+
+**Issue**: Suites are not showing up in the Suites tab regardless of whether tests are run in 1 or more environments. This is occurring even after all previous fixes were implemented.
+
+**User Report**: "There still seems to be some issues with the Suites not showing up in the Suites tab regardless of the tests being run in 1 or more environments."
+
+### Investigation Status
+
+**Status**: 🔍 **INVESTIGATING**
+
+#### Current Understanding
+
+1. **Container Creation Script**: `create-framework-containers.sh` is called in Step 4.5 of `prepare-combined-allure-results.sh`
+   - Creates environment-specific containers (e.g., "Cypress Tests [DEV]")
+   - Creates top-level containers (e.g., "Cypress Tests")
+   - Adds `parentSuite` labels to env-specific containers
+   - Structure: Top-level → Env-specific → Results
+
+2. **Execution Order**:
+   - Step 4: Add environment labels (`add-environment-labels.sh`)
+   - Step 4.5: Create framework containers (`create-framework-containers.sh`)
+   - Step 5: Preserve history
+   - Step 6: Create executor.json
+   - Step 7: Create categories.json
+
+3. **Previous Verification**: Pipeline run 20566262529 showed all frameworks appearing in both Overview and Suites tab
+   - However, this may have been a specific case or the issue has regressed
+
+#### Potential Root Causes
+
+1. **Container File Processing Order**: 
+   - Containers may be created but then overwritten or deleted by subsequent steps
+   - Allure may require containers to be present at a specific point in processing
+
+2. **Container Structure Issues**:
+   - Top-level containers reference env-container UUIDs
+   - Env-specific containers reference result UUIDs
+   - `parentSuite` labels added to env-specific containers
+   - **Question**: Does Allure require a specific UUID format or structure?
+
+3. **Allure Report Generation**:
+   - Containers may be created correctly but Allure report generation may not be processing them
+   - **Question**: Are container files being included in the final report generation?
+
+4. **Environment Detection**:
+   - Script skips "unknown" environment containers
+   - If environment labels aren't properly set, containers won't be created
+   - **Question**: Are all tests getting proper environment labels before container creation?
+
+5. **Container File Naming**:
+   - Containers use UUID-based filenames: `{uuid}-container.json`
+   - **Question**: Does Allure require specific naming conventions?
+
+6. **Timing/Order Issues**:
+   - Containers created in Step 4.5, but maybe Allure needs them earlier or later
+   - **Question**: Should containers be created before or after environment labels are added?
+
+#### Next Steps for Investigation
+
+1. **FIRST STEP: Verify Container Files Exist** ⚠️ **START HERE**
+   - Download a recent Allure results artifact from a successful pipeline run
+   - Check if `*-container.json` files exist in the artifact
+   - Count how many container files are present
+   - Verify container files are in the correct directory (`allure-results-combined/`)
+   - **Action**: Download artifact `allure-report-combined-all-environments` or check `allure-results-combined` directory
+   - **Expected**: Should see multiple `*-container.json` files (one per framework/environment combination)
+   - **If missing**: Container creation script may not be running or containers are being deleted
+
+2. **Verify Container Creation**:
+   - Check if container files are actually being created in the pipeline
+   - Verify container file structure matches Allure requirements
+   - Check if containers are being deleted or overwritten
+
+2. **Check Allure Report Generation**:
+   - Verify that `allure generate` command includes container files
+   - Check if Allure is processing container files correctly
+   - Verify container files are in the correct directory when report is generated
+
+3. **Review Allure Documentation**:
+   - Research Allure's exact requirements for Suites tab display
+   - Verify container structure matches Allure's expected format
+   - Check if there are any Allure version-specific requirements
+
+4. **Test Container Structure**:
+   - Create a minimal test case with known-good container structure
+   - Compare our container structure with Allure examples
+   - Verify UUID references are correct
+
+5. **Check Pipeline Logs**:
+   - Review recent pipeline runs for container creation output
+   - Verify containers are being created successfully
+   - Check for any errors or warnings during container creation
+
+6. **Environment Label Verification**:
+   - Verify all tests have environment labels before container creation
+   - Check if "unknown" environment is causing containers to be skipped
+   - Verify environment detection is working correctly
+
+7. **Compare Working vs Non-Working**:
+   - Compare pipeline run 20566262529 (working) with recent runs (not working)
+   - Identify what changed between working and non-working states
+   - Check if recent changes broke container creation
+
+#### Files to Review
+
+1. `scripts/ci/create-framework-containers.sh` - Container creation logic
+2. `scripts/ci/prepare-combined-allure-results.sh` - Execution order
+3. `scripts/ci/add-environment-labels.sh` - Environment label assignment
+4. `.github/workflows/ci.yml` - Report generation step
+5. Recent pipeline logs - Actual execution output
+
+#### Research Needed
+
+1. **Allure Container Requirements**:
+   - What is the exact structure required for containers to appear in Suites tab?
+   - Are there any required fields or labels?
+   - Does Allure require a specific hierarchy depth?
+
+2. **Allure Report Generation**:
+   - How does Allure process container files during report generation?
+   - Are there any flags or options needed for Suites tab?
+   - Does Allure version matter?
+
+3. **Container vs Result Files**:
+   - What's the relationship between result files and container files?
+   - Do containers need to reference results, or vice versa?
+   - Can containers exist without results?
+
+#### Implementation Plan (Pending Investigation)
+
+Once root cause is identified, implement fix:
+
+1. **If Container Structure Issue**:
+   - Update container creation to match Allure requirements
+   - Fix UUID references or hierarchy
+   - Add required fields/labels
+
+2. **If Processing Order Issue**:
+   - Adjust when containers are created
+   - Ensure containers are created at the right time
+   - Verify containers persist through report generation
+
+3. **If Environment Label Issue**:
+   - Fix environment detection
+   - Ensure all tests have environment labels
+   - Handle "unknown" environment cases
+
+4. **If Allure Generation Issue**:
+   - Update report generation command
+   - Add required flags or options
+   - Verify container files are included
+
+#### Verification Plan
+
+After fix implementation:
+
+1. Run pipeline with fix
+2. Verify containers are created (check logs)
+3. Verify containers appear in Suites tab
+4. Verify all frameworks are visible
+5. Verify environment-specific containers work
+6. Test with 1 environment and multiple environments
+
+---
+
+**Last Updated**: 2025-12-29  
+**Status**: ⚠️ **ONGOING ISSUE** - Investigation in progress
 
