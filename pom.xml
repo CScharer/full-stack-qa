@@ -1111,6 +1111,20 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 									<ignore />
 								</action>
 							</pluginExecution>
+							<!-- Ignore maven-compiler-plugin testCompile execution (skip controlled by maven.compiler.skip) -->
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>org.apache.maven.plugins</groupId>
+									<artifactId>maven-compiler-plugin</artifactId>
+									<versionRange>[0,)</versionRange>
+									<goals>
+										<goal>testCompile</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore />
+								</action>
+							</pluginExecution>
 							<!-- Ignore scala-maven-plugin when phase is none -->
 							<pluginExecution>
 								<pluginExecutionFilter>
