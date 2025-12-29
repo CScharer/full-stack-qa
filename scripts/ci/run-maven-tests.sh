@@ -63,10 +63,18 @@ if [ -d "pre-compiled-classes" ]; then
     # Verify we have the essential compiled classes
     if [ -d "target/classes" ] && [ -n "$(ls -A target/classes 2>/dev/null)" ]; then
       echo "✅ Successfully reused compiled classes"
-      # Touch class files to make them appear newer than sources (prevents Maven from recompiling)
+      # Touch class files AND target directory to make them appear newer than sources
+      # This prevents Maven's incremental compilation from detecting changes
+      touch target/classes 2>/dev/null || true
       find target/classes -type f -name "*.class" -exec touch {} \; 2>/dev/null || true
       if [ -d "target/test-classes" ] && [ -n "$(ls -A target/test-classes 2>/dev/null)" ]; then
+        touch target/test-classes 2>/dev/null || true
         find target/test-classes -type f -name "*.class" -exec touch {} \; 2>/dev/null || true
+      fi
+      # Also touch maven-status to prevent dependency checking
+      if [ -d "pre-compiled-classes/maven-status" ]; then
+        mkdir -p target/maven-status
+        cp -r pre-compiled-classes/maven-status/* target/maven-status/ 2>/dev/null || true
       fi
       echo "   Updated timestamps - compilation will be skipped"
     else
