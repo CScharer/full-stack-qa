@@ -312,10 +312,17 @@ The `ci.yml` workflow **does** have a shared `build-and-compile` job (lines 336-
    - Uses `continue-on-error: true` for graceful fallback if artifact unavailable
 
 2. **Modified `scripts/ci/run-maven-tests.sh`**:
-   - Added logic to check for pre-compiled classes in `pre-compiled-classes/target`
-   - Reuses compiled classes using existing `reuse-or-compile.sh` script
-   - Added `-Dcheckstyle.skip=true` to skip redundant checkstyle execution
+   - Added logic to check for pre-compiled classes in `pre-compiled-classes/` (checks both `target/` and direct `classes/` structures)
+   - Reuses compiled classes using existing `reuse-or-compile.sh` script or direct copy
+   - Added `-Dcheckstyle.skip=true`, `-Dfmt.skip=true`, and `-Djmeter.skip=true` to skip redundant executions
+   - Added comprehensive debugging output to show artifact structure
    - Added logging to show optimization status
+
+3. **Modified `pom.xml`**:
+   - Added default property values: `checkstyle.skip=false`, `fmt.skip=false`, `jmeter.skip=false`
+   - Updated checkstyle plugin configuration to respect `${checkstyle.skip}` property in execution block
+   - Updated fmt-maven-plugin configuration to respect `${fmt.skip}` property
+   - Updated jmeter-maven-plugin execution configuration to respect `${jmeter.skip}` property
 
 ### Expected Outcomes
 

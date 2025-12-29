@@ -855,6 +855,9 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 						<goals>
 							<goal>check</goal>
 						</goals>
+						<configuration>
+							<skip>${checkstyle.skip}</skip>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -987,7 +990,6 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<artifactId>jmeter-maven-plugin</artifactId>
 				<version>${jmeter-maven-plugin.version}</version>
 				<configuration>
-					<skip>${jmeter.skip}</skip>
 					<testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
 					<resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
 					<generateReports>true</generateReports>
@@ -1004,6 +1006,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 							<goal>configure</goal>
 						</goals>
 						<configuration>
+							<skip>${jmeter.skip}</skip>
 							<testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
 							<resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
 							<testFilesIncluded>

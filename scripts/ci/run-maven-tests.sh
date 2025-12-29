@@ -31,24 +31,45 @@ if [ -z "$ENVIRONMENT" ] || [ -z "$SUITE_FILE" ]; then
 fi
 
 # Solution 1: Reuse compiled classes from build-and-compile job if available
-# Check if pre-compiled classes exist (downloaded from compiled-classes artifact)
-# The artifact is uploaded as target/, so it will be in pre-compiled-classes/target/ after download
-if [ -d "pre-compiled-classes/target" ] && [ -n "$(ls -A pre-compiled-classes/target/classes 2>/dev/null)" ]; then
-  echo "✅ Found pre-compiled classes from build-and-compile job"
-  echo "📦 Reusing compiled classes to skip compilation..."
-  chmod +x scripts/ci/reuse-or-compile.sh
-  ./scripts/ci/reuse-or-compile.sh "pre-compiled-classes/target"
-elif [ -d "pre-compiled-classes" ] && [ -n "$(find pre-compiled-classes -name "classes" -type d 2>/dev/null | head -1)" ]; then
-  # Alternative: artifact might be structured differently
-  echo "✅ Found pre-compiled classes (alternative structure)"
-  echo "📦 Reusing compiled classes to skip compilation..."
-  chmod +x scripts/ci/reuse-or-compile.sh
-  # Find the target directory
-  TARGET_DIR=$(find pre-compiled-classes -name "target" -type d 2>/dev/null | head -1)
-  if [ -n "$TARGET_DIR" ]; then
-    ./scripts/ci/reuse-or-compile.sh "$TARGET_DIR"
+# The artifact is uploaded as "path: target/" and downloaded to "path: pre-compiled-classes"
+# GitHub Actions behavior: When you upload a directory, it preserves the directory structure
+# So "path: target/" uploaded and downloaded to "pre-compiled-classes" creates: pre-compiled-classes/target/
+if [ -d "pre-compiled-classes" ]; then
+  echo "🔍 Checking for pre-compiled classes..."
+  
+  # Debug: Show actual structure (first 3 levels)
+  echo "   Artifact directory structure:"
+  find pre-compiled-classes -maxdepth 3 -type d 2>/dev/null | head -15 | sed 's/^/      /' || echo "      (empty or not accessible)"
+  
+  # Check for target subdirectory (most likely - GitHub Actions preserves directory structure)
+  if [ -d "pre-compiled-classes/target" ] && [ -d "pre-compiled-classes/target/classes" ] && [ -n "$(ls -A pre-compiled-classes/target/classes 2>/dev/null)" ]; then
+    echo "✅ Found pre-compiled classes from build-and-compile job (target/ structure)"
+    echo "📦 Reusing compiled classes to skip compilation..."
+    chmod +x scripts/ci/reuse-or-compile.sh
+    ./scripts/ci/reuse-or-compile.sh "pre-compiled-classes/target"
+  # Fallback: Check for direct classes (in case structure is flattened during upload)
+  elif [ -d "pre-compiled-classes/classes" ] && [ -n "$(ls -A pre-compiled-classes/classes 2>/dev/null)" ]; then
+    echo "✅ Found pre-compiled classes (flattened structure)"
+    echo "📦 Reusing compiled classes to skip compilation..."
+    mkdir -p target
+    # Copy main classes
+    cp -r pre-compiled-classes/classes target/ 2>/dev/null || {
+      echo "⚠️  Failed to copy classes, will compile"
+    }
+    # Copy test classes if available
+    if [ -d "pre-compiled-classes/test-classes" ] && [ -n "$(ls -A pre-compiled-classes/test-classes 2>/dev/null)" ]; then
+      cp -r pre-compiled-classes/test-classes target/ 2>/dev/null || true
+    fi
+    # Verify we have the essential compiled classes
+    if [ -d "target/classes" ] && [ -n "$(ls -A target/classes 2>/dev/null)" ]; then
+      echo "✅ Successfully reused compiled classes - compilation will be skipped"
+    else
+      echo "⚠️  Classes incomplete, will compile"
+    fi
   else
-    echo "⚠️  Could not locate target directory in artifact, will compile"
+    echo "ℹ️  Artifact downloaded but no compiled classes found, will compile during test execution"
+    echo "   Debug: Full directory tree (first 20 lines):"
+    find pre-compiled-classes -type f -o -type d 2>/dev/null | head -20 | sed 's/^/      /' || echo "      (directory empty or not accessible)"
   fi
 else
   echo "ℹ️  No pre-compiled classes found, will compile during test execution"
