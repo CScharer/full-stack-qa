@@ -892,15 +892,23 @@ After fix implementation:
 - ✅ **IMPLEMENTED**: Added warning if no container files found
 
 **Next Steps**:
-1. ✅ **Check pipeline logs** - Review run #141 (20581888044) for:
-   - Container validation output in "Generate Combined Allure Report" step
-   - Container creation output in "Step 4.5: Creating framework container files..."
-   - Framework counts and container breakdown
-2. ✅ **Verify container files in artifact** - Check `allure-results-combined-all-environments` artifact
-3. ✅ **Compare container structures** - Verify all frameworks have containers created
-4. ✅ **Check environment detection** - Verify marker files were created for all environments
 
-**Pipeline Run to Review**: https://github.com/CScharer/full-stack-qa/actions/runs/20581888044
+**Important**: Branch/PR pipeline runs only execute DEV tests. Full environment testing (dev/test/prod) only happens after merging to main.
+
+1. **Current Branch Run (DEV only)**:
+   - ✅ Container validation output will show framework counts (helpful for diagnosing Suites tab issue)
+   - ✅ Container creation output will show which frameworks have containers
+   - ⚠️ Environment detection will only show DEV (expected for branch runs)
+   - **Useful for**: Diagnosing why only Playwright shows in Suites tab
+
+2. **After Merge to Main (All Environments)**:
+   - ✅ Full environment detection debugging will show dev/test/prod
+   - ✅ Marker file warnings will identify if test/prod detection is failing
+   - ✅ Will help diagnose Surefire/Selenide DEV-only issue
+   - **Useful for**: Diagnosing environment detection issues
+
+**Current Pipeline Run**: https://github.com/CScharer/full-stack-qa/actions/runs/20581888044 (DEV only)
+**After Merge**: Full pipeline with all environments will provide complete diagnostic data
 
 ---
 
