@@ -1115,9 +1115,9 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 
 ### Next Steps
 
-#### Pipeline Run #144 (20582910075) - Results ✅
+#### Pipeline Run #144 (20582910075) - Branch Results ✅
 
-**Status**: ✅ **SUCCESS** - Pipeline completed successfully
+**Status**: ✅ **SUCCESS** - Pipeline completed successfully (DEV only - expected for branch)
 
 **Container Creation Results**:
 - ✅ **7 environment-specific containers created** (DEV only - expected for branch run)
@@ -1139,9 +1139,45 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 - Likely cause: Suite name inference from `testClass` labels is creating suite names for setUp/tearDown methods
 
 **Next Actions**:
-1. Review deployed report to see if Suites tab displays correctly
-2. After merge to main, verify all environments (dev, test, prod) show up
+1. ✅ Review deployed report to see if Suites tab displays correctly
+2. ✅ After merge to main, verify all environments (dev, test, prod) show up
 3. Consider refining suite name inference to avoid creating suites for setUp/tearDown methods
+
+---
+
+#### Pipeline Run #145 (20583251402) - Main Branch Results ✅
+
+**Status**: ✅ **SUCCESS** - Pipeline completed successfully (All environments: dev, test, prod)
+
+**Pipeline URL**: https://github.com/CScharer/full-stack-qa/actions/runs/20583251402
+
+**What to Verify**:
+1. **Multi-Environment Container Creation**:
+   - Check if containers were created for all 3 environments (dev, test, prod)
+   - Verify all frameworks show all environments
+   - Look for: "✅ Created container: [Framework] [DEV]", "[TEST]", "[PROD]"
+
+2. **Environment Detection**:
+   - Check for: "Environments found: dev, test, prod"
+   - Verify no "WARNING: Only DEV markers found" message
+   - Confirm Surefire/Selenide show all environments (not just DEV)
+
+3. **Container Validation**:
+   - Check container breakdown shows all expected frameworks
+   - Verify total container count (should be higher than branch run)
+   - Confirm Suites tab should display correctly
+
+4. **Fix Effectiveness**:
+   - Check for any inference warnings (should be minimal or none)
+   - Verify unknown/combined environments handled correctly
+   - Confirm suite name inference working as expected
+
+**Manual Review Required**:
+- Review pipeline logs at: https://github.com/CScharer/full-stack-qa/actions/runs/20583251402
+- Check "Combined Allure Report (All Environments)" job logs
+- Look for "Step 4.5: Creating framework container files..." section
+- Review "Generate Combined Allure Report" step output
+- Check deployed report: https://cscharer.github.io/full-stack-qa/#
 
 #### Immediate Actions (Before Merge)
 
