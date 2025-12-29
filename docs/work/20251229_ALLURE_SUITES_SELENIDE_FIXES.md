@@ -1151,33 +1151,41 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 
 **Pipeline URL**: https://github.com/CScharer/full-stack-qa/actions/runs/20583251402
 
-**What to Verify**:
-1. **Multi-Environment Container Creation**:
-   - Check if containers were created for all 3 environments (dev, test, prod)
-   - Verify all frameworks show all environments
-   - Look for: "✅ Created container: [Framework] [DEV]", "[TEST]", "[PROD]"
+**Artifact Analysis Results**:
 
-2. **Environment Detection**:
-   - Check for: "Environments found: dev, test, prod"
-   - Verify no "WARNING: Only DEV markers found" message
-   - Confirm Surefire/Selenide show all environments (not just DEV)
+**Container Statistics**:
+- ✅ **Total containers**: 2,135
+- ✅ **Total result files**: 1,328
+- ⚠️ **Environment distribution**:
+  - Combined: 2,112 containers (99%)
+  - DEV: 7 containers
+  - TEST: 5 containers
+  - PROD: 4 containers
 
-3. **Container Validation**:
-   - Check container breakdown shows all expected frameworks
-   - Verify total container count (should be higher than branch run)
-   - Confirm Suites tab should display correctly
+**Framework Container Analysis**:
+- ✅ **Cypress Tests**: DEV, TEST, PROD containers present
+- ✅ **Playwright Tests**: DEV, TEST, PROD containers present
+- ✅ **Robot Framework Tests**: DEV, TEST, PROD containers present
+- ✅ **Vibium Tests**: DEV, TEST, PROD containers present
+- ❌ **Selenide Tests**: Only DEV container found (TEST and PROD missing)
+- ⚠️ **Surefire test**: Not clearly visible in environment-specific containers
 
-4. **Fix Effectiveness**:
-   - Check for any inference warnings (should be minimal or none)
-   - Verify unknown/combined environments handled correctly
-   - Confirm suite name inference working as expected
+**Key Findings**:
+1. ✅ **Multi-environment containers created**: All main frameworks (except Selenide) have containers for all 3 environments
+2. ⚠️ **Environment detection issue**: Most containers (99%) are marked as "combined" instead of specific environments
+3. ❌ **Selenide DEV-only issue persists**: Selenide Tests only shows DEV environment, confirming the original issue
+4. ✅ **Container creation working**: All frameworks have containers, just environment labeling needs improvement
 
-**Manual Review Required**:
-- Review pipeline logs at: https://github.com/CScharer/full-stack-qa/actions/runs/20583251402
-- Check "Combined Allure Report (All Environments)" job logs
-- Look for "Step 4.5: Creating framework container files..." section
-- Review "Generate Combined Allure Report" step output
-- Check deployed report: https://cscharer.github.io/full-stack-qa/#
+**Root Cause Analysis**:
+- Environment detection in `merge-allure-results.sh` is still defaulting to "combined" for most tests
+- Selenide tests are not getting proper environment labels during the merge step
+- The "combined" environment splitting logic in `create-framework-containers.sh` is working (we see DEV/TEST/PROD containers), but most tests are still being labeled as "combined" initially
+
+**Next Steps**:
+1. ✅ Review deployed report to verify Suites tab display
+2. ⚠️ **CRITICAL**: Fix environment detection in `merge-allure-results.sh` to properly detect test/prod environments
+3. Investigate why Selenide tests are not getting environment labels for TEST and PROD
+4. Consider improving the "combined" environment splitting to handle more cases
 
 #### Immediate Actions (Before Merge)
 
