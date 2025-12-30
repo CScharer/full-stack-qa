@@ -883,7 +883,10 @@ def create_job_search_site(data: Dict[str, Any]) -> Dict[str, Any]:
             
             return get_job_search_site_by_id(site_id)
         except sqlite3.IntegrityError:
-            raise ConflictError("JobSearchSite", "name", data["name"])
+            raise ConflictError(
+                "JobSearchSite name already exists",
+                {"resource": "JobSearchSite", "field": "name", "value": data["name"]}
+            )
 
 
 def get_job_search_site_by_id(site_id: int, include_deleted: bool = False) -> Optional[Dict[str, Any]]:
@@ -988,7 +991,10 @@ def update_job_search_site(site_id: int, data: Dict[str, Any]) -> Dict[str, Any]
             """, values)
             conn.commit()
         except sqlite3.IntegrityError:
-            raise ConflictError("JobSearchSite", "name", data["name"])
+            raise ConflictError(
+                "JobSearchSite name already exists",
+                {"resource": "JobSearchSite", "field": "name", "value": data["name"]}
+            )
     
     return get_job_search_site_by_id(site_id)
 

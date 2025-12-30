@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Robot Framework library for automatic WebDriver management using webdriver-manager."""
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
@@ -22,11 +23,11 @@ class WebDriverManager:
             current_path = os.environ.get('PATH', '')
             driver_dir = os.path.dirname(driver_path)
             if driver_dir not in current_path:
-                os.environ['PATH'] = f"{driver_dir}:{current_path}"
-            print(f"✅ ChromeDriver automatically installed at: {driver_path}")
+                os.environ['PATH'] = driver_dir + ":" + current_path
+            print("✅ ChromeDriver automatically installed at: " + driver_path)
             return driver_path
         except Exception as e:
-            print(f"❌ Failed to set up ChromeDriver: {e}")
+            print("❌ Failed to set up ChromeDriver: " + str(e))
             raise
     
     def get_chromedriver_path(self):

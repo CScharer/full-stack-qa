@@ -30,7 +30,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
 		<maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
 		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
 		<!-- Cucumber Dependencies-->
@@ -50,7 +50,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<commons-logging.version>1.3.5</commons-logging.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<netty-codec-http.version>4.2.8.Final</netty-codec-http.version>
-		<rhino.version>1.7.14.1</rhino.version>
+		<rhino.version>1.9.0</rhino.version>
 		<cucumber.version>7.33.0</cucumber.version>
 		<cucumber-core.version>${cucumber.version}</cucumber-core.version>
 		<cucumber-java.version>${cucumber.version}</cucumber-java.version>
@@ -70,7 +70,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<gson.version>2.13.2</gson.version>
 		<guava.version>33.5.0-jre</guava.version>
 		<hsqldb.version>2.7.4</hsqldb.version>
-		<htmlunit.version>4.20.0</htmlunit.version>
+		<htmlunit.version>4.21.0</htmlunit.version>
 		<htmlunit-driver.version>4.39.0</htmlunit-driver.version>
 		<httpclient.version>4.5.14</httpclient.version>
 		<httpmime.version>4.5.14</httpmime.version>
@@ -84,7 +84,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<h2.version>2.4.240</h2.version>
 		<eclipse-jface.version>3.5.2</eclipse-jface.version>
 		<jfreechart.version>1.5.6</jfreechart.version>
-		<json.version>20250517</json.version>
+		<json.version>20251224</json.version>
 		<jsoup.version>1.21.2</jsoup.version>
 		<junit.version>4.13.2</junit.version>
 		<jxl.version>2.6.12</jxl.version>
@@ -1060,6 +1060,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<testCasesDirectory>${project.basedir}/src/test/robot</testCasesDirectory>
 					<outputDirectory>${project.build.directory}/robot-reports</outputDirectory>
 					<logLevel>INFO</logLevel>
+					<pythonExecutable>/opt/homebrew/bin/python3</pythonExecutable>
 				</configuration>
 				<executions>
 					<execution>

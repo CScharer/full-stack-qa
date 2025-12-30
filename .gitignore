@@ -220,6 +220,11 @@ vibium/.vitest/
 vibium/dist/
 vibium/*.tsbuildinfo
 
+# Cypress test output
+cypress/cypress/results/
+cypress/results/
+cypress/cypress/results/*.json
+
 # Pipeline results (keep RESULTS.md, ignore large zip files)
 results/*.zip
 results/*.tar.gz

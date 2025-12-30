@@ -7,7 +7,7 @@ uvicorn[standard]>=0.38.0
 starlette>=0.50.0  # Updated for httpx 0.28+ compatibility
 
 # Database
-aiosqlite>=0.22.0  # Async SQLite support (optional, can use sqlite3)
+aiosqlite>=0.22.1  # Async SQLite support (optional, can use sqlite3)
 
 # Data Validation
 pydantic>=2.12.5
