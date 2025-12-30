@@ -562,7 +562,7 @@ The system uses artifact name patterns to detect environments:
 
 **Scripts**: 
 - `scripts/ci/merge-allure-results.sh` - Merges results from all environments
-- `scripts/ci/add-environment-labels.sh` - Adds environment labels to test results and fixes Selenide suite labels
+- `scripts/ci/add-environment-labels.sh` - Adds environment labels to test results, fixes Selenide suite labels, and updates Smoke test suite labels
 - `scripts/ci/deduplicate-testng-retries.sh` - Deduplicates TestNG retry attempts (keeps best result)
 - `scripts/ci/create-framework-containers.sh` - Creates framework container files, detects and groups Smoke tests
 - `scripts/ci/convert-cypress-to-allure.sh` - Converts Cypress results to Allure format (individual tests, all environments)
@@ -599,7 +599,8 @@ Frontend framework test results are converted to Allure format:
   - Creates individual Allure results from `assertionResults` array
   - Properly maps test statuses (passed/failed/skipped)
 - **Smoke Tests**: Automatically detected and grouped under "Smoke Tests" suite
-  - Detected by `epic="Smoke Tests"` label
+  - Detected by `epic="Smoke Tests"` label in both `add-environment-labels.sh` and `create-framework-containers.sh`
+  - Suite label updated from "Surefire test" to "Smoke Tests" in result files
   - Grouped separately from "Surefire test" suite
   - Shows for all environments if environment labels are correctly set
 
