@@ -523,7 +523,7 @@ Your browser will automatically open showing:
 ## 🔄 CI/CD Combined Report Generation
 
 **Status**: ✅ **Active** - Combined reports with multi-environment support  
-**Last Updated**: 2025-12-29
+**Last Updated**: 2025-12-30
 
 ### Overview
 
@@ -581,8 +581,13 @@ Frontend framework test results are converted to Allure format:
 - **Cypress**: Parses `cypress-results.json` or `mochawesome.json` files
   - Creates individual Allure results for each test
   - Recursively searches for test objects in JSON structure
-- **Playwright**: Parses `results.json` files from test-results directory
+  - Handles environment-specific artifact subdirectories (e.g., `cypress-results/cypress-results-dev/...`)
+- **Playwright**: Parses JUnit XML files from test-results directory
   - Creates individual Allure results for each test case
+  - **Retry Deduplication**: Intelligently handles retry attempts:
+    - Tests that passed on first attempt: Removes duplicate entries
+    - Tests that failed and were retried: Keeps final result, marks as flaky if status changed
+    - Preserves retry information for analysis
 - **Robot Framework**: Parses `output.xml` files
   - Creates individual Allure results from `<test>` elements
   - Extracts test name, status, and duration
@@ -591,10 +596,10 @@ Frontend framework test results are converted to Allure format:
   - Properly maps test statuses (passed/failed/skipped)
 
 **Scripts**: 
-- `scripts/ci/convert-cypress-to-allure.sh`
-- `scripts/ci/convert-playwright-to-allure.sh`
-- `scripts/ci/convert-robot-to-allure.sh`
-- `scripts/ci/convert-vibium-to-allure.sh`
+- `scripts/ci/convert-cypress-to-allure.sh` - Converts Cypress JSON results, handles environment-specific artifact subdirectories
+- `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright JUnit XML results, deduplicates retry attempts intelligently
+- `scripts/ci/convert-robot-to-allure.sh` - Converts Robot Framework XML results
+- `scripts/ci/convert-vibium-to-allure.sh` - Converts Vibium/Vitest JSON results
 
 #### Performance Test Conversion
 
@@ -774,8 +779,301 @@ allure serve target/allure-results
   - Allure2: `allure-framework/allure2` (Java-based)
   - Allure3: `allure-framework/allure3` (TypeScript-based)
 
+---
+
+## 📥 Downloading and Viewing Reports Locally
+
+**Last Updated**: 2025-12-30
+
+### Overview
+
+You can download Allure reports from GitHub Actions pipeline artifacts and view them locally on your machine. This is useful for:
+- **Detailed Analysis**: Review test results in detail without relying on GitHub Pages
+- **Offline Viewing**: Access reports when GitHub Pages is unavailable
+- **Local Development**: Test report generation and view changes locally
+- **Debugging**: Investigate issues with report generation or display
+
+### Method 1: Download Generated Report (Recommended)
+
+This method downloads the already-generated HTML report, which you can view immediately.
+
+#### Step 1: Download Report Artifact
+
+1. **Navigate to GitHub Actions**:
+   - Go to your repository on GitHub
+   - Click on "Actions" tab
+   - Find the workflow run you want (e.g., "Combined Allure Report")
+   - Click on the workflow run
+
+2. **Download the Artifact**:
+   - Scroll down to the "Artifacts" section
+   - Find `allure-report-combined-all-environments`
+   - Click to download (it will download as a ZIP file)
+
+3. **Extract the ZIP File**:
+   ```bash
+   # Extract the downloaded ZIP file
+   unzip allure-report-combined-all-environments.zip -d allure-report-combined
+   ```
+
+#### Step 2: View the Report Locally
+
+**Option A: Using Python HTTP Server (Simple)**
+
+```bash
+# Navigate to the extracted report directory
+cd allure-report-combined
+
+# Start a local HTTP server (Python 3)
+python3 -m http.server 8080
+
+# Or specify a different port if 8080 is in use
+python3 -m http.server 8081
+```
+
+Then open your browser and navigate to:
+- `http://localhost:8080` (or the port you specified)
+
+**Option B: Using Allure Serve (Allure3 CLI)**
+
+If you have Allure3 CLI installed:
+
+```bash
+# Navigate to the extracted report directory
+cd allure-report-combined
+
+# Serve the report using Allure3 CLI
+allure serve . --port 8080
+```
+
+**Option C: Using Node.js HTTP Server**
+
+```bash
+# Install http-server globally (if not already installed)
+npm install -g http-server
+
+# Navigate to the extracted report directory
+cd allure-report-combined
+
+# Start the server
+http-server -p 8080
+```
+
+**Option D: Using PHP Built-in Server**
+
+```bash
+# Navigate to the extracted report directory
+cd allure-report-combined
+
+# Start PHP built-in server
+php -S localhost:8080
+```
+
+#### Step 3: Access the Report
+
+Open your web browser and navigate to:
+- `http://localhost:8080` (or the port you specified)
+- The report will display with all interactive features
+
+**Note**: The report is static HTML, so all features (graphs, filters, test details) work without a backend server.
+
+---
+
+### Method 2: Download Raw Results and Generate Report Locally
+
+This method downloads the raw Allure result files and generates a fresh report locally. Useful for:
+- **Custom Report Generation**: Generate reports with different Allure versions
+- **Debugging**: Investigate issues with result files
+- **Customization**: Apply custom configurations or plugins
+
+#### Step 1: Download Results Artifact
+
+1. **Navigate to GitHub Actions**:
+   - Go to your repository on GitHub
+   - Click on "Actions" tab
+   - Find the workflow run you want
+   - Click on the workflow run
+
+2. **Download the Results Artifact**:
+   - Scroll down to the "Artifacts" section
+   - Find `allure-results-combined-all-environments`
+   - Click to download (it will download as a ZIP file)
+
+3. **Extract the ZIP File**:
+   ```bash
+   # Extract the downloaded ZIP file
+   unzip allure-results-combined-all-environments.zip -d allure-results-combined
+   ```
+
+#### Step 2: Install Allure CLI
+
+**For Allure3 CLI (Recommended)**:
+
+```bash
+# Install Allure3 CLI via npm
+npm install -g allure@3.0.0
+
+# Verify installation
+allure --version
+```
+
+**For Allure2 CLI (Alternative)**:
+
+```bash
+# Download and install Allure2 CLI
+# macOS
+brew install allure
+
+# Linux
+wget https://github.com/allure-framework/allure2/releases/download/2.36.0/allure-2.36.0.tgz
+tar -zxvf allure-2.36.0.tgz
+sudo mv allure-2.36.0 /opt/allure
+sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+
+# Verify installation
+allure --version
+```
+
+#### Step 3: Generate the Report
+
+**Using Allure3 CLI**:
+
+```bash
+# Navigate to the directory containing the results
+cd allure-results-combined
+
+# Generate the report (Allure3 syntax - no --clean flag)
+rm -rf allure-report  # Clean previous report if exists
+allure generate . -o allure-report
+
+# Serve the report
+allure serve . --port 8080
+```
+
+**Using Allure2 CLI**:
+
+```bash
+# Navigate to the directory containing the results
+cd allure-results-combined
+
+# Generate the report
+allure generate . --clean -o allure-report
+
+# Or serve directly (generates and serves in one command)
+allure serve . --port 8080
+```
+
+#### Step 4: View the Report
+
+The `allure serve` command will:
+1. Generate the report (if needed)
+2. Start a local web server
+3. Automatically open your browser to the report
+
+If you generated the report separately, you can serve it using any HTTP server (see Method 1, Step 2).
+
+---
+
+### Method 3: Download Environment-Specific Reports
+
+You can also download reports for individual environments (dev, test, prod) from the environment-specific workflow runs.
+
+#### Step 1: Download Environment Report
+
+1. **Navigate to GitHub Actions**:
+   - Go to your repository on GitHub
+   - Click on "Actions" tab
+   - Find the environment-specific workflow run (e.g., "Test FE (DEV)")
+   - Click on the workflow run
+
+2. **Download the Artifact**:
+   - Scroll down to the "Artifacts" section
+   - Find `allure-report-dev` (or `allure-report-test`, `allure-report-prod`)
+   - Click to download
+
+3. **Extract and View**:
+   ```bash
+   # Extract
+   unzip allure-report-dev.zip -d allure-report-dev
+   
+   # Serve locally
+   cd allure-report-dev
+   python3 -m http.server 8080
+   ```
+
+---
+
+### Troubleshooting Local Viewing
+
+#### Port Already in Use
+
+If you get an error that the port is already in use:
+
+```bash
+# Use a different port
+python3 -m http.server 8081
+
+# Or find and kill the process using the port (macOS/Linux)
+lsof -ti:8080 | xargs kill -9
+```
+
+#### Report Not Displaying Correctly
+
+**Issue**: Report shows blank or errors in browser
+
+**Solutions**:
+1. **Check Browser Console**: Open browser developer tools (F12) and check for errors
+2. **Use HTTP Server**: Make sure you're using an HTTP server, not opening the HTML file directly (file:// URLs may not work)
+3. **Check File Structure**: Ensure all files were extracted correctly (should have `index.html`, `data/`, `plugins/`, etc.)
+4. **Clear Browser Cache**: Try clearing your browser cache or using an incognito/private window
+
+#### Allure CLI Not Found
+
+**Issue**: `allure: command not found`
+
+**Solutions**:
+1. **Check Installation**: Verify Allure is installed: `allure --version`
+2. **Check PATH**: Ensure Allure is in your PATH
+3. **Reinstall**: Reinstall Allure CLI using the methods above
+
+#### Missing Files in Report
+
+**Issue**: Report is missing test results or attachments
+
+**Solutions**:
+1. **Check Artifact Download**: Ensure you downloaded the complete artifact
+2. **Verify Extraction**: Make sure all files were extracted (check file count)
+3. **Re-download**: Try downloading the artifact again from GitHub Actions
+
+---
+
+### Quick Reference Commands
+
+```bash
+# Download and extract report
+unzip allure-report-combined-all-environments.zip -d allure-report-combined
+cd allure-report-combined
+
+# Serve with Python (simplest)
+python3 -m http.server 8080
+
+# Serve with Allure3 CLI
+allure serve . --port 8080
+
+# Download and generate from results
+unzip allure-results-combined-all-environments.zip -d allure-results-combined
+cd allure-results-combined
+allure generate . -o allure-report
+cd allure-report
+python3 -m http.server 8080
+```
+
+---
+
 ### Resources
 
+- **Allure Documentation**: https://docs.qameta.io/allure/
+- **Allure GitHub**: https://github.com/allure-framework/allure2
 - **Allure3 GitHub**: https://github.com/allure-framework/allure3
 - **Allure3 Releases**: https://github.com/allure-framework/allure3/releases
 - **Allure Report Website**: https://allurereport.org/

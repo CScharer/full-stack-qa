@@ -84,14 +84,16 @@ for junit_file in junit_files:
         
         # Process individual test cases to create separate Allure results
         # This allows skipped tests to appear in Categories section
+        # Track all attempts for each test to handle retries correctly
+        test_attempts = {}  # fullName -> list of (test_case, status, attempt_order)
+        
         for suite in test_suites:
             test_cases = suite.findall('testcase')
             
-            for test_case in test_cases:
+            for idx, test_case in enumerate(test_cases):
                 test_name = test_case.get('name', 'Unknown Test')
                 test_class = test_case.get('classname', 'Playwright')
-                test_time = float(test_case.get('time', 0))
-                duration = int(test_time * 1000) if test_time > 0 else 1000
+                full_name = f"{test_class}.{test_name}"
                 
                 # Determine test status
                 # Check for skipped, failure, or error elements
@@ -101,69 +103,128 @@ for junit_file in junit_files:
                 
                 if skipped_elem is not None:
                     status = "skipped"
-                    status_message = skipped_elem.get('message', 'Test was skipped')
                 elif failure_elem is not None:
                     status = "failed"
-                    status_message = failure_elem.get('message', 'Test failed')
                 elif error_elem is not None:
                     status = "broken"
-                    status_message = error_elem.get('message', 'Test error')
                 else:
                     status = "passed"
-                    status_message = None
                 
-                # Create unique test result
-                test_uuid = uuid.uuid4().hex[:32]
-                timestamp = int(datetime.now().timestamp() * 1000)
-                full_name = f"{test_class}.{test_name}"
-                history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+                # Track all attempts for this test
+                if full_name not in test_attempts:
+                    test_attempts[full_name] = []
+                test_attempts[full_name].append((test_case, status, idx))
+        
+        # Now process each test and decide what to keep
+        test_results = {}  # fullName -> (test_case, status, is_flaky, retry_info)
+        
+        for full_name, attempts in test_attempts.items():
+            if len(attempts) == 1:
+                # Single attempt - no retry, keep as is
+                test_case, status, _ = attempts[0]
+                test_results[full_name] = (test_case, status, False, None)
+            else:
+                # Multiple attempts - this test was retried
+                # Sort by attempt order (idx) to get chronological order
+                attempts_sorted = sorted(attempts, key=lambda x: x[2])
+                first_attempt = attempts_sorted[0]
+                last_attempt = attempts_sorted[-1]
                 
-                labels = [
-                    {"name": "suite", "value": "Playwright Tests"},
-                    {"name": "testClass", "value": test_class},
-                    {"name": "epic", "value": "Playwright E2E Testing"},
-                    {"name": "feature", "value": "Playwright Tests"}
-                ]
+                first_test_case, first_status, _ = first_attempt
+                last_test_case, last_status, _ = last_attempt
                 
-                if env and env not in ["unknown", "combined"]:
-                    labels.append({"name": "environment", "value": env})
-                
-                params = []
-                if env and env not in ["unknown", "combined"]:
-                    params.append({"name": "Environment", "value": env.upper()})
-                
-                status_details = {
-                    "known": False,
-                    "muted": False,
-                    "flaky": False
-                }
-                
-                if status_message:
-                    status_details["message"] = status_message
-                
-                result = {
-                    "uuid": test_uuid,
-                    "historyId": history_id,
-                    "fullName": full_name,
-                    "labels": labels,
-                    "name": test_name,
-                    "status": status,
-                    "statusDetails": status_details,
-                    "stage": "finished",
-                    "description": f"Playwright test: {test_name}",
-                    "steps": [],
-                    "attachments": [],
-                    "parameters": params,
-                    "start": timestamp,
-                    "stop": timestamp + duration
-                }
-                
-                output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
-                with open(output_file, 'w') as f:
-                    import json
-                    json.dump(result, f, indent=2)
-                
-                converted += 1
+                # If test passed on first attempt, it shouldn't have been retried
+                # Keep only the first passed result (deduplicate unnecessary retries)
+                if first_status == "passed":
+                    test_results[full_name] = (first_test_case, first_status, False, None)
+                else:
+                    # Test failed initially and was retried - keep the final result
+                    # Mark as flaky if status changed (failed -> passed indicates flakiness)
+                    is_flaky = (first_status != last_status) and (last_status == "passed")
+                    retry_info = f"Retried {len(attempts)} times. First: {first_status}, Final: {last_status}"
+                    test_results[full_name] = (last_test_case, last_status, is_flaky, retry_info)
+        
+        # Now convert the processed test results
+        for full_name, (test_case, final_status, is_flaky, retry_info) in test_results.items():
+            test_name = test_case.get('name', 'Unknown Test')
+            test_class = test_case.get('classname', 'Playwright')
+            test_time = float(test_case.get('time', 0))
+            duration = int(test_time * 1000) if test_time > 0 else 1000
+            
+            # Get status message from the final test case
+            skipped_elem = test_case.find('skipped')
+            failure_elem = test_case.find('failure')
+            error_elem = test_case.find('error')
+            
+            if skipped_elem is not None:
+                status_message = skipped_elem.get('message', 'Test was skipped')
+            elif failure_elem is not None:
+                status_message = failure_elem.get('message', 'Test failed')
+            elif error_elem is not None:
+                status_message = error_elem.get('message', 'Test error')
+            else:
+                status_message = None
+            
+            # is_flaky and retry_info are already determined above
+            
+            # Create unique test result
+            test_uuid = uuid.uuid4().hex[:32]
+            timestamp = int(datetime.now().timestamp() * 1000)
+            history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+            
+            labels = [
+                {"name": "suite", "value": "Playwright Tests"},
+                {"name": "testClass", "value": test_class},
+                {"name": "epic", "value": "Playwright E2E Testing"},
+                {"name": "feature", "value": "Playwright Tests"}
+            ]
+            
+            if env and env not in ["unknown", "combined"]:
+                labels.append({"name": "environment", "value": env})
+            
+            params = []
+            if env and env not in ["unknown", "combined"]:
+                params.append({"name": "Environment", "value": env.upper()})
+            
+            status_details = {
+                "known": False,
+                "muted": False,
+                "flaky": is_flaky
+            }
+            
+            # Add retry information to description if test was retried
+            description = f"Playwright test: {test_name}"
+            if retry_info:
+                description += f" ({retry_info})"
+                if not status_message:
+                    status_message = retry_info
+            
+            if status_message:
+                status_details["message"] = status_message
+            
+            result = {
+                "uuid": test_uuid,
+                "historyId": history_id,
+                "fullName": full_name,
+                "labels": labels,
+                "name": test_name,
+                "status": final_status,
+                "statusDetails": status_details,
+                "stage": "finished",
+                "description": description,
+                "steps": [],
+                "attachments": [],
+                "parameters": params,
+                "start": timestamp,
+                "stop": timestamp + duration
+            }
+            
+            output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+            with open(output_file, 'w') as f:
+                import json
+                json.dump(result, f, indent=2)
+            
+            converted += 1
         
         # Print summary
         if 'test_cases' in locals() and test_cases:

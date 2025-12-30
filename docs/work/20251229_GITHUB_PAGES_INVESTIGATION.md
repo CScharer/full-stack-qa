@@ -1,8 +1,8 @@
 # GitHub Pages Suites Tab Investigation
 
 **Created**: 2025-12-29  
-**Last Updated**: 2025-12-30  
-**Status**: 🔍 **INVESTIGATING**  
+**Last Updated**: 2025-12-30 (Cypress & Playwright fixes)  
+**Status**: ✅ **FIXES IN PROGRESS** - Cypress results missing and retry duplication issues  
 **Issue**: Suites tab shows all frameworks locally but only Playwright on GitHub Pages
 
 ---
@@ -364,4 +364,77 @@ After these fixes:
 7. ✅ Allure3 CLI now active in production
 
 **Important**: Allure3 does NOT replace the Allure2 Java libraries (`io.qameta.allure:allure-testng`, `io.qameta.allure:allure-java-commons`). These Maven dependencies will continue to use Allure2 versions. Allure3 is only for the CLI report generation tool.
+
+---
+
+## Cypress Results Missing Fix
+
+**Date**: 2025-12-30  
+**Status**: ✅ **FIXED** - Branch: `fix-cypress-results-missing`  
+**Issue**: Cypress test results were not appearing in combined Allure reports
+
+### Problem
+
+Cypress results were being downloaded to `all-test-results/cypress-results` but the conversion script was looking for environment-specific subdirectories like `results-$env/cypress-results-$env`. When artifacts are merged with `merge-multiple: true`, they preserve their artifact name as a subdirectory (e.g., `cypress-results/cypress-results-dev/...`).
+
+### Fix Applied
+
+**File**: `scripts/ci/prepare-combined-allure-results.sh`
+
+1. **Environment-Specific Directory Check**: Updated to check for environment-specific subdirectories within merged Cypress artifacts (`cypress-results/cypress-results-$env/...`)
+2. **Per-Environment Processing**: Processes each active environment separately to ensure all Cypress results are converted
+3. **Fallback Logic**: Falls back to merged root directory if environment-specific subdirectories aren't found
+
+**Changes**:
+- Lines 99-133: Enhanced Cypress conversion logic to handle merged artifacts with environment-specific subdirectories
+- Checks for `$SOURCE_DIR/cypress-results/cypress-results-$env` pattern
+- Processes each environment separately to ensure complete coverage
+
+### Expected Result
+
+After this fix:
+- ✅ Cypress test results will appear in combined Allure reports
+- ✅ All environments (dev/test/prod) will have Cypress results included
+- ✅ Cypress tests will show in Suites tab and Behaviors tab
+
+---
+
+## Playwright Retry Deduplication Fix
+
+**Date**: 2025-12-30  
+**Status**: ✅ **FIXED** - Branch: `fix-cypress-results-missing`  
+**Issue**: Tests that passed on first attempt were showing as retried, and retry attempts were creating duplicate test entries
+
+### Problem
+
+When Playwright retries tests, it creates multiple entries in the JUnit XML output. The conversion script was processing all entries, creating duplicate test results in Allure reports. Additionally, tests that passed on the first attempt were incorrectly showing retry information.
+
+### Fix Applied
+
+**File**: `scripts/ci/convert-playwright-to-allure.sh`
+
+1. **Retry Tracking**: Tracks all attempts for each test by `fullName` to identify retries
+2. **Smart Deduplication**:
+   - **Tests that passed on first attempt**: Removes duplicate entries, keeps only the first passed result
+   - **Tests that failed and were retried**: Keeps the final result, marks as flaky if status changed (failed → passed)
+3. **Retry Information**: Includes retry details in test description for tests that actually needed retries
+
+**Changes**:
+- Lines 85-125: Added retry tracking logic to collect all attempts per test
+- Lines 127-145: Smart deduplication that handles passed vs. failed retries differently
+- Lines 195-201: Adds retry information to test description for failed-then-retried tests
+
+### Expected Result
+
+After this fix:
+- ✅ Tests that passed on first attempt will show only once (no duplicate retry entries)
+- ✅ Tests that failed and were retried will show final result with retry information
+- ✅ Flaky tests (failed → passed on retry) will be marked as flaky
+- ✅ Retry information preserved for analysis of actually retried tests
+
+### Retry Behavior
+
+- **Passed on first attempt**: Single entry, no retry information
+- **Failed then passed on retry**: Final passed result, marked as flaky, includes retry count
+- **Failed after all retries**: Final failed result, includes retry count
 
