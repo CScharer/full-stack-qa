@@ -1190,7 +1190,9 @@ jobs:
         if: always()
         run: |
           echo "Generating Allure report for ${{ inputs.environment }}..."
-          allure generate allure-results --clean -o allure-report-${{ inputs.environment }}
+          # Allure3 CLI: Remove old report directory first, then generate
+          rm -rf allure-report-${{ inputs.environment }}
+          allure generate allure-results -o allure-report-${{ inputs.environment }}
           echo "✅ Report generated!"
 
       - name: Upload Allure Report

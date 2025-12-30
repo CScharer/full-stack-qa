@@ -67,7 +67,9 @@ Use direct Allure CLI installation:
     allure --version
 
 - name: Generate Allure Report
-  run: allure generate allure-results --clean -o allure-report
+  run: |
+    rm -rf allure-report
+    allure generate allure-results -o allure-report
 ```
 
 **Note:** This is the current configuration in the workflow.

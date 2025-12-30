@@ -238,7 +238,8 @@ allure serve target/allure-results
 ### Generate Report Without Opening
 ```bash
 # Generate static HTML report
-allure generate target/allure-results -o target/allure-report --clean
+rm -rf target/allure-report
+allure generate target/allure-results -o target/allure-report
 
 # Open manually
 open target/allure-report/index.html
@@ -475,7 +476,8 @@ ls -la target/allure-results/
 ### Report doesn't open
 Generate manually:
 ```bash
-allure generate target/allure-results -o target/allure-report --clean
+rm -rf target/allure-report
+allure generate target/allure-results -o target/allure-report
 open target/allure-report/index.html
 ```
 
