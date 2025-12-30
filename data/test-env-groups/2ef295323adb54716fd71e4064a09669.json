@@ -1,1 +1,1 @@
-{"id":"2ef295323adb54716fd71e4064a09669","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testFormInteraction","name":"Test form interaction [DEV]","status":"passed","testResultsByEnv":{"default":"d16a6a7db095754fce68838156b88678"}}
+{"id":"2ef295323adb54716fd71e4064a09669","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testFormInteraction","name":"Test form interaction [PROD]","status":"passed","testResultsByEnv":{"default":"d16a6a7db095754fce68838156b88678"}}
