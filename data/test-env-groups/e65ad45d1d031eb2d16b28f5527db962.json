@@ -1,1 +1,1 @@
-{"id":"e65ad45d1d031eb2d16b28f5527db962","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testMultiSiteNavigation","name":"Test navigation between multiple sites [DEV]","status":"passed","testResultsByEnv":{"default":"02574cb11c5ea7de63674bbeb0be23a2"}}
+{"id":"e65ad45d1d031eb2d16b28f5527db962","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testMultiSiteNavigation","name":"Test navigation between multiple sites [PROD]","status":"passed","testResultsByEnv":{"default":"1b061239caa04f23949dad2e521d299e"}}
