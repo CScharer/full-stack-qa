@@ -115,7 +115,7 @@
 
 **Resource Configuration** (✅ Implemented):
 - `maven_memory` (default: `'2048m'`) - Maven heap size
-- `allure_version` (default: `'2.25.0'`) - Allure CLI version
+- `allure_version` (default: `'2.36.0'`) - Allure CLI version
 - `docker_shm_size` (default: `'2gb'`) - Docker shared memory for Selenium nodes
 
 **Parallel Execution Configuration** (🔧 Planned):
@@ -481,7 +481,7 @@ with:
   smoke_tests_timeout_minutes: 7  # Optional: defaults to 5
   # Resource Configuration
   maven_memory: '4096m'     # Optional: defaults to '2048m'
-  allure_version: '2.26.0'  # Optional: defaults to '2.25.0'
+  allure_version: '2.36.0'  # Optional: defaults to '2.36.0'
   docker_shm_size: '4gb'   # Optional: defaults to '2gb'
 ```
 

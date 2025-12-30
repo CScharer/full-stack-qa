@@ -42,6 +42,10 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Security](https://img.shields.io/badge/Security-Google%20Cloud-blue.svg)](https://cloud.google.com/secret-manager)
 
+[![Reporting](https://img.shields.io/badge/Reporting-Allure_Reports-yellow.svg)](docs/guides/testing/ALLURE_REPORTING.md)
+
+[![Allure_Reports](https://img.shields.io/badge/Allure_Reports-2.36.0-blue.svg)](https://allurereport.org/)
+
 [![Coming Soon!!!](https://img.shields.io/badge/Coming%20Soon!!!-What's_Next!!!-cyan.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 <!-- [![Vibium](https://img.shields.io/badge/Vibium-0.1.2-cyan.svg)](https://vibium.com/) -->
 
@@ -1198,7 +1202,7 @@ cp XML/UserSettings.xml.template XML/UserSettings.xml
 - ARM64 (Apple Silicon) compatibility
 
 **✅ Allure Reporting with Screenshots**
-- Allure Framework 2.31.0 integration
+- Allure Framework 2.36.0 integration
 - Automatic screenshot capture on test failures only
 - Beautiful HTML dashboards with graphs
 - Epic/Feature/Story organization

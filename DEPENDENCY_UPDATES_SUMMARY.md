@@ -14,7 +14,7 @@ All dependencies have been updated to their latest stable versions. This documen
 
 | Dependency | Previous | Updated To | Notes |
 |------------|----------|------------|-------|
-| Allure | 2.31.0 | 2.32.0 | Latest stable (released Dec 12, 2025) |
+| Allure | 2.32.0 | 2.36.0 | Latest stable (updated Dec 30, 2025) |
 | AspectJ | 1.9.25 | 1.9.25.1 | Patch update |
 | Byte Buddy | 1.18.2 | 1.18.3 | Patch update |
 | Checkstyle | 12.2.0 | 12.3.0 | Minor update |
@@ -178,9 +178,10 @@ pip list | grep -E "locust|requests|matplotlib|pandas"
 - **Note**: 0.125.0 doesn't exist - corrected to actual latest
 - **Action**: Verify backend still works correctly
 
-### 4. Allure 2.32.0
+### 4. Allure 2.36.0
 - **Risk**: Low - minor version update
 - **Action**: Verify Allure reports still generate correctly
+- **Updated**: 2025-12-30 (from 2.32.0 Java library and 2.25.0 CLI)
 
 ---
 

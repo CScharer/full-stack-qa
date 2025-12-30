@@ -1,9 +1,10 @@
 # Allure Test Reporting
 
 **Status**: ✅ Configured
-**Version**: Allure 2.31.0
+**Version**: Allure 2.36.0
 **Framework**: TestNG
 **Date**: November 8, 2025
+**Last Updated**: December 30, 2025
 
 ---
 
@@ -22,8 +23,8 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 ## ✅ What's Configured
 
 ### Dependencies Added (pom.xml)
-- `allure-testng:2.31.0` - TestNG integration
-- `allure-java-commons:2.31.0` - Core Allure functionality
+- `allure-testng:2.36.0` - TestNG integration
+- `allure-java-commons:2.36.0` - Core Allure functionality
 - `aspectjweaver:1.9.22` - For Allure step tracking
 
 ### Maven Plugins

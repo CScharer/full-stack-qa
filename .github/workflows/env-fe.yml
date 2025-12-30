@@ -160,7 +160,7 @@ on:
       allure_version:
         description: 'Allure CLI version'
         type: string
-        default: '2.25.0'
+        default: '2.36.0'
       docker_shm_size:
         description: 'Docker shared memory size for Selenium nodes (e.g., 2gb, 4gb)'
         type: string
@@ -1183,7 +1183,7 @@ jobs:
       - name: Install Allure CLI
         if: always()
         run: |
-          ./scripts/ci/install-allure-cli.sh "${{ inputs.allure_version || '2.25.0' }}"
+          ./scripts/ci/install-allure-cli.sh "${{ inputs.allure_version || '2.36.0' }}"
 
       - name: Generate Allure Report
         if: always()
