@@ -90,74 +90,531 @@
 
 ---
 
-## 📋 Update Instructions
+## 📋 Step-by-Step Update Instructions
 
-### Java/Maven Dependencies
-
-1. **Maven Compiler Plugin**:
-   ```xml
-   <!-- Update in pom.xml -->
-   <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
-   ```
-
-2. **HTMLUnit**:
-   ```xml
-   <!-- Update in pom.xml -->
-   <htmlunit.version>4.21.0</htmlunit.version>
-   ```
-
-3. **JSON**:
-   ```xml
-   <!-- Update in pom.xml -->
-   <json.version>20251224</json.version>
-   ```
-
-4. **Rhino**:
-   ```xml
-   <!-- Update in pom.xml (review changelog first) -->
-   <rhino.version>1.9.0</rhino.version>
-   ```
-
-### Node.js Dependencies (Frontend)
-
-```bash
-cd frontend
-npm install next@16.1.1 @tanstack/react-query@5.90.16 eslint-config-next@16.1.1 jsdom@27.4.0
-```
-
-### Python Dependencies
-
-1. **Backend (aiosqlite)**:
-   ```bash
-   cd backend
-   pip install --upgrade aiosqlite==0.22.1
-   # Or update requirements.txt to: aiosqlite>=0.22.1
-   ```
-
-2. **Performance Testing (Requests)**:
-   ```bash
-   pip install --upgrade requests==2.32.5
-   # Or update requirements.txt to: requests==2.32.5
-   ```
+**Important**: Update dependencies **one at a time** and test after each update to identify any issues early.
 
 ---
 
-## 📝 Next Steps
+### Step 1: Maven Compiler Plugin (3.13.0 → 3.14.1)
 
-1. **Review MINOR updates** (Rhino 1.7 → 1.9):
-   - Check changelog for breaking changes
-   - Test thoroughly after update
+**File**: `pom.xml`  
+**Location**: Line 33  
+**Update Type**: PATCH (Low Risk)
 
-2. **Apply PATCH updates**:
-   - Create feature branch
-   - Apply updates incrementally
-   - Test locally
-   - Commit and create PR
+#### Steps:
+1. **Open** `pom.xml`
+2. **Find** line 33: `<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>`
+3. **Update** to: `<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>`
+4. **Save** the file
 
-3. **Verify updates**:
-   - Run test suite
-   - Check for any deprecation warnings
-   - Verify functionality
+#### Test Locally:
+```bash
+# Clean and compile to verify the update works
+./mvnw clean compile
+
+# Run tests to ensure nothing broke
+./mvnw test -Dtest=SimpleGridTest
+```
+
+#### Rollback (if needed):
+```bash
+git checkout pom.xml
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in pom.xml
+- [ ] Clean compile successful
+- [ ] Tests pass
+- [ ] Ready to commit
+
+---
+
+### Step 2: HTMLUnit (4.20.0 → 4.21.0)
+
+**File**: `pom.xml`  
+**Location**: Line 73  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Open** `pom.xml`
+2. **Find** line 73: `<htmlunit.version>4.20.0</htmlunit.version>`
+3. **Update** to: `<htmlunit.version>4.21.0</htmlunit.version>`
+4. **Save** the file
+
+#### Test Locally:
+```bash
+# Clean and compile
+./mvnw clean compile
+
+# Run tests that use HTMLUnit (if any)
+./mvnw test -Dtest=*HtmlUnit*
+```
+
+#### Rollback (if needed):
+```bash
+git checkout pom.xml
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in pom.xml
+- [ ] Clean compile successful
+- [ ] Tests pass
+- [ ] Ready to commit
+
+---
+
+### Step 3: JSON (20250517 → 20251224)
+
+**File**: `pom.xml`  
+**Location**: Line 87  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Open** `pom.xml`
+2. **Find** line 87: `<json.version>20250517</json.version>`
+3. **Update** to: `<json.version>20251224</json.version>`
+4. **Save** the file
+
+#### Test Locally:
+```bash
+# Clean and compile
+./mvnw clean compile
+
+# Run tests that use JSON parsing
+./mvnw test -Dtest=*Json*
+```
+
+#### Rollback (if needed):
+```bash
+git checkout pom.xml
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in pom.xml
+- [ ] Clean compile successful
+- [ ] Tests pass
+- [ ] Ready to commit
+
+---
+
+### Step 4: Rhino (1.7.14.1 → 1.9.0)
+
+**File**: `pom.xml`  
+**Location**: Line 53  
+**Update Type**: MINOR (Review Required - May have breaking changes)
+
+#### Steps:
+1. **Review changelog** first:
+   - Check: https://github.com/mozilla/rhino/releases
+   - Look for breaking changes between 1.7.14.1 and 1.9.0
+2. **Open** `pom.xml`
+3. **Find** line 53: `<rhino.version>1.7.14.1</rhino.version>`
+4. **Update** to: `<rhino.version>1.9.0</rhino.version>`
+5. **Save** the file
+
+#### Test Locally:
+```bash
+# Clean and compile
+./mvnw clean compile
+
+# Run tests that use Rhino (JavaScript engine)
+./mvnw test -Dtest=*Rhino*
+```
+
+#### Rollback (if needed):
+```bash
+git checkout pom.xml
+```
+
+#### ✅ Checklist:
+- [ ] Reviewed changelog for breaking changes
+- [ ] Updated version in pom.xml
+- [ ] Clean compile successful
+- [ ] Tests pass
+- [ ] Ready to commit
+
+---
+
+### Step 5: Next.js (16.1.0 → 16.1.1)
+
+**File**: `frontend/package.json`  
+**Location**: Line 19  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Navigate** to frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. **Open** `package.json`
+3. **Find** line 19: `"next": "16.1.0",`
+4. **Update** to: `"next": "16.1.1",`
+5. **Save** the file
+6. **Install** the updated version:
+   ```bash
+   npm install
+   ```
+
+#### Test Locally:
+```bash
+# Build the frontend to verify it compiles
+npm run build
+
+# Run tests
+npm test
+
+# Start dev server and verify it works
+npm run dev
+# (Open browser and verify app loads correctly)
+```
+
+#### Rollback (if needed):
+```bash
+git checkout package.json package-lock.json
+npm install
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in package.json
+- [ ] Ran npm install
+- [ ] Build successful
+- [ ] Tests pass
+- [ ] Dev server works
+- [ ] Ready to commit
+
+---
+
+### Step 6: @tanstack/react-query (5.90.12 → 5.90.16)
+
+**File**: `frontend/package.json`  
+**Location**: Line 16  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Navigate** to frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. **Open** `package.json`
+3. **Find** line 16: `"@tanstack/react-query": "^5.90.12",`
+4. **Update** to: `"@tanstack/react-query": "^5.90.16",`
+5. **Save** the file
+6. **Install** the updated version:
+   ```bash
+   npm install
+   ```
+
+#### Test Locally:
+```bash
+# Build the frontend
+npm run build
+
+# Run tests (especially any React Query related tests)
+npm test
+
+# Start dev server and test React Query functionality
+npm run dev
+```
+
+#### Rollback (if needed):
+```bash
+git checkout package.json package-lock.json
+npm install
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in package.json
+- [ ] Ran npm install
+- [ ] Build successful
+- [ ] Tests pass
+- [ ] React Query functionality works
+- [ ] Ready to commit
+
+---
+
+### Step 7: eslint-config-next (16.1.0 → 16.1.1)
+
+**File**: `frontend/package.json`  
+**Location**: Line 37  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Navigate** to frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. **Open** `package.json`
+3. **Find** line 37: `"eslint-config-next": "16.1.0",`
+4. **Update** to: `"eslint-config-next": "16.1.1",`
+5. **Save** the file
+6. **Install** the updated version:
+   ```bash
+   npm install
+   ```
+
+#### Test Locally:
+```bash
+# Run ESLint to verify no new issues
+npm run lint
+
+# Build to ensure linting doesn't break build
+npm run build
+```
+
+#### Rollback (if needed):
+```bash
+git checkout package.json package-lock.json
+npm install
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in package.json
+- [ ] Ran npm install
+- [ ] Linting passes
+- [ ] Build successful
+- [ ] Ready to commit
+
+---
+
+### Step 8: jsdom (27.3.0 → 27.4.0)
+
+**File**: `frontend/package.json`  
+**Location**: Line 38  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Navigate** to frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. **Open** `package.json`
+3. **Find** line 38: `"jsdom": "^27.3.0",`
+4. **Update** to: `"jsdom": "^27.4.0",`
+5. **Save** the file
+6. **Install** the updated version:
+   ```bash
+   npm install
+   ```
+
+#### Test Locally:
+```bash
+# Run tests (jsdom is used for testing)
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+#### Rollback (if needed):
+```bash
+git checkout package.json package-lock.json
+npm install
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in package.json
+- [ ] Ran npm install
+- [ ] Tests pass
+- [ ] Test coverage still works
+- [ ] Ready to commit
+
+---
+
+### Step 9: Requests (Python) (2.32.4 → 2.32.5)
+
+**File**: `requirements.txt`  
+**Location**: Line 8  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Open** `requirements.txt`
+2. **Find** line 8: `requests==2.32.4`
+3. **Update** to: `requests==2.32.5`
+4. **Save** the file
+5. **Install** the updated version:
+   ```bash
+   pip install --upgrade requests==2.32.5
+   ```
+
+#### Test Locally:
+```bash
+# Verify requests is updated
+pip show requests
+
+# Run any performance tests that use requests
+cd /path/to/performance/tests
+python -m pytest tests/ -v
+```
+
+#### Rollback (if needed):
+```bash
+git checkout requirements.txt
+pip install --upgrade requests==2.32.4
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in requirements.txt
+- [ ] Installed updated version
+- [ ] Verified version with pip show
+- [ ] Tests pass
+- [ ] Ready to commit
+
+---
+
+### Step 10: aiosqlite (0.22.0 → 0.22.1)
+
+**File**: `backend/requirements.txt`  
+**Location**: Line 10  
+**Update Type**: PATCH (Low Risk)
+
+#### Steps:
+1. **Open** `backend/requirements.txt`
+2. **Find** line 10: `aiosqlite>=0.22.0`
+3. **Update** to: `aiosqlite>=0.22.1` (or `aiosqlite==0.22.1` for exact version)
+4. **Save** the file
+5. **Install** the updated version:
+   ```bash
+   cd backend
+   pip install --upgrade aiosqlite==0.22.1
+   ```
+
+#### Test Locally:
+```bash
+# Verify aiosqlite is updated
+pip show aiosqlite
+
+# Run backend tests
+cd backend
+pytest tests/ -v
+
+# Test database operations specifically
+pytest tests/ -k database -v
+```
+
+#### Rollback (if needed):
+```bash
+git checkout backend/requirements.txt
+pip install --upgrade aiosqlite==0.22.0
+```
+
+#### ✅ Checklist:
+- [ ] Updated version in requirements.txt
+- [ ] Installed updated version
+- [ ] Verified version with pip show
+- [ ] Backend tests pass
+- [ ] Database operations work
+- [ ] Ready to commit
+
+---
+
+## 📝 Update Progress Tracker
+
+Use this checklist to track your progress:
+
+### Java/Maven Dependencies
+- [ ] Step 1: Maven Compiler Plugin (3.13.0 → 3.14.1)
+- [ ] Step 2: HTMLUnit (4.20.0 → 4.21.0)
+- [ ] Step 3: JSON (20250517 → 20251224)
+- [ ] Step 4: Rhino (1.7.14.1 → 1.9.0) - **Review changelog first**
+
+### Node.js Dependencies (Frontend)
+- [ ] Step 5: Next.js (16.1.0 → 16.1.1)
+- [ ] Step 6: @tanstack/react-query (5.90.12 → 5.90.16)
+- [ ] Step 7: eslint-config-next (16.1.0 → 16.1.1)
+- [ ] Step 8: jsdom (27.3.0 → 27.4.0)
+
+### Python Dependencies
+- [ ] Step 9: Requests (2.32.4 → 2.32.5)
+- [ ] Step 10: aiosqlite (0.22.0 → 0.22.1)
+
+---
+
+## 🔄 Recommended Update Order
+
+1. **Start with PATCH updates** (low risk):
+   - Steps 1-3, 5-8, 9-10
+2. **Then handle MINOR update** (review required):
+   - Step 4 (Rhino) - Review changelog first
+
+---
+
+## ⚠️ Important Notes
+
+- **Update one at a time**: This allows you to identify which update causes issues (if any)
+- **Test after each update**: Don't batch updates - test immediately after each one
+- **Commit after each successful update**: This creates a clear history and easy rollback points
+- **Review changelog for MINOR updates**: Step 4 (Rhino) requires changelog review
+- **Keep this document updated**: Mark each step as complete as you go
+
+---
+
+## 📝 General Testing Commands
+
+After each update, run these commands to verify everything works:
+
+### Java/Maven
+```bash
+# Clean and compile
+./mvnw clean compile
+
+# Run all tests
+./mvnw test
+
+# Run specific test suite
+./mvnw test -Dtest=SimpleGridTest
+```
+
+### Frontend (Node.js)
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Lint
+npm run lint
+
+# Build
+npm run build
+
+# Run tests
+npm test
+
+# Start dev server (verify manually)
+npm run dev
+```
+
+### Python
+```bash
+# Backend
+cd backend
+pytest tests/ -v
+
+# Performance tests
+cd /path/to/root
+python -m pytest tests/ -v
+```
+
+---
+
+## 🔙 Rollback Strategy
+
+If any update causes issues:
+
+1. **Revert the specific file**:
+   ```bash
+   git checkout <file>
+   ```
+
+2. **Reinstall dependencies**:
+   - **Maven**: `./mvnw clean install`
+   - **npm**: `npm install`
+   - **pip**: `pip install -r <requirements-file>`
+
+3. **Test again** to verify rollback worked
+
+4. **Document the issue** in this file or create an issue
 
 ---
 
