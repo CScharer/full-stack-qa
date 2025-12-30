@@ -7,8 +7,10 @@ from fastapi.testclient import TestClient
 
 def test_create_job_search_site(client: TestClient):
     """Test creating a job search site."""
+    import uuid
+    unique_name = f"LinkedIn_{uuid.uuid4().hex[:8]}"
     site_data = {
-        "name": "LinkedIn",
+        "name": unique_name,
         "url": "https://linkedin.com/jobs",
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
@@ -17,14 +19,16 @@ def test_create_job_search_site(client: TestClient):
     response = client.post("/api/v1/job-search-sites", json=site_data)
     assert response.status_code == 201
     data = response.json()
-    assert data["name"] == "LinkedIn"
+    assert data["name"] == unique_name
     assert "id" in data
 
 
 def test_get_job_search_site(client: TestClient):
     """Test getting a job search site by ID."""
+    import uuid
+    unique_name = f"Indeed_{uuid.uuid4().hex[:8]}"
     site_data = {
-        "name": "Indeed",
+        "name": unique_name,
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
