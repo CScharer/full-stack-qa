@@ -1,8 +1,8 @@
 # GitHub Pages Suites Tab Investigation
 
 **Created**: 2025-12-29  
-**Last Updated**: 2025-12-30  
-**Status**: 🔍 **INVESTIGATING**  
+**Last Updated**: 2025-12-30 (Cypress & Playwright fixes - including mislabeling and deduplication improvements)  
+**Status**: ✅ **FIXES IN PROGRESS** - Cypress results missing and retry duplication issues  
 **Issue**: Suites tab shows all frameworks locally but only Playwright on GitHub Pages
 
 ---
@@ -364,4 +364,152 @@ After these fixes:
 7. ✅ Allure3 CLI now active in production
 
 **Important**: Allure3 does NOT replace the Allure2 Java libraries (`io.qameta.allure:allure-testng`, `io.qameta.allure:allure-java-commons`). These Maven dependencies will continue to use Allure2 versions. Allure3 is only for the CLI report generation tool.
+
+---
+
+## Cypress Results Missing Fix
+
+**Date**: 2025-12-30  
+**Status**: ✅ **FIXED** - Branch: `fix-cypress-results-missing`  
+**Issue**: Cypress test results were not appearing in combined Allure reports
+
+### Problem
+
+Cypress results were being downloaded to `all-test-results/cypress-results` but the conversion script was looking for environment-specific subdirectories like `results-$env/cypress-results-$env`. When artifacts are merged with `merge-multiple: true`, they preserve their artifact name as a subdirectory (e.g., `cypress-results/cypress-results-dev/...`).
+
+### Fix Applied
+
+**File**: `scripts/ci/prepare-combined-allure-results.sh`
+
+1. **Environment-Specific Directory Check**: Updated to check for environment-specific subdirectories within merged Cypress artifacts (`cypress-results/cypress-results-$env/...`)
+2. **Per-Environment Processing**: Processes each active environment separately to ensure all Cypress results are converted
+3. **Fallback Logic**: Falls back to merged root directory if environment-specific subdirectories aren't found
+
+**Changes**:
+- Lines 99-133: Enhanced Cypress conversion logic to handle merged artifacts with environment-specific subdirectories
+- Checks for `$SOURCE_DIR/cypress-results/cypress-results-$env` pattern
+- Processes each environment separately to ensure complete coverage
+
+### Expected Result
+
+After this fix:
+- ✅ Cypress test results will appear in combined Allure reports
+- ✅ All environments (dev/test/prod) will have Cypress results included
+- ✅ Cypress tests will show in Suites tab and Behaviors tab
+
+### Additional Fix: Cypress Mislabeling (2025-12-30)
+
+**Issue**: Cypress tests were appearing under "Selenide Tests" suite instead of "Cypress Tests"
+
+**Root Cause**: Cypress tests have "Selenide.Cypress..." in their fullName, causing Selenide detection logic to misidentify them
+
+**Fix Applied**:
+- Updated `scripts/ci/add-environment-labels.sh` to exclude Cypress from Selenide detection
+- Updated `scripts/ci/create-framework-containers.sh` to exclude Cypress from Selenide detection
+- Detection now checks: Only mark as Selenide if fullName/name contains "Selenide" but NOT "Cypress"
+
+**Expected Result**:
+- ✅ Cypress tests will appear under "Cypress Tests" suite (not "Selenide Tests")
+
+---
+
+## Playwright Retry Deduplication Fix
+
+**Date**: 2025-12-30  
+**Status**: ✅ **FIXED** - Branch: `fix-cypress-results-missing`  
+**Issue**: Tests that passed on first attempt were showing as retried, and retry attempts were creating duplicate test entries
+
+### Problem
+
+When Playwright retries tests, it creates multiple entries in the JUnit XML output. The conversion script was processing all entries, creating duplicate test results in Allure reports. Additionally, tests that passed on the first attempt were incorrectly showing retry information.
+
+### Fix Applied
+
+**File**: `scripts/ci/convert-playwright-to-allure.sh`
+
+1. **Retry Tracking**: Tracks all attempts for each test by `fullName` to identify retries
+2. **Smart Deduplication**:
+   - **Tests that passed on first attempt**: Removes duplicate entries, keeps only the first passed result
+   - **Tests that failed and were retried**: Keeps the final result, marks as flaky if status changed (failed → passed)
+3. **Retry Information**: Includes retry details in test description for tests that actually needed retries
+
+**Changes**:
+- Lines 85-125: Added retry tracking logic to collect all attempts per test
+- Lines 127-145: Smart deduplication that handles passed vs. failed retries differently
+- Lines 195-201: Adds retry information to test description for failed-then-retried tests
+
+### Expected Result
+
+After this fix:
+- ✅ Tests that passed on first attempt will show only once (no duplicate retry entries)
+- ✅ Tests that failed and were retried will show final result with retry information
+- ✅ Flaky tests (failed → passed on retry) will be marked as flaky
+- ✅ Retry information preserved for analysis of actually retried tests
+
+### Additional Fix: Less Aggressive Deduplication (2025-12-30)
+
+**Issue**: Passed tests were being removed when duplicates existed, even though they passed on first attempt. Skipped tests were appearing as duplicates.
+
+**Root Cause**: 
+- Playwright's `retries: 1` config retries ALL tests (even passed ones), creating duplicates
+- The original fix was too aggressive and removed valid passed tests
+- Retry attempts might be in different JUnit XML files, so deduplication wasn't working across files
+
+**Fix Applied**:
+- Updated `scripts/ci/convert-playwright-to-allure.sh` to:
+  - Track attempts across ALL JUnit files (not just within one file)
+  - Smart deduplication: If all attempts have same status, keep first (deduplicates duplicates)
+  - If status changed, keep best result (passed > failed > broken > skipped)
+  - Properly handles skipped tests (deduplicates if all skipped, keeps best if status changed)
+  - If test passed on first attempt: Keep it (don't deduplicate, even if retry config created duplicates)
+  - Only deduplicate if test actually failed and was retried
+  - This ensures all passed tests are shown in the report
+
+**Expected Result**:
+- ✅ All passed Playwright tests will be shown (no false deduplication)
+- ✅ Duplicate skipped tests will be deduplicated
+- ✅ Only actual retries of failed tests will be deduplicated
+- ✅ Best result kept when status changes (e.g., skipped → passed)
+
+---
+
+## TestNG/Surefire Retry Deduplication Fix
+
+**Date**: 2025-12-30  
+**Status**: ✅ **FIXED** - Branch: `fix-cypress-results-missing`  
+**Issue**: TestNG retry attempts were appearing as duplicate test results in Surefire suite and Surefire test
+
+### Problem
+
+TestNG's `RetryAnalyzer` creates separate Allure result files for each retry attempt. Allure TestNG reports each retry as a separate test result, causing duplicates in the report (same test appearing multiple times with different attempt results).
+
+### Fix Applied
+
+**File**: `scripts/ci/deduplicate-testng-retries.sh` (NEW)
+
+1. **Deduplication Logic**: Groups result files by `fullName` and `historyId` (same test, same environment)
+2. **Best Result Selection**: Keeps only the best result (passed > failed > broken > skipped)
+3. **Removes Duplicates**: Deletes duplicate retry attempt files
+
+**Integration**:
+- Added to `scripts/ci/prepare-combined-allure-results.sh` as Step 4.25
+- Runs after environment labels are added but before framework containers are created
+
+**Changes**:
+- **NEW**: `scripts/ci/deduplicate-testng-retries.sh` - Deduplicates TestNG retry attempts
+- **UPDATED**: `scripts/ci/prepare-combined-allure-results.sh` - Added Step 4.25 to call deduplication script
+
+### Expected Result
+
+After this fix:
+- ✅ TestNG retry attempts will be deduplicated
+- ✅ Only the best result will be shown for each test (passed > failed > broken > skipped)
+- ✅ No duplicate test entries in Surefire suite or Surefire test
+- ✅ Retry information preserved in the kept result
+
+### Retry Behavior
+
+- **Passed on first attempt**: Single entry, no retry information
+- **Failed then passed on retry**: Final passed result, marked as flaky, includes retry count
+- **Failed after all retries**: Final failed result, includes retry count
 

@@ -248,15 +248,26 @@ for result_file in all_files:
             # CRITICAL: Check fullName and name fields FIRST for result files (not just containers)
             # This must happen BEFORE label processing to catch Selenide result files
             # fullName often has "Selenide." prepended, which is a reliable indicator
+            # BUT: Exclude Cypress tests which may have "Selenide.Cypress..." in fullName
             if 'fullName' in data:
                 full_name = data.get('fullName', '')
-                if 'Selenide' in full_name or 'HomePageTests' in full_name or 'HomePage' in full_name:
+                # Only mark as Selenide if fullName contains "Selenide" but NOT "Cypress"
+                # Cypress tests may have "Selenide.Cypress..." in fullName but should not be treated as Selenide
+                if 'Selenide' in full_name and 'Cypress' not in full_name:
+                    is_selenide_test = True
+                # Also check for explicit Selenide patterns (HomePageTests, HomePage with Selenide)
+                if 'HomePageTests' in full_name or ('Selenide' in full_name and 'HomePage' in full_name and 'Cypress' not in full_name):
                     is_selenide_test = True
             
             # Also check name field for Selenide indicators (works for both result files and containers)
+            # BUT: Exclude Cypress tests which may have "Selenide" in name
             if 'name' in data:
                 name_value = data.get('name', '')
-                if 'Selenide' in name_value or 'HomePageTests' in name_value or 'HomePage' in name_value:
+                # Only mark as Selenide if name contains "Selenide" but NOT "Cypress"
+                if 'Selenide' in name_value and 'Cypress' not in name_value:
+                    is_selenide_test = True
+                # Also check for explicit Selenide patterns (HomePageTests, HomePage with Selenide but not Cypress)
+                if 'HomePageTests' in name_value or ('Selenide' in name_value and 'HomePage' in name_value and 'Cypress' not in name_value):
                     is_selenide_test = True
             
             # Also check name/fullName fields for container files (might contain "Surefire" or "HomePage")

@@ -61,6 +61,10 @@ if not junit_files:
     print("   This is expected if Playwright tests haven't run")
     sys.exit(0)
 
+# Track all attempts across ALL JUnit files to handle retries correctly
+# This ensures we deduplicate even if retries are in different JUnit files
+test_attempts = {}  # fullName -> list of (test_case, status, attempt_order, junit_file)
+
 for junit_file in junit_files:
     try:
         tree = ET.parse(junit_file)
@@ -84,14 +88,18 @@ for junit_file in junit_files:
         
         # Process individual test cases to create separate Allure results
         # This allows skipped tests to appear in Categories section
+        # Track all attempts for each test to handle retries correctly
+        # Use a global counter across all files to maintain order
+        global_attempt_counter = len(test_attempts) * 1000  # Offset to avoid collisions
+        
         for suite in test_suites:
             test_cases = suite.findall('testcase')
             
-            for test_case in test_cases:
+            for idx, test_case in enumerate(test_cases):
+                global_attempt_counter += 1
                 test_name = test_case.get('name', 'Unknown Test')
                 test_class = test_case.get('classname', 'Playwright')
-                test_time = float(test_case.get('time', 0))
-                duration = int(test_time * 1000) if test_time > 0 else 1000
+                full_name = f"{test_class}.{test_name}"
                 
                 # Determine test status
                 # Check for skipped, failure, or error elements
@@ -101,80 +109,19 @@ for junit_file in junit_files:
                 
                 if skipped_elem is not None:
                     status = "skipped"
-                    status_message = skipped_elem.get('message', 'Test was skipped')
                 elif failure_elem is not None:
                     status = "failed"
-                    status_message = failure_elem.get('message', 'Test failed')
                 elif error_elem is not None:
                     status = "broken"
-                    status_message = error_elem.get('message', 'Test error')
                 else:
                     status = "passed"
-                    status_message = None
                 
-                # Create unique test result
-                test_uuid = uuid.uuid4().hex[:32]
-                timestamp = int(datetime.now().timestamp() * 1000)
-                full_name = f"{test_class}.{test_name}"
-                history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
-                
-                labels = [
-                    {"name": "suite", "value": "Playwright Tests"},
-                    {"name": "testClass", "value": test_class},
-                    {"name": "epic", "value": "Playwright E2E Testing"},
-                    {"name": "feature", "value": "Playwright Tests"}
-                ]
-                
-                if env and env not in ["unknown", "combined"]:
-                    labels.append({"name": "environment", "value": env})
-                
-                params = []
-                if env and env not in ["unknown", "combined"]:
-                    params.append({"name": "Environment", "value": env.upper()})
-                
-                status_details = {
-                    "known": False,
-                    "muted": False,
-                    "flaky": False
-                }
-                
-                if status_message:
-                    status_details["message"] = status_message
-                
-                result = {
-                    "uuid": test_uuid,
-                    "historyId": history_id,
-                    "fullName": full_name,
-                    "labels": labels,
-                    "name": test_name,
-                    "status": status,
-                    "statusDetails": status_details,
-                    "stage": "finished",
-                    "description": f"Playwright test: {test_name}",
-                    "steps": [],
-                    "attachments": [],
-                    "parameters": params,
-                    "start": timestamp,
-                    "stop": timestamp + duration
-                }
-                
-                output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
-                with open(output_file, 'w') as f:
-                    import json
-                    json.dump(result, f, indent=2)
-                
-                converted += 1
+                # Track all attempts for this test (across all JUnit files)
+                if full_name not in test_attempts:
+                    test_attempts[full_name] = []
+                test_attempts[full_name].append((test_case, status, global_attempt_counter, junit_file))
         
-        # Print summary
-        if 'test_cases' in locals() and test_cases:
-            total = len(test_cases)
-            passed = sum(1 for tc in test_cases if tc.find('skipped') is None and tc.find('failure') is None and tc.find('error') is None)
-            failed = sum(1 for tc in test_cases if tc.find('failure') is not None)
-            skipped = sum(1 for tc in test_cases if tc.find('skipped') is not None)
-            print(f"✅ Created {converted} Playwright test result(s)")
-            print(f"   Stats: {total} tests, {passed} passed, {failed} failed, {skipped} skipped")
-        else:
-            print(f"✅ Created {converted} Playwright test result(s)")
+        # Continue to next JUnit file (don't process yet, collect all attempts first)
         
     except Exception as e:
         print(f"⚠️  Error parsing Playwright JUnit XML from {junit_file}: {e}", file=sys.stderr)
@@ -182,7 +129,154 @@ for junit_file in junit_files:
         traceback.print_exc()
         continue
 
-if converted == 0:
+# Now process each test and decide what to keep (after processing ALL JUnit files)
+if not test_attempts:
+    print("ℹ️  No Playwright test attempts found")
+    sys.exit(0)
+
+# IMPORTANT: Playwright's retries: 1 config retries ALL tests, even if they pass
+# So we need to be smart about deduplication - only deduplicate actual retries of failed tests
+test_results = {}  # fullName -> (test_case, status, is_flaky, retry_info)
+
+for full_name, attempts in test_attempts.items():
+    if len(attempts) == 1:
+        # Single attempt - no retry, keep as is
+        test_case, status, _, _ = attempts[0]
+        test_results[full_name] = (test_case, status, False, None)
+    else:
+        # Multiple attempts - could be retries or duplicate entries
+        # Sort by attempt order (idx) to get chronological order
+        attempts_sorted = sorted(attempts, key=lambda x: x[2])
+        first_attempt = attempts_sorted[0]
+        last_attempt = attempts_sorted[-1]
+        
+        first_test_case, first_status, _, _ = first_attempt
+        last_test_case, last_status, _, _ = last_attempt
+        
+        # Smart deduplication logic:
+        # 1. If all attempts have same status (all passed, all skipped, all failed) - keep first (no retry needed)
+        # 2. If status changed (failed->passed, skipped->passed, etc.) - keep the best result
+        # 3. Prefer passed > failed > broken > skipped (best to worst)
+        
+        # Check if all attempts have the same status
+        all_same_status = all(attempt[1] == first_status for attempt in attempts_sorted)
+        
+        if all_same_status:
+            # All attempts have same status - no actual retry needed, keep first
+            test_results[full_name] = (first_test_case, first_status, False, None)
+        else:
+            # Status changed - this is a real retry, find the best result
+            # Priority: passed > failed > broken > skipped
+            status_priority = {"passed": 4, "failed": 3, "broken": 2, "skipped": 1}
+            best_attempt = max(attempts_sorted, key=lambda x: status_priority.get(x[1], 0))
+            best_test_case, best_status, _, _ = best_attempt
+            
+            # Mark as flaky if status improved (failed->passed, skipped->passed)
+            is_flaky = (first_status != "passed" and best_status == "passed")
+            retry_info = f"Retried {len(attempts)} times. First: {first_status}, Best: {best_status}"
+            test_results[full_name] = (best_test_case, best_status, is_flaky, retry_info)
+        
+        # Now convert the processed test results
+        for full_name, (test_case, final_status, is_flaky, retry_info) in test_results.items():
+            test_name = test_case.get('name', 'Unknown Test')
+            test_class = test_case.get('classname', 'Playwright')
+            test_time = float(test_case.get('time', 0))
+            duration = int(test_time * 1000) if test_time > 0 else 1000
+            
+            # Get status message from the final test case
+            # IMPORTANT: Use final_status (from our deduplication logic) instead of re-checking test_case
+            # This ensures skipped tests are properly preserved
+            skipped_elem = test_case.find('skipped')
+            failure_elem = test_case.find('failure')
+            error_elem = test_case.find('error')
+            
+            # Determine status message based on final_status (which we determined from deduplication)
+            if final_status == "skipped":
+                # Test is skipped - get message from skipped element or use default
+                if skipped_elem is not None:
+                    status_message = skipped_elem.get('message', 'Test was skipped')
+                else:
+                    status_message = 'Test was skipped'
+            elif final_status == "failed":
+                if failure_elem is not None:
+                    status_message = failure_elem.get('message', 'Test failed')
+                else:
+                    status_message = 'Test failed'
+            elif final_status == "broken":
+                if error_elem is not None:
+                    status_message = error_elem.get('message', 'Test error')
+                else:
+                    status_message = 'Test error'
+            else:
+                status_message = None
+            
+            # is_flaky and retry_info are already determined above
+            
+            # Create unique test result
+            test_uuid = uuid.uuid4().hex[:32]
+            timestamp = int(datetime.now().timestamp() * 1000)
+            history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
+            
+            labels = [
+                {"name": "suite", "value": "Playwright Tests"},
+                {"name": "testClass", "value": test_class},
+                {"name": "epic", "value": "Playwright E2E Testing"},
+                {"name": "feature", "value": "Playwright Tests"}
+            ]
+            
+            if env and env not in ["unknown", "combined"]:
+                labels.append({"name": "environment", "value": env})
+            
+            params = []
+            if env and env not in ["unknown", "combined"]:
+                params.append({"name": "Environment", "value": env.upper()})
+            
+            status_details = {
+                "known": False,
+                "muted": False,
+                "flaky": is_flaky
+            }
+            
+            # Add retry information to description if test was retried
+            description = f"Playwright test: {test_name}"
+            if retry_info:
+                description += f" ({retry_info})"
+                if not status_message:
+                    status_message = retry_info
+            
+            if status_message:
+                status_details["message"] = status_message
+            
+            # CRITICAL: Ensure skipped tests are included with correct status
+            # Use final_status which was determined by our deduplication logic
+            result = {
+                "uuid": test_uuid,
+                "historyId": history_id,
+                "fullName": full_name,
+                "labels": labels,
+                "name": test_name,
+                "status": final_status,  # Use final_status from deduplication logic
+                "statusDetails": status_details,
+                "stage": "finished",
+                "description": description,
+                "steps": [],
+                "attachments": [],
+                "parameters": params,
+                "start": timestamp,
+                "stop": timestamp + duration
+            }
+            
+            output_file = os.path.join(allure_dir, f"{test_uuid}-result.json")
+            with open(output_file, 'w') as f:
+                import json
+                json.dump(result, f, indent=2)
+            
+            converted += 1
+        
+# Print summary after processing all files
+if converted > 0:
+    print(f"✅ Created {converted} Playwright test result(s)")
+else:
     print("ℹ️  No Playwright results were converted")
     sys.exit(0)
 
