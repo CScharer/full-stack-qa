@@ -1097,11 +1097,11 @@ jobs:
           chmod +x scripts/ci/prepare-combined-allure-results.sh
           ./scripts/ci/prepare-combined-allure-results.sh "all-test-results" "allure-results-combined"
 
-      - name: Install Allure CLI
+      - name: Install Allure3 CLI
         if: always()
         run: |
-          chmod +x scripts/ci/install-allure-cli.sh
-          ./scripts/ci/install-allure-cli.sh "2.36.0"
+          chmod +x scripts/ci/install-allure3-cli.sh
+          ./scripts/ci/install-allure3-cli.sh "3.0.0"
 
       - name: Generate Combined Allure Report
         if: always()

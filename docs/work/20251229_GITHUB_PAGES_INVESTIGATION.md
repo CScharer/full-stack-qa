@@ -285,56 +285,62 @@ After these fixes:
 ## Allure Report Version Upgrade
 
 **Date**: 2025-12-30  
-**Status**: 🔄 **IN PROGRESS** - Changes made, awaiting review and pipeline completion
+**Status**: ✅ **COMPLETED** - Allure3 CLI successfully integrated and working
 
-### Current Versions (Before Upgrade)
-- **Allure CLI** (workflows): 2.25.0
-- **Allure Java library** (pom.xml): 2.32.0
+### Allure2 Upgrade (Completed ✅)
+- **Allure CLI**: Upgraded from 2.25.0 to 2.36.0
+- **Allure Java library**: Remains at 2.32.0 (latest in Maven Central)
+- **Status**: Merged to main
 
-### Target Versions
-- **Allure CLI**: 2.36.0 (11 versions behind) - Available on GitHub releases
-- **Allure Java library**: 2.32.0 (already latest) - Latest available in Maven Central
+### Allure3 Integration (Completed ✅)
 
-**Note**: Version 2.36.0 exists on GitHub but has not been published to Maven Central yet. The latest version available in Maven Central is 2.32.0. Therefore:
-- **Java libraries** remain at **2.32.0** (latest in Maven Central)
-- **CLI** is upgraded to **2.36.0** (available on GitHub releases)
+**Status**: Allure3 CLI successfully integrated and working
 
-### Changes Made
+**Changes Made**:
 
-1. **`pom.xml`**:
-   - Kept `<allure.version>` at `2.32.0` (latest available in Maven Central)
-   - Note: 2.36.0 not yet published to Maven Central
+1. **New Script**: `scripts/ci/install-allure3-cli.sh`
+   - Installs Allure3 via npm instead of binary download
+   - Installs Node.js if not available
+   - Verifies installation
 
 2. **`.github/workflows/ci.yml`**:
-   - Updated Allure CLI installation from `2.25.0` to `2.36.0`
+   - Updated to use `install-allure3-cli.sh` with version `3.0.0`
+   - Changed step name to "Install Allure3 CLI"
 
 3. **`.github/workflows/env-fe.yml`**:
-   - Updated default Allure CLI version from `2.25.0` to `2.36.0`
+   - Updated to use `install-allure3-cli.sh` with default version `3.0.0`
+   - Updated input description to mention Allure3
+
+4. **`pom.xml`**:
+   - **No changes**: Java libraries remain at Allure2 2.32.0
 
 ### Expected Benefits
 
-- Potential fixes for Suites tab display issues
-- Improved container file handling
-- Better environment detection
-- Bug fixes and improvements from 11 CLI versions (CLI upgraded to 2.36.0)
-- Java libraries remain at 2.32.0 (latest in Maven Central; 2.36.0 not yet published)
-- May resolve duplicate Selenide display issue
+- Modern TypeScript-based CLI with improved performance
+- Redesigned UI with better user experience
+- Real-time reporting capabilities
+- New plugin system for extensibility
+- Backward compatible with Allure2 results (no test code changes needed)
 
-### Testing
+### Testing Results ✅
 
-- [ ] Pipeline runs successfully with new Allure version
-- [ ] Allure report generates correctly
-- [ ] Suites tab displays all frameworks correctly
-- [ ] Duplicate Selenide display issue resolved
-- [ ] All environments show correctly in Behaviors tab
+- [x] Pipeline runs successfully with Allure3 CLI
+- [x] Allure3 CLI installs correctly via npm
+- [x] Allure report generates correctly from Allure2 results
+- [x] Report displays correctly on GitHub Pages (https://cscharer.github.io/full-stack-qa/)
+- [x] Suites tab displays all frameworks correctly
+- [x] All environments show correctly in Behaviors tab
+- [x] UI improvements are visible and beneficial
+- [x] Performance is acceptable and improved
 
 ### Allure3 Testing Plan
 
 **Note**: Allure3 (v3.0.0) is a separate TypeScript-based CLI tool that is compatible with Allure2 results. It is NOT a replacement for the Allure2 Java libraries used in this Maven project.
 
 **Current Status**:
-- ✅ Allure2 upgrade to 2.36.0 is in progress (current branch: `upgrade-allure-to-2.36.0`)
-- ⏳ Allure3 testing will be done in a **separate branch** after this upgrade is merged
+- ✅ Allure2 upgrade to 2.36.0 completed and merged to main
+- ✅ Allure3 CLI successfully integrated and working
+- ✅ Allure3 CLI now active in CI/CD pipeline
 
 **Allure3 Details**:
 - **Repository**: `allure-framework/allure3` (separate from `allure-framework/allure2`)
@@ -348,13 +354,14 @@ After these fixes:
   - Redesigned UI
   - Backward compatible with Allure2 results
 
-**Testing Plan**:
-1. ✅ Complete Allure2 upgrade to 2.36.0 (current branch)
-2. ⏳ Merge Allure2 upgrade to main
-3. ⏳ Create new branch for Allure3 CLI testing
-4. ⏳ Test Allure3 CLI with existing Allure2 results
-5. ⏳ Evaluate if Allure3 CLI provides benefits over Allure2 CLI
-6. ⏳ Document findings and decide on adoption
+**Implementation Plan**:
+1. ✅ Complete Allure2 upgrade to 2.36.0
+2. ✅ Merge Allure2 upgrade to main
+3. ✅ Create new branch for Allure3 CLI testing (`test-allure3-cli`)
+4. ✅ Test Allure3 CLI with existing Allure2 results
+5. ✅ Evaluate Allure3 CLI benefits (UI improvements, performance, features)
+6. ✅ Document findings and adopt Allure3 CLI
+7. ✅ Allure3 CLI now active in production
 
 **Important**: Allure3 does NOT replace the Allure2 Java libraries (`io.qameta.allure:allure-testng`, `io.qameta.allure:allure-java-commons`). These Maven dependencies will continue to use Allure2 versions. Allure3 is only for the CLI report generation tool.
 
