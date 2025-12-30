@@ -1060,6 +1060,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<testCasesDirectory>${project.basedir}/src/test/robot</testCasesDirectory>
 					<outputDirectory>${project.build.directory}/robot-reports</outputDirectory>
 					<logLevel>INFO</logLevel>
+					<pythonExecutable>/opt/homebrew/bin/python3</pythonExecutable>
 				</configuration>
 				<executions>
 					<execution>
