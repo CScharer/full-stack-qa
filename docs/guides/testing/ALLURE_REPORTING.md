@@ -633,9 +633,147 @@ Backend test results are converted to Allure format:
 
 ---
 
-**Last Updated**: December 29, 2025
+**Last Updated**: December 30, 2025
 
-### Recent Updates (2025-12-29)
+## 📚 Implementation History & Key Fixes
+
+This section documents the historical context and key fixes that were implemented to achieve the current Allure reporting setup. This information is preserved for reference and understanding of the evolution of the reporting system.
+
+### Initial Challenges (2025-12-29)
+
+**Problem**: Allure reports were missing several sections and frameworks:
+- Missing Executors section (CI/CD build information)
+- Missing Categories section (custom test categories)
+- Missing Trend section (historical test execution data)
+- Missing Suites section (test suite grouping)
+- Only TestNG tests appeared in "Features By Stories" (Cypress, Playwright, Robot, Vibium, Selenide missing)
+- Only Playwright tests appeared in Suites tab on GitHub Pages
+
+### Framework Integration (Completed ✅)
+
+**Solution**: Created conversion scripts for each framework:
+- **Cypress**: `convert-cypress-to-allure.sh` - Converts JSON results to individual Allure results
+- **Playwright**: `convert-playwright-to-allure.sh` - Converts JUnit XML with intelligent retry deduplication
+- **Robot Framework**: `convert-robot-to-allure.sh` - Converts XML results to Allure format
+- **Vibium**: `convert-vibium-to-allure.sh` - Converts Vitest JSON results to Allure format
+
+**Key Features Implemented**:
+- Individual test results (not summaries) for all frameworks
+- Environment-specific processing (dev, test, prod)
+- Retry deduplication for Playwright and TestNG
+- Proper status mapping (passed/failed/skipped)
+
+### Selenide Visibility Fixes (Completed ✅)
+
+**Problem**: Selenide tests were appearing nested under "Surefire test" instead of as a top-level "Selenide Tests" suite.
+
+**Root Causes Identified**:
+1. Selenide result files had `suite="Surefire test"` instead of `suite="Selenide Tests"`
+2. Multiple duplicate top-level containers were being created (80+ containers!)
+3. Container hierarchy was incorrect (pointing to result UUIDs instead of env container UUIDs)
+
+**Fixes Implemented**:
+1. **Early Selenide Detection**: Added detection in `add-environment-labels.sh` to check `fullName` and `name` fields before container checks
+2. **Suite Label Update**: Updates suite label from "Surefire test" to "Selenide Tests" in result files
+3. **Suite Name Override**: Override happens BEFORE grouping in `create-framework-containers.sh`
+4. **Suite Merging**: Logic to merge "Surefire test" into "Selenide Tests" if it contains Selenide tests
+5. **Deduplication**: Added `top_level_containers_created` set to prevent duplicate top-level containers
+
+**Result**: Selenide tests now appear as a separate top-level suite with proper environment containers.
+
+### Suites Tab Fixes (Completed ✅)
+
+**Problem**: Only Playwright tests were appearing in the Allure report's Suites tab, even though all frameworks were showing correctly in the Overview section.
+
+**Root Causes Identified**:
+1. Missing container files for frameworks
+2. Incorrect container hierarchy (top-level containers pointing directly to result UUIDs)
+3. Multiple duplicate containers being created
+
+**Fixes Implemented**:
+1. **Container Creation Script**: Created `create-framework-containers.sh` to generate container files for all frameworks
+2. **Proper Hierarchy**: Top-level containers → Environment-specific containers → Results
+3. **Environment-Specific Containers**: Creates containers like "Cypress Tests [DEV]", "Cypress Tests [TEST]", "Cypress Tests [PROD]"
+4. **Deduplication**: Prevents multiple top-level containers for the same suite
+5. **Combined Environment Handling**: Splits "combined" environment by test name patterns ([DEV], [TEST], [PROD])
+
+**Result**: All frameworks now appear in Suites tab with proper hierarchy and environment breakdown.
+
+### Environment Detection Fixes (Completed ✅)
+
+**Problem**: Selenide and Surefire tests only showed DEV environment in Behaviors tab, while other frameworks showed all 3 environments.
+
+**Root Cause**: Environment detection patterns were not matching `selenide-results-{env}` artifact naming convention.
+
+**Fix Applied**: Updated `merge-allure-results.sh` and `add-environment-labels.sh` to detect `selenide-results-{env}` pattern in 3 locations.
+
+**Result**: All frameworks now show all 3 environments (dev, test, prod) in Behaviors tab.
+
+### Allure Version Upgrades (Completed ✅)
+
+**Allure2 Upgrade**:
+- CLI upgraded from 2.25.0 to 2.36.0
+- Java libraries remain at 2.32.0 (latest in Maven Central)
+
+**Allure3 Integration**:
+- Allure3 CLI 3.0.0 successfully integrated
+- TypeScript-based CLI installed via npm
+- Works with existing Allure2 result files (backward compatible)
+- No changes required to Java libraries or test code
+
+**Key Changes**:
+- Removed `--clean` flag from `allure generate` commands (not supported in Allure3)
+- Added explicit `rm -rf` before report generation for clean reports
+- Updated all workflows and scripts to use Allure3 CLI
+
+### Retry Deduplication (Completed ✅)
+
+**Problem**: TestNG and Playwright tests showed duplicate entries for retry attempts.
+
+**Solution**: 
+- Created `deduplicate-testng-retries.sh` for TestNG retry deduplication
+- Enhanced `convert-playwright-to-allure.sh` with intelligent retry logic:
+  - Tests that passed on first attempt: Keep only first result
+  - Tests that failed and were retried: Keep final result, mark as flaky if status changed
+  - Preserves retry information for genuinely failed tests
+
+**Result**: No duplicate retries, retry information preserved for failed tests.
+
+### Smoke Tests Suite Detection (Completed ✅)
+
+**Problem**: Smoke tests were not appearing under their own suite.
+
+**Solution**: 
+- Added detection for Smoke tests by `epic="Smoke Tests"` label
+- Updated suite label from "Surefire test" to "Smoke Tests" in result files
+- Removed `parentSuite` label to make Smoke tests appear as top-level suite
+
+**Result**: Smoke tests now appear under their own "Smoke Tests" suite for all environments.
+
+### GitHub Pages Deployment (Completed ✅)
+
+**Problem**: Suites tab showed all frameworks locally but only Playwright on GitHub Pages.
+
+**Solution**: 
+- Changed `force_orphan: false` to preserve file references
+- Added verification step before deployment
+- Fixed container file structure and hierarchy
+
+**Result**: All frameworks now appear correctly in Suites tab on GitHub Pages.
+
+### Key Learnings
+
+1. **Container Structure**: Allure's Suites tab requires both top-level and environment-specific containers with proper hierarchy
+2. **parentSuite Labels**: Explicit `parentSuite` labels help Allure understand the container hierarchy
+3. **Container vs Result Files**: Both `*-result.json` and `*-container.json` files need to be processed
+4. **Environment Processing**: Must loop through all environments, not use `elif` statements that stop at first match
+5. **Selenide Detection**: Multiple detection methods (epic, testClass, fullName) ensure Selenide files are always identified
+6. **Combined Environment**: Tests with `env="combined"` can be split by test name patterns to create environment-specific containers
+7. **Allure3 Compatibility**: Allure3 CLI is backward compatible with Allure2 result files, making migration seamless
+
+---
+
+### Recent Updates (2025-12-30)
 
 - ✅ **Fixed Framework Conversions**: All frameworks now create individual test results (not summaries)
   - Cypress: 2 individual tests ✅

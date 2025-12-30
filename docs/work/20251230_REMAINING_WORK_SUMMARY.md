@@ -1,6 +1,6 @@
 # 📋 Remaining Work & Improvements Summary
 
-**Last Updated**: 2025-12-27 (Code Quality Warnings - Checkstyle Complete, PMD Complete, GuardedLogger Migration Complete)  
+**Last Updated**: 2025-12-30 (Allure Report fixes complete, all high/medium priority items resolved)  
 **Status**: Current state of all remaining tasks  
 **Purpose**: Consolidated view of all remaining work items from cleanup, archive, and issues documentation
 
@@ -61,25 +61,36 @@
 ---
 
 #### Allure Report Issues
-**Status**: 🔍 **In Progress** - Core infrastructure complete, usability improvements needed
+**Status**: ✅ **COMPLETE** - All major fixes implemented and verified (2025-12-30)
 
-**Note**: See `docs/guides/testing/ALLURE_REPORTING.md` for detailed implementation records of completed fixes.
+**Note**: See `docs/guides/testing/ALLURE_REPORTING.md` for detailed implementation records and historical context.
 
-**Current Issues**:
-1. **Environment Differentiation in Report**:
-   - **Issue**: Cannot filter/group tests by environment in the Allure report UI
-   - **Status**: ⚠️ Partially addressed - FE tests show environment in test name/parameters, BE tests may show "COMBINED" if environment can't be determined
-   - **Limitation**: Allure Report doesn't natively support filtering by custom labels like "environment"
-   - **Workaround**: Environment is added to test name (e.g., "Test Name [DEV]") and as a parameter for visibility
-   - **Impact**: FE tests will show environment clearly, BE tests may need additional work to properly differentiate environments
-
-**Completed Fixes** (moved to `docs/guides/testing/ALLURE_REPORTING.md`):
+**Completed Fixes** (all major issues resolved):
 - ✅ Fixed IndexError in environment labeling script
 - ✅ Fixed environment detection (all tests incorrectly labeled as "test")
 - ✅ Fixed marker file processing (JSON parsing errors)
 - ✅ Fixed BE results conversion (performance tests not appearing)
 - ✅ Fixed Multi.Environment flag (showing false when tests ran in multiple environments)
 - ✅ Fixed BE test failure counts (incorrect column indices in CSV parsing)
+- ✅ Fixed Selenide suite visibility (now appears as separate top-level suite)
+- ✅ Fixed Suites tab display (all frameworks now visible)
+- ✅ Fixed environment detection for Selenide/Surefire (all 3 environments now show)
+- ✅ Fixed Cypress environment processing (all environments now show)
+- ✅ Fixed Playwright retry deduplication (no duplicate passed retries)
+- ✅ Fixed TestNG retry deduplication (keeps best result)
+- ✅ Fixed Smoke tests suite detection (now appears under own suite)
+- ✅ Fixed skipped tests visibility (Playwright and all frameworks)
+- ✅ Upgraded to Allure3 CLI 3.0.0 (TypeScript-based, backward compatible)
+- ✅ Fixed GitHub Pages deployment (all frameworks visible in Suites tab)
+
+**Known Limitations** (non-blocking):
+1. **Environment Differentiation in Report**:
+   - **Issue**: Cannot filter/group tests by environment in the Allure report UI
+   - **Status**: ⚠️ Partially addressed - FE tests show environment in test name/parameters, BE tests may show "COMBINED" if environment can't be determined
+   - **Limitation**: Allure Report doesn't natively support filtering by custom labels like "environment"
+   - **Workaround**: Environment is added to test name (e.g., "Test Name [DEV]") and as a parameter for visibility
+   - **Impact**: FE tests will show environment clearly, BE tests may need additional work to properly differentiate environments
+   - **Priority**: 🟢 Low - Workaround is functional, native filtering would be nice-to-have
 
 ---
 
@@ -105,9 +116,9 @@
 
 ### 🟡 Remaining @SuppressWarnings Annotations
 
-**Status**: ⚠️ **TO REVIEW** - See `docs/work/20251225_SUPPRESS_WARNINGS_INVENTORY.md` for complete inventory
+**Status**: ⚠️ **TO REVIEW** - See `docs/work/20251230_SUPPRESS_WARNINGS_INVENTORY.md` for complete inventory
 
-**Note**: All @SuppressWarnings information has been consolidated into the dedicated inventory document: `docs/work/20251225_SUPPRESS_WARNINGS_INVENTORY.md`
+**Note**: All @SuppressWarnings information has been consolidated into the dedicated inventory document: `docs/work/20251230_SUPPRESS_WARNINGS_INVENTORY.md`
 
 ---
 
@@ -172,5 +183,5 @@
 
 ---
 
-**Last Review Date**: 2025-12-24  
-**Document Location**: `docs/work/20251225_REMAINING_WORK_SUMMARY.md`
+**Last Review Date**: 2025-12-30  
+**Document Location**: `docs/work/20251230_REMAINING_WORK_SUMMARY.md`
