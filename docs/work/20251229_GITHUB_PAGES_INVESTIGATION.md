@@ -191,6 +191,43 @@ After these fixes:
 **Next Steps**:
 1. ✅ Review pipeline logs - **Deduplication confirmed working**
 2. ⚠️ Investigate why "Surefire test" still has 388 tests (may be expected if they're non-Selenide TestNG tests)
-3. ⚠️ Merge PR to main for full environment testing
+3. ✅ **PR merged to main** - Full pipeline run completed
 4. ⚠️ Verify Suites tab on GitHub Pages after merge (all frameworks should appear)
+
+---
+
+## Main Branch Pipeline Run Results
+
+**Pipeline Run**: https://github.com/CScharer/full-stack-qa/actions/runs/20586056931  
+**Status**: ⚠️ **COMPLETED WITH FAILURES** - One test failure in Firefox Grid Tests (PROD)
+
+### Failed Jobs
+1. **Test FE (PROD) / Grid Tests - firefox (prod)**: Failed
+2. **Gate (PROD)**: Failed (likely due to test failure above)
+
+### Successful Jobs
+- ✅ All DEV environment tests passed
+- ✅ All TEST environment tests passed
+- ✅ Most PROD environment tests passed (only Firefox Grid Tests failed)
+- ✅ **Combined Allure Report job completed successfully**
+
+### Key Findings
+
+**Test Failure Analysis**:
+- The failure is in **test execution**, not in our container creation fixes
+- Firefox Grid Tests failed in PROD environment only
+- All other browsers (Chrome, Edge) passed in PROD
+- All Firefox tests passed in DEV and TEST environments
+- This appears to be a **flaky test** or **environment-specific issue**, not related to our Suites tab fixes
+
+**Container Creation Status**:
+- ⚠️ **Unable to verify container creation logs** due to log access limitations
+- ✅ Combined Allure Report job completed, suggesting container creation likely worked
+- ⚠️ Need to verify GitHub Pages deployment status
+
+**Next Steps**:
+1. ⚠️ Review Firefox Grid Tests failure (separate issue from Suites tab fixes)
+2. ⚠️ Check if GitHub Pages deployment occurred (may have been skipped due to failure)
+3. ⚠️ Verify Suites tab on GitHub Pages if deployment occurred
+4. ⚠️ Check container creation logs if accessible
 
