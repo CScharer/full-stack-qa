@@ -9,7 +9,7 @@
 [![JavaScript](https://img.shields.io/badge/logo-JavaScript-blue?logo=JavaScript)](https://www.JavaScriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 [![Python](https://img.shields.io/badge/Python-3.13-orange.svg)](https://www.python.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://www.typescriptlang.org/)
 
 [![Cucumber](https://img.shields.io/badge/Cucumber-7.33.0-brightgreen.svg)](https://cucumber.io/)
 [![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.0-blue.svg)](https://rest-assured.io/)
@@ -28,7 +28,7 @@
 
 [![UI Frameworks](https://img.shields.io/badge/UI%20Frameworks-Cypress%20%7C%20Playwright%20%7C%20Robot%20%7C%20Selenide%20%7C%20Selenium-yellow.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 
-[![Cypress](https://img.shields.io/badge/Cypress-15.2.0-blue.svg)](https://www.cypress.io)
+[![Cypress](https://img.shields.io/badge/Cypress-15.8.1-blue.svg)](https://www.cypress.io)
 [![Playwright](https://img.shields.io/badge/Playwright-1.57.0-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
 [![Selenide](https://img.shields.io/badge/Selenide-7.13.0-blue.svg)](https://selenide.org/)
@@ -119,10 +119,10 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Java 21** - Latest LTS version
 - **Python 3.13** - Latest stable version (for Robot Framework & Locust)
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
-- **TypeScript 5.9** - Type-safe JavaScript (for Cypress & Playwright)
+- **TypeScript 5.9.3** - Type-safe JavaScript (for Cypress & Playwright)
 - **Selenium 4.39.0** - Modern WebDriver API with Grid support
 - **Playwright 1.57.0** - Fast and reliable end-to-end testing
-- **Cypress 15.2.0** - JavaScript end-to-end testing framework
+- **Cypress 15.8.1** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
 - **REST Assured 6.0.0** - REST API testing & validation
 - **Cucumber 7.33.0** - BDD framework with Gherkin
@@ -1167,7 +1167,7 @@ cp XML/UserSettings.xml.template XML/UserSettings.xml
 | **Security** | Google Cloud Secret Manager | 2.80.0 |
 | **Driver Management** | WebDriverManager | 6.3.3 |
 | **UI Testing** | Playwright (TS) | 1.57.0 |
-| **UI Testing** | Cypress (TS) | 13.7.0 |
+| **UI Testing** | Cypress (TS) | 15.8.1 |
 | **UI Testing** | Robot Framework | 2.1.0 |
 | **Database** | H2, SQLite, MSSQL | Various |
 | **Docker** | Docker Compose | 3.8 |

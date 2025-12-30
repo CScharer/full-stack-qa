@@ -123,14 +123,16 @@ This living document serves as a centralized tracking system for all dependency 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
 | React | 19.2.3 | 19.2.3 | [✅] | 2025-12-30 | Current stable version |
-| Next.js | 16.1.0 | 16.1.1 | [⚠️] | 2025-12-30 | Current: 16.1.0, update available: 16.1.1 |
+| Next.js | 16.1.1 | 16.1.1 | [✅] | 2025-12-30 | Current stable version |
+| @tanstack/react-query | 5.90.16 | 5.90.16 | [✅] | 2025-12-30 | Current stable version |
+| eslint-config-next | 16.1.1 | 16.1.1 | [✅] | 2025-12-30 | Current stable version |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @testing-library/react | 16.3.0 | 16.3.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @testing-library/jest-dom | 6.9.1 | 6.9.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @testing-library/user-event | 14.6.1 | 14.6.1 | [✅] | 2025-12-19 | Updated in PR #51 |
-| jsdom | 27.3.0 | 27.4.0 | [⚠️] | 2025-12-30 | Current: 27.3.0, update available: 27.4.0 |
+| jsdom | 27.4.0 | 27.4.0 | [✅] | 2025-12-30 | Current stable version |
 | ESLint | 9.39.2 | 9.39.2 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @types/node | 25.0.0 | 25.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 
@@ -235,7 +237,10 @@ This living document serves as a centralized tracking system for all dependency 
 - **Cypress**: 15.2.0 → 15.8.1 (current stable)
 - **TypeScript**: 5.9 → 5.9.3 (current stable) - All projects
 - **React**: 19.2.1 → 19.2.3 (current stable)
-- **Next.js**: 16.0.10 → 16.1.0 (current, update available: 16.1.1)
+- **Next.js**: 16.0.10 → 16.1.1 (current stable)
+- **@tanstack/react-query**: 5.90.12 → 5.90.16 (current stable)
+- **eslint-config-next**: 16.1.0 → 16.1.1 (current stable)
+- **jsdom**: 27.3.0 → 27.4.0 (current stable)
 - **Jackson Databind**: 3.0.0 → 3.0.3 (current stable)
 - **MSSQL JDBC**: 13.2.0.jre11 → 13.2.1.jre11 (current stable)
 - **Maven Compiler Plugin**: Current 3.13.0 (update available: 3.14.1)
