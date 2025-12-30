@@ -585,9 +585,10 @@ Frontend framework test results are converted to Allure format:
 - **Playwright**: Parses JUnit XML files from test-results directory
   - Creates individual Allure results for each test case
   - **Retry Deduplication**: Intelligently handles retry attempts:
-    - Tests that passed on first attempt: Removes duplicate entries
-    - Tests that failed and were retried: Keeps final result, marks as flaky if status changed
+    - Tests that passed on first attempt: Keeps the test (Playwright's retries: 1 retries all tests, but we keep passed ones)
+    - Tests that failed and were retried: Keeps final result, marks as flaky if status changed (failed → passed)
     - Preserves retry information for analysis
+    - **Note**: Only deduplicates actual retries of failed tests, not passed tests with duplicates from retry config
 - **Robot Framework**: Parses `output.xml` files
   - Creates individual Allure results from `<test>` elements
   - Extracts test name, status, and duration

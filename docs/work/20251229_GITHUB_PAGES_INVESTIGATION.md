@@ -1,7 +1,7 @@
 # GitHub Pages Suites Tab Investigation
 
 **Created**: 2025-12-29  
-**Last Updated**: 2025-12-30 (Cypress & Playwright fixes)  
+**Last Updated**: 2025-12-30 (Cypress & Playwright fixes - including mislabeling and deduplication improvements)  
 **Status**: ✅ **FIXES IN PROGRESS** - Cypress results missing and retry duplication issues  
 **Issue**: Suites tab shows all frameworks locally but only Playwright on GitHub Pages
 
@@ -397,6 +397,20 @@ After this fix:
 - ✅ All environments (dev/test/prod) will have Cypress results included
 - ✅ Cypress tests will show in Suites tab and Behaviors tab
 
+### Additional Fix: Cypress Mislabeling (2025-12-30)
+
+**Issue**: Cypress tests were appearing under "Selenide Tests" suite instead of "Cypress Tests"
+
+**Root Cause**: Cypress tests have "Selenide.Cypress..." in their fullName, causing Selenide detection logic to misidentify them
+
+**Fix Applied**:
+- Updated `scripts/ci/add-environment-labels.sh` to exclude Cypress from Selenide detection
+- Updated `scripts/ci/create-framework-containers.sh` to exclude Cypress from Selenide detection
+- Detection now checks: Only mark as Selenide if fullName/name contains "Selenide" but NOT "Cypress"
+
+**Expected Result**:
+- ✅ Cypress tests will appear under "Cypress Tests" suite (not "Selenide Tests")
+
 ---
 
 ## Playwright Retry Deduplication Fix
@@ -431,6 +445,22 @@ After this fix:
 - ✅ Tests that failed and were retried will show final result with retry information
 - ✅ Flaky tests (failed → passed on retry) will be marked as flaky
 - ✅ Retry information preserved for analysis of actually retried tests
+
+### Additional Fix: Less Aggressive Deduplication (2025-12-30)
+
+**Issue**: Passed tests were being removed when duplicates existed, even though they passed on first attempt
+
+**Root Cause**: Playwright's `retries: 1` config retries ALL tests (even passed ones), creating duplicates. The original fix was too aggressive and removed valid passed tests.
+
+**Fix Applied**:
+- Updated `scripts/ci/convert-playwright-to-allure.sh` to be less aggressive:
+  - If test passed on first attempt: Keep it (don't deduplicate, even if retry config created duplicates)
+  - Only deduplicate if test actually failed and was retried
+  - This ensures all passed tests are shown in the report
+
+**Expected Result**:
+- ✅ All passed Playwright tests will be shown (no false deduplication)
+- ✅ Only actual retries of failed tests will be deduplicated
 
 ### Retry Behavior
 
