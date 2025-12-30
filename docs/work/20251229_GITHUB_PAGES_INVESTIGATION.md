@@ -227,7 +227,55 @@ After these fixes:
 
 **Next Steps**:
 1. ⚠️ Review Firefox Grid Tests failure (separate issue from Suites tab fixes)
-2. ⚠️ Check if GitHub Pages deployment occurred (may have been skipped due to failure)
-3. ⚠️ Verify Suites tab on GitHub Pages if deployment occurred
-4. ⚠️ Check container creation logs if accessible
+2. ✅ **GitHub Pages deployment confirmed** - Status: Built and deployed
+3. ⚠️ **Issue Found**: Only Cypress, Playwright, Robot, and Vibium show all 3 environments in Behaviors tab
+4. ⚠️ **Root Cause**: Selenide/Surefire tests not getting environment labels correctly
+5. ✅ **Fix Applied**: Updated environment detection patterns to include `selenide-results-{env}` pattern
+
+---
+
+## Environment Detection Fix
+
+**Problem**: Selenide and Surefire tests only show DEV environment in Behaviors tab, while Cypress, Playwright, Robot, and Vibium show all 3 environments.
+
+**Root Cause**: 
+- Selenide results are uploaded as `selenide-results-{environment}` artifacts
+- Environment detection patterns in `merge-allure-results.sh` and `add-environment-labels.sh` were not matching `selenide-results-{env}` pattern
+- Only patterns like `-results-dev`, `-results-test`, `-results-prod` were being checked
+
+**Fix Applied**:
+- Updated `scripts/ci/merge-allure-results.sh` to detect `selenide-results-{env}` pattern
+- Updated `scripts/ci/add-environment-labels.sh` to detect `selenide-results-{env}` pattern
+- This ensures Selenide test results get correct environment labels (dev/test/prod)
+
+**Files Modified**:
+1. `scripts/ci/merge-allure-results.sh` - Added `selenide-results-{env}` pattern matching (3 locations)
+2. `scripts/ci/add-environment-labels.sh` - Added `selenide-results-{env}` pattern matching
+
+**Expected Result**: After next pipeline run, Selenide and Surefire tests should show all 3 environments in Behaviors tab
+
+---
+
+## Current Status (Post-Fix)
+
+**Date**: 2025-12-30  
+**Status**: ✅ **PARTIALLY RESOLVED** - Selenide Tests visible but duplicate display issue remains
+
+### Suites Tab Status
+
+✅ **Selenide Tests now appear in Suites tab** - The suite label fixes are working  
+⚠️ **Duplicate display issue**: Selenide Tests appear both:
+- As a separate "Selenide Tests" suite (correct)
+- Also nested below "Surefire test" suite (incorrect - needs further investigation)
+
+### Behaviors Tab Status
+
+✅ **Cypress, Playwright, Robot, Vibium**: All show all 3 environments (dev/test/prod)  
+⚠️ **Selenide/Surefire**: Environment detection fix applied, awaiting next pipeline run to verify
+
+### Next Steps
+
+1. ✅ **Environment detection fix**: Applied and ready for testing
+2. ⚠️ **Duplicate Selenide display**: Investigate why Selenide Tests appear under both "Selenide Tests" and "Surefire test" suites
+3. ⚠️ **Allure upgrade**: Consider upgrading to latest version (2.36.0) to potentially resolve remaining issues
 
