@@ -204,9 +204,9 @@ This document summarizes a comprehensive audit and update of **all dependencies*
 
 ### Allure Version
 
-- **Current**: Allure 2.36.0 (CLI and Java library)
+- **Current**: Allure CLI 2.36.0, Allure Java libraries 2.32.0
 - **Updated**: 2025-12-30
-- **Note**: Upgraded from 2.32.0 (Java) and 2.25.0 (CLI) to latest stable version 2.36.0
+- **Note**: CLI upgraded from 2.25.0 to 2.36.0 (available on GitHub). Java libraries remain at 2.32.0 (latest in Maven Central; 2.36.0 not yet published)
 
 ### Python Dependency Conflicts
 
