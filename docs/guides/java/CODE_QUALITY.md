@@ -47,7 +47,7 @@ This project maintains high code quality standards through automated tools and b
 
 ### Pre-Commit Workflow (Required)
 
-**⚠️ IMPORTANT**: This formatting workflow **MUST** be run before every commit to maintain code quality and ensure zero violations.
+**⚠️ IMPORTANT**: This formatting workflow **MUST** be run before every commit to maintain code quality and ensure zero violations. The pre-commit hook automatically runs this for you.
 
 **Quick Start - Use the Automated Script** (Recommended):
 
@@ -161,7 +161,7 @@ The code quality pipeline has been optimized for CI/CD:
 
 - **CI Script**: `scripts/ci/verify-code-quality.sh` - Read-only verification (Checkstyle + PMD)
 - **Local Script**: `scripts/format-code.sh` - Full formatting with import cleanup
-- **Pre-commit hooks**: Automatically formats code if code files changed (skips docs-only, no compilation)
+- **Pre-commit hooks**: Automatically formats code if code files changed (skips docs-only, no compilation/validation)
 - **Pre-push hooks**: Formats, compiles, and validates code if code files changed (skips docs-only)
 - **GitHub Actions**: `.github/workflows/verify-formatting.yml` enforces formatting server-side
 - **Workflow Validation**: GitHub Actions workflow files validated using `actionlint` on push

@@ -39,7 +39,7 @@ cat > "$PRE_COMMIT_HOOK" << 'HOOK_EOF'
 #!/bin/bash
 # .git/hooks/pre-commit
 # Git pre-commit hook for code formatting
-# Formats code automatically if code files are being committed
+# Formats code automatically if code files are being committed (no compilation/validation)
 # Can be bypassed with: git commit --no-verify
 
 # Colors for output
@@ -66,7 +66,7 @@ if [ -z "$CODE_FILES" ] && [ -n "$STAGED_FILES" ]; then
     exit 0
 fi
 
-# Code files changed - format code (skip compilation on commit)
+# Code files changed - format code only (skip compilation and validation)
 if [ -n "$CODE_FILES" ]; then
     echo -e "${BLUE}📝 Code files changed - formatting code...${NC}"
     
@@ -279,8 +279,8 @@ chmod +x "$POST_CHECKOUT_HOOK"
 echo -e "${GREEN}✅ Git hooks installed successfully${NC}"
 echo ""
 echo "Installed hooks:"
-echo "  ✅ Pre-commit hook: Formats code automatically (skips for documentation-only changes)"
-echo "  ✅ Pre-push hook: Formats and validates code (skips for documentation-only changes)"
+echo "  ✅ Pre-commit hook: Formats code automatically (skips compilation/validation - runs on push)"
+echo "  ✅ Pre-push hook: Formats, compiles, and validates code (skips for documentation-only changes)"
 echo "  ✅ Post-checkout hook: Auto-installs hooks on checkout/clone"
 echo ""
 echo "To bypass hooks, use:"

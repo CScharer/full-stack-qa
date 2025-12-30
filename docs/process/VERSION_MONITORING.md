@@ -69,7 +69,7 @@ This document describes the automated version monitoring and alerting system imp
 - Automatically formats code if code files are being committed (runs `scripts/format-code.sh --skip-compilation`)
 - Skips formatting for documentation-only changes (`.md`, `.log`, `.txt`, `.rst`, `.adoc` files)
 - Fast commits: Documentation-only commits complete in <1 second
-- Code commits: Formatting takes 20-40 seconds (no compilation on commit)
+- Code commits: Formatting takes 20-40 seconds (no compilation/validation on commit)
 - Can be bypassed with `git commit --no-verify` (use with caution)
 
 **Pre-Push Hook Features**:
