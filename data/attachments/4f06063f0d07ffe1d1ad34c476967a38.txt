@@ -1,2 +1,0 @@
-Browser: chrome 143.0.7499.169
-Platform: linux
