@@ -1202,7 +1202,7 @@ cp XML/UserSettings.xml.template XML/UserSettings.xml
 - ARM64 (Apple Silicon) compatibility
 
 **✅ Allure Reporting with Screenshots**
-- Allure Framework 2.36.0 integration
+- Allure Framework integration (CLI: 2.36.0, Java: 2.32.0)
 - Automatic screenshot capture on test failures only
 - Beautiful HTML dashboards with graphs
 - Epic/Feature/Story organization

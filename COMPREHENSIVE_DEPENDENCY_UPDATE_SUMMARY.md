@@ -30,7 +30,8 @@ This document summarizes a comprehensive audit and update of **all dependencies*
 
 | Dependency | Previous Version | Updated Version | Status | Notes |
 |------------|-----------------|-----------------|--------|-------|
-| **Allure Report** | 2.32.0 | 2.36.0 | ✅ | Latest stable available in Maven Central (updated 2025-12-30) |
+| **Allure CLI** | 2.25.0 | 2.36.0 | ✅ | Updated to latest (GitHub releases, updated 2025-12-30) |
+| **Allure Java** | 2.32.0 | 2.32.0 | ✅ | Latest in Maven Central (2.36.0 not yet published, updated 2025-12-30) |
 | **AspectJ** | 1.9.25 | 1.9.25.1 | ✅ | Patch update |
 | **Byte Buddy** | 1.18.2 | 1.18.3 | ✅ | Patch update |
 | **Checkstyle** | 12.2.0 | 12.3.0 | ✅ | Minor update |

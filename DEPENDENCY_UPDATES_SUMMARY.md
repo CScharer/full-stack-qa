@@ -14,7 +14,8 @@ All dependencies have been updated to their latest stable versions. This documen
 
 | Dependency | Previous | Updated To | Notes |
 |------------|----------|------------|-------|
-| Allure | 2.32.0 | 2.36.0 | Latest stable (updated Dec 30, 2025) |
+| Allure CLI | 2.25.0 | 2.36.0 | Latest (GitHub releases, updated Dec 30, 2025) |
+| Allure Java | 2.32.0 | 2.32.0 | Latest in Maven Central (updated Dec 30, 2025) |
 | AspectJ | 1.9.25 | 1.9.25.1 | Patch update |
 | Byte Buddy | 1.18.2 | 1.18.3 | Patch update |
 | Checkstyle | 12.2.0 | 12.3.0 | Minor update |
