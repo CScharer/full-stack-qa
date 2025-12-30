@@ -143,38 +143,38 @@ for full_name, attempts in test_attempts.items():
         # Single attempt - no retry, keep as is
         test_case, status, _, _ = attempts[0]
         test_results[full_name] = (test_case, status, False, None)
-            else:
-                # Multiple attempts - could be retries or duplicate entries
-                # Sort by attempt order (idx) to get chronological order
-                attempts_sorted = sorted(attempts, key=lambda x: x[2])
-                first_attempt = attempts_sorted[0]
-                last_attempt = attempts_sorted[-1]
-                
-                first_test_case, first_status, _, _ = first_attempt
-                last_test_case, last_status, _, _ = last_attempt
-                
-                # Smart deduplication logic:
-                # 1. If all attempts have same status (all passed, all skipped, all failed) - keep first (no retry needed)
-                # 2. If status changed (failed->passed, skipped->passed, etc.) - keep the best result
-                # 3. Prefer passed > failed > broken > skipped (best to worst)
-                
-                # Check if all attempts have the same status
-                all_same_status = all(attempt[1] == first_status for attempt in attempts_sorted)
-                
-                if all_same_status:
-                    # All attempts have same status - no actual retry needed, keep first
-                    test_results[full_name] = (first_test_case, first_status, False, None)
-                else:
-                    # Status changed - this is a real retry, find the best result
-                    # Priority: passed > failed > broken > skipped
-                    status_priority = {"passed": 4, "failed": 3, "broken": 2, "skipped": 1}
-                    best_attempt = max(attempts_sorted, key=lambda x: status_priority.get(x[1], 0))
-                    best_test_case, best_status, _, _ = best_attempt
-                    
-                    # Mark as flaky if status improved (failed->passed, skipped->passed)
-                    is_flaky = (first_status != "passed" and best_status == "passed")
-                    retry_info = f"Retried {len(attempts)} times. First: {first_status}, Best: {best_status}"
-                    test_results[full_name] = (best_test_case, best_status, is_flaky, retry_info)
+    else:
+        # Multiple attempts - could be retries or duplicate entries
+        # Sort by attempt order (idx) to get chronological order
+        attempts_sorted = sorted(attempts, key=lambda x: x[2])
+        first_attempt = attempts_sorted[0]
+        last_attempt = attempts_sorted[-1]
+        
+        first_test_case, first_status, _, _ = first_attempt
+        last_test_case, last_status, _, _ = last_attempt
+        
+        # Smart deduplication logic:
+        # 1. If all attempts have same status (all passed, all skipped, all failed) - keep first (no retry needed)
+        # 2. If status changed (failed->passed, skipped->passed, etc.) - keep the best result
+        # 3. Prefer passed > failed > broken > skipped (best to worst)
+        
+        # Check if all attempts have the same status
+        all_same_status = all(attempt[1] == first_status for attempt in attempts_sorted)
+        
+        if all_same_status:
+            # All attempts have same status - no actual retry needed, keep first
+            test_results[full_name] = (first_test_case, first_status, False, None)
+        else:
+            # Status changed - this is a real retry, find the best result
+            # Priority: passed > failed > broken > skipped
+            status_priority = {"passed": 4, "failed": 3, "broken": 2, "skipped": 1}
+            best_attempt = max(attempts_sorted, key=lambda x: status_priority.get(x[1], 0))
+            best_test_case, best_status, _, _ = best_attempt
+            
+            # Mark as flaky if status improved (failed->passed, skipped->passed)
+            is_flaky = (first_status != "passed" and best_status == "passed")
+            retry_info = f"Retried {len(attempts)} times. First: {first_status}, Best: {best_status}"
+            test_results[full_name] = (best_test_case, best_status, is_flaky, retry_info)
         
         # Now convert the processed test results
         for full_name, (test_case, final_status, is_flaky, retry_info) in test_results.items():
@@ -184,16 +184,29 @@ for full_name, attempts in test_attempts.items():
             duration = int(test_time * 1000) if test_time > 0 else 1000
             
             # Get status message from the final test case
+            # IMPORTANT: Use final_status (from our deduplication logic) instead of re-checking test_case
+            # This ensures skipped tests are properly preserved
             skipped_elem = test_case.find('skipped')
             failure_elem = test_case.find('failure')
             error_elem = test_case.find('error')
             
-            if skipped_elem is not None:
-                status_message = skipped_elem.get('message', 'Test was skipped')
-            elif failure_elem is not None:
-                status_message = failure_elem.get('message', 'Test failed')
-            elif error_elem is not None:
-                status_message = error_elem.get('message', 'Test error')
+            # Determine status message based on final_status (which we determined from deduplication)
+            if final_status == "skipped":
+                # Test is skipped - get message from skipped element or use default
+                if skipped_elem is not None:
+                    status_message = skipped_elem.get('message', 'Test was skipped')
+                else:
+                    status_message = 'Test was skipped'
+            elif final_status == "failed":
+                if failure_elem is not None:
+                    status_message = failure_elem.get('message', 'Test failed')
+                else:
+                    status_message = 'Test failed'
+            elif final_status == "broken":
+                if error_elem is not None:
+                    status_message = error_elem.get('message', 'Test error')
+                else:
+                    status_message = 'Test error'
             else:
                 status_message = None
             
@@ -234,13 +247,15 @@ for full_name, attempts in test_attempts.items():
             if status_message:
                 status_details["message"] = status_message
             
+            # CRITICAL: Ensure skipped tests are included with correct status
+            # Use final_status which was determined by our deduplication logic
             result = {
                 "uuid": test_uuid,
                 "historyId": history_id,
                 "fullName": full_name,
                 "labels": labels,
                 "name": test_name,
-                "status": final_status,
+                "status": final_status,  # Use final_status from deduplication logic
                 "statusDetails": status_details,
                 "stage": "finished",
                 "description": description,
