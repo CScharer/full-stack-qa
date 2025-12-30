@@ -158,9 +158,9 @@ on:
         type: string
         default: '2048m'
       allure_version:
-        description: 'Allure CLI version'
+        description: 'Allure3 CLI version (default: 3.0.0)'
         type: string
-        default: '2.36.0'
+        default: '3.0.0'
       docker_shm_size:
         description: 'Docker shared memory size for Selenium nodes (e.g., 2gb, 4gb)'
         type: string
@@ -1180,10 +1180,11 @@ jobs:
           echo "  Results: $(find allure-results -name "*-result.json" 2>/dev/null | wc -l | tr -d ' ')"
           echo "  Screenshots: $(find allure-results -name "*.png" 2>/dev/null | wc -l | tr -d ' ')"
 
-      - name: Install Allure CLI
+      - name: Install Allure3 CLI
         if: always()
         run: |
-          ./scripts/ci/install-allure-cli.sh "${{ inputs.allure_version || '2.36.0' }}"
+          chmod +x scripts/ci/install-allure3-cli.sh
+          ./scripts/ci/install-allure3-cli.sh "${{ inputs.allure_version || '3.0.0' }}"
 
       - name: Generate Allure Report
         if: always()

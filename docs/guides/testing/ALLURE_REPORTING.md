@@ -1,10 +1,11 @@
 # Allure Test Reporting
 
-**Status**: ✅ Configured
-**Version**: Allure CLI 2.36.0, Java libraries 2.32.0
+**Status**: ✅ Configured (Testing Allure3 CLI)
+**Version**: Allure3 CLI 3.0.0, Allure2 Java libraries 2.32.0
 **Framework**: TestNG
 **Date**: November 8, 2025
 **Last Updated**: December 30, 2025
+**Note**: Currently testing Allure3 CLI while keeping Allure2 Java libraries
 
 ---
 
@@ -25,7 +26,7 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 ### Dependencies Added (pom.xml)
 - `allure-testng:2.32.0` - TestNG integration (latest in Maven Central)
 - `allure-java-commons:2.32.0` - Core Allure functionality (latest in Maven Central)
-- **Note**: CLI version is 2.36.0, but Java libraries are 2.32.0 (2.36.0 not yet in Maven Central)
+- **Note**: Currently testing Allure3 CLI 3.0.0, while Java libraries remain at Allure2 2.32.0 (latest in Maven Central)
 - `aspectjweaver:1.9.22` - For Allure step tracking
 
 ### Maven Plugins
@@ -649,3 +650,130 @@ Backend test results are converted to Allure format:
   - Surefire and Selenide tests now show [DEV], [TEST], [PROD] containers in Suites section ✅
   - All frameworks have both environment-specific and top-level containers ✅
 - ✅ **Improved Test Status Detection**: Fixed Vibium status logic to properly detect passed tests
+
+---
+
+## 🔮 Allure3: What to Expect
+
+### Overview
+
+**Allure3** (v3.0.0) is a complete rewrite of the Allure reporting framework, built from the ground up in TypeScript. It represents the next evolution of Allure Report with significant architectural improvements and new features.
+
+### Key Differences from Allure2
+
+#### 1. **Architecture & Technology**
+- **Allure2**: Java-based CLI tool
+- **Allure3**: TypeScript-based CLI tool (complete rewrite)
+- **Installation**: Allure3 is installed via npm (`npm install -g allure`), not downloaded as a binary
+
+#### 2. **What Would Change**
+
+**CLI Installation & Usage**:
+```bash
+# Current (Allure2):
+./scripts/ci/install-allure-cli.sh "2.36.0"
+allure generate target/allure-results
+allure serve target/allure-results
+
+# With Allure3:
+npm install -g allure
+allure generate target/allure-results
+allure serve target/allure-results
+```
+
+**Workflow Changes**:
+- GitHub Actions workflows would need to install Allure3 via npm instead of downloading binaries
+- CLI commands remain largely the same (backward compatible)
+- Report generation process stays the same
+
+#### 3. **What Would Stay the Same**
+
+**Java Libraries** (No Changes Required):
+- ✅ **Maven dependencies remain unchanged**: `io.qameta.allure:allure-testng:2.32.0`
+- ✅ **Test annotations remain the same**: `@Epic`, `@Feature`, `@Story`, `@Severity`, etc.
+- ✅ **Test code requires no changes**: All existing Allure annotations work identically
+- ✅ **Result format is compatible**: Allure3 CLI can read Allure2 result files (`*-result.json`, `*-container.json`)
+
+**Test Execution**:
+- ✅ Tests run exactly the same way
+- ✅ Allure annotations work identically
+- ✅ Result files generated in the same format
+- ✅ Screenshots and attachments work the same
+
+#### 4. **New Features in Allure3**
+
+**Enhanced UI & Experience**:
+- 🎨 **Redesigned User Interface**: Modern, improved visual design
+- ⚡ **Real-time Reporting**: View live updates during test execution using `allure watch`
+- 🔌 **Plugin System**: Modular plugin architecture for extensibility
+- 📊 **Allure Awesome**: New lightweight report option with backward compatibility
+
+**Improved Configuration**:
+- 📝 **Simplified Configuration**: Single configuration file for all report settings
+- 🔧 **Better Customization**: Enhanced plugin system allows for more customization
+- 📦 **Easier Management**: Improved handling of multiple reports
+
+**Performance & Stability**:
+- 🚀 **Better Performance**: TypeScript implementation offers improved speed
+- 🛡️ **Enhanced Stability**: Complete rewrite addresses known issues
+- 🔄 **Active Development**: Active maintenance and feature development
+
+#### 5. **Migration Considerations**
+
+**Advantages**:
+- ✅ **No Test Code Changes**: All existing Allure annotations work without modification
+- ✅ **Backward Compatible**: Allure3 CLI reads Allure2 result files seamlessly
+- ✅ **Improved Features**: Better UI, real-time reporting, plugin system
+- ✅ **Active Development**: More frequent updates and improvements
+
+**Considerations**:
+- ⚠️ **CLI Installation Change**: Requires npm instead of binary download
+- ⚠️ **Workflow Updates**: GitHub Actions workflows need to be updated
+- ⚠️ **Learning Curve**: New features and UI may require some familiarization
+- ⚠️ **Plugin Compatibility**: Custom plugins may need updates for Allure3
+
+**Current Status**:
+- ✅ **Allure3 v3.0.0**: Stable release available
+- ✅ **Compatible**: Works with existing Allure2 test results
+- ⏳ **Testing**: Planned for separate branch after Allure2 upgrade is validated
+
+#### 6. **Recommended Approach**
+
+**Phase 1: Allure2 Upgrade** ✅ **COMPLETED**
+- Upgraded Allure2 CLI from 2.25.0 to 2.36.0
+- Kept Allure2 Java libraries at 2.32.0 in Maven
+- Validated setup and resolved issues
+- Merged to main
+
+**Phase 2: Allure3 Testing** 🔄 **IN PROGRESS** (Branch: `test-allure3-cli`)
+- Created branch to test Allure3 CLI
+- Updated workflows to install Allure3 via npm
+- Generating reports using Allure3 with existing Allure2 results
+- Comparing UI, features, and performance
+- Evaluating plugin system and customization options
+
+**Phase 3: Decision** 📋 **PENDING**
+- Based on testing results, decide on adoption
+- If adopted: Merge Allure3 changes to main
+- If not adopted: Revert to Allure2 CLI
+- Keep Allure2 Java libraries (they remain compatible regardless)
+- Document any workflow or process changes
+
+#### 7. **Important Notes**
+
+- **Java Libraries**: Allure3 does NOT replace Allure2 Java libraries. Your Maven dependencies (`io.qameta.allure:allure-testng`, `io.qameta.allure:allure-java-commons`) will continue to use Allure2 versions regardless of which CLI you use.
+
+- **Result Compatibility**: Allure3 CLI is designed to read Allure2 result files, so your existing test results work without any conversion.
+
+- **No Breaking Changes**: Since Allure3 CLI reads Allure2 results, there are no breaking changes to your test code or result format.
+
+- **Separate Projects**: Allure2 and Allure3 are separate GitHub repositories:
+  - Allure2: `allure-framework/allure2` (Java-based)
+  - Allure3: `allure-framework/allure3` (TypeScript-based)
+
+### Resources
+
+- **Allure3 GitHub**: https://github.com/allure-framework/allure3
+- **Allure3 Releases**: https://github.com/allure-framework/allure3/releases
+- **Allure Report Website**: https://allurereport.org/
+- **Allure3 Pre-release Webinar**: https://allurereport.org/events/allure3-prerelease-webinar-2025/

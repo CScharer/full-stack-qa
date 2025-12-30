@@ -408,7 +408,7 @@ All test jobs run in **parallel** (no dependencies between them):
 
 **Resource Configuration Inputs**:
 - `maven_memory` (default: `'2048m'`) ✅ - Maven heap size (e.g., `2048m`, `4096m`)
-- `allure_version` (default: `'2.36.0'`) ✅ - Allure CLI version
+- `allure_version` (default: `'3.0.0'`) ✅ - Allure3 CLI version
 - `docker_shm_size` (default: `'2gb'`) ✅ - Docker shared memory size for Selenium nodes (e.g., `2gb`, `4gb`)
 
 **Timeout Inputs - Test Execution** (for each test type):
@@ -464,7 +464,7 @@ with:
   service_wait_timeout_seconds: 45
   # Resource Configuration
   maven_memory: '4096m'
-  allure_version: '2.36.0'
+  allure_version: '3.0.0'  # Allure3 CLI
   docker_shm_size: '4gb'
   # Parallel Configuration (planned)
   smoke_tests_parallel: 'tests'
