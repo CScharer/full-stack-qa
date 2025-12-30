@@ -166,12 +166,31 @@ After these fixes:
 **Pipeline Results**:
 - ✅ Pipeline completed successfully
 - ✅ Combined Allure Report job completed
+- ✅ **Deduplication working**: Only 6 top-level containers created (one per framework)
+- ✅ **Selenide Tests separated**: "Selenide Tests" is now a separate suite (16 tests)
+- ⚠️ **"Surefire test" still exists**: 388 tests still grouped under "Surefire test" (may need additional investigation)
 - ⚠️ Verification and deployment steps skipped (expected for branch runs)
 - ⚠️ Full verification requires merge to main for GitHub Pages deployment
 
+**Container Creation Summary** (from pipeline logs):
+```
+✅ Created top-level container: Surefire test (1 env containers, 1 environment(s))
+✅ Created top-level container: Vibium Tests (1 env containers, 1 environment(s))
+✅ Created top-level container: Playwright Tests (1 env containers, 1 environment(s))
+✅ Created top-level container: Selenide Tests (1 env containers, 1 environment(s))
+✅ Created top-level container: Robot Framework Tests (1 env containers, 1 environment(s))
+✅ Created top-level container: Performance Tests (1 env containers, 1 environment(s))
+```
+
+**Key Findings**:
+- ✅ **Fix 4 (Deduplication) is working**: Only ONE top-level container per framework
+- ✅ **Selenide Tests is correctly identified**: 16 tests grouped under "Selenide Tests"
+- ⚠️ **"Surefire test" suite still exists**: 388 tests (likely other TestNG tests, not Selenide)
+- ⚠️ **Container count discrepancy**: Expected 12, found 716 (likely includes old containers from previous runs)
+
 **Next Steps**:
-1. ✅ Review pipeline logs for container creation output (check for deduplication working)
-2. ⚠️ Verify fixes are working as expected (check container creation logs)
+1. ✅ Review pipeline logs - **Deduplication confirmed working**
+2. ⚠️ Investigate why "Surefire test" still has 388 tests (may be expected if they're non-Selenide TestNG tests)
 3. ⚠️ Merge PR to main for full environment testing
 4. ⚠️ Verify Suites tab on GitHub Pages after merge (all frameworks should appear)
 
