@@ -205,11 +205,11 @@ This living document serves as a centralized tracking system for all dependency 
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2025-12-20)
+### Current Status (as of 2025-12-30)
 
-**Total Vulnerabilities**: 29
+**Total Vulnerabilities**: 28 (reduced from 29)
 - **Critical**: 6 🔴
-- **High**: 10 🟠
+- **High**: 9 🟠 (reduced from 10 - qs vulnerability fixed)
 - **Moderate**: 10 🟡
 - **Low**: 3 🟢
 
@@ -223,6 +223,29 @@ This living document serves as a centralized tracking system for all dependency 
 4. **Low Priority**: Review Low vulnerabilities (likely acceptable)
 
 **Note**: Many vulnerabilities may be resolved by applying pending dependency updates listed above.
+
+### Fixing Transitive Dependency Vulnerabilities (npm)
+
+When a vulnerability exists in a transitive dependency (not directly in your `package.json`), use npm's `overrides` feature to force a patched version:
+
+**Example**: Fixing `qs` vulnerability in Cypress (Dependabot Alert #1)
+```json
+{
+  "devDependencies": {
+    "qs": "^6.14.1"
+  },
+  "overrides": {
+    "qs": "^6.14.1"
+  }
+}
+```
+
+The `overrides` section forces all instances of the package (including transitive dependencies) to use the patched version. After adding the override:
+1. Run `npm install` to update `package-lock.json`
+2. Verify with `npm audit` - should show 0 vulnerabilities for that package
+3. Verify with `npm list <package-name>` - should show patched version throughout dependency tree
+
+**Reference**: See Update History section for resolved vulnerabilities.
 
 ---
 
@@ -246,6 +269,7 @@ This living document serves as a centralized tracking system for all dependency 
 - **Maven Compiler Plugin**: Current 3.13.0 (update available: 3.14.1)
 - **jsdom**: 27.3.0 (update available: 27.4.0)
 - **Outdated Dependencies Document**: Created `docs/work/20251230_OUTDATED_DEPENDENCIES.md` with 10 outdated dependencies identified
+- **Security Fix - qs (npm)**: Fixed Dependabot alert #1 (High severity) by adding `qs@^6.14.1` as direct dependency and using npm `overrides` to force patched version throughout dependency tree. Vulnerability: ArrayLimit bypass in bracket notation allows DoS via memory exhaustion (GHSA-6rw7-vpxm-498p). Fixed in `cypress/package.json`.
 
 ### 2025-12-19
 - **REST Assured**: 5.5.6 → 6.0.0 (PR #51)
