@@ -108,10 +108,11 @@ else
 fi
 
 # Generate report
-# Note: We preserve history manually, so we can use --clean for fresh report
+# Note: Allure3 CLI doesn't support --clean flag, so we remove the directory first
 echo ""
 echo "🔄 Generating Allure report..."
-allure generate "$RESULTS_DIR" --clean -o "$REPORT_DIR"
+rm -rf "$REPORT_DIR"
+allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
 # Preserve history for next run (copy from report back to results)
 if [ -d "$REPORT_DIR/history" ]; then

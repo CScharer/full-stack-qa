@@ -49,7 +49,8 @@ if command -v allure &> /dev/null; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "Generating Allure report..."
-        allure generate target/allure-results --clean -o target/allure-report
+        rm -rf target/allure-report
+        allure generate target/allure-results -o target/allure-report
         echo "Opening report..."
         allure open target/allure-report
     fi
