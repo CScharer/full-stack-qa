@@ -57,6 +57,7 @@ processed = 0
 skipped = 0
 errors = 0
 selenide_updated = 0
+smoke_updated = 0
 name_fixed_count = 0
 
 # If we have source directory, try to map files to environments
@@ -241,6 +242,7 @@ for result_file in all_files:
             suite_value = None
             parent_suite_value = None
             is_selenide_test = False
+            is_smoke_test = False
             
             # Check if this is a container file (has children or childrenUuid)
             is_container = 'children' in data or 'childrenUuid' in data
@@ -294,6 +296,8 @@ for result_file in all_files:
                 if label_name == 'epic' and label_value == 'HomePage Tests':
                     epic_value = label_value
                     is_selenide_test = True  # Primary detection: epic is most reliable
+                elif label_name == 'epic' and label_value == 'Smoke Tests':
+                    is_smoke_test = True  # Detect Smoke tests by epic label
                 elif label_name == 'feature' and label_value == 'HomePage Navigation':
                     feature_value = label_value
                     # If we have the feature but not epic, still consider it Selenide
@@ -414,6 +418,55 @@ for result_file in all_files:
                         parent_val = next((l.get('value', '') for l in labels if l.get('name') == 'parentSuite'), 'N/A')
                         name_val = data.get('name', 'N/A')
                         print(f"   🔧 Updated {file_type} file: {file_name[:50]}... (suite={suite_val}, parentSuite={parent_val}, name={name_val[:50] if name_val != 'N/A' else 'N/A'})")
+            
+            # If this is a Smoke test, update suite label for proper grouping
+            # Similar to Selenide tests, Smoke tests should have their own suite
+            if is_smoke_test:
+                smoke_file_updated = False
+                
+                # Update suite label to "Smoke Tests"
+                # CRITICAL: This must happen for ALL Smoke tests to appear as their own suite
+                suite_updated = False
+                if suite_label_index is not None:
+                    old_suite_value = labels[suite_label_index].get('value', '')
+                    if old_suite_value != 'Smoke Tests':
+                        labels[suite_label_index]['value'] = 'Smoke Tests'
+                        suite_updated = True
+                        smoke_file_updated = True
+                else:
+                    # Add suite label if it doesn't exist
+                    labels.append({'name': 'suite', 'value': 'Smoke Tests'})
+                    suite_updated = True
+                    smoke_file_updated = True
+                
+                # Ensure suite label is set even if we missed it above
+                if not suite_updated:
+                    # Find and update any existing suite label
+                    for i, label in enumerate(labels):
+                        if label.get('name') == 'suite':
+                            if label.get('value') != 'Smoke Tests':
+                                labels[i]['value'] = 'Smoke Tests'
+                                smoke_file_updated = True
+                                break
+                    else:
+                        # No suite label found, add it
+                        labels.append({'name': 'suite', 'value': 'Smoke Tests'})
+                        smoke_file_updated = True
+                
+                # Remove parentSuite to make Smoke tests appear as top-level suite
+                if parent_suite_label_index is not None:
+                    labels.pop(parent_suite_label_index)
+                    smoke_file_updated = True
+                
+                if smoke_file_updated:
+                    data['labels'] = labels
+                    # Debug: Print info about updated files (only for first few to avoid spam)
+                    if smoke_updated <= 5:
+                        file_type = "container" if is_container else "result"
+                        file_name = result_file.name
+                        suite_val = next((l.get('value', '') for l in labels if l.get('name') == 'suite'), 'N/A')
+                        print(f"   🔧 Updated {file_type} file for Smoke test: {file_name[:50]}... (suite={suite_val})")
+                    smoke_updated += 1
         
         # Update historyId to include environment to prevent cross-environment deduplication
         # This allows the same test from different environments to be shown separately
@@ -711,6 +764,7 @@ print(f"   Processed: {processed} files")
 print(f"   Skipped (already labeled): {skipped} files")
 print(f"   Errors: {errors} files")
 print(f"   Selenide tests updated: {selenide_updated} files")
+print(f"   Smoke tests updated: {smoke_updated} files")
 if name_fixed_count > 0:
     print(f"   Files with invalid 'name' field fixed: {name_fixed_count} files")
 print(f"   Total: {len(all_files)} files ({len(result_files)} result files, {len(container_files)} container files)")
