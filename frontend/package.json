@@ -13,7 +13,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-query": "^5.90.16",
     "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
     "next": "16.1.1",
