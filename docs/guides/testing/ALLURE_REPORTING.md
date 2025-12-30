@@ -560,11 +560,12 @@ The system uses artifact name patterns to detect environments:
 - `*-results-test` → test environment
 - `*-results-prod` → prod environment
 
-**Scripts**:
+**Scripts**: 
 - `scripts/ci/merge-allure-results.sh` - Merges results from all environments
 - `scripts/ci/add-environment-labels.sh` - Adds environment labels to test results and fixes Selenide suite labels
+- `scripts/ci/deduplicate-testng-retries.sh` - Deduplicates TestNG retry attempts (keeps best result)
 - `scripts/ci/convert-cypress-to-allure.sh` - Converts Cypress results to Allure format (individual tests)
-- `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright results to Allure format (individual tests)
+- `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright results to Allure format (individual tests, deduplicates retries)
 - `scripts/ci/convert-robot-to-allure.sh` - Converts Robot Framework results to Allure format (individual tests)
 - `scripts/ci/convert-vibium-to-allure.sh` - Converts Vibium/Vitest results to Allure format (individual tests)
 

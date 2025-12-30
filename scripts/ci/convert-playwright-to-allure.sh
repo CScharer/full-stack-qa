@@ -61,6 +61,10 @@ if not junit_files:
     print("   This is expected if Playwright tests haven't run")
     sys.exit(0)
 
+# Track all attempts across ALL JUnit files to handle retries correctly
+# This ensures we deduplicate even if retries are in different JUnit files
+test_attempts = {}  # fullName -> list of (test_case, status, attempt_order, junit_file)
+
 for junit_file in junit_files:
     try:
         tree = ET.parse(junit_file)
@@ -85,12 +89,14 @@ for junit_file in junit_files:
         # Process individual test cases to create separate Allure results
         # This allows skipped tests to appear in Categories section
         # Track all attempts for each test to handle retries correctly
-        test_attempts = {}  # fullName -> list of (test_case, status, attempt_order)
+        # Use a global counter across all files to maintain order
+        global_attempt_counter = len(test_attempts) * 1000  # Offset to avoid collisions
         
         for suite in test_suites:
             test_cases = suite.findall('testcase')
             
             for idx, test_case in enumerate(test_cases):
+                global_attempt_counter += 1
                 test_name = test_case.get('name', 'Unknown Test')
                 test_class = test_case.get('classname', 'Playwright')
                 full_name = f"{test_class}.{test_name}"
@@ -110,21 +116,33 @@ for junit_file in junit_files:
                 else:
                     status = "passed"
                 
-                # Track all attempts for this test
+                # Track all attempts for this test (across all JUnit files)
                 if full_name not in test_attempts:
                     test_attempts[full_name] = []
-                test_attempts[full_name].append((test_case, status, idx))
+                test_attempts[full_name].append((test_case, status, global_attempt_counter, junit_file))
         
-        # Now process each test and decide what to keep
-        # IMPORTANT: Playwright's retries: 1 config retries ALL tests, even if they pass
-        # So we need to be smart about deduplication - only deduplicate actual retries of failed tests
-        test_results = {}  # fullName -> (test_case, status, is_flaky, retry_info)
+        # Continue to next JUnit file (don't process yet, collect all attempts first)
         
-        for full_name, attempts in test_attempts.items():
-            if len(attempts) == 1:
-                # Single attempt - no retry, keep as is
-                test_case, status, _ = attempts[0]
-                test_results[full_name] = (test_case, status, False, None)
+    except Exception as e:
+        print(f"⚠️  Error parsing Playwright JUnit XML from {junit_file}: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        continue
+
+# Now process each test and decide what to keep (after processing ALL JUnit files)
+if not test_attempts:
+    print("ℹ️  No Playwright test attempts found")
+    sys.exit(0)
+
+# IMPORTANT: Playwright's retries: 1 config retries ALL tests, even if they pass
+# So we need to be smart about deduplication - only deduplicate actual retries of failed tests
+test_results = {}  # fullName -> (test_case, status, is_flaky, retry_info)
+
+for full_name, attempts in test_attempts.items():
+    if len(attempts) == 1:
+        # Single attempt - no retry, keep as is
+        test_case, status, _, _ = attempts[0]
+        test_results[full_name] = (test_case, status, False, None)
             else:
                 # Multiple attempts - could be retries or duplicate entries
                 # Sort by attempt order (idx) to get chronological order
@@ -132,27 +150,31 @@ for junit_file in junit_files:
                 first_attempt = attempts_sorted[0]
                 last_attempt = attempts_sorted[-1]
                 
-                first_test_case, first_status, _ = first_attempt
-                last_test_case, last_status, _ = last_attempt
+                first_test_case, first_status, _, _ = first_attempt
+                last_test_case, last_status, _, _ = last_attempt
                 
-                # Only deduplicate if test actually failed and was retried
-                # If test passed on first attempt, keep it (even if there are duplicates from retry config)
-                # This ensures all passed tests are shown
-                if first_status == "passed":
-                    # Test passed on first attempt - keep it (don't deduplicate)
-                    # This handles Playwright's retries: 1 config that retries all tests
+                # Smart deduplication logic:
+                # 1. If all attempts have same status (all passed, all skipped, all failed) - keep first (no retry needed)
+                # 2. If status changed (failed->passed, skipped->passed, etc.) - keep the best result
+                # 3. Prefer passed > failed > broken > skipped (best to worst)
+                
+                # Check if all attempts have the same status
+                all_same_status = all(attempt[1] == first_status for attempt in attempts_sorted)
+                
+                if all_same_status:
+                    # All attempts have same status - no actual retry needed, keep first
                     test_results[full_name] = (first_test_case, first_status, False, None)
-                elif first_status != "passed" and last_status == "passed":
-                    # Test failed initially but passed on retry - keep the final passed result
-                    # Mark as flaky since it failed then passed
-                    is_flaky = True
-                    retry_info = f"Retried {len(attempts)} times. First: {first_status}, Final: {last_status}"
-                    test_results[full_name] = (last_test_case, last_status, is_flaky, retry_info)
                 else:
-                    # Test failed on all attempts - keep the final result
-                    is_flaky = False
-                    retry_info = f"Retried {len(attempts)} times. All attempts: {first_status}"
-                    test_results[full_name] = (last_test_case, last_status, is_flaky, retry_info)
+                    # Status changed - this is a real retry, find the best result
+                    # Priority: passed > failed > broken > skipped
+                    status_priority = {"passed": 4, "failed": 3, "broken": 2, "skipped": 1}
+                    best_attempt = max(attempts_sorted, key=lambda x: status_priority.get(x[1], 0))
+                    best_test_case, best_status, _, _ = best_attempt
+                    
+                    # Mark as flaky if status improved (failed->passed, skipped->passed)
+                    is_flaky = (first_status != "passed" and best_status == "passed")
+                    retry_info = f"Retried {len(attempts)} times. First: {first_status}, Best: {best_status}"
+                    test_results[full_name] = (best_test_case, best_status, is_flaky, retry_info)
         
         # Now convert the processed test results
         for full_name, (test_case, final_status, is_flaky, retry_info) in test_results.items():
@@ -236,24 +258,10 @@ for junit_file in junit_files:
             
             converted += 1
         
-        # Print summary
-        if 'test_cases' in locals() and test_cases:
-            total = len(test_cases)
-            passed = sum(1 for tc in test_cases if tc.find('skipped') is None and tc.find('failure') is None and tc.find('error') is None)
-            failed = sum(1 for tc in test_cases if tc.find('failure') is not None)
-            skipped = sum(1 for tc in test_cases if tc.find('skipped') is not None)
-            print(f"✅ Created {converted} Playwright test result(s)")
-            print(f"   Stats: {total} tests, {passed} passed, {failed} failed, {skipped} skipped")
-        else:
-            print(f"✅ Created {converted} Playwright test result(s)")
-        
-    except Exception as e:
-        print(f"⚠️  Error parsing Playwright JUnit XML from {junit_file}: {e}", file=sys.stderr)
-        import traceback
-        traceback.print_exc()
-        continue
-
-if converted == 0:
+# Print summary after processing all files
+if converted > 0:
+    print(f"✅ Created {converted} Playwright test result(s)")
+else:
     print("ℹ️  No Playwright results were converted")
     sys.exit(0)
 

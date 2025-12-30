@@ -448,19 +448,64 @@ After this fix:
 
 ### Additional Fix: Less Aggressive Deduplication (2025-12-30)
 
-**Issue**: Passed tests were being removed when duplicates existed, even though they passed on first attempt
+**Issue**: Passed tests were being removed when duplicates existed, even though they passed on first attempt. Skipped tests were appearing as duplicates.
 
-**Root Cause**: Playwright's `retries: 1` config retries ALL tests (even passed ones), creating duplicates. The original fix was too aggressive and removed valid passed tests.
+**Root Cause**: 
+- Playwright's `retries: 1` config retries ALL tests (even passed ones), creating duplicates
+- The original fix was too aggressive and removed valid passed tests
+- Retry attempts might be in different JUnit XML files, so deduplication wasn't working across files
 
 **Fix Applied**:
-- Updated `scripts/ci/convert-playwright-to-allure.sh` to be less aggressive:
+- Updated `scripts/ci/convert-playwright-to-allure.sh` to:
+  - Track attempts across ALL JUnit files (not just within one file)
+  - Smart deduplication: If all attempts have same status, keep first (deduplicates duplicates)
+  - If status changed, keep best result (passed > failed > broken > skipped)
+  - Properly handles skipped tests (deduplicates if all skipped, keeps best if status changed)
   - If test passed on first attempt: Keep it (don't deduplicate, even if retry config created duplicates)
   - Only deduplicate if test actually failed and was retried
   - This ensures all passed tests are shown in the report
 
 **Expected Result**:
 - ✅ All passed Playwright tests will be shown (no false deduplication)
+- ✅ Duplicate skipped tests will be deduplicated
 - ✅ Only actual retries of failed tests will be deduplicated
+- ✅ Best result kept when status changes (e.g., skipped → passed)
+
+---
+
+## TestNG/Surefire Retry Deduplication Fix
+
+**Date**: 2025-12-30  
+**Status**: ✅ **FIXED** - Branch: `fix-cypress-results-missing`  
+**Issue**: TestNG retry attempts were appearing as duplicate test results in Surefire suite and Surefire test
+
+### Problem
+
+TestNG's `RetryAnalyzer` creates separate Allure result files for each retry attempt. Allure TestNG reports each retry as a separate test result, causing duplicates in the report (same test appearing multiple times with different attempt results).
+
+### Fix Applied
+
+**File**: `scripts/ci/deduplicate-testng-retries.sh` (NEW)
+
+1. **Deduplication Logic**: Groups result files by `fullName` and `historyId` (same test, same environment)
+2. **Best Result Selection**: Keeps only the best result (passed > failed > broken > skipped)
+3. **Removes Duplicates**: Deletes duplicate retry attempt files
+
+**Integration**:
+- Added to `scripts/ci/prepare-combined-allure-results.sh` as Step 4.25
+- Runs after environment labels are added but before framework containers are created
+
+**Changes**:
+- **NEW**: `scripts/ci/deduplicate-testng-retries.sh` - Deduplicates TestNG retry attempts
+- **UPDATED**: `scripts/ci/prepare-combined-allure-results.sh` - Added Step 4.25 to call deduplication script
+
+### Expected Result
+
+After this fix:
+- ✅ TestNG retry attempts will be deduplicated
+- ✅ Only the best result will be shown for each test (passed > failed > broken > skipped)
+- ✅ No duplicate test entries in Surefire suite or Surefire test
+- ✅ Retry information preserved in the kept result
 
 ### Retry Behavior
 

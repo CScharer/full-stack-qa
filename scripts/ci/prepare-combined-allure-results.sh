@@ -248,6 +248,12 @@ echo "🏷️  Step 4: Adding environment labels..."
 chmod +x scripts/ci/add-environment-labels.sh
 ./scripts/ci/add-environment-labels.sh "$TARGET_DIR" "$SOURCE_DIR"
 
+# Step 4.25: Deduplicate TestNG retry attempts
+echo ""
+echo "🔄 Step 4.25: Deduplicating TestNG retry attempts..."
+chmod +x scripts/ci/deduplicate-testng-retries.sh
+./scripts/ci/deduplicate-testng-retries.sh "$TARGET_DIR"
+
 # Step 4.5: Create framework container files for Suites section
 echo ""
 echo "📦 Step 4.5: Creating framework container files..."
