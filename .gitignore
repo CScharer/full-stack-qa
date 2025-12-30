@@ -176,6 +176,10 @@ target/surefire-reports/
 target/cucumber-reports/
 target/allure-results/
 target/test-reports/
+
+# Allure combined results and reports (generated in CI/CD)
+allure-results-combined/
+allure-report-combined/
 checkstyle-current.xml
 checkstyle-result.xml
 pmd.xml
