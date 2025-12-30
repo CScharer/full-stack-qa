@@ -513,3 +513,43 @@ After this fix:
 - **Failed then passed on retry**: Final passed result, marked as flaky, includes retry count
 - **Failed after all retries**: Final failed result, includes retry count
 
+---
+
+## Smoke Tests Suite Label Update Fix
+
+**Date**: 2025-12-30  
+**Status**: ✅ **FIXED** - Branch: `fix-smoke-tests-suite-label`  
+**Issue**: Smoke tests were still not appearing even after the suite detection fix
+
+### Problem
+
+The suite label override in `create-framework-containers.sh` only affected the grouping logic for creating containers, but didn't update the actual result files. The result files still had `"suite":"Surefire test"` instead of `"suite":"Smoke Tests"`, so even though containers were being created correctly, the tests themselves still had the wrong suite label.
+
+### Fix Applied
+
+**File**: `scripts/ci/add-environment-labels.sh`
+
+1. **Smoke Test Detection**: Added detection for Smoke tests by checking for `epic="Smoke Tests"` label
+2. **Suite Label Update**: Updates suite label from "Surefire test" to "Smoke Tests" in the result files themselves
+3. **ParentSuite Removal**: Removes parentSuite label to make Smoke tests appear as top-level suite
+4. **Summary Reporting**: Added smoke_updated counter and summary print statement
+
+**Changes**:
+- Lines 244: Added is_smoke_test variable
+- Lines 297-298: Added Smoke test detection by epic label
+- Lines 429-469: Added Smoke test suite label update logic (similar to Selenide)
+- Lines 60, 767: Added smoke_updated counter and summary
+
+**Integration**:
+- Runs in `add-environment-labels.sh` (Step 4) before container creation
+- Ensures result files have correct suite label before containers are created
+- Works in conjunction with `create-framework-containers.sh` detection logic
+
+### Expected Result
+
+After this fix:
+- ✅ Smoke tests will have correct suite label (`"suite":"Smoke Tests"`) in result files
+- ✅ Smoke tests will appear under their own "Smoke Tests" suite in Suites tab
+- ✅ Smoke tests will be visible and easy to find
+- ✅ Smoke tests will show for all environments (if environment labels are correctly set)
+
