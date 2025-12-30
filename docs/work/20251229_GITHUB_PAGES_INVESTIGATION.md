@@ -158,13 +158,20 @@ After these fixes:
 
 **Branch**: `fix-selenide-suites-github-pages`  
 **PR**: #23  
-**Status**: ⚠️ **PENDING** - Pipeline completed, awaiting review
+**Pipeline Run**: https://github.com/CScharer/full-stack-qa/actions/runs/20585663940  
+**Status**: ✅ **PIPELINE COMPLETED SUCCESSFULLY** - Ready for review
 
 **Note**: Branch runs only execute DEV tests. Full verification with all environments (dev/test/prod) will occur after merge to main.
 
+**Pipeline Results**:
+- ✅ Pipeline completed successfully
+- ✅ Combined Allure Report job completed
+- ⚠️ Verification and deployment steps skipped (expected for branch runs)
+- ⚠️ Full verification requires merge to main for GitHub Pages deployment
+
 **Next Steps**:
-1. Review pipeline logs for container creation output
-2. Verify fixes are working as expected
-3. Merge PR to main for full environment testing
-4. Verify Suites tab on GitHub Pages after merge
+1. ✅ Review pipeline logs for container creation output (check for deduplication working)
+2. ⚠️ Verify fixes are working as expected (check container creation logs)
+3. ⚠️ Merge PR to main for full environment testing
+4. ⚠️ Verify Suites tab on GitHub Pages after merge (all frameworks should appear)
 
