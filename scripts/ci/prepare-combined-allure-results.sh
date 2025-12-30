@@ -116,11 +116,11 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
 done
 
 # Check merged cypress-results directory only if no environment-specific directories were found
-# IMPORTANT: Only process merged directory for ACTIVE environments (not all environments)
+# IMPORTANT: Process merged directory for ALL ACTIVE environments (not just the first one)
 if [ "$CYPRESS_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/cypress-results" ]; then
     echo "   Converting Cypress results (merged artifacts - processing for active environments only)..."
     chmod +x scripts/ci/convert-cypress-to-allure.sh
-    # Process merged directory only for environments that actually ran
+    # Process merged directory for each environment that actually ran
     # When artifacts are merged, they may preserve their artifact name as a subdirectory
     # e.g., cypress-results/cypress-results-dev/... or cypress-results/cypress-results-test/...
     for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
@@ -137,8 +137,8 @@ if [ "$CYPRESS_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/cypress-results" ]; then
                 CYPRESS_PROCESSED=1
             fi
         # If no environment-specific subdirectory, check the merged root directory
-        # But only process once to avoid duplicate processing
-        elif [ "$CYPRESS_PROCESSED" -eq 0 ]; then
+        # Process for each environment to ensure all environments are covered
+        else
             json_file=$(find "$SOURCE_DIR/cypress-results" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/results/*.json" \) 2>/dev/null | head -1)
             if [ -n "$json_file" ] && [ -f "$json_file" ]; then
                 json_dir=$(dirname "$json_file")

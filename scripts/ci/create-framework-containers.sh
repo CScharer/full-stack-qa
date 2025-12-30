@@ -158,6 +158,15 @@ for result_file in result_files:
             if 'HomePageTests' in full_name or ('Selenide' in full_name and 'HomePage' in full_name and 'Cypress' not in full_name):
                 is_selenide = True
         
+        # Check for Smoke Tests - they should have their own suite
+        # Smoke tests have epic="Smoke Tests" label
+        is_smoke_test = False
+        if 'labels' in data:
+            for label in data['labels']:
+                if label.get('name') == 'epic' and label.get('value') == 'Smoke Tests':
+                    is_smoke_test = True
+                    break
+        
         # CRITICAL: If this is a Selenide test but suite label says "Surefire test", override it
         # This MUST happen BEFORE grouping to ensure Selenide tests are grouped under "Selenide Tests"
         # not "Surefire test". This handles cases where add-environment-labels.sh hasn't updated
@@ -169,6 +178,17 @@ for result_file in result_files:
                 for label in data['labels']:
                     if label.get('name') == 'suite':
                         label['value'] = 'Selenide Tests'
+                        break
+        
+        # CRITICAL: If this is a Smoke test but suite label says "Surefire test", override it
+        # This ensures Smoke tests are grouped under "Smoke Tests" suite, not "Surefire test"
+        if is_smoke_test and suite_name == 'Surefire test':
+            suite_name = 'Smoke Tests'
+            # Also update the suite label in the data so it's correct for future processing
+            if 'labels' in data:
+                for label in data['labels']:
+                    if label.get('name') == 'suite':
+                        label['value'] = 'Smoke Tests'
                         break
         
         # Try to infer suite name if missing (Fix 2: Add fallback for missing suite labels)
