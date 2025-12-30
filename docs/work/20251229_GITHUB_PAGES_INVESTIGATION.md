@@ -1,6 +1,7 @@
 # GitHub Pages Suites Tab Investigation
 
 **Created**: 2025-12-29  
+**Last Updated**: 2025-12-30  
 **Status**: 🔍 **INVESTIGATING**  
 **Issue**: Suites tab shows all frameworks locally but only Playwright on GitHub Pages
 
@@ -277,5 +278,83 @@ After these fixes:
 
 1. ✅ **Environment detection fix**: Applied and ready for testing
 2. ⚠️ **Duplicate Selenide display**: Investigate why Selenide Tests appear under both "Selenide Tests" and "Surefire test" suites
-3. ⚠️ **Allure upgrade**: Consider upgrading to latest version (2.36.0) to potentially resolve remaining issues
+3. ✅ **Allure upgrade**: Upgrading to latest version (2.36.0) to potentially resolve remaining issues
+
+---
+
+## Allure Report Version Upgrade
+
+**Date**: 2025-12-30  
+**Status**: 🔄 **IN PROGRESS** - Changes made, awaiting review and pipeline completion
+
+### Current Versions (Before Upgrade)
+- **Allure CLI** (workflows): 2.25.0
+- **Allure Java library** (pom.xml): 2.32.0
+
+### Target Versions
+- **Allure CLI**: 2.36.0 (11 versions behind) - Available on GitHub releases
+- **Allure Java library**: 2.32.0 (already latest) - Latest available in Maven Central
+
+**Note**: Version 2.36.0 exists on GitHub but has not been published to Maven Central yet. The latest version available in Maven Central is 2.32.0. Therefore:
+- **Java libraries** remain at **2.32.0** (latest in Maven Central)
+- **CLI** is upgraded to **2.36.0** (available on GitHub releases)
+
+### Changes Made
+
+1. **`pom.xml`**:
+   - Kept `<allure.version>` at `2.32.0` (latest available in Maven Central)
+   - Note: 2.36.0 not yet published to Maven Central
+
+2. **`.github/workflows/ci.yml`**:
+   - Updated Allure CLI installation from `2.25.0` to `2.36.0`
+
+3. **`.github/workflows/env-fe.yml`**:
+   - Updated default Allure CLI version from `2.25.0` to `2.36.0`
+
+### Expected Benefits
+
+- Potential fixes for Suites tab display issues
+- Improved container file handling
+- Better environment detection
+- Bug fixes and improvements from 11 CLI versions (CLI upgraded to 2.36.0)
+- Java libraries remain at 2.32.0 (latest in Maven Central; 2.36.0 not yet published)
+- May resolve duplicate Selenide display issue
+
+### Testing
+
+- [ ] Pipeline runs successfully with new Allure version
+- [ ] Allure report generates correctly
+- [ ] Suites tab displays all frameworks correctly
+- [ ] Duplicate Selenide display issue resolved
+- [ ] All environments show correctly in Behaviors tab
+
+### Allure3 Testing Plan
+
+**Note**: Allure3 (v3.0.0) is a separate TypeScript-based CLI tool that is compatible with Allure2 results. It is NOT a replacement for the Allure2 Java libraries used in this Maven project.
+
+**Current Status**:
+- ✅ Allure2 upgrade to 2.36.0 is in progress (current branch: `upgrade-allure-to-2.36.0`)
+- ⏳ Allure3 testing will be done in a **separate branch** after this upgrade is merged
+
+**Allure3 Details**:
+- **Repository**: `allure-framework/allure3` (separate from `allure-framework/allure2`)
+- **Latest Version**: v3.0.0 (stable, released)
+- **Installation**: Via npm (`npm install -g allure`), not Maven
+- **Compatibility**: Allure3 CLI can read Allure2 results, so it can be used to generate reports from existing Allure2 test results
+- **Key Features**: 
+  - Complete TypeScript rewrite
+  - New plugin system
+  - Real-time reporting
+  - Redesigned UI
+  - Backward compatible with Allure2 results
+
+**Testing Plan**:
+1. ✅ Complete Allure2 upgrade to 2.36.0 (current branch)
+2. ⏳ Merge Allure2 upgrade to main
+3. ⏳ Create new branch for Allure3 CLI testing
+4. ⏳ Test Allure3 CLI with existing Allure2 results
+5. ⏳ Evaluate if Allure3 CLI provides benefits over Allure2 CLI
+6. ⏳ Document findings and decide on adoption
+
+**Important**: Allure3 does NOT replace the Allure2 Java libraries (`io.qameta.allure:allure-testng`, `io.qameta.allure:allure-java-commons`). These Maven dependencies will continue to use Allure2 versions. Allure3 is only for the CLI report generation tool.
 

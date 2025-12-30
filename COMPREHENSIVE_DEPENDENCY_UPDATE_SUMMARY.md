@@ -30,7 +30,8 @@ This document summarizes a comprehensive audit and update of **all dependencies*
 
 | Dependency | Previous Version | Updated Version | Status | Notes |
 |------------|-----------------|-----------------|--------|-------|
-| **Allure Report** | 2.31.0 | 2.32.0 | ✅ | Latest stable available in Maven Central |
+| **Allure CLI** | 2.25.0 | 2.36.0 | ✅ | Updated to latest (GitHub releases, updated 2025-12-30) |
+| **Allure Java** | 2.32.0 | 2.32.0 | ✅ | Latest in Maven Central (2.36.0 not yet published, updated 2025-12-30) |
 | **AspectJ** | 1.9.25 | 1.9.25.1 | ✅ | Patch update |
 | **Byte Buddy** | 1.18.2 | 1.18.3 | ✅ | Patch update |
 | **Checkstyle** | 12.2.0 | 12.3.0 | ✅ | Minor update |
@@ -203,9 +204,9 @@ This document summarizes a comprehensive audit and update of **all dependencies*
 
 ### Allure Version
 
-- **Issue**: Attempted to update to Allure 2.36.0, but artifacts not available in Maven Central
-- **Resolution**: Reverted to Allure 2.32.0 (confirmed available and working)
-- **Note**: Allure 2.36.0 may be available in the future, but 2.32.0 is the latest confirmed stable
+- **Current**: Allure CLI 2.36.0, Allure Java libraries 2.32.0
+- **Updated**: 2025-12-30
+- **Note**: CLI upgraded from 2.25.0 to 2.36.0 (available on GitHub). Java libraries remain at 2.32.0 (latest in Maven Central; 2.36.0 not yet published)
 
 ### Python Dependency Conflicts
 

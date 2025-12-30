@@ -1101,7 +1101,7 @@ jobs:
         if: always()
         run: |
           chmod +x scripts/ci/install-allure-cli.sh
-          ./scripts/ci/install-allure-cli.sh "2.25.0"
+          ./scripts/ci/install-allure-cli.sh "2.36.0"
 
       - name: Generate Combined Allure Report
         if: always()

@@ -42,6 +42,10 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Security](https://img.shields.io/badge/Security-Google%20Cloud-blue.svg)](https://cloud.google.com/secret-manager)
 
+[![Reporting](https://img.shields.io/badge/Reporting-Allure_Reports-yellow.svg)](docs/guides/testing/ALLURE_REPORTING.md)
+
+[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:2.36.0_Java:2.32.0-blue.svg)](https://allurereport.org/)
+
 [![Coming Soon!!!](https://img.shields.io/badge/Coming%20Soon!!!-What's_Next!!!-cyan.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 <!-- [![Vibium](https://img.shields.io/badge/Vibium-0.1.2-cyan.svg)](https://vibium.com/) -->
 
@@ -126,7 +130,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Log4j 2.25.3** - Professional structured logging (updated via Dependabot PR #52)
 - **Maven 3.9.11** - Build management (wrapper included!)
 - **Docker & Docker Compose** - Complete containerization
-- **Allure 2.31.0** - Beautiful test reporting with screenshots
+- **Allure CLI 2.36.0, Java 2.32.0** - Beautiful test reporting with screenshots
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.3** - Automatic driver management
@@ -1198,7 +1202,7 @@ cp XML/UserSettings.xml.template XML/UserSettings.xml
 - ARM64 (Apple Silicon) compatibility
 
 **✅ Allure Reporting with Screenshots**
-- Allure Framework 2.31.0 integration
+- Allure Framework integration (CLI: 2.36.0, Java: 2.32.0)
 - Automatic screenshot capture on test failures only
 - Beautiful HTML dashboards with graphs
 - Epic/Feature/Story organization
