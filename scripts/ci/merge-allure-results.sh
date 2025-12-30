@@ -63,18 +63,19 @@ find "$SOURCE_DIR" -name "*-result.json" | while read -r result_file; do
     # or: grid-results-chrome-dev/target/allure-results/...
     # Also check for results-{env}/ directory structure from separate downloads
     # Also check for be-results-{env}/ for BE results
-    if echo "$rel_path" | grep -qiE "(results-dev/|-results-dev[/-]|be-results-dev/)"; then
+    # Also check for selenide-results-{env} pattern (Selenide tests)
+    if echo "$rel_path" | grep -qiE "(results-dev/|-results-dev[/-]|be-results-dev/|selenide-results-dev)"; then
         env="dev"
-    elif echo "$rel_path" | grep -qiE "(results-test/|-results-test[/-]|be-results-test/)"; then
+    elif echo "$rel_path" | grep -qiE "(results-test/|-results-test[/-]|be-results-test/|selenide-results-test)"; then
         env="test"
-    elif echo "$rel_path" | grep -qiE "(results-prod/|-results-prod[/-]|be-results-prod/)"; then
+    elif echo "$rel_path" | grep -qiE "(results-prod/|-results-prod[/-]|be-results-prod/|selenide-results-prod)"; then
         env="prod"
     # Also check the full absolute path as fallback
-    elif echo "$result_file" | grep -qiE "(results-dev/|-results-dev[/-]|be-results-dev/)"; then
+    elif echo "$result_file" | grep -qiE "(results-dev/|-results-dev[/-]|be-results-dev/|selenide-results-dev)"; then
         env="dev"
-    elif echo "$result_file" | grep -qiE "(results-test/|-results-test[/-]|be-results-test/)"; then
+    elif echo "$result_file" | grep -qiE "(results-test/|-results-test[/-]|be-results-test/|selenide-results-test)"; then
         env="test"
-    elif echo "$result_file" | grep -qiE "(results-prod/|-results-prod[/-]|be-results-prod/)"; then
+    elif echo "$result_file" | grep -qiE "(results-prod/|-results-prod[/-]|be-results-prod/|selenide-results-prod)"; then
         env="prod"
     # Fallback: check for environment in directory names (more specific patterns)
     elif echo "$result_file" | grep -qiE "(/dev/|/development/)" && ! echo "$result_file" | grep -qiE "(/test/|/testing/|/prod/|/production/)"; then
@@ -152,11 +153,12 @@ if [ -d "$SOURCE_DIR" ]; then
                 allure_path=$(echo "$allure_dir" | tr '[:upper:]' '[:lower:]')
                 
                 # Check for explicit -results-{env} pattern in path
-                if echo "$allure_path" | grep -qiE "-results-dev[/-]"; then
+                # Also check for selenide-results-{env} pattern (Selenide tests)
+                if echo "$allure_path" | grep -qiE "(-results-dev[/-]|selenide-results-dev)"; then
                     env="dev"
-                elif echo "$allure_path" | grep -qiE "-results-test[/-]"; then
+                elif echo "$allure_path" | grep -qiE "(-results-test[/-]|selenide-results-test)"; then
                     env="test"
-                elif echo "$allure_path" | grep -qiE "-results-prod[/-]"; then
+                elif echo "$allure_path" | grep -qiE "(-results-prod[/-]|selenide-results-prod)"; then
                     env="prod"
                 fi
                 
@@ -187,11 +189,12 @@ if [ -d "$SOURCE_DIR" ]; then
         allure_path=$(echo "$allure_dir" | tr '[:upper:]' '[:lower:]')
         
         # Check for explicit -results-{env} pattern in path (most reliable)
-        if echo "$allure_path" | grep -qiE "-results-dev[/-]"; then
+        # Also check for selenide-results-{env} pattern (Selenide tests)
+        if echo "$allure_path" | grep -qiE "(-results-dev[/-]|selenide-results-dev)"; then
             env="dev"
-        elif echo "$allure_path" | grep -qiE "-results-test[/-]"; then
+        elif echo "$allure_path" | grep -qiE "(-results-test[/-]|selenide-results-test)"; then
             env="test"
-        elif echo "$allure_path" | grep -qiE "-results-prod[/-]"; then
+        elif echo "$allure_path" | grep -qiE "(-results-prod[/-]|selenide-results-prod)"; then
             env="prod"
         # Fallback: check for environment in directory names
         elif echo "$allure_path" | grep -qiE "(/dev/|/development/)" && ! echo "$allure_path" | grep -qiE "(/test/|/testing/|/prod/|/production/)"; then

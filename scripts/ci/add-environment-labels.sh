@@ -73,11 +73,12 @@ if source_dir and os.path.isdir(source_dir):
                 
                 # Check for explicit -results-{env} pattern (most reliable)
                 # Also check for be-results-{env}/ for BE results
-                if "-results-dev" in path_str or "/results-dev/" in path_str or "/be-results-dev/" in path_str:
+                # Also check for selenide-results-{env} pattern (Selenide tests)
+                if "-results-dev" in path_str or "/results-dev/" in path_str or "/be-results-dev/" in path_str or "selenide-results-dev" in path_str:
                     env = "dev"
-                elif "-results-test" in path_str or "/results-test/" in path_str or "/be-results-test/" in path_str:
+                elif "-results-test" in path_str or "/results-test/" in path_str or "/be-results-test/" in path_str or "selenide-results-test" in path_str:
                     env = "test"
-                elif "-results-prod" in path_str or "/results-prod/" in path_str or "/be-results-prod/" in path_str:
+                elif "-results-prod" in path_str or "/results-prod/" in path_str or "/be-results-prod/" in path_str or "selenide-results-prod" in path_str:
                     env = "prod"
                 # Fallback: check for environment in directory names (more specific)
                 elif ("/dev/" in path_str or "/development/" in path_str) and not any(x in path_str for x in ["/test/", "/testing/", "/prod/", "/production/"]):

@@ -227,7 +227,30 @@ After these fixes:
 
 **Next Steps**:
 1. ⚠️ Review Firefox Grid Tests failure (separate issue from Suites tab fixes)
-2. ⚠️ Check if GitHub Pages deployment occurred (may have been skipped due to failure)
-3. ⚠️ Verify Suites tab on GitHub Pages if deployment occurred
-4. ⚠️ Check container creation logs if accessible
+2. ✅ **GitHub Pages deployment confirmed** - Status: Built and deployed
+3. ⚠️ **Issue Found**: Only Cypress, Playwright, Robot, and Vibium show all 3 environments in Behaviors tab
+4. ⚠️ **Root Cause**: Selenide/Surefire tests not getting environment labels correctly
+5. ✅ **Fix Applied**: Updated environment detection patterns to include `selenide-results-{env}` pattern
+
+---
+
+## Environment Detection Fix
+
+**Problem**: Selenide and Surefire tests only show DEV environment in Behaviors tab, while Cypress, Playwright, Robot, and Vibium show all 3 environments.
+
+**Root Cause**: 
+- Selenide results are uploaded as `selenide-results-{environment}` artifacts
+- Environment detection patterns in `merge-allure-results.sh` and `add-environment-labels.sh` were not matching `selenide-results-{env}` pattern
+- Only patterns like `-results-dev`, `-results-test`, `-results-prod` were being checked
+
+**Fix Applied**:
+- Updated `scripts/ci/merge-allure-results.sh` to detect `selenide-results-{env}` pattern
+- Updated `scripts/ci/add-environment-labels.sh` to detect `selenide-results-{env}` pattern
+- This ensures Selenide test results get correct environment labels (dev/test/prod)
+
+**Files Modified**:
+1. `scripts/ci/merge-allure-results.sh` - Added `selenide-results-{env}` pattern matching (3 locations)
+2. `scripts/ci/add-environment-labels.sh` - Added `selenide-results-{env}` pattern matching
+
+**Expected Result**: After next pipeline run, Selenide and Surefire tests should show all 3 environments in Behaviors tab
 
