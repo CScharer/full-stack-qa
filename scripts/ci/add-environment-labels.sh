@@ -244,6 +244,20 @@ for result_file in all_files:
             # Check if this is a container file (has children or childrenUuid)
             is_container = 'children' in data or 'childrenUuid' in data
             
+            # CRITICAL: Check fullName and name fields FIRST for result files (not just containers)
+            # This must happen BEFORE label processing to catch Selenide result files
+            # fullName often has "Selenide." prepended, which is a reliable indicator
+            if 'fullName' in data:
+                full_name = data.get('fullName', '')
+                if 'Selenide' in full_name or 'HomePageTests' in full_name or 'HomePage' in full_name:
+                    is_selenide_test = True
+            
+            # Also check name field for Selenide indicators (works for both result files and containers)
+            if 'name' in data:
+                name_value = data.get('name', '')
+                if 'Selenide' in name_value or 'HomePageTests' in name_value or 'HomePage' in name_value:
+                    is_selenide_test = True
+            
             # Also check name/fullName fields for container files (might contain "Surefire" or "HomePage")
             # CRITICAL: If a container has name="Surefire test", it's likely a parent container
             # that's causing Selenide tests to nest under it. We need to update it.
