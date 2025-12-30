@@ -247,8 +247,8 @@ cp Configurations/Environments.xml.template Configurations/Environments.xml
 Git hooks are **automatically maintained** via a post-checkout hook that runs on every `git checkout`.
 
 **What gets installed:**
-- **Pre-commit hook**: Automatically formats code and removes unused imports before commit
-- **Pre-push hook**: Verifies code quality before push (safety net)
+- **Pre-commit hook**: Formats code automatically (20-40 seconds, no compilation/validation)
+- **Pre-push hook**: Formats, compiles, and validates code before push (30-60 seconds)
 - **Post-checkout hook**: Ensures hooks are installed and up-to-date on every checkout
 
 **How it works:**
@@ -267,10 +267,11 @@ Git hooks are **automatically maintained** via a post-checkout hook that runs on
 **Why one-time setup?**
 Git hooks live in `.git/hooks/` which isn't tracked by Git (for security). The post-checkout hook maintains everything automatically after the initial install, but it needs to be created first.
 
-**⚠️ IMPORTANT**: The pre-commit hook will automatically run `format-code.sh` before each commit, ensuring:
-- Code is formatted (Prettier + Google Java Format)
-- Unused/duplicate imports are removed (Spotless)
-- Code quality is verified (Checkstyle, PMD)
+**⚠️ IMPORTANT**: The pre-commit hook will automatically format code before each commit, and the pre-push hook will compile and validate, ensuring:
+- Code is formatted (Prettier + Google Java Format) - on commit
+- Unused/duplicate imports are removed (Spotless) - on commit
+- Code compiles successfully - on push
+- Code quality is verified (Checkstyle, PMD) - on push
 - Auto-fixed files are staged automatically
 
 **Manual Installation (if needed):**
@@ -1068,8 +1069,8 @@ We welcome contributions! Please follow these guidelines:
 3. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
 4. **Make your changes**
 5. **Run tests** (`./mvnw test`)
-6. **Commit your changes** (pre-commit hook automatically formats code and removes unused imports)
-7. **Push to branch** (`git push origin feature/amazing-feature`) - Pre-push hook verifies code quality
+6. **Commit your changes** (pre-commit hook automatically formats code)
+7. **Push to branch** (`git push origin feature/amazing-feature`) - Pre-push hook formats, compiles, and validates code quality
 8. **Open a Pull Request** (template will auto-populate)
 
 ### Pull Request Guidelines

@@ -165,7 +165,7 @@ chmod +x scripts/install-git-hooks.sh
 ```
 
 **What gets installed**:
-- **Pre-commit hook**: Automatically formats code (skips for documentation-only changes)
+- **Pre-commit hook**: Automatically formats code (skips compilation/validation - runs on push)
 - **Pre-push hook**: Formats code AND runs validation checks (compilation, tests, etc.)
 - **Post-checkout hook**: Auto-installs hooks when checking out branches
 

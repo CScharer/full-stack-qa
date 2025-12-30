@@ -470,7 +470,7 @@ Git hooks are automatically installed via `scripts/install-git-hooks.sh` and pro
 **Behavior**:
 - **Documentation-only changes**: Skips all checks (<1 second)
 - **Code changes**: Automatically formats code using `scripts/format-code.sh --skip-compilation` (20-40 seconds)
-- Formats code but does NOT compile (compilation happens in pre-push hook)
+- Formats code but does NOT compile or validate (compilation/validation happens in pre-push hook)
 
 **Installation**:
 ```bash

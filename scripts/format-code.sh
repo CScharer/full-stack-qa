@@ -318,7 +318,7 @@ if [ "$SKIP_FORMATTING" = false ] && [ "$CI_MODE" = false ]; then
     echo "  ✅ Line length issues fixed (Google Java Format)"
 fi
 echo "  ✅ Code quality verified (Checkstyle)"
-if [ "$CI_MODE" = false ]; then
+if [ "$CI_MODE" = false ] && [ "$SKIP_COMPILATION" = false ]; then
     echo "  ✅ Compilation verified"
 fi
 echo "  ✅ Code analysis completed (PMD)"
