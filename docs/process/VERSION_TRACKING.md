@@ -56,7 +56,7 @@ This living document serves as a centralized tracking system for all dependency 
 | JUnit | 4.13.2 | 4.13.2 | [✅] | - | Current (JUnit 5.14.0 available) |
 | Cucumber | 7.33.0 | 7.33.0 | [✅] | - | Current |
 | REST Assured | 6.0.0 | 6.0.0 | [✅] | 2025-12-19 | Updated in PR #51 - Requires Java 17+, Jackson 3.0.0 |
-| Allure3 CLI | 3.0.0 | 3.0.0 | [🔄] | 2025-12-30 | Testing Allure3 (TypeScript-based, npm install) |
+| Allure3 CLI | 3.0.0 | 3.0.0 | [✅] | 2025-12-30 | Active - Allure3 CLI in use (TypeScript-based, npm install) |
 | Allure2 Java | 2.32.0 | 2.32.0 | [✅] | 2025-12-30 | Latest in Maven Central (Java libraries unchanged) |
 
 ### Build & Tools
