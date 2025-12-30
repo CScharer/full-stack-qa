@@ -152,10 +152,17 @@ for result_file in result_files:
             is_selenide = True
         
         # CRITICAL: If this is a Selenide test but suite label says "Surefire test", override it
-        # This handles cases where add-environment-labels.sh hasn't updated the suite label yet
-        # or the result file was missed
+        # This MUST happen BEFORE grouping to ensure Selenide tests are grouped under "Selenide Tests"
+        # not "Surefire test". This handles cases where add-environment-labels.sh hasn't updated
+        # the suite label yet or the result file was missed.
         if is_selenide and suite_name == 'Surefire test':
             suite_name = 'Selenide Tests'
+            # Also update the suite label in the data so it's correct for future processing
+            if 'labels' in data:
+                for label in data['labels']:
+                    if label.get('name') == 'suite':
+                        label['value'] = 'Selenide Tests'
+                        break
         
         # Try to infer suite name if missing (Fix 2: Add fallback for missing suite labels)
         if not suite_name:
@@ -215,6 +222,48 @@ for result_file in result_files:
     except Exception as e:
         print(f"⚠️  Error processing {result_file}: {e}", file=sys.stderr)
         continue
+
+# CRITICAL: Merge "Surefire test" suite into "Selenide Tests" if it contains Selenide tests
+# This must happen BEFORE creating env containers to ensure containers are created under correct suite
+# Check if "Surefire test" suite contains any Selenide tests
+if 'Surefire test' in suite_groups and 'Selenide Tests' in suite_groups:
+    # Check if "Surefire test" contains Selenide tests by checking result files
+    surefire_has_selenide = False
+    for env, results in suite_groups['Surefire test'].items():
+        for r in results[:5]:  # Check first 5 as sample
+            try:
+                with open(r['file'], 'r', encoding='utf-8') as f:
+                    result_data = json.load(f)
+                    # Check for Selenide indicators
+                    if 'labels' in result_data:
+                        for label in result_data['labels']:
+                            if label.get('name') == 'epic' and label.get('value') == 'HomePage Tests':
+                                surefire_has_selenide = True
+                                break
+                        if surefire_has_selenide:
+                            break
+                    if 'fullName' in result_data and 'Selenide' in result_data.get('fullName', ''):
+                        surefire_has_selenide = True
+                        break
+            except:
+                pass
+            if surefire_has_selenide:
+                break
+        if surefire_has_selenide:
+            break
+    
+    # If "Surefire test" contains Selenide tests, merge them into "Selenide Tests"
+    if surefire_has_selenide:
+        print(f"   🔄 Merging 'Surefire test' suite into 'Selenide Tests' (contains Selenide tests)", file=sys.stderr)
+        for env, results in suite_groups['Surefire test'].items():
+            if env in suite_groups['Selenide Tests']:
+                suite_groups['Selenide Tests'][env].extend(results)
+            else:
+                suite_groups['Selenide Tests'][env] = results
+        # Remove "Surefire test" from suite_groups to prevent duplicate containers
+        # This ensures env containers are created under "Selenide Tests" not "Surefire test"
+        del suite_groups['Surefire test']
+        print(f"   ✅ Merged 'Surefire test' into 'Selenide Tests'", file=sys.stderr)
 
 # Create container files for each suite/environment combination
 # We create BOTH env-specific containers AND top-level containers
@@ -391,14 +440,29 @@ for suite_name, env_groups in suite_groups.items():
 print("\n📦 Creating top-level framework containers...")
 top_level_containers = 0
 
+# Track which suite names we've already created top-level containers for
+# This prevents duplicate top-level containers for the same suite
+top_level_containers_created = set()
+
 for suite_name, env_groups in suite_groups.items():
+    # CRITICAL: Skip if we've already created a top-level container for this suite name
+    # This prevents duplicate containers when the same suite appears multiple times
+    # (e.g., if Selenide tests were grouped under both "Surefire test" and "Selenide Tests")
+    if suite_name in top_level_containers_created:
+        print(f"   ⚠️  Skipping duplicate top-level container for '{suite_name}' (already created)", file=sys.stderr)
+        continue
+    
     # Get env-specific container UUIDs for this suite
     env_container_uuids = env_container_uuids_by_suite.get(suite_name, [])
     
     # If no env-specific containers were created, skip top-level container
     # (This shouldn't happen, but handle gracefully)
     if not env_container_uuids:
+        print(f"   ⚠️  Skipping top-level container for '{suite_name}' (no env-specific containers found)", file=sys.stderr)
         continue
+    
+    # Mark this suite as having a top-level container created
+    top_level_containers_created.add(suite_name)
     
     # Create top-level container (no environment suffix)
     # The name should match the suite name exactly for Allure to recognize it

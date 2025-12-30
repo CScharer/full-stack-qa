@@ -1305,13 +1305,85 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
 
 ---
 
+#### Pipeline Run #148 (20584809969) - Main Branch Results ✅
+
+**Status**: ✅ **SUCCESS** - Pipeline completed successfully (All environments: dev, test, prod)
+
+**Pipeline URL**: https://github.com/CScharer/full-stack-qa/actions/runs/20584809969
+
+**Key Results**:
+- ✅ **Verification step executed successfully**
+- ✅ **GitHub Pages deployment occurred** (main branch - deployment was NOT skipped)
+- ✅ All environments (dev, test, prod) ran
+- ✅ Full report structure verified before deployment
+
+**Deployment Status**:
+- ✅ "Verify Report Before Deployment" step: Success
+- ✅ "Deploy to GitHub Pages" step: Success
+- ✅ Report deployed to: https://cscharer.github.io/full-stack-qa/#
+
+**Next Action - Manual Verification Required**:
+1. **Check GitHub Pages**: https://cscharer.github.io/full-stack-qa/#
+2. **Verify Suites Tab**: Check if all frameworks are now visible
+3. **Compare with local report**: Ensure consistency
+4. **Check browser console**: Look for any 404 errors or missing file references
+
+**If Suites Tab Shows All Frameworks**:
+- ✅ Fix successful - `force_orphan: false` resolved the issue
+- ✅ GitHub Pages deployment issue resolved
+- Document success and update status
+
+**If Suites Tab Still Missing Frameworks**:
+- Review verification step output in pipeline logs
+- Check deployed report structure
+- Investigate file references or caching issues
+- Consider additional fixes (e.g., cache headers, file paths)
+
+---
+
+#### Pipeline Run #148 Analysis - Critical Finding ✅
+
+**Status**: ✅ **ROOT CAUSE IDENTIFIED** - GitHub Pages deployment issue, NOT container creation
+
+**Critical Discovery**:
+- ✅ **Local report (downloaded artifact)**: All frameworks show correctly in Suites tab
+- ❌ **GitHub Pages (deployed)**: Only Playwright shows in Suites tab
+- ✅ **Container creation**: Working correctly (local report confirms)
+- ✅ **Detection logic**: Working correctly (local report confirms)
+
+**Root Cause**: 
+This is a **GitHub Pages deployment/serving issue**, NOT a container creation or detection problem. The report is generated correctly, but something is wrong with how it's deployed or served on GitHub Pages.
+
+**Possible Causes**:
+1. **File deployment issue**: Container files or data files not being deployed correctly to GitHub Pages
+2. **GitHub Pages caching**: Browser or CDN caching old version with incomplete data
+3. **File path references**: Relative paths in generated report might not work correctly on GitHub Pages
+4. **Deployment timing**: Files might not all be available when GitHub Pages serves the report
+5. **`force_orphan: false` issue**: The fix might not have fully resolved the deployment problem
+
+**Investigation Needed**:
+1. Compare deployed report file structure with local report
+2. Check browser console on GitHub Pages for 404 errors or missing file references
+3. Verify container files are accessible in deployed report (check `data/` directory)
+4. Check if `keep_files: false` is causing issues with file references
+5. Verify `force_orphan: false` is working as expected
+
+**Next Steps**:
+1. **Compare file structures**: Download deployed report from GitHub Pages and compare with local artifact
+2. **Check browser console**: Look for 404 errors or missing file references on GitHub Pages
+3. **Verify deployment**: Check if all container files are actually deployed to `gh-pages` branch
+4. **Consider alternatives**: May need to adjust deployment settings or add verification step
+
+---
+
 ## Next Steps Summary
 
 **Current Status**:
 - ✅ Container creation fixes: Implemented and working
 - ✅ GitHub Pages deployment fix: Implemented in PR #22
 - ✅ Verification step: Added and working
-- ⚠️ **Pending**: Merge PR #22 to main for full verification
+- ✅ PR #22 merged to main
+- ⚠️ **Pending**: Pipeline run completion and verification on GitHub Pages
 
 **What Happens Next**:
 
@@ -1338,7 +1410,7 @@ Since artifacts aren't easily accessible via CLI, manual review of pipeline logs
    - Investigate file references or caching issues
    - Consider additional fixes (e.g., cache headers, file paths)
 
-**Recommended Action**: Merge PR #22 to proceed with full verification.
+**Recommended Action**: ✅ **COMPLETE** - PR #22 merged, pipeline completed successfully. Manual verification of GitHub Pages required.
 
 #### After Reviewing Logs/Artifacts
 

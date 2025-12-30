@@ -1,0 +1,154 @@
+# GitHub Pages Suites Tab Investigation
+
+**Created**: 2025-12-29  
+**Status**: 🔍 **INVESTIGATING**  
+**Issue**: Suites tab shows all frameworks locally but only Playwright on GitHub Pages
+
+---
+
+## Critical Discovery
+
+**Local Report (Downloaded Artifact)**: ✅ All frameworks visible in Suites tab  
+**GitHub Pages (Deployed)**: ❌ Only Playwright visible in Suites tab
+
+This confirms the issue is with **GitHub Pages deployment**, NOT container creation or detection logic.
+
+---
+
+## Investigation Results
+
+### 1. Container Files Analysis
+
+- **Container files in results**: ✅ 2,131 container files exist
+- **Container files in gh-pages**: ❌ 0 container files (Allure converts them to `suites.json`)
+- **suites.json in gh-pages**: Shows 6 frameworks (Performance, Surefire suite, Surefire test, Cypress, Playwright, Robot)
+- **Missing from suites.json**: Vibium Tests, Selenide Tests
+
+### 2. Selenide Container Structure Issue
+
+**Problem Found**: Multiple Selenide top-level containers created (80+ containers!)
+
+- **Expected**: ONE top-level container per framework
+- **Actual**: 80+ containers with `name="Selenide Tests"`
+- **Correct container exists**: `36e91d39b1154e4c80daadc4b468fd70-container.json` has correct structure (1 child = env container UUID)
+- **Incorrect containers**: Most have 99 children pointing directly to result UUIDs (should point to env container UUIDs)
+
+**Root Cause**:
+- Selenide result files still have `suite=Surefire test` (not updated to `suite=Selenide Tests`)
+- Container creation script detects them as Selenide and overrides suite name, but this happens AFTER initial grouping
+- Script may be creating containers for both "Surefire test" and "Selenide Tests" suites
+- Multiple top-level containers are being created instead of one per suite
+
+### 3. Container Structure Comparison
+
+**Playwright (Working)**:
+- Top-level container: `children: 3` (env container UUIDs) ✅
+- Structure: Top-level → Env containers → Results ✅
+
+**Selenide (Not Working)**:
+- Top-level containers: Multiple with `children: 99` (result UUIDs) ❌
+- One correct container: `children: 1` (env container UUID) ✅
+- Structure: Most are incorrect (Top-level → Results, skipping env containers) ❌
+
+### 4. Vibium Tests Missing
+
+- **Vibium containers**: 0 found
+- **Vibium result files**: Not present in combined results
+- **Possible causes**: Tests didn't run, results not uploaded, or results not merged
+
+---
+
+## Root Causes Identified
+
+1. **Selenide suite labels not updated**: Result files still have `suite=Surefire test` instead of `suite=Selenide Tests`
+2. **Multiple duplicate containers**: 80+ top-level containers created for Selenide instead of one
+3. **Incorrect container hierarchy**: Most Selenide containers point to result UUIDs instead of env container UUIDs
+4. **Allure filtering**: Allure may be ignoring duplicate/incorrect containers, leaving only Playwright visible
+
+---
+
+## Fixes Required
+
+### Fix 1: Ensure Selenide Suite Labels Are Updated
+- **File**: `scripts/ci/add-environment-labels.sh`
+- **Issue**: Selenide detection may not be working for result files
+- **Action**: Verify Selenide detection logic updates suite labels correctly
+
+### Fix 2: Prevent Duplicate Top-Level Containers
+- **File**: `scripts/ci/create-framework-containers.sh`
+- **Issue**: Multiple top-level containers being created for same suite
+- **Action**: Add check to ensure only ONE top-level container per suite name
+
+### Fix 3: Fix Container Hierarchy
+- **File**: `scripts/ci/create-framework-containers.sh`
+- **Issue**: Top-level containers pointing to result UUIDs instead of env container UUIDs
+- **Action**: Verify `env_container_uuids_by_suite` is populated correctly before creating top-level containers
+
+### Fix 4: Investigate Vibium
+- **Action**: Check if Vibium tests ran and if results were uploaded/merged
+
+---
+
+## Fixes Implemented
+
+### Fix 1: Selenide Detection in add-environment-labels.sh ✅
+- **Change**: Added checks for `fullName` and `name` fields BEFORE checking if file is a container
+- **Why**: Result files need to be detected as Selenide before label processing
+- **Impact**: Selenide result files will be detected and have suite labels updated correctly
+
+### Fix 2: Suite Name Override Before Grouping ✅
+- **Change**: Suite name override happens BEFORE adding to `suite_groups` in `create-framework-containers.sh`
+- **Why**: Ensures Selenide tests are grouped under "Selenide Tests" from the start, not "Surefire test"
+- **Impact**: Prevents Selenide tests from being grouped under wrong suite name
+
+### Fix 3: Merge "Surefire test" into "Selenide Tests" ✅
+- **Change**: Added logic to merge "Surefire test" suite into "Selenide Tests" if it contains Selenide tests
+- **Why**: Handles edge cases where some Selenide tests might still be grouped under "Surefire test"
+- **Impact**: Ensures all Selenide tests end up in "Selenide Tests" suite before env containers are created
+
+### Fix 4: Prevent Duplicate Top-Level Containers ✅
+- **Change**: Added `top_level_containers_created` set to track which suites already have top-level containers
+- **Why**: Prevents multiple top-level containers for the same suite (was creating 80+ for Selenide)
+- **Impact**: Only ONE top-level container per suite will be created
+
+## Next Steps
+
+1. ✅ **Fixes implemented** - Ready for testing
+2. ⚠️ **Test fixes** in pipeline and verify Suites tab shows all frameworks
+3. ⚠️ **Investigate Vibium** missing tests (separate issue)
+
+---
+
+**Last Updated**: 2025-12-29  
+**Status**: ✅ **FIXES IMPLEMENTED** - Ready for testing
+
+## Implementation Details
+
+### Files Modified
+
+1. **`scripts/ci/add-environment-labels.sh`**
+   - Added `fullName` and `name` field checks for result files BEFORE container checks
+   - Ensures Selenide result files are detected before label processing
+   - Lines 247-259: Added early detection for result files
+
+2. **`scripts/ci/create-framework-containers.sh`**
+   - Added suite name override BEFORE grouping (lines 154-158)
+   - Added merge logic to combine "Surefire test" into "Selenide Tests" (lines 226-265)
+   - Added deduplication to prevent multiple top-level containers (lines 402-410)
+   - Ensures only ONE top-level container per suite name
+
+### Key Changes
+
+1. **Early Selenide Detection**: Result files are now checked for Selenide indicators (fullName, name) before checking if they're containers
+2. **Suite Name Override**: Selenide tests are grouped under "Selenide Tests" from the start, not "Surefire test"
+3. **Suite Merging**: "Surefire test" suite is merged into "Selenide Tests" if it contains Selenide tests
+4. **Deduplication**: Top-level containers are tracked to prevent duplicates
+
+### Expected Results
+
+After these fixes:
+- ✅ Selenide tests will have `suite=Selenide Tests` label
+- ✅ Only ONE top-level container for "Selenide Tests"
+- ✅ Top-level container will reference env container UUIDs (not result UUIDs)
+- ✅ All Selenide tests will appear in Suites tab on GitHub Pages
+
