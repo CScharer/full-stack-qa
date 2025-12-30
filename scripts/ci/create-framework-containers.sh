@@ -147,9 +147,16 @@ for result_file in result_files:
                 elif label.get('name') == 'environment':
                     env = label.get('value', 'unknown')
         
-        # Check fullName for Selenide
-        if 'fullName' in data and 'Selenide' in data.get('fullName', ''):
-            is_selenide = True
+        # Check fullName for Selenide (but exclude Cypress tests which may have "Selenide" in fullName)
+        if 'fullName' in data:
+            full_name = data.get('fullName', '')
+            # Only mark as Selenide if fullName contains "Selenide" but NOT "Cypress"
+            # Cypress tests may have "Selenide.Cypress..." in fullName but should not be treated as Selenide
+            if 'Selenide' in full_name and 'Cypress' not in full_name:
+                is_selenide = True
+            # Also check for explicit Selenide patterns (HomePageTests, HomePage with Selenide but not Cypress)
+            if 'HomePageTests' in full_name or ('Selenide' in full_name and 'HomePage' in full_name and 'Cypress' not in full_name):
+                is_selenide = True
         
         # CRITICAL: If this is a Selenide test but suite label says "Surefire test", override it
         # This MUST happen BEFORE grouping to ensure Selenide tests are grouped under "Selenide Tests"

@@ -116,6 +116,8 @@ for junit_file in junit_files:
                 test_attempts[full_name].append((test_case, status, idx))
         
         # Now process each test and decide what to keep
+        # IMPORTANT: Playwright's retries: 1 config retries ALL tests, even if they pass
+        # So we need to be smart about deduplication - only deduplicate actual retries of failed tests
         test_results = {}  # fullName -> (test_case, status, is_flaky, retry_info)
         
         for full_name, attempts in test_attempts.items():
@@ -124,7 +126,7 @@ for junit_file in junit_files:
                 test_case, status, _ = attempts[0]
                 test_results[full_name] = (test_case, status, False, None)
             else:
-                # Multiple attempts - this test was retried
+                # Multiple attempts - could be retries or duplicate entries
                 # Sort by attempt order (idx) to get chronological order
                 attempts_sorted = sorted(attempts, key=lambda x: x[2])
                 first_attempt = attempts_sorted[0]
@@ -133,15 +135,23 @@ for junit_file in junit_files:
                 first_test_case, first_status, _ = first_attempt
                 last_test_case, last_status, _ = last_attempt
                 
-                # If test passed on first attempt, it shouldn't have been retried
-                # Keep only the first passed result (deduplicate unnecessary retries)
+                # Only deduplicate if test actually failed and was retried
+                # If test passed on first attempt, keep it (even if there are duplicates from retry config)
+                # This ensures all passed tests are shown
                 if first_status == "passed":
+                    # Test passed on first attempt - keep it (don't deduplicate)
+                    # This handles Playwright's retries: 1 config that retries all tests
                     test_results[full_name] = (first_test_case, first_status, False, None)
-                else:
-                    # Test failed initially and was retried - keep the final result
-                    # Mark as flaky if status changed (failed -> passed indicates flakiness)
-                    is_flaky = (first_status != last_status) and (last_status == "passed")
+                elif first_status != "passed" and last_status == "passed":
+                    # Test failed initially but passed on retry - keep the final passed result
+                    # Mark as flaky since it failed then passed
+                    is_flaky = True
                     retry_info = f"Retried {len(attempts)} times. First: {first_status}, Final: {last_status}"
+                    test_results[full_name] = (last_test_case, last_status, is_flaky, retry_info)
+                else:
+                    # Test failed on all attempts - keep the final result
+                    is_flaky = False
+                    retry_info = f"Retried {len(attempts)} times. All attempts: {first_status}"
                     test_results[full_name] = (last_test_case, last_status, is_flaky, retry_info)
         
         # Now convert the processed test results
