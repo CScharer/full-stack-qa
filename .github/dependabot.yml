@@ -1,27 +1,43 @@
 version: 2
+
+# Common configuration anchors (YAML aliases)
+# Note: Dependabot may not support YAML anchors - if this doesn't work,
+# we'll need to keep the duplication or use a generator script
+x-common-schedule: &common-schedule
+  interval: "weekly"
+  day: "sunday"
+  # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+  time: "14:00"
+
+x-common-reviewers: &common-reviewers
+  - "CScharer"
+
+x-common-commit-message: &common-commit-message
+  prefix: "chore(deps)"
+  include: "scope"
+
+x-common-auto-merge: &common-auto-merge
+  auto-merge: true
+  auto-merge-options:
+    allowed-update-types:
+      - "security"
+    merge-strategy: "squash"
+
+x-common-config: &common-config
+  schedule: *common-schedule
+  open-pull-requests-limit: 3
+  reviewers: *common-reviewers
+  commit-message: *common-commit-message
+  <<: *common-auto-merge
+
 updates:
   # Maven dependencies
   - package-ecosystem: "maven"
     directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "java"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     ignore:
       # Ignore major Selenium updates (test carefully before upgrading)
       - dependency-name: "org.seleniumhq.selenium:*"
@@ -30,46 +46,18 @@ updates:
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "ci/cd"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     
   # Docker
   - package-ecosystem: "docker"
     directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "docker"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     ignore:
       # Stay on Java 21 (ignore Java 11, 17, 22, 23, 24, 25, etc.)
       - dependency-name: "eclipse-temurin"
@@ -80,159 +68,62 @@ updates:
   # npm (JavaScript/TypeScript) - Cypress
   - package-ecosystem: "npm"
     directory: "/cypress"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "javascript"
       - "cypress"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     
   # npm (JavaScript/TypeScript) - Frontend
   - package-ecosystem: "npm"
     directory: "/frontend"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "javascript"
       - "frontend"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     
   # npm (JavaScript/TypeScript) - Vibium
   - package-ecosystem: "npm"
     directory: "/vibium"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "javascript"
       - "vibium"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     
   # npm (JavaScript/TypeScript) - Playwright
   - package-ecosystem: "npm"
     directory: "/playwright"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "javascript"
       - "playwright"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
     
   # Python (pip) - Backend API
   - package-ecosystem: "pip"
     directory: "/backend"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "python"
       - "backend"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     
   # Python (pip) - Performance Testing
   - package-ecosystem: "pip"
     directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "python"
       - "performance"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
     
   # Python (pip) - Test Data
   - package-ecosystem: "pip"
     directory: "/Data/Core/tests"
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
-      time: "14:00"
-    open-pull-requests-limit: 3
-    reviewers:
-      - "CScharer"
+    <<: *common-config
     labels:
       - "dependencies"
       - "python"
       - "test-data"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    auto-merge: true
-    auto-merge-options:
-      allowed-update-types:
-        - "security"
-      merge-strategy: "squash"
-
