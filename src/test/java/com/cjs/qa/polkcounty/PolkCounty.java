@@ -13,7 +13,7 @@ public class PolkCounty {
   public PolkCounty(WebDriver webDriver) {
     main = new Main(webDriver);
     details = new Details(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 
   public Main getMain() {

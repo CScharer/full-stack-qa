@@ -72,8 +72,8 @@ public class EnhancedGridTests {
 
     LOGGER.info("✅ Driver initialized in {} mode", isHeadless ? "headless" : "headed");
 
-    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
     if (LOGGER.isInfoEnabled()) {
       LOGGER.info("✅ {} browser initialized\n", currentBrowser.toUpperCase(Locale.ENGLISH));
     }
@@ -123,7 +123,7 @@ public class EnhancedGridTests {
     searchBox.sendKeys(Keys.RETURN);
 
     // Wait for URL to change (indicates search was performed)
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     wait.until(ExpectedConditions.not(ExpectedConditions.urlToBe(initialUrl)));
 
     // Verify URL changed
@@ -153,7 +153,7 @@ public class EnhancedGridTests {
     Assert.assertTrue(title.contains("GitHub"), "Title should contain 'GitHub'");
 
     // Verify GitHub logo is present
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     WebElement logo =
         wait.until(
             ExpectedConditions.presenceOfElementLocated(

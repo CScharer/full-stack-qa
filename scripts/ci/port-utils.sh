@@ -41,7 +41,7 @@ stop_port() {
             fi
             kill $pid 2>/dev/null || true
             # Wait a moment and force kill if still running
-            sleep 2
+            sleep 1
             if kill -0 $pid 2>/dev/null; then
                 if [ "$force" = "true" ]; then
                     echo "   Force killing $service_name (PID: $pid)..."

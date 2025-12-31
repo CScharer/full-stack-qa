@@ -180,7 +180,7 @@ public class SmokeTests {
 
         driver = new RemoteWebDriver(new URL(gridUrl), options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
     }
 
     @Test(priority = 1)
@@ -581,7 +581,7 @@ public class SmokeTests {
         options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
         driver = new RemoteWebDriver(new URL(gridUrl), options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
     }
 
     @Test(priority = 1, groups = "smoke")

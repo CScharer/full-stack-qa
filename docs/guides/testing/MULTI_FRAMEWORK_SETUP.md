@@ -406,8 +406,8 @@ Selenide can be configured in test setup:
 public void setUp() {
     Configuration.browser = "chrome";
     Configuration.headless = true;
-    Configuration.timeout = 10000;
-    Configuration.pageLoadTimeout = 60000;
+    Configuration.timeout = 5000;
+    Configuration.pageLoadTimeout = 10000;
     Configuration.browserSize = "1920x1080";
     Configuration.baseUrl = "http://localhost:3003";
 }

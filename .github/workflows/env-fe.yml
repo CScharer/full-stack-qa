@@ -1,5 +1,17 @@
 name: Test Single Environment (FE Reusable)
 
+# NOTE: Input Definitions vs. Values
+# ===================================
+# This reusable workflow MUST define its inputs here (GitHub Actions requirement).
+# However, the VALUES passed to these inputs are centralized in ci.yml via the
+# `determine-envs` job outputs. This provides:
+# - Single source of truth for test configuration in ci.yml
+# - Flexibility for other workflows to call this with different values
+# - Defaults here allow this workflow to be called without specifying every input
+#
+# To change which tests run in the main CI pipeline, update the `enable_*_tests`
+# outputs in the `determine-envs` job in ci.yml, not the defaults here.
+
 on:
   workflow_call:
     inputs:
@@ -147,16 +159,16 @@ on:
       grid_wait_timeout_seconds:
         description: 'Timeout in seconds for waiting for Selenium Grid'
         type: number
-        default: 60
+        default: 5
       service_wait_timeout_seconds:
         description: 'Timeout in seconds for waiting for services (frontend/backend)'
         type: number
-        default: 30
+        default: 5
       # Resource Configuration
       maven_memory:
         description: 'Maven heap size (e.g., 2048m, 4096m)'
         type: string
-        default: '2048m'
+        default: '4096m'
       allure_version:
         description: 'Allure3 CLI version (default: 3.0.0)'
         type: string
@@ -168,7 +180,7 @@ on:
 
 env:
   JAVA_VERSION: ${{ inputs.java_version || '21' }}
-  MAVEN_OPTS: -Xmx${{ inputs.maven_memory || '2048m' }} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  MAVEN_OPTS: -Xmx${{ inputs.maven_memory || '4096m' }} -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
   # Default Selenium Grid hub URL for CI runs
   SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
 
@@ -228,6 +240,13 @@ jobs:
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -245,7 +264,7 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 5 }}"
 
       - name: Run Smoke Tests
         timeout-minutes: ${{ inputs.smoke_tests_timeout_minutes || 5 }}
@@ -350,6 +369,13 @@ jobs:
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -360,8 +386,8 @@ jobs:
       - name: Wait for Selenium Grid
         run: |
           echo "⏳ Waiting for Grid..."
-          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
-          sleep 10
+          timeout ${{ inputs.grid_wait_timeout_seconds || 5 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 1; done'
+          # No sleep needed - curl success confirms Grid is ready
           echo "✅ Grid ready!"
 
       - name: Run Grid Tests
@@ -456,6 +482,13 @@ jobs:
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -473,8 +506,8 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
-          sleep 5
+          timeout ${{ inputs.grid_wait_timeout_seconds || 5 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 1; done'
+          # No sleep needed - curl success confirms Grid is ready
           echo "✅ Grid ready!"
 
       - name: Run Mobile Browser Tests
@@ -565,6 +598,13 @@ jobs:
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -582,8 +622,8 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
-          sleep 5
+          timeout ${{ inputs.grid_wait_timeout_seconds || 5 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 1; done'
+          # No sleep needed - curl success confirms Grid is ready
           echo "✅ Grid ready!"
 
       - name: Run Responsive Design Tests
@@ -661,6 +701,13 @@ jobs:
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
+
       - name: Install Cypress dependencies
         working-directory: ./cypress
         run: npm ci
@@ -737,6 +784,13 @@ jobs:
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Install Playwright dependencies
         working-directory: ./playwright
@@ -836,7 +890,7 @@ jobs:
         run: |
           ./scripts/ci/verify-services.sh \
             "${{ inputs.base_url }}" \
-            "${{ inputs.service_wait_timeout_seconds || 30 }}"
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Install Robot Framework dependencies
         run: |
@@ -851,7 +905,7 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 5 }}"
 
       - name: Run Robot Framework Tests
         timeout-minutes: ${{ inputs.robot_tests_timeout_minutes || 5 }}
@@ -981,6 +1035,13 @@ jobs:
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -998,7 +1059,7 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 5 }}"
 
       - name: Run Selenide Tests
         timeout-minutes: ${{ inputs.selenide_tests_timeout_minutes || 5 }}
@@ -1074,6 +1135,13 @@ jobs:
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Are Running
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        run: |
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Install Vibium dependencies
         working-directory: ./vibium

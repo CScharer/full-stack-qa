@@ -112,7 +112,7 @@ public class ResponsiveDesignTests {
       driver.manage().window().setSize(viewport);
 
       driver.get("https://www.github.com/");
-      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+      WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
       wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
       // Verify no horizontal scroll

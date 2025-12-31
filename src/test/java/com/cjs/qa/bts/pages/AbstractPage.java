@@ -47,7 +47,7 @@ public class AbstractPage implements ISelenium {
   protected void setEdit(By byLocator, String value) {
     LOG.debug("Object: {}", byLocator.toString());
     final WebElement element = getWebDriver().findElement(byLocator);
-    final WebDriverWait wait = new WebDriverWait(this.webDriver, java.time.Duration.ofSeconds(10));
+    final WebDriverWait wait = new WebDriverWait(this.webDriver, java.time.Duration.ofSeconds(5));
     wait.until(ExpectedConditions.elementToBeClickable(element));
     LOG.debug("Displayed: {}", element.isDisplayed());
     LOG.debug("Enabled: {}", element.isEnabled());
@@ -60,7 +60,7 @@ public class AbstractPage implements ISelenium {
   }
 
   protected WebElement waitClickable(WebElement element) {
-    final WebDriverWait wait = new WebDriverWait(this.webDriver, java.time.Duration.ofSeconds(10));
+    final WebDriverWait wait = new WebDriverWait(this.webDriver, java.time.Duration.ofSeconds(5));
     return wait.until(ExpectedConditions.elementToBeClickable(element));
   }
 

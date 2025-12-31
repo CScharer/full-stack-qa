@@ -4,11 +4,11 @@
 #
 # Arguments:
 #   base-url       - Base URL for the environment (e.g., http://localhost:3003)
-#   timeout-seconds - Timeout in seconds for waiting for services (default: 30)
+#   timeout-seconds - Timeout in seconds for waiting for services (default: 5)
 #
 # Examples:
 #   ./scripts/ci/verify-services.sh http://localhost:3003
-#   ./scripts/ci/verify-services.sh http://localhost:3004 60
+#   ./scripts/ci/verify-services.sh http://localhost:3004 5
 
 set -e
 
@@ -17,9 +17,9 @@ BASE_URL=${1}
 SCRIPT_DIR_FULL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_CONFIG="${SCRIPT_DIR_FULL}/config/environments.json"
 if [ -f "$ENV_CONFIG" ] && command -v jq &> /dev/null; then
-    DEFAULT_TIMEOUT=$(jq -r '.timeouts.serviceVerification' "$ENV_CONFIG" 2>/dev/null || echo "30")
+    DEFAULT_TIMEOUT=$(jq -r '.timeouts.serviceVerification' "$ENV_CONFIG" 2>/dev/null || echo "5")
 else
-    DEFAULT_TIMEOUT=30
+    DEFAULT_TIMEOUT=5
 fi
 TIMEOUT=${2:-$DEFAULT_TIMEOUT}
 
@@ -105,7 +105,7 @@ if [ -f "$WAIT_SCRIPT" ]; then
 else
   # Fallback to inline logic if utility doesn't exist
   echo "Checking Frontend on port $FRONTEND_PORT..."
-  timeout "$TIMEOUT" bash -c "until curl -sf http://localhost:$FRONTEND_PORT > /dev/null; do echo '  Waiting for frontend...'; sleep 2; done" || {
+  timeout "$TIMEOUT" bash -c "until curl -sf http://localhost:$FRONTEND_PORT > /dev/null; do echo '  Waiting for frontend...'; sleep 1; done" || {
     echo "❌ Frontend not responding on port $FRONTEND_PORT"
     echo "Checking if process is running:"
     if [ -f "$PORT_UTILS" ]; then
@@ -133,7 +133,7 @@ if [ -f "$WAIT_SCRIPT" ]; then
 else
   # Fallback to inline logic if utility doesn't exist
   echo "Checking Backend on port $API_PORT..."
-  timeout "$TIMEOUT" bash -c "until curl -sf http://localhost:$API_PORT/docs > /dev/null; do echo '  Waiting for backend...'; sleep 2; done" || {
+  timeout "$TIMEOUT" bash -c "until curl -sf http://localhost:$API_PORT/docs > /dev/null; do echo '  Waiting for backend...'; sleep 1; done" || {
     echo "❌ Backend not responding on port $API_PORT"
     echo "Checking if process is running:"
     if [ -f "$PORT_UTILS" ]; then

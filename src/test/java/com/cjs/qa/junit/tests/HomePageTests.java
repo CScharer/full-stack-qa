@@ -31,8 +31,8 @@ public class HomePageTests {
     // Configure Selenide
     Configuration.browser = "chrome";
     Configuration.headless = !"false".equalsIgnoreCase(System.getProperty("headless", "true"));
-    Configuration.timeout = 10000;
-    Configuration.pageLoadTimeout = 60000;
+    Configuration.timeout = 5000;
+    Configuration.pageLoadTimeout = 10000;
     // Maximize browser window (set to large size to ensure sidebar is visible)
     Configuration.browserSize = "1920x1080";
 
@@ -82,16 +82,16 @@ public class HomePageTests {
     // Verify navigation panel elements are visible (with extended timeout)
     // Sidebar may be hidden on small screens, so check if it exists first
     SelenideElement sidebar = homePage.getSidebar();
-    sidebar.shouldBe(visible, Duration.ofSeconds(15));
+    sidebar.shouldBe(visible, Duration.ofSeconds(5));
 
     SelenideElement navTitleElement = homePage.getNavigationTitle();
-    navTitleElement.shouldBe(visible, Duration.ofSeconds(15));
+    navTitleElement.shouldBe(visible, Duration.ofSeconds(5));
     String navTitle = navTitleElement.getText();
     Assert.assertTrue(
         navTitle.contains("Navigation"),
         "Navigation title should contain 'Navigation', but was: " + navTitle);
 
-    homePage.getSidebarNavigation().shouldBe(visible, Duration.ofSeconds(15));
+    homePage.getSidebarNavigation().shouldBe(visible, Duration.ofSeconds(5));
 
     LOGGER.info("✅ Navigation panel is visible");
   }

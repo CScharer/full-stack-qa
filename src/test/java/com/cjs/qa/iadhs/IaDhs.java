@@ -21,6 +21,6 @@ public class IaDhs {
   public IaDhs(WebDriver webDriver) {
     casePaymentsPage = new CasePaymentsPage(webDriver);
     signInPage = new SignInPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 }

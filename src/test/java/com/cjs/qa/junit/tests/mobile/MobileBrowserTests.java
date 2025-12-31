@@ -145,7 +145,7 @@ public class MobileBrowserTests {
 
     // Test responsive site
     driver.get("https://www.wikipedia.org/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.id("searchInput")));
 
     // Verify content adapts to mobile
@@ -174,7 +174,7 @@ public class MobileBrowserTests {
 
     // Navigate to a page with clickable elements
     driver.get("https://www.github.com/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     // Test tap/click on mobile
     WebElement searchButton =
@@ -245,7 +245,7 @@ public class MobileBrowserTests {
     LOG.info("✅ Mobile driver initialized for viewport testing");
 
     driver.get("https://www.github.com/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
     // Check viewport meta tag
@@ -284,7 +284,7 @@ public class MobileBrowserTests {
     LOG.info("✅ Mobile driver initialized for form testing");
 
     driver.get("https://www.google.com/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     // Find and interact with search input
     WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("q")));

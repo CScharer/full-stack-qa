@@ -53,6 +53,6 @@ public class Marlboro {
     securityPage = new SecurityPage(webDriver);
     signInPage = new SignInPage(webDriver);
     verifyInformationInterruptPage = new VerifyInformationInterruptPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
   }
 }

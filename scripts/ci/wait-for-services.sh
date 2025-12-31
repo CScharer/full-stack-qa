@@ -7,15 +7,15 @@ set -e
 
 FRONTEND_URL=$1
 BACKEND_URL=$2
-MAX_ATTEMPTS=${3:-30}
+MAX_ATTEMPTS=${3:-5}
 ENVIRONMENT=${4:-"unknown"}
 
 # Get script directory to find wait-for-service.sh
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WAIT_SCRIPT="${SCRIPT_DIR}/scripts/ci/wait-for-service.sh"
 
-# Calculate timeout from max attempts (each attempt is ~2 seconds)
-TIMEOUT=$((MAX_ATTEMPTS * 2))
+# Use aggressive timeout (max 5 seconds)
+TIMEOUT=5
 
 echo "⏳ Waiting for services to be ready ($ENVIRONMENT)..."
 echo "  Frontend: $FRONTEND_URL"
@@ -24,7 +24,7 @@ echo "  Backend: $BACKEND_URL"
 # Use centralized wait-for-service.sh utility if available
 if [ -f "$WAIT_SCRIPT" ]; then
   # Wait for Frontend
-  "$WAIT_SCRIPT" "$FRONTEND_URL" "Frontend ($ENVIRONMENT)" "$TIMEOUT" 2 || {
+  "$WAIT_SCRIPT" "$FRONTEND_URL" "Frontend ($ENVIRONMENT)" "$TIMEOUT" 1 || {
     echo "❌ Frontend failed to start within the time limit"
     echo "Frontend: $FRONTEND_URL"
     exit 1
@@ -32,7 +32,7 @@ if [ -f "$WAIT_SCRIPT" ]; then
   
   # Wait for Backend (check health endpoint)
   BACKEND_HEALTH_URL="${BACKEND_URL}/health"
-  "$WAIT_SCRIPT" "$BACKEND_HEALTH_URL" "Backend ($ENVIRONMENT)" "$TIMEOUT" 2 || {
+  "$WAIT_SCRIPT" "$BACKEND_HEALTH_URL" "Backend ($ENVIRONMENT)" "$TIMEOUT" 1 || {
     echo "❌ Backend failed to start within the time limit"
     echo "Backend: $BACKEND_URL"
     exit 1
@@ -49,7 +49,7 @@ else
       break
     fi
     echo "Waiting... ($i/$MAX_ATTEMPTS)"
-    sleep 2
+    sleep 1
   done
   
   if [ "$READY" = "false" ]; then

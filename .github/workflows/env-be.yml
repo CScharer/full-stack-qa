@@ -66,7 +66,7 @@ jobs:
           echo "🚀 Starting services for be tests (${{ inputs.environment }})..."
           chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
-          sleep 10
+          # No sleep needed - start-services-for-ci.sh waits for services to be ready
 
       - name: Wait for Services
         run: |

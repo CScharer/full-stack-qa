@@ -65,7 +65,7 @@ public class SmokeTests {
 
     driver = new RemoteWebDriver(URI.create(gridUrl).toURL(), options);
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
+    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
     LOGGER.info("✅ Driver initialized in {} mode", isHeadless ? "headless" : "headed");
   }
@@ -134,7 +134,7 @@ public class SmokeTests {
     searchBox.sendKeys(Keys.RETURN);
 
     Allure.step("Wait for results");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     wait.until(ExpectedConditions.not(ExpectedConditions.urlToBe(initialUrl)));
 
     Allure.step("Verify URL changed");

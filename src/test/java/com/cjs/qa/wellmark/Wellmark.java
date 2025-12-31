@@ -27,7 +27,7 @@ public class Wellmark {
     logInPage = new LogInPage(webDriver);
     popUpPage = new PopUpPage(webDriver);
     tempPage = new TempPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
   }
 
   public ClaimsAndSpendingPage getClaimsAndSpendingPage() {
