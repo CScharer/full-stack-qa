@@ -44,12 +44,14 @@ env = "$ENVIRONMENT" if "$ENVIRONMENT" else None
 
 converted = 0
 
-# Look for Artillery JSON result files
+# Look for Artillery JSON result files recursively
 json_files = []
 if os.path.isdir(artillery_dir):
-    for file in os.listdir(artillery_dir):
-        if file.endswith('.json') and 'results' in file.lower():
-            json_files.append(os.path.join(artillery_dir, file))
+    # Search recursively for JSON files with 'results' in the name
+    for root, dirs, files in os.walk(artillery_dir):
+        for file in files:
+            if file.endswith('.json') and 'results' in file.lower():
+                json_files.append(os.path.join(root, file))
 
 if not json_files:
     print("ℹ️  No Artillery JSON result files found")

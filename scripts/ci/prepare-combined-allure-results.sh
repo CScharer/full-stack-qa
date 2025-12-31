@@ -249,22 +249,33 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     if [ -d "$SOURCE_DIR/results-$env/artillery-results-$env" ]; then
         echo "   Converting Artillery results ($env)..."
         chmod +x scripts/ci/convert-artillery-to-allure.sh
-        if [ -d "$SOURCE_DIR/results-$env/artillery-results-$env" ]; then
-            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/artillery-results-$env" "$env" || true
-            ARTILLERY_PROCESSED=1
-        fi
+        ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/artillery-results-$env" "$env" || true
+        ARTILLERY_PROCESSED=1
     fi
 done
 
-# Check merged artillery-results directory only if no environment-specific directories were found
-# IMPORTANT: Only process merged directory for ACTIVE environments (not all environments)
-if [ "$ARTILLERY_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/artillery-results" ]; then
+# Check merged artillery-results directory
+# When artifacts are merged, they may preserve their artifact name as a subdirectory
+# e.g., artillery-results/artillery-results-dev/... or just artillery-results/...
+if [ -d "$SOURCE_DIR/artillery-results" ]; then
     echo "   Converting Artillery results (merged artifacts - processing for active environments only)..."
     chmod +x scripts/ci/convert-artillery-to-allure.sh
-    # Process merged directory only for environments that actually ran
+    # Process merged directory for each environment that actually ran
     for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-        if [ -d "$SOURCE_DIR/artillery-results" ]; then
-            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
+        # First, check if there's an environment-specific subdirectory in the merged artifacts
+        if [ -d "$SOURCE_DIR/artillery-results/artillery-results-$env" ]; then
+            echo "   Found environment-specific Artillery directory: artillery-results-$env"
+            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results/artillery-results-$env" "$env" || true
+            ARTILLERY_PROCESSED=1
+        # If no environment-specific subdirectory, check the merged root directory
+        # This handles the case where artifacts are merged flat
+        elif [ "$ARTILLERY_PROCESSED" -eq 0 ]; then
+            # Only process if we haven't processed any environment-specific directories yet
+            # Check if there are any JSON files in the root
+            if find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null | grep -q .; then
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
+                ARTILLERY_PROCESSED=1
+            fi
         fi
     done
 fi
@@ -322,7 +333,7 @@ PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Playw
 CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Cypress E2E Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
 ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Robot Framework Acceptance Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
 VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Vibium Visual Regression Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
-ARTILLERY_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Performance Testing" {} \; 2>/dev/null | grep -l "Artillery Load Tests" {} \; 2>/dev/null | wc -l | tr -d ' ')
+ARTILLERY_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Artillery Load Tests" {} \; 2>/dev/null | wc -l | tr -d ' ')
 # Selenide uses @Epic("HomePage Tests") and @Feature("HomePage Navigation")
 # Match either epic or feature value (pattern searches for the string anywhere in JSON)
 SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -lE "HomePage Tests|HomePage Navigation" {} \; 2>/dev/null | wc -l | tr -d ' ')
