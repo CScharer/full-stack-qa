@@ -2,8 +2,11 @@ name: Version Monitoring (Scheduled)
 
 on:
   schedule:
-    # Nightly: Every day at 9 AM UTC (3 AM Central Time)
+    # Daily monitoring: Every day at 9 AM UTC (3 AM Central Time)
     - cron: '0 9 * * *'
+    # Monthly audit: First day of each month
+    # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+    - cron: '0 14 1 * *'  # First day of each month at 14:00 UTC
   workflow_dispatch: # Allow manual triggering
 
 jobs:
