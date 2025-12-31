@@ -2,8 +2,8 @@
 
 **Status**: ✅ Active (7-Stage Architecture)
 **Workflow**: `.github/workflows/ci.yml`
-**Last Updated**: December 30, 2025
-**Version**: 3.4 - Performance Target Optimization
+**Last Updated**: 2025-12-31
+**Version**: 3.5 - Performance Optimizations Complete
 
 ---
 
@@ -135,6 +135,54 @@ A dedicated workflow (`.github/workflows/dependency-submission.yml`) automatical
 - Manual workflow dispatch
 
 **Note**: This workflow replaces GitHub's automatic dependency submission, which was failing because it couldn't validate the repository root as a Python project. The custom workflow correctly targets the actual Python projects in their respective directories.
+
+---
+
+## ⚡ Performance Optimizations
+
+The pipeline has been optimized for faster test execution through several improvements (completed 2025-12-31):
+
+### Optimizations Implemented
+
+1. **Optimized Timeouts** ✅
+   - Grid wait timeout: Reduced from 60s to 5s
+   - Service wait timeout: Reduced from 30s to 5s
+   - Test-level timeouts: Element waits 5s, page loads 10s
+   - **Savings**: ~3.5 minutes total across all jobs
+
+2. **Parallel Service Startup** ✅
+   - Backend and frontend services start concurrently
+   - **Savings**: ~15-20 seconds per startup
+
+3. **Dependency Caching** ✅
+   - Frontend `node_modules` cached based on `package-lock.json`
+   - Backend `venv` cached based on `requirements.txt`
+   - **Savings**: ~10-15 seconds per job when cache hits
+
+4. **Reduced Sleep Statements** ✅
+   - Removed unnecessary fixed delays
+   - Replaced with actual readiness checks
+   - **Savings**: ~5-10 seconds per job
+
+### Current Timeout Values
+
+| Component | Timeout | Location |
+|-----------|---------|----------|
+| Grid Wait | 5 seconds | `scripts/ci/wait-for-grid.sh` |
+| Service Wait | 5 seconds | `scripts/ci/wait-for-service.sh` |
+| Element Wait | 5 seconds | Test code (Environment.java) |
+| Page Load | 10 seconds | Test code (Environment.java) |
+| Test Execution | 5 minutes | Workflow job timeout |
+
+### Performance Impact
+
+**Total Estimated Savings**: ~4-5 minutes across all test jobs
+
+**Test Execution Times** (after optimizations):
+- Fast tests (Cypress, Playwright, Robot, Vibium): < 2 minutes
+- Maven/Grid tests: ~3-4 minutes (down from 4-5 minutes)
+
+**Note**: Shared service startup was attempted but reverted because GitHub Actions jobs run on separate runners and cannot share services across jobs. Each test job starts its own services.
 
 ---
 
