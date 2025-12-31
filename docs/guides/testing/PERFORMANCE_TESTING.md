@@ -2,7 +2,7 @@
 
 ## 📊 Overview
 
-Comprehensive performance testing framework using three industry-standard tools, each serving different purposes and scenarios.
+Comprehensive performance testing framework using four industry-standard tools, each serving different purposes and scenarios.
 
 ---
 
@@ -10,13 +10,110 @@ Comprehensive performance testing framework using three industry-standard tools,
 
 | Tool | Allocation | Purpose | Language | Strength |
 |------|------------|---------|----------|----------|
-| **Locust** | **40%** | Primary load testing | Python | Real-time UI, flexible scripting |
-| **Gatling** | **30%** | Detailed analysis | Scala | Beautiful reports, metrics |
-| **JMeter** | **30%** | Industry standard | Java | Protocol support, mature |
+| **Artillery + Playwright** | **20%** | Browser load testing | JavaScript | Real browser rendering, Core Web Vitals |
+| **Gatling** | **25%** | Detailed analysis | Scala | Beautiful reports, metrics |
+| **JMeter** | **25%** | Industry standard | Java | Protocol support, mature |
+| **Locust** | **30%** | API load testing | Python | Real-time UI, flexible scripting |
 
 ---
 
-## 🐝 Locust (40% - Primary Tool)
+## 🎯 Artillery + Playwright (20% - Browser-Level Load Testing)
+
+### Why Artillery + Playwright
+
+**Advantages:**
+- ✅ Real browser rendering (Chromium, Firefox, WebKit)
+- ✅ JavaScript execution
+- ✅ Core Web Vitals tracking (LCP, FID, CLS, FCP)
+- ✅ Browser-specific performance metrics
+- ✅ Reuse existing Playwright page objects
+- ✅ Real user experience metrics
+
+### Installation
+
+```bash
+# Install Artillery (included in playwright/package.json)
+cd playwright
+npm install
+```
+
+### Test Files
+
+**1. homepage-minimal-test.yml**
+- Minimal smoke test for CI/CD
+- Single user, 5 seconds
+- Quick verification
+
+**2. homepage-load.yml**
+- Homepage load testing
+- Warm-up, sustained load, cool-down phases
+- Core Web Vitals tracking
+
+**3. applications-flow.yml**
+- Full applications CRUD flow
+- Multi-page user journeys
+- Complex scenarios
+
+### Running Artillery
+
+**Local Testing:**
+```bash
+cd playwright
+npm run load:test:homepage
+npm run load:test:applications
+npm run load:test:all
+```
+
+**CI/CD Integration:**
+- Runs automatically in GitHub Actions pipeline
+- Environment-aware (dev, test)
+- Results included in Allure reports
+
+### Metrics Collected
+
+**Standard Metrics:**
+- Page load times
+- Request rate (RPS)
+- Response times (p50, p95, p99)
+- Error rates
+- Active users
+
+**Core Web Vitals:**
+- **LCP (Largest Contentful Paint)** - Loading performance
+- **FCP (First Contentful Paint)** - Initial render
+- **CLS (Cumulative Layout Shift)** - Visual stability
+- **TTI (Time to Interactive)** - Interactivity
+
+**Browser-Specific:**
+- DOM content loaded time
+- Resource loading times
+- Network waterfall analysis
+- JavaScript execution time
+
+### Reports
+
+- **JSON Results**: `playwright/artillery-results/*.json`
+- **Allure Integration**: Results converted to Allure format
+- **Artillery Cloud**: Optional cloud visualization (https://app.artillery.io)
+
+### When to Use Artillery + Playwright
+
+**Use Artillery + Playwright when:**
+- ✅ Real browser rendering needed
+- ✅ Core Web Vitals tracking required
+- ✅ JavaScript execution matters
+- ✅ User experience metrics needed
+- ✅ Browser-specific performance testing
+
+**Use Protocol-Level Tools (Locust/Gatling/JMeter) when:**
+- ✅ Testing API endpoints directly
+- ✅ High concurrency needed (1000+ users)
+- ✅ Resource-efficient testing required
+- ✅ Protocol-level metrics sufficient
+
+---
+
+## ⚡ Gatling (25% - Detailed Analysis)
 
 ### Why Locust is Primary
 
@@ -104,7 +201,7 @@ locust -f src/test/locust/api_load_test.py --worker --master-host=<master-ip>
 
 ---
 
-## ⚡ Gatling (30% - Detailed Analysis)
+## ⚡ Gatling (25% - Detailed Analysis)
 
 ### Why Gatling
 
@@ -187,7 +284,7 @@ locust -f src/test/locust/api_load_test.py --worker --master-host=<master-ip>
 
 ---
 
-## 📊 JMeter (30% - Industry Standard)
+## 📊 JMeter (25% - Industry Standard)
 
 ### Why JMeter
 
@@ -312,9 +409,32 @@ jmeter -t src/test/jmeter/API_Performance_Test.jmx
 - Latency
 - Thread statistics
 
+**Artillery + Playwright:**
+- Core Web Vitals (LCP, FCP, CLS, TTI)
+- Page load times
+- Browser rendering metrics
+- JavaScript execution time
+- Network waterfall analysis
+
 ---
 
 ## 🎯 Test Scenarios
+
+### Protocol-Level vs Browser-Level Testing
+
+**Protocol-Level Tools (Locust, Gatling, JMeter):**
+- ✅ HTTP/HTTPS protocol-level load testing
+- ✅ API endpoint performance testing
+- ✅ Request/response metrics
+- ✅ High concurrency (1000+ users)
+- ✅ Resource-efficient testing
+
+**Browser-Level Tool (Artillery + Playwright):**
+- ✅ Real browser rendering
+- ✅ JavaScript execution
+- ✅ Core Web Vitals (LCP, FID, CLS, FCP)
+- ✅ Browser-specific performance metrics
+- ✅ Real user experience metrics
 
 ### API Load Testing
 
@@ -368,8 +488,12 @@ jmeter -t src/test/jmeter/API_Performance_Test.jmx
 ### Run All Tools
 
 ```bash
-# Sequential execution
+# Sequential execution (Protocol-level tools only)
 ./scripts/run-all-performance-tests.sh
+
+# Artillery + Playwright (Browser-level)
+cd playwright
+npm run load:test:homepage
 ```
 
 ### CI/CD Integration
@@ -390,11 +514,12 @@ locust -f src/test/locust/api_load_test.py --headless \
 
 ### Response Time Comparison
 
-| Tool | API (avg) | Web (avg) | Format |
-|------|-----------|-----------|--------|
-| Locust | Real-time | Real-time | Web UI + HTML |
-| Gatling | Post-test | Post-test | HTML Dashboard |
-| JMeter | Post-test | Post-test | HTML + CSV |
+| Tool | API (avg) | Web (avg) | Browser | Format |
+|------|-----------|-----------|---------|--------|
+| Locust | Real-time | Real-time | ❌ | Web UI + HTML |
+| Gatling | Post-test | Post-test | ❌ | HTML Dashboard |
+| JMeter | Post-test | Post-test | ❌ | HTML + CSV |
+| Artillery + Playwright | N/A | Real-time | ✅ | JSON + Allure |
 
 ### Use Cases
 
@@ -415,6 +540,13 @@ locust -f src/test/locust/api_load_test.py --headless \
 - ✅ Need GUI test builder
 - ✅ Testing multiple protocols
 - ✅ Integration with CI/CD tools
+
+**Use Artillery + Playwright when:**
+- ✅ Real browser rendering needed
+- ✅ Core Web Vitals tracking required
+- ✅ JavaScript execution matters
+- ✅ User experience metrics needed
+- ✅ Browser-specific performance testing
 
 ---
 

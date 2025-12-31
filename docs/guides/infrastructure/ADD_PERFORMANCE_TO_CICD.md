@@ -56,7 +56,7 @@ on:
 
 jobs:
   locust-performance:
-    name: Locust Performance Tests (40%)
+    name: Locust Performance Tests (30%)
     runs-on: ubuntu-latest
 
     steps:
@@ -91,7 +91,7 @@ jobs:
           retention-days: 7
 
   gatling-performance:
-    name: Gatling Performance Tests (30%)
+    name: Gatling Performance Tests (25%)
     runs-on: ubuntu-latest
 
     steps:
@@ -117,7 +117,7 @@ jobs:
           retention-days: 7
 
   jmeter-performance:
-    name: JMeter Performance Tests (30%)
+    name: JMeter Performance Tests (25%)
     runs-on: ubuntu-latest
 
     steps:

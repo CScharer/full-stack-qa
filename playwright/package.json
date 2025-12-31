@@ -13,12 +13,17 @@
     "test:report": "playwright show-report",
     "test:integration": "playwright test --config=playwright.integration.config.ts",
     "test:integration:ui": "playwright test --config=playwright.integration.config.ts --ui",
-    "test:integration:headed": "playwright test --config=playwright.integration.config.ts --headed"
+    "test:integration:headed": "playwright test --config=playwright.integration.config.ts --headed",
+    "load:test": "artillery run",
+    "load:test:all": "artillery run artillery/scenarios/*.yml",
+    "load:test:homepage": "artillery run artillery/scenarios/homepage-load.yml",
+    "load:test:applications": "artillery run artillery/scenarios/applications-flow.yml"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/node": "^25.0.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "artillery": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0",

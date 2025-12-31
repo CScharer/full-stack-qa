@@ -1,0 +1,20 @@
+# Minimal Homepage Test - Single user for quick testing
+# This is the fastest test to verify Artillery + Playwright setup
+
+config:
+  target: "http://localhost:3003"  # Default, overridden by --variable flag
+  phases:
+    # Single user, 5 seconds - Quick smoke test for CI/CD
+    - duration: 5
+      arrivalRate: 1
+      name: "Single user test"
+  processor: "../processors/homepage-processor.js"
+  variables:
+    baseUrl: "http://localhost:3003"  # Default, overridden by --variable flag
+
+scenarios:
+  - name: "Minimal Homepage Test"
+    weight: 100
+    flow:
+      - function: "loadHomepage"
+

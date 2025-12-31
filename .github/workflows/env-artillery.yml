@@ -1,0 +1,147 @@
+name: Test Single Environment (Artillery Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to Test (dev, test)'
+        required: true
+        type: string
+      artillery_test_type:
+        description: 'Artillery Test Type (smoke, all, homepage-only, applications-only)'
+        required: true
+        type: string
+      base_url:
+        description: 'Base URL for the Environment'
+        required: true
+        type: string
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+jobs:
+  artillery-tests:
+    name: Artillery Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine Ports and URLs
+        id: ports
+        run: |
+          chmod +x scripts/ci/determine-ports.sh
+          ./scripts/ci/determine-ports.sh "${{ inputs.environment }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: playwright/package-lock.json
+
+      - name: Start Backend and Frontend Services
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting services for Artillery tests (${{ inputs.environment }})..."
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+          # No sleep needed - start-services-for-ci.sh waits for services to be ready
+
+      - name: Wait for Services
+        run: |
+          chmod +x scripts/ci/wait-for-services.sh
+          ./scripts/ci/wait-for-services.sh \
+            "${{ steps.ports.outputs.frontend_url }}" \
+            "${{ steps.ports.outputs.backend_url }}" \
+            "30" \
+            "${{ inputs.environment }}"
+
+      - name: Install Playwright dependencies
+        working-directory: ./playwright
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ./playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Create Artillery results directory
+        working-directory: ./playwright
+        run: mkdir -p artillery-results
+
+      - name: Run Artillery Tests
+        working-directory: ./playwright
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "🎯 Running Artillery tests (${{ inputs.environment }})..."
+          echo "Test Type: ${{ inputs.artillery_test_type }}"
+          echo "Base URL: $BASE_URL"
+          
+          case "${{ inputs.artillery_test_type }}" in
+            smoke)
+              echo "Running smoke test (minimal homepage load test)..."
+              npx artillery run artillery/scenarios/homepage-minimal-test.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
+                --output artillery-results/smoke-results.json || true
+              ;;
+            homepage-only)
+              echo "Running homepage load test..."
+              npx artillery run artillery/scenarios/homepage-load.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
+                --output artillery-results/homepage-results.json || true
+              ;;
+            applications-only)
+              echo "Running applications flow load test..."
+              npx artillery run artillery/scenarios/applications-flow.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
+                --output artillery-results/applications-results.json || true
+              ;;
+            all)
+              echo "Running all Artillery test scenarios..."
+              npx artillery run artillery/scenarios/homepage-load.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
+                --output artillery-results/homepage-results.json || true
+              npx artillery run artillery/scenarios/applications-flow.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
+                --output artillery-results/applications-results.json || true
+              ;;
+            *)
+              echo "⚠️ Unknown test type: ${{ inputs.artillery_test_type }}"
+              echo "Running smoke test as fallback..."
+              npx artillery run artillery/scenarios/homepage-minimal-test.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
+                --output artillery-results/smoke-results.json || true
+              ;;
+          esac
+
+      - name: Upload Artillery Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: artillery-results-${{ inputs.environment }}
+          path: playwright/artillery-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Note on Artillery Reporting
+        if: always()
+        run: |
+          echo "ℹ️  Artillery HTML report generation has been deprecated."
+          echo "📊 JSON results are available in the 'artillery-results-${{ inputs.environment }}' artifact."
+          echo "🌐 For visualization, use Artillery Cloud: https://app.artillery.io"
+          echo ""
+          echo "To view results locally, you can:"
+          echo "  1. Download the JSON artifact"
+          echo "  2. Upload to Artillery Cloud for visualization"
+          echo "  3. Or parse the JSON directly for metrics"
+
