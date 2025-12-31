@@ -216,7 +216,7 @@ jobs:
     name: Determine Environments
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    if: always() && needs.determine-schedule-type.result == 'success'
     outputs:
       run_dev: ${{ steps.set-envs.outputs.run_dev }}
       run_test: ${{ steps.set-envs.outputs.run_test }}
@@ -260,7 +260,7 @@ jobs:
     name: Determine Test Execution
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    if: always() && needs.determine-schedule-type.result == 'success'
     outputs:
       run_ui_tests: ${{ steps.set-execution.outputs.run_ui_tests }}
       run_be_tests: ${{ steps.set-execution.outputs.run_be_tests }}
