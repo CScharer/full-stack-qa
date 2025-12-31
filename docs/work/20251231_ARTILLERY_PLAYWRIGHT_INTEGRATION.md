@@ -275,16 +275,16 @@ playwright/
 - One working load test scenario
 - Documentation of setup
 
-### Phase 2: CI/CD Integration (Priority: High) 🎯
+### Phase 2: CI/CD Integration ✅ COMPLETE
 
 **Goals**:
-- Integrate Artillery tests into CI/CD pipeline
-- Follow same pattern as BE tests (dev on branches, dev+test on main)
-- Run tests similar to performance tests (Locust/Gatling/JMeter)
+- ✅ Integrate Artillery tests into CI/CD pipeline
+- ✅ Follow same pattern as BE tests (dev on branches, dev+test on main)
+- ✅ Run tests similar to performance tests (Locust/Gatling/JMeter)
 
-**Recommended Approach**: **Treat as Browser Load Tests (Similar to BE Performance Tests)**
+**Approach**: **Treat as Browser Load Tests (Similar to BE Performance Tests)**
 
-**Pattern to Follow**:
+**Pattern Implemented**:
 - ✅ Use reusable workflow pattern (like `env-be.yml`)
 - ✅ Run in parallel with other tests
 - ✅ Dev environment on branches/PRs
@@ -292,46 +292,50 @@ playwright/
 - ✅ Start services (FE + BE) before tests
 - ✅ Collect and upload results as artifacts
 
-**Tasks**:
+**Tasks Completed**:
 
-1. **Create Reusable Workflow** (Similar to `env-be.yml`)
-   - Create `.github/workflows/env-artillery.yml`
-   - Accept inputs: `environment`, `base_url`, `artillery_test_type`
-   - Start services (FE + BE) - same as BE tests
-   - Install Artillery and Playwright dependencies
-   - Run Artillery tests
-   - Upload results as artifacts
+1. ✅ **Created Reusable Workflow** (`.github/workflows/env-artillery.yml`)
+   - Accepts inputs: `environment`, `base_url`, `artillery_test_type`
+   - Starts services (FE + BE) - same as BE tests
+   - Installs Artillery and Playwright dependencies
+   - Runs Artillery tests based on test type
+   - Uploads JSON results and HTML reports as artifacts
 
-2. **Add Jobs to `ci.yml`**
-   - Add `test-artillery-dev` job (runs on branches/PRs)
-   - Add `test-artillery-test` job (runs on main only)
-   - Follow same pattern as `test-be-dev` and `test-be-test`
-   - Add to gate jobs for result checking
+2. ✅ **Added Jobs to `ci.yml`**
+   - ✅ `test-artillery-dev` job (runs on branches/PRs - dev only)
+   - ✅ `test-artillery-test` job (runs on main - test environment)
+   - ✅ Follows same pattern as `test-be-dev` and `test-be-test`
+   - ✅ Integrated with gate jobs for result checking
 
-3. **Environment Configuration**
-   - **Branches/PRs**: Run `test-artillery-dev` only (dev environment)
-   - **Main branch**: Run both `test-artillery-dev` and `test-artillery-test`
-   - **Never run on prod** (same as performance tests)
+3. ✅ **Environment Configuration**
+   - ✅ **Branches/PRs**: Run `test-artillery-dev` only (dev environment)
+   - ✅ **Main branch**: Run both `test-artillery-dev` and `test-artillery-test`
+   - ✅ **Never run on prod** (same as performance tests)
 
-4. **Test Types** (Similar to BE test types)
-   - `smoke` - Quick test (5-10 seconds, 1-2 users)
-   - `all` - All scenarios (homepage, applications, etc.)
-   - `homepage-only` - Homepage load test only
-   - `applications-only` - Applications flow only
+4. ✅ **Test Types** (Similar to BE test types)
+   - ✅ `smoke` - Quick test (5 seconds, 1 user) - **Default for CI/CD**
+   - ✅ `all` - All scenarios (homepage, applications, etc.)
+   - ✅ `homepage-only` - Homepage load test only
+   - ✅ `applications-only` - Applications flow only
 
-5. **Results Collection**
-   - Upload Artillery JSON results as artifacts
-   - Upload Artillery HTML reports (if generated)
-   - Store with environment prefix: `artillery-results-dev`, `artillery-results-test`
+5. ✅ **Results Collection**
+   - ✅ Upload Artillery JSON results as artifacts (`artillery-results-{env}`)
+   - ✅ Upload Artillery HTML reports (`artillery-reports-{env}`)
+   - ✅ 7-day retention for artifacts
+
+6. ✅ **Gate Integration**
+   - ✅ Added Artillery results to `gate-dev` checks
+   - ✅ Added Artillery results to `gate-test` checks
+   - ✅ Added Artillery results to pipeline summary
 
 **Deliverables**:
 - ✅ Reusable workflow: `.github/workflows/env-artillery.yml`
-- ✅ CI/CD jobs in `ci.yml`
-- ✅ Environment-specific execution
-- ✅ Artifact collection
+- ✅ CI/CD jobs in `ci.yml`: `test-artillery-dev`, `test-artillery-test`
+- ✅ Environment-specific execution (dev on branches, dev+test on main)
+- ✅ Artifact collection and upload
 - ✅ Integration with gate jobs
 
-**Estimated Time**: 2-3 hours
+**Status**: ✅ **COMPLETE** - Ready for testing in CI/CD pipeline
 
 ### Phase 3: Page Object Reuse & Enhanced Scenarios (Week 2-3)
 
@@ -547,14 +551,27 @@ module.exports = {
 
 ## 📊 Integration with Existing Performance Testing
 
-### Tool Allocation (Proposed)
+### Tool Allocation (Proposed - To Be Updated When Merging to Main)
 
+**⚠️ NOTE**: Do NOT update percentages in documentation yet. Wait until branch is merged to main.
+
+**Current Allocation** (from `docs/guides/testing/PERFORMANCE_TESTING.md`):
+- Locust: 40%
+- Gatling: 30%
+- JMeter: 30%
+
+**Proposed Allocation** (after Artillery integration):
 | Tool | Allocation | Purpose | Type |
 |------|------------|---------|------|
 | **Locust** | 30% | API load testing | Protocol-level |
 | **Gatling** | 25% | Detailed analysis | Protocol-level |
 | **JMeter** | 25% | Industry standard | Protocol-level |
 | **Artillery + Playwright** | 20% | Browser load testing | Browser-level |
+
+**Files to Update** (when merging to main):
+- `docs/guides/testing/PERFORMANCE_TESTING.md` - Update tool allocation table
+- `README.md` - Update performance testing section if it mentions percentages
+- Any other documentation referencing performance test tool allocation
 
 ### When to Use Each Tool
 
@@ -715,27 +732,32 @@ module.exports = {
    - Core Web Vitals tracking implemented
    - Local execution verified successfully
 
-### 🎯 Immediate Next Steps (Phase 2: CI/CD Integration)
+2. ✅ **Phase 2: CI/CD Integration** - COMPLETE
+   - Created reusable workflow: `.github/workflows/env-artillery.yml`
+   - Added jobs to `ci.yml`: `test-artillery-dev` and `test-artillery-test`
+   - Integrated with gate jobs for result checking
+   - Configured to run: dev on branches/PRs, dev+test on main
+   - Artifact collection and upload configured
 
-**Priority**: **HIGH** - Get tests running in pipeline
+### 🎯 Next Steps (Phase 3: Enhanced Scenarios)
 
-1. **Create Reusable Workflow** (`.github/workflows/env-artillery.yml`)
-   - Follow pattern from `env-be.yml`
-   - Start services (FE + BE)
-   - Install Artillery and Playwright
-   - Run Artillery tests
-   - Upload results as artifacts
+**Priority**: **MEDIUM** - Enhance test scenarios and reuse page objects
 
-2. **Add Jobs to `ci.yml`**
-   - Add `test-artillery-dev` (runs on branches/PRs - dev only)
-   - Add `test-artillery-test` (runs on main - test environment)
-   - Follow same pattern as `test-be-dev` and `test-be-test`
+1. **Refactor Page Objects for Reuse**
+   - Extract page objects to shared location
+   - Ensure compatibility with both functional and load tests
 
-3. **Update Gate Jobs**
-   - Include Artillery test results in gate checks
-   - Similar to how BE test results are checked
+2. **Create Additional Scenarios**
+   - Applications CRUD flow
+   - Companies flow
+   - Contacts flow
+   - Multi-page user journeys
 
-4. **Test in CI/CD**
+3. **Enhance Core Web Vitals Collection**
+   - Improve collection reliability
+   - Add more metrics (TTFB, DOM Content Loaded, etc.)
+
+4. **Test in CI/CD** (Immediate)
    - Push to branch → verify `test-artillery-dev` runs
    - Merge to main → verify both dev and test run
    - Verify artifacts are uploaded correctly
@@ -750,6 +772,6 @@ module.exports = {
 
 **Last Updated**: 2025-12-31  
 **Document Location**: `docs/work/20251231_ARTILLERY_PLAYWRIGHT_INTEGRATION.md`  
-**Status**: ✅ Phase 1 Complete - Ready for Phase 2 (CI/CD Integration)  
+**Status**: ✅ Phase 1 & 2 Complete - Ready for Review & Testing  
 **Branch**: `artillery-playwright-integration`
 

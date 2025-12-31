@@ -2,15 +2,15 @@
 # This is the fastest test to verify Artillery + Playwright setup
 
 config:
-  target: "http://localhost:3003"
+  target: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
   phases:
-    # Single user, 5 seconds
+    # Single user, 5 seconds - Quick smoke test for CI/CD
     - duration: 5
       arrivalRate: 1
       name: "Single user test"
   processor: "../processors/homepage-processor.js"
   variables:
-    baseUrl: "http://localhost:3003"
+    baseUrl: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
 
 scenarios:
   - name: "Minimal Homepage Test"
