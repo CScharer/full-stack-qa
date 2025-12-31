@@ -9,6 +9,12 @@
 
 This guide walks you through the manual GitHub UI steps required to enable auto-merge for Dependabot security updates. These steps cannot be automated and must be done through the GitHub web interface.
 
+**⚠️ Important Clarification:**
+- **"Allow auto-merge"** checkbox is **ONLY** in **Settings → General → Pull Requests**
+- **Branch protection rules** do **NOT** have a separate "Allow auto-merge" checkbox
+- Once enabled in General settings, it works with branch protection rules automatically
+- You only need to ensure branch protection rules are configured correctly (require PR, require checks, require up-to-date)
+
 ---
 
 ## Step 1: Enable Auto-merge in Repository Settings
@@ -23,8 +29,10 @@ This guide walks you through the manual GitHub UI steps required to enable auto-
 
 1. Scroll down to the **Pull Requests** section
 2. Find the **"Allow auto-merge"** checkbox
+   - **Location**: It should be near the top of the Pull Requests section
+   - **Label**: "Allow auto-merge" or "Automatically merge pull requests when all requirements are met"
 3. ✅ **Check the box** to enable auto-merge
-4. Click **Save** (if a save button appears)
+4. The setting saves automatically (no save button needed)
 
 **What this does:**
 - Allows pull requests to be automatically merged when all requirements are met
@@ -102,8 +110,12 @@ After completing the above steps:
 
 1. Wait for Dependabot to create a security update PR (or manually trigger one)
 2. Check the PR page - you should see:
-   - **"Enable auto-merge"** button (if all checks pass)
-   - Or the PR will auto-merge automatically after CI/CD passes (if configured)
+   - **"Enable auto-merge"** button appears on the PR (if all checks pass)
+   - **OR** the PR will auto-merge automatically after CI/CD passes (if Dependabot is configured with `auto-merge: true`)
+3. For security updates configured in `dependabot.yml`:
+   - Dependabot will automatically enable auto-merge on the PR
+   - Once CI/CD checks pass, the PR will merge automatically
+   - No manual intervention needed
 
 ### 3.2 Expected Behavior
 
@@ -121,16 +133,22 @@ After completing the above steps:
 
 ## Troubleshooting
 
-### Issue: "Allow auto-merge" option not visible
+### Issue: "Allow auto-merge" option not visible in General settings
 
 **Possible causes:**
 - Repository doesn't have the required permissions
 - Organization settings may restrict auto-merge
-- You may not have admin access to the repository
+- You may not have admin/maintainer access to the repository
+- Feature may not be available for your repository type/plan
+
+**Where to look:**
+- **Settings** → **General** → Scroll to **Pull Requests** section
+- Look for checkbox labeled "Allow auto-merge" or "Automatically merge pull requests when all requirements are met"
 
 **Solution:**
-- Verify you have admin access to the repository
+- Verify you have admin/maintainer access to the repository
 - Check organization settings if this is an organization repository
+- Ensure repository plan supports auto-merge (available in all GitHub plans)
 
 ### Issue: "Allow auto-merge" not visible in branch protection rules
 
@@ -171,10 +189,11 @@ After completing the above steps:
 
 After completing these steps, your repository will have:
 
-✅ **Auto-merge enabled** in General settings  
-✅ **Branch protection rules** configured  
-✅ **Auto-merge allowed** in branch protection  
-✅ **Dependabot configured** for security update auto-merge  
+✅ **Auto-merge enabled** in General settings (Settings → General → Pull Requests)  
+✅ **Branch protection rules** configured (Settings → Branches → Branch protection rules)  
+✅ **Dependabot configured** for security update auto-merge (`.github/dependabot.yml`)  
+
+**Important**: "Allow auto-merge" is **only** in General settings. Branch protection rules don't have a separate "Allow auto-merge" checkbox - they just need to be configured correctly (require PR, require checks, require up-to-date).
 
 **Result**: Security update PRs from Dependabot will automatically merge after CI/CD checks pass.
 

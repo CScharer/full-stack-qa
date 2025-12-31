@@ -608,14 +608,17 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
    - Settings → Branches → Branch protection rules
    - Ensure CI/CD checks are required
    - Ensure "Require branches to be up to date" is enabled
-   - Ensure auto-merge is allowed
+   - **Note**: "Allow auto-merge" is NOT in branch protection rules - it's only in General settings (Step 1)
 4. ✅ Configuration changes ready for commit
 5. ⏳ Wait for next Dependabot security PR (after manual steps completed)
 6. ⏳ Verify auto-merge works correctly
 
 **Verification** (after manual steps):
-- [ ] Auto-merge is enabled in repository settings (manual)
-- [ ] Branch protection rules allow auto-merge (manual)
+- [ ] Auto-merge is enabled in repository settings: Settings → General → Pull Requests → "Allow auto-merge" (manual)
+- [ ] Branch protection rules are configured: Settings → Branches → Branch protection rules (manual)
+  - Require a pull request before merging
+  - Require status checks to pass before merging
+  - Require branches to be up to date before merging
 - [ ] Dependabot security PRs are auto-merged after CI/CD passes
 - [ ] No issues introduced by auto-merged PRs
 
