@@ -545,12 +545,22 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
 8. ⏳ Wait for analysis to complete (10-30 minutes)
 9. ⏳ Review results in Security tab
 
-**Verification**:
+**Verification** (to be checked after workflow runs):
 - [ ] CodeQL workflow runs successfully
 - [ ] Results appear in GitHub Security tab
 - [ ] No critical security issues found (or issues are documented)
 - [ ] Weekly schedule is configured correctly
-- [ ] (If Option A) Copilot Autofix suggestions appear in test PR with CodeQL alerts
+- [ ] Copilot Autofix suggestions appear in test PR with CodeQL alerts
+
+**Changes Made**:
+- ✅ Created `.github/workflows/codeql-analysis.yml` with CodeQL configuration
+- ✅ Configured for Java, JavaScript/TypeScript, and Python
+- ✅ Set up weekly scheduled scan (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
+- ✅ Selected Option A: Enable Copilot Autofix
+- ✅ Copilot Autofix will be enabled automatically (no additional config needed)
+- ✅ Documented decision and implementation progress
+
+**Status**: ✅ Configuration complete and committed. Ready to test workflow manually or wait for scheduled run. Copilot Autofix will activate automatically when CodeQL alerts are found in pull requests.
 
 ---
 
