@@ -127,28 +127,15 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
-      - name: Generate Artillery HTML Report
-        working-directory: ./playwright
+      - name: Note on Artillery Reporting
         if: always()
-        continue-on-error: true
         run: |
-          # Generate HTML report from JSON results if available
-          if [ -f artillery-results/smoke-results.json ]; then
-            npx artillery report artillery-results/smoke-results.json --output artillery-results/smoke-report.html || true
-          fi
-          if [ -f artillery-results/homepage-results.json ]; then
-            npx artillery report artillery-results/homepage-results.json --output artillery-results/homepage-report.html || true
-          fi
-          if [ -f artillery-results/applications-results.json ]; then
-            npx artillery report artillery-results/applications-results.json --output artillery-results/applications-report.html || true
-          fi
-
-      - name: Upload Artillery HTML Reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: artillery-reports-${{ inputs.environment }}
-          path: playwright/artillery-results/*.html
-          retention-days: 7
-          if-no-files-found: ignore
+          echo "ℹ️  Artillery HTML report generation has been deprecated."
+          echo "📊 JSON results are available in the 'artillery-results-${{ inputs.environment }}' artifact."
+          echo "🌐 For visualization, use Artillery Cloud: https://app.artillery.io"
+          echo ""
+          echo "To view results locally, you can:"
+          echo "  1. Download the JSON artifact"
+          echo "  2. Upload to Artillery Cloud for visualization"
+          echo "  3. Or parse the JSON directly for metrics"
 
