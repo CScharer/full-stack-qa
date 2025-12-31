@@ -599,6 +599,10 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
 - ✅ Configured for security updates only (conservative approach)
 - ✅ Set squash merge strategy for cleaner commit history
 - ✅ All ecosystems: Maven, GitHub Actions, Docker, npm (4 projects), pip (3 projects)
+- ✅ **Refactored to use YAML anchors** (reduced from 239 to 130 lines, ~45% reduction)
+  - Common configuration centralized at top of file
+  - Easier to maintain (change once, applies everywhere)
+  - ⚠️ **Testing**: Dependabot may not support YAML anchors - monitoring next Dependabot run
 
 **Important Notes**:
 - **Security updates only**: Starting conservatively with security patches only
