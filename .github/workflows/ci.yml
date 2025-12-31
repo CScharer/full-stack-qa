@@ -497,66 +497,18 @@ jobs:
             "validate-dependency-versions:${{ needs.validate-dependency-versions.result }}"
 
   # ==================================================================================
-  # STAGE 3: DEV ENVIRONMENT SERVICE SETUP
-  # ==================================================================================
-  gate-start-dev:
-    name: Gate (Start DEV Services)
-    runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup]
-    if: |
-      always() &&
-      !cancelled() &&
-      needs.determine-schedule-type.outputs.code-changed == 'true' &&
-      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_dev == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache Frontend Dependencies
-        uses: actions/cache@v4
-        with:
-          path: frontend/node_modules
-          key: frontend-deps-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            frontend-deps-${{ runner.os }}-
-
-      - name: Cache Backend Dependencies
-        uses: actions/cache@v4
-        with:
-          path: backend/venv
-          key: backend-deps-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
-          restore-keys: |
-            backend-deps-${{ runner.os }}-
-
-      - name: Verify Readiness
-        run: |
-          echo "✅ DEV environment ready - dependencies cached"
-          echo "📋 Test jobs will start services using cached dependencies"
-
-  # ==================================================================================
   # STAGE 3: DEV ENVIRONMENT TESTING & DEPLOYMENT
   # ==================================================================================
 
   test-fe-dev:
     name: Test FE (DEV)
-    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-start-dev]
+    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-start-dev.result == 'success' || needs.gate-start-dev.result == 'skipped')
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
@@ -636,12 +588,12 @@ jobs:
             "determine-test-execution.be_test_mode:${{ needs.determine-test-execution.outputs.be_test_mode }}"
 
   # ==================================================================================
-  # STAGE 4: TEST ENVIRONMENT SERVICE SETUP
+  # STAGE 4: TEST ENVIRONMENT TESTING & DEPLOYMENT
   # ==================================================================================
-  gate-start-test:
-    name: Gate (Start TEST Services)
-    runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-finish-dev]
+
+  test-fe-test:
+    name: Test FE (TEST)
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-finish-dev]
     if: |
       always() &&
       !cancelled() &&
@@ -649,54 +601,6 @@ jobs:
       needs.determine-envs.outputs.run_test == 'true' &&
       (needs.gate-finish-dev.result == 'success' ||
        (needs.gate-finish-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false'))
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache Frontend Dependencies
-        uses: actions/cache@v4
-        with:
-          path: frontend/node_modules
-          key: frontend-deps-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            frontend-deps-${{ runner.os }}-
-
-      - name: Cache Backend Dependencies
-        uses: actions/cache@v4
-        with:
-          path: backend/venv
-          key: backend-deps-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
-          restore-keys: |
-            backend-deps-${{ runner.os }}-
-
-      - name: Verify Readiness
-        run: |
-          echo "✅ TEST environment ready - dependencies cached"
-          echo "📋 Test jobs will start services using cached dependencies"
-
-  # ==================================================================================
-  # STAGE 4: TEST ENVIRONMENT TESTING & DEPLOYMENT
-  # ==================================================================================
-
-  test-fe-test:
-    name: Test FE (TEST)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-test]
-    if: |
-      always() &&
-      !cancelled() &&
-      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-start-test.result == 'success' || needs.gate-start-test.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
@@ -777,12 +681,12 @@ jobs:
             "determine-test-execution.be_test_mode:${{ needs.determine-test-execution.outputs.be_test_mode }}"
 
   # ==================================================================================
-  # STAGE 5: PROD ENVIRONMENT SERVICE SETUP
+  # STAGE 5: PROD ENVIRONMENT TESTING & DEPLOYMENT
   # ==================================================================================
-  gate-start-prod:
-    name: Gate (Start PROD Services)
-    runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-finish-test]
+
+  test-fe-prod:
+    name: Test FE (PROD)
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-finish-test]
     if: |
       always() &&
       !cancelled() &&
@@ -790,54 +694,6 @@ jobs:
       needs.determine-envs.outputs.run_prod == 'true' &&
       (needs.gate-finish-test.result == 'success' ||
        (needs.gate-finish-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false'))
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache Frontend Dependencies
-        uses: actions/cache@v4
-        with:
-          path: frontend/node_modules
-          key: frontend-deps-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            frontend-deps-${{ runner.os }}-
-
-      - name: Cache Backend Dependencies
-        uses: actions/cache@v4
-        with:
-          path: backend/venv
-          key: backend-deps-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
-          restore-keys: |
-            backend-deps-${{ runner.os }}-
-
-      - name: Verify Readiness
-        run: |
-          echo "✅ PROD environment ready - dependencies cached"
-          echo "📋 Test jobs will start services using cached dependencies"
-
-  # ==================================================================================
-  # STAGE 5: PROD ENVIRONMENT TESTING & DEPLOYMENT
-  # ==================================================================================
-
-  test-fe-prod:
-    name: Test FE (PROD)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-prod]
-    if: |
-      always() &&
-      !cancelled() &&
-      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_prod == 'true' &&
-      (needs.gate-start-prod.result == 'success' || needs.gate-start-prod.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'
@@ -921,7 +777,7 @@ jobs:
   test-be-dev:
     name: Test BE (DEV)
     uses: ./.github/workflows/env-be.yml
-    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-start-dev]
+    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
     # Note: BE tests run when:
     # - BE tests are enabled (run_be_tests == 'true')
     # - Dev environment is selected for be tests (be_env_dev == 'true')
@@ -932,7 +788,7 @@ jobs:
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
       needs.determine-test-execution.outputs.be_env_dev == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      needs.gate-start-dev.result == 'success'
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
     with:
       environment: 'dev'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
@@ -942,14 +798,15 @@ jobs:
   test-be-test:
     name: Test BE (TEST)
     uses: ./.github/workflows/env-be.yml
-    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-start-test]
+    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-finish-dev]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
       needs.determine-test-execution.outputs.be_env_test == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      needs.gate-start-test.result == 'success'
+      (needs.gate-finish-dev.result == 'success' ||
+       (needs.gate-finish-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false'))
     with:
       environment: 'test'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
