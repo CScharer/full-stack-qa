@@ -854,7 +854,9 @@ After implementation, verify:
 
 **Remaining Manual Steps**:
 - ⚠️ Enable auto-merge in repository settings (GitHub UI)
+  - **Guide**: See `docs/guides/setup/GITHUB_UI_AUTO_MERGE_SETUP.md` for step-by-step instructions
 - ⚠️ Verify branch protection rules (GitHub UI)
+  - **Guide**: See `docs/guides/setup/GITHUB_UI_AUTO_MERGE_SETUP.md` for step-by-step instructions
 
 **Next Steps After PR Merge**:
 1. Complete manual GitHub UI steps for auto-merge
