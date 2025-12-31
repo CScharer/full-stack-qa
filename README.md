@@ -14,11 +14,11 @@
 [![Cucumber](https://img.shields.io/badge/Cucumber-7.33.0-brightgreen.svg)](https://cucumber.io/)
 [![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.0-blue.svg)](https://rest-assured.io/)
 
-[![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-TestNG%20%7C%20Vitest%20%7C%20JUnit-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
+[![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
 
+[![JUnit](https://img.shields.io/badge/JUnit-4.13.2-blue.svg)](https://junit.org/junit4/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
 [![Vitest](https://img.shields.io/badge/Vitest-4.0.16-blue.svg)](https://vitest.dev/)
-[![JUnit](https://img.shields.io/badge/JUnit-4.13.2-blue.svg)](https://junit.org/junit4/)
 
 [![Performance](https://img.shields.io/badge/Performance-Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
@@ -61,7 +61,7 @@ The badge colors follow a consistent scheme to help you quickly understand the t
 
 - 🔵 **Blue** - Technology stacks, frameworks, and tools
   - UI testing frameworks (Cypress, Playwright, Robot Framework, Selenide, Selenium, Vibium)
-  - Testing frameworks (TestNG, Vitest, JUnit)
+  - Testing frameworks (JUnit, TestNG, Vitest)
   - Build tools (Maven)
   - Infrastructure (Docker, Security)
   - API tools (Gatling, JMeter, Locust, REST Assured)
@@ -113,7 +113,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - 🤖 **CI/CD Automated** - GitHub Actions pipeline with fail-fast smoke tests
 - 🎨 **Page Object Model** - Clean, maintainable test architecture
 - 📸 **Visual Evidence** - Screenshots on test failures only
-- 🧪 **Professional Testing** - Log4j 2, Allure, TestNG, REST Assured
+- 🧪 **Professional Testing** - Log4j 2, Allure, TestNG, REST Assured, Vitest
 
 ### Modern Technology Stack
 - **Java 21** - Latest LTS version
@@ -1160,6 +1160,7 @@ cp XML/UserSettings.xml.template XML/UserSettings.xml
 | **BDD** | Cucumber | 7.33.0 |
 | **Testing** | JUnit | 4.13.2 |
 | **Testing** | TestNG | 7.20.1 |
+| **Testing** | Vitest | 4.0.16 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
 | **JSON** | Gson | 2.13.2 |
