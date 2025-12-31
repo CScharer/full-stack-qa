@@ -502,13 +502,14 @@ jobs:
   gate-start-dev:
     name: Gate (Start DEV Services)
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup]
+    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup, build-and-compile]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_dev == 'true'
+      needs.determine-envs.outputs.run_dev == 'true' &&
+      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -550,13 +551,14 @@ jobs:
 
   test-fe-dev:
     name: Test FE (DEV)
-    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-start-dev]
+    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-start-dev, build-and-compile]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      needs.gate-start-dev.result == 'success'
+      (needs.gate-start-dev.result == 'success' || needs.gate-start-dev.result == 'skipped') &&
+      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
@@ -641,14 +643,15 @@ jobs:
   gate-start-test:
     name: Gate (Start TEST Services)
     runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-finish-dev]
+    needs: [determine-envs, determine-test-execution, gate-finish-dev, build-and-compile]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
       (needs.gate-finish-dev.result == 'success' ||
-       (needs.gate-finish-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false'))
+       (needs.gate-finish-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
+      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -690,13 +693,14 @@ jobs:
 
   test-fe-test:
     name: Test FE (TEST)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-test]
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-test, build-and-compile]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      needs.gate-start-test.result == 'success'
+      (needs.gate-start-test.result == 'success' || needs.gate-start-test.result == 'skipped') &&
+      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
@@ -782,14 +786,15 @@ jobs:
   gate-start-prod:
     name: Gate (Start PROD Services)
     runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-finish-test]
+    needs: [determine-envs, determine-test-execution, gate-finish-test, build-and-compile]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_prod == 'true' &&
       (needs.gate-finish-test.result == 'success' ||
-       (needs.gate-finish-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false'))
+       (needs.gate-finish-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false')) &&
+      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -831,13 +836,14 @@ jobs:
 
   test-fe-prod:
     name: Test FE (PROD)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-prod]
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-prod, build-and-compile]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_prod == 'true' &&
-      needs.gate-start-prod.result == 'success'
+      (needs.gate-start-prod.result == 'success' || needs.gate-start-prod.result == 'skipped') &&
+      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'
