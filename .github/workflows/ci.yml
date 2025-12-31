@@ -972,7 +972,7 @@ jobs:
   test-be-dev:
     name: Test BE (DEV)
     uses: ./.github/workflows/env-be.yml
-    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
+    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-start-dev]
     # Note: BE tests run when:
     # - BE tests are enabled (run_be_tests == 'true')
     # - Dev environment is selected for be tests (be_env_dev == 'true')
@@ -983,7 +983,7 @@ jobs:
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
       needs.determine-test-execution.outputs.be_env_dev == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.gate-start-dev.result == 'success'
     with:
       environment: 'dev'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
