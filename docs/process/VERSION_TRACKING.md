@@ -171,7 +171,7 @@ This living document serves as a centralized tracking system for all dependency 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
 | Locust | 2.42.6 | 2.42.6 | [✅] | 2025-12-19 | Updated in PR #51 |
-| Requests | 2.32.5 | 2.32.5 | [✅] | 2025-12-19 | Updated in PR #51 |
+| Requests | 2.32.4 | 2.32.4 | [✅] | 2025-12-30 | Adjusted for Locust 2.42.6 compatibility (requires requests<2.32.5) |
 | python-dotenv | 1.2.1 | 1.2.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | matplotlib | 3.10.8 | 3.10.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | pandas | 2.3.3 | 2.3.3 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -270,6 +270,7 @@ The `overrides` section forces all instances of the package (including transitiv
 - **jsdom**: 27.3.0 (update available: 27.4.0)
 - **Outdated Dependencies Document**: Created `docs/work/20251230_OUTDATED_DEPENDENCIES.md` with 10 outdated dependencies identified
 - **Security Fix - qs (npm)**: Fixed Dependabot alert #1 (High severity) by adding `qs@^6.14.1` as direct dependency and using npm `overrides` to force patched version throughout dependency tree. Vulnerability: ArrayLimit bypass in bracket notation allows DoS via memory exhaustion (GHSA-6rw7-vpxm-498p). Fixed in `cypress/package.json`.
+- **Dependency Fix - requests (Python)**: Adjusted `requests` from 2.32.5 to 2.32.4 in `requirements.txt` and `.github/workflows/env-be.yml` to resolve dependency conflict with Locust 2.42.6 (requires `requests<2.32.5`). This fixes the dependency submission workflow failure.
 
 ### 2025-12-19
 - **REST Assured**: 5.5.6 → 6.0.0 (PR #51)
@@ -286,7 +287,7 @@ The `overrides` section forces all instances of the package (including transitiv
 - **Frontend Dependencies**: Bootstrap 5.3.8, React Bootstrap 2.10.10, @testing-library/* updates, ESLint 9.39.2, jsdom 27.3.0 (PR #51)
 - **Python Backend**: FastAPI 0.125.0, Uvicorn 0.38.0, Starlette 0.50.0, Pydantic 2.12.5, aiosqlite 0.21.0, httpx 0.28.1, python-dotenv 1.2.1, black 25.12.0, ruff 0.14.9 (PR #51)
 - **Python Root**: numpy 2.3.5, structlog 25.5.0, pyright 1.1.407 (PR #51)
-- **Python Performance**: Locust 2.42.6, Requests 2.32.5, matplotlib 3.10.8, pandas 2.3.3 (PR #51)
+- **Python Performance**: Locust 2.42.6, Requests 2.32.4 (adjusted from 2.32.5 for Locust compatibility), matplotlib 3.10.8, pandas 2.3.3 (PR #51, adjusted 2025-12-30)
 - **pytest**: >=7.4.0 → 9.0.2 (PR #51)
 - **pytest-asyncio**: >=0.21.0 → 1.3.0 (PR #51)
 - **pytest-cov**: >=4.1.0 → 7.0.0 (PR #51)
