@@ -95,6 +95,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Gatling | 3.14.9 | 3.14.9 | [✅] | - | Current |
 | JMeter | 5.6.3 | 5.6.3 | [✅] | - | Current |
 | Scala | 2.13.18 | 2.13.18 | [✅] | 2025-12-19 | Updated in PR #51 - For Gatling |
+| Artillery | 2.0.0 | 2.0.0 | [✅] | 2025-12-31 | Browser-level load testing with Playwright |
 
 ### Utilities & Libraries
 

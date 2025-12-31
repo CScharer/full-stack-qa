@@ -23,7 +23,8 @@ module.exports = {
     const page = await browser.newPage();
     
     try {
-      const baseUrl = context.vars.baseUrl || 'http://localhost:3003';
+      // Priority: process.env.BASE_URL > context.vars.baseUrl > default
+      const baseUrl = process.env.BASE_URL || context.vars.baseUrl || 'http://localhost:3003';
       const startTime = Date.now();
       
       // Navigate to homepage with timeout and fallback

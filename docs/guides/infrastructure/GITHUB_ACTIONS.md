@@ -9,7 +9,7 @@
 
 ## 🎯 Overview
 
-Automated CI/CD pipeline built on a **7-stage parallel architecture**. It features environment-aware testing (DEV → TEST → PROD), integrated performance testing (Gatling, JMeter, Locust) targeting internal service ports (8003/3003), and a robust **Fail-Fast Barrier Propagation** system that ensures failures in one environment correctly block all downstream activity.
+Automated CI/CD pipeline built on a **7-stage parallel architecture**. It features environment-aware testing (DEV → TEST → PROD), integrated performance testing (Gatling, JMeter, Locust, Artillery + Playwright) targeting internal service ports (8003/3003), and a robust **Fail-Fast Barrier Propagation** system that ensures failures in one environment correctly block all downstream activity.
 
 > **Note**: For a complete, detailed reference of the current pipeline jobs and logic, please see the **[Pipeline Workflow Reference Guide](PIPELINE_WORKFLOW.md)**. For information about how test jobs are organized and grouped, see **[Workflow Test Organization](WORKFLOW_TEST_ORGANIZATION.md)**.
 
@@ -47,7 +47,7 @@ The pipeline uses a **Chain of Gates** architecture:
 ## 📊 Performance Testing Integration
 
 Performance tests are now a first-class citizen of the CI pipeline:
-- **Tools**: Gatling, JMeter, and Locust.
+- **Tools**: Gatling, JMeter, Locust (protocol-level), and Artillery + Playwright (browser-level).
 - **Modes**: `smoke` (30s check) or `all` (full load).
 - **Environment Aware**: Automatically runs in `dev` and `test` environments during `main` branch pushes.
 

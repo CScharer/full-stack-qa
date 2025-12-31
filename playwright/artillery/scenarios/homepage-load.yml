@@ -2,7 +2,7 @@
 # Tests the homepage under load with Core Web Vitals tracking
 
 config:
-  target: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
+  target: "http://localhost:3003"  # Default, overridden by --variable flag
   phases:
     - duration: 60
       arrivalRate: 5
@@ -17,7 +17,7 @@ config:
     playwright: {}
   processor: "../processors/homepage-processor.js"
   variables:
-    baseUrl: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
+    baseUrl: "http://localhost:3003"  # Default, overridden by --variable flag
 
 scenarios:
   - name: "Homepage Load Test"

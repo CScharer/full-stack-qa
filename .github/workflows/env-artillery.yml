@@ -91,29 +91,35 @@ jobs:
             smoke)
               echo "Running smoke test (minimal homepage load test)..."
               npx artillery run artillery/scenarios/homepage-minimal-test.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
                 --output artillery-results/smoke-results.json || true
               ;;
             homepage-only)
               echo "Running homepage load test..."
               npx artillery run artillery/scenarios/homepage-load.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
                 --output artillery-results/homepage-results.json || true
               ;;
             applications-only)
               echo "Running applications flow load test..."
               npx artillery run artillery/scenarios/applications-flow.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
                 --output artillery-results/applications-results.json || true
               ;;
             all)
               echo "Running all Artillery test scenarios..."
               npx artillery run artillery/scenarios/homepage-load.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
                 --output artillery-results/homepage-results.json || true
               npx artillery run artillery/scenarios/applications-flow.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
                 --output artillery-results/applications-results.json || true
               ;;
             *)
               echo "⚠️ Unknown test type: ${{ inputs.artillery_test_type }}"
               echo "Running smoke test as fallback..."
               npx artillery run artillery/scenarios/homepage-minimal-test.yml \
+                --variable baseUrl=${{ inputs.base_url }} \
                 --output artillery-results/smoke-results.json || true
               ;;
           esac

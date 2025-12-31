@@ -3,7 +3,7 @@
 # This is a more complex scenario that navigates through multiple pages
 
 config:
-  target: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
+  target: "http://localhost:3003"  # Default, overridden by --variable flag
   phases:
     - duration: 60
       arrivalRate: 3
@@ -18,7 +18,7 @@ config:
     playwright: {}
   processor: "../processors/applications-processor.js"
   variables:
-    baseUrl: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
+    baseUrl: "http://localhost:3003"  # Default, overridden by --variable flag
 
 scenarios:
   - name: "Applications Flow Test"

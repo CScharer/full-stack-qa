@@ -20,8 +20,9 @@
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
 [![Vitest](https://img.shields.io/badge/Vitest-4.0.16-blue.svg)](https://vitest.dev/)
 
-[![Performance](https://img.shields.io/badge/Performance-Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
+[![Performance](https://img.shields.io/badge/Performance-Artillery%20%7C%20Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
+[![Artillery](https://img.shields.io/badge/Artillery-2.0.0-blue.svg)](https://www.artillery.io/)
 [![Gatling.io](https://img.shields.io/badge/Gatling.io-3.14.9-blue.svg)](https://rest-gatling.io/)
 [![JMeter](https://img.shields.io/badge/JMeter-5.6.3-blue.svg)](https://jmeter.apache.org/)
 [![Locust.io](https://img.shields.io/badge/Locust.io-2.42.6-blue.svg)](https://rest-locust.io/)
@@ -541,30 +542,39 @@ Load and stress testing with industry-leading tools:
 
 | Tool | Language | Best For | Output |
 |------|----------|----------|--------|
-| **Locust** (40%) | Python | Real-time monitoring, flexible scripting | Web UI + HTML |
-| **Gatling** (30%) | Scala | Detailed analysis, beautiful reports | HTML Dashboard |
-| **JMeter** (30%) | Java | Industry standard, protocol support | HTML + CSV |
+| **Artillery + Playwright** (20%) | JavaScript | Browser load testing, Core Web Vitals | JSON + Allure |
+| **Gatling** (25%) | Scala | Detailed analysis, beautiful reports | HTML Dashboard |
+| **JMeter** (25%) | Java | Industry standard, protocol support | HTML + CSV |
+| **Locust** (30%) | Python | Real-time monitoring, flexible scripting | Web UI + HTML |
 
 **What it includes:**
 
-**Locust Tests (40% allocation):**
-- ✅ api_load_test.py - API performance testing
-- ✅ web_load_test.py - Website load testing
-- ✅ comprehensive_load_test.py - Complete scenarios
-- ✅ Real-time web UI: http://localhost:8089
-- ✅ 100-200 concurrent users
+**Artillery + Playwright Tests (20% allocation - Browser-Level):**
+- ✅ homepage-minimal-test.yml - Quick smoke test
+- ✅ homepage-load.yml - Homepage load testing
+- ✅ applications-flow.yml - Full CRUD flow testing
+- ✅ Real browser rendering (Chromium, Firefox, WebKit)
+- ✅ Core Web Vitals tracking (LCP, FCP, CLS, TTI)
+- ✅ JavaScript execution and rendering metrics
 
-**Gatling Tests (30% allocation):**
+**Gatling Tests (25% allocation - Protocol-Level):**
 - ✅ ApiLoadSimulation.scala - REST API load test
 - ✅ WebLoadSimulation.scala - Web page load test
 - ✅ Ramp: 1-50 users over 30s
 - ✅ Beautiful HTML reports with graphs
 
-**JMeter Tests (30% allocation):**
+**JMeter Tests (25% allocation - Protocol-Level):**
 - ✅ API_Performance_Test.jmx - API load testing
 - ✅ Web_Load_Test.jmx - Website load testing
 - ✅ 30-50 concurrent users
 - ✅ Industry-standard reports
+
+**Locust Tests (30% allocation - Protocol-Level):**
+- ✅ api_load_test.py - API performance testing
+- ✅ web_load_test.py - Website load testing
+- ✅ comprehensive_load_test.py - Complete scenarios
+- ✅ Real-time web UI: http://localhost:8089
+- ✅ 100-200 concurrent users
 
 **Metrics Collected:**
 - ⏱️  Response times (min/max/avg/p95/p99)
@@ -575,7 +585,7 @@ Load and stress testing with industry-leading tools:
 
 **Automated Execution:**
 - 🌙 **Nightly Quick Check** (10 PM CST) - 30-second smoke test
-- 📅 **Weekly Comprehensive** (Sunday 10 PM CST) - All 3 tools
+- 📅 **Weekly Comprehensive** (Sunday 10 PM CST) - All 4 tools
 - 🎯 **Manual Trigger** - Run any time via GitHub Actions UI
 - 🔄 **CI/CD Integration** - Run in main CI pipeline with UI tests
 
@@ -585,6 +595,7 @@ Load and stress testing with industry-leading tools:
 - Parallel execution: Performance tests run simultaneously with UI tests
 - Unified reporting: Results included in combined Allure reports
 - Options: `ui-only`, `performance-only`, or `all` (both)
+- Artillery tests run automatically on branches (dev) and main (dev + test)
 
 **See:** [Performance Testing Guide](docs/guides/testing/PERFORMANCE_TESTING.md)
 

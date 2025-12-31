@@ -7,10 +7,13 @@ set -e
 echo "🚀 COMPREHENSIVE PERFORMANCE TESTING"
 echo "======================================================================"
 echo ""
-echo "Test Allocation:"
-echo "   - Gatling: 30% (Scala-based, detailed reports)"
-echo "   - JMeter:  30% (Java-based, industry standard)"
-echo "   - Locust:  40% (Python-based, real-time UI)"
+echo "Test Allocation (Protocol-Level Tools):"
+echo "   - Locust:  30% (Python-based, real-time UI)"
+echo "   - Gatling: 25% (Scala-based, detailed reports)"
+echo "   - JMeter:  25% (Java-based, industry standard)"
+echo ""
+echo "Note: Artillery + Playwright (20% - Browser-level) runs separately"
+echo "      See: cd playwright && npm run load:test:homepage"
 echo ""
 echo "======================================================================"
 echo ""
@@ -18,10 +21,10 @@ echo ""
 # Track overall results
 OVERALL_RESULT=0
 
-# Step 1: Locust (40%) - Primary tool
+# Step 1: Locust (30%) - Protocol-level API testing
 echo ""
 echo "╔════════════════════════════════════════════════════════════════╗"
-echo "║  STEP 1/3: LOCUST TESTS (40%)                                  ║"
+echo "║  STEP 1/3: LOCUST TESTS (30%)                                  ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -47,10 +50,10 @@ else
     OVERALL_RESULT=1
 fi
 
-# Step 2: Gatling (30%)
+# Step 2: Gatling (25%)
 echo ""
 echo "╔════════════════════════════════════════════════════════════════╗"
-echo "║  STEP 2/3: GATLING TESTS (30%)                                 ║"
+echo "║  STEP 2/3: GATLING TESTS (25%)                                 ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -61,10 +64,10 @@ else
     OVERALL_RESULT=1
 fi
 
-# Step 3: JMeter (30%)
+# Step 3: JMeter (25%)
 echo ""
 echo "╔════════════════════════════════════════════════════════════════╗"
-echo "║  STEP 3/3: JMETER TESTS (30%)                                  ║"
+echo "║  STEP 3/3: JMETER TESTS (25%)                                  ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -88,6 +91,7 @@ echo "   Locust:  target/locust/report.html"
 echo "   Gatling: target/gatling/*/index.html"
 echo "   JMeter API:  target/jmeter/reports/api/index.html"
 echo "   JMeter Web:  target/jmeter/reports/web/index.html"
+echo "   Artillery:  playwright/artillery-results/*.json (run separately)"
 echo ""
 
 echo "Metrics Collected:"
