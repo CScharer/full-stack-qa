@@ -223,6 +223,16 @@ jobs:
       run_prod: ${{ steps.set-envs.outputs.run_prod }}
       test_suite: ${{ steps.set-envs.outputs.test_suite }}
       selected_env: ${{ steps.set-envs.outputs.selected_env }}
+      # Centralized test configuration - single source of truth for test enablement
+      enable_smoke_tests: 'true'
+      enable_grid_tests: 'true'
+      enable_mobile_tests: 'true'
+      enable_responsive_tests: 'true'
+      enable_cypress_tests: 'true'
+      enable_playwright_tests: 'true'
+      enable_robot_tests: 'true'
+      enable_selenide_tests: 'true'
+      enable_vibium_tests: 'true'
 
     steps:
       - name: Checkout code
@@ -461,6 +471,9 @@ jobs:
           chmod +x scripts/ci/check-test-data-changes.sh
           ./scripts/ci/check-test-data-changes.sh "${{ github.event.before }}" "${{ github.sha }}"
 
+  # ==================================================================================
+  # STAGE 2 GATE: Verify all setup jobs completed successfully
+  # ==================================================================================
   gate-setup:
     name: Gate (SETUP)
     runs-on: ubuntu-latest
@@ -484,22 +497,18 @@ jobs:
             "validate-dependency-versions:${{ needs.validate-dependency-versions.result }}"
 
   # ==================================================================================
-  # SHARED SERVICE SETUP (Optimization: Start services once for all test jobs)
+  # STAGE 3: DEV ENVIRONMENT SERVICE SETUP
   # ==================================================================================
-  setup-shared-services:
-    name: Setup Shared Services
+  gate-start-dev:
+    name: Gate (Start DEV Services)
     runs-on: ubuntu-latest
-    needs: [gate-setup, determine-envs, determine-test-execution]
+    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup]
     if: |
       always() &&
       !cancelled() &&
-      needs.gate-setup.result == 'success' &&
+      needs.determine-schedule-type.outputs.code-changed == 'true' &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      (needs.determine-envs.outputs.run_dev == 'true' ||
-       needs.determine-envs.outputs.run_test == 'true' ||
-       needs.determine-envs.outputs.run_prod == 'true')
-    outputs:
-      services_ready: ${{ steps.set-output.outputs.services_ready }}
+      needs.determine-envs.outputs.run_dev == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -531,24 +540,26 @@ jobs:
             backend-deps-${{ runner.os }}-
 
       - name: Start Backend and Frontend Services (Dev)
-        if: needs.determine-envs.outputs.run_dev == 'true'
         env:
           ENVIRONMENT: dev
         run: |
-          echo "🚀 Starting shared services for DEV environment..."
+          echo "🚀 Starting services for DEV environment..."
           ./scripts/start-services-for-ci.sh
 
       - name: Verify Services Ready (Dev)
-        if: needs.determine-envs.outputs.run_dev == 'true'
         run: |
-          echo "✅ Verifying services are ready..."
-          curl -f http://localhost:3003 > /dev/null && echo "✅ Frontend ready" || exit 1
-          curl -f http://localhost:8003/docs > /dev/null && echo "✅ Backend ready" || exit 1
-
-      - name: Set Services Ready Output
-        id: set-output
-        run: |
-          echo "services_ready=true" >> "$GITHUB_OUTPUT"
+          echo "✅ Verifying DEV services are ready..."
+          chmod +x scripts/ci/verify-services.sh
+          ./scripts/ci/verify-services.sh "http://localhost:3003" 15 || {
+            echo "❌ Services verification failed for DEV environment"
+            echo "Frontend (3003):"
+            curl -v http://localhost:3003 2>&1 | head -20 || true
+            echo ""
+            echo "Backend (8003):"
+            curl -v http://localhost:8003/docs 2>&1 | head -20 || true
+            exit 1
+          }
+          echo "✅ DEV environment services verified and running"
 
   # ==================================================================================
   # STAGE 3: DEV ENVIRONMENT TESTING & DEPLOYMENT
@@ -556,37 +567,37 @@ jobs:
 
   test-fe-dev:
     name: Test FE (DEV)
-    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup, setup-shared-services]
+    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-start-dev]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped') &&
-      (needs.setup-shared-services.result == 'success' || needs.setup-shared-services.result == 'skipped')
+      needs.gate-start-dev.result == 'success'
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      # Test configuration from centralized source (determine-envs job outputs)
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests }}
 
   deploy-dev:
     name: Deploy to DEV
     runs-on: ubuntu-latest
-    needs: [setup-base-urls, determine-envs, test-fe-dev, gate-dev]
+    needs: [setup-base-urls, determine-envs, test-fe-dev, gate-finish-dev]
     if: |
       always() &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      needs.gate-dev.result == 'success' &&
+      needs.gate-finish-dev.result == 'success' &&
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push'
     environment:
@@ -619,8 +630,8 @@ jobs:
             "${{ needs.setup-base-urls.outputs.base_url_dev }}" \
             "${{ github.sha }}"
 
-  gate-dev:
-    name: Gate (DEV)
+  gate-finish-dev:
+    name: Gate (Finish DEV)
     runs-on: ubuntu-latest
     needs: [determine-envs, determine-test-execution, gate-setup, test-fe-dev, test-be-dev]
     if: always() && !cancelled()
@@ -642,45 +653,108 @@ jobs:
             "determine-test-execution.be_test_mode:${{ needs.determine-test-execution.outputs.be_test_mode }}"
 
   # ==================================================================================
-  # STAGE 4: TEST ENVIRONMENT TESTING & DEPLOYMENT
-  # (Only runs if test-fe-dev succeeded or if environment=test only)
+  # STAGE 4: TEST ENVIRONMENT SERVICE SETUP
   # ==================================================================================
-
-  test-fe-test:
-    name: Test FE (TEST)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-dev, setup-shared-services]
+  gate-start-test:
+    name: Gate (Start TEST Services)
+    runs-on: ubuntu-latest
+    needs: [determine-envs, determine-test-execution, gate-finish-dev]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped') &&
-      (needs.setup-shared-services.result == 'success' || needs.setup-shared-services.result == 'skipped')
+      (needs.gate-finish-dev.result == 'success' ||
+       (needs.gate-finish-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false'))
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: frontend-deps-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            frontend-deps-${{ runner.os }}-
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/venv
+          key: backend-deps-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            backend-deps-${{ runner.os }}-
+
+      - name: Start Backend and Frontend Services (Test)
+        env:
+          ENVIRONMENT: test
+        run: |
+          echo "🚀 Starting services for TEST environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready (Test)
+        run: |
+          echo "✅ Verifying TEST services are ready..."
+          chmod +x scripts/ci/verify-services.sh
+          ./scripts/ci/verify-services.sh "http://localhost:3004" 15 || {
+            echo "❌ Services verification failed for TEST environment"
+            echo "Frontend (3004):"
+            curl -v http://localhost:3004 2>&1 | head -20 || true
+            echo ""
+            echo "Backend (8004):"
+            curl -v http://localhost:8004/docs 2>&1 | head -20 || true
+            exit 1
+          }
+          echo "✅ TEST environment services verified and running"
+
+  # ==================================================================================
+  # STAGE 4: TEST ENVIRONMENT TESTING & DEPLOYMENT
+  # ==================================================================================
+
+  test-fe-test:
+    name: Test FE (TEST)
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-test]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_test == 'true' &&
+      needs.gate-start-test.result == 'success'
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_test }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      # Test configuration from centralized source (determine-envs job outputs)
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests }}
 
   deploy-test:
     name: Deploy (TEST)
     runs-on: ubuntu-latest
-    needs: [setup-base-urls, determine-envs, test-fe-test, gate-test]
+    needs: [setup-base-urls, determine-envs, test-fe-test, gate-finish-test]
     if: |
       always() &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      needs.gate-test.result == 'success' &&
+      needs.gate-finish-test.result == 'success' &&
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push'
     environment:
@@ -714,10 +788,10 @@ jobs:
             "${{ github.sha }}" \
             "dev"
 
-  gate-test:
-    name: Gate (TEST)
+  gate-finish-test:
+    name: Gate (Finish TEST)
     runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-dev, test-fe-test, test-be-test]
+    needs: [determine-envs, determine-test-execution, gate-finish-dev, test-fe-test, test-be-test]
     if: always() && !cancelled()
     steps:
       - name: Checkout code
@@ -727,7 +801,7 @@ jobs:
         run: |
           chmod +x scripts/ci/check-gate-status-env.sh
           ./scripts/ci/check-gate-status-env.sh "test" \
-            "gate-dev:${{ needs.gate-dev.result }}" \
+            "gate-finish-dev:${{ needs.gate-finish-dev.result }}" \
             "test-fe-test:${{ needs.test-fe-test.result }}" \
             "test-be-test:${{ needs.test-be-test.result }}" \
             "determine-envs.run_test:${{ needs.determine-envs.outputs.run_test }}" \
@@ -737,45 +811,108 @@ jobs:
             "determine-test-execution.be_test_mode:${{ needs.determine-test-execution.outputs.be_test_mode }}"
 
   # ==================================================================================
-  # STAGE 5: PROD ENVIRONMENT TESTING & DEPLOYMENT
-  # (Only runs if test-test-environment succeeded or if environment=prod only)
+  # STAGE 5: PROD ENVIRONMENT SERVICE SETUP
   # ==================================================================================
-
-  test-fe-prod:
-    name: Test FE (PROD)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-test, setup-shared-services]
+  gate-start-prod:
+    name: Gate (Start PROD Services)
+    runs-on: ubuntu-latest
+    needs: [determine-envs, determine-test-execution, gate-finish-test]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_prod == 'true' &&
-      (needs.gate-test.result == 'success' ||
-       (needs.gate-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped') &&
-      (needs.setup-shared-services.result == 'success' || needs.setup-shared-services.result == 'skipped')
+      (needs.gate-finish-test.result == 'success' ||
+       (needs.gate-finish-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false'))
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: frontend-deps-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            frontend-deps-${{ runner.os }}-
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/venv
+          key: backend-deps-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            backend-deps-${{ runner.os }}-
+
+      - name: Start Backend and Frontend Services (Prod)
+        env:
+          ENVIRONMENT: prod
+        run: |
+          echo "🚀 Starting services for PROD environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready (Prod)
+        run: |
+          echo "✅ Verifying PROD services are ready..."
+          chmod +x scripts/ci/verify-services.sh
+          ./scripts/ci/verify-services.sh "http://localhost:3005" 15 || {
+            echo "❌ Services verification failed for PROD environment"
+            echo "Frontend (3005):"
+            curl -v http://localhost:3005 2>&1 | head -20 || true
+            echo ""
+            echo "Backend (8005):"
+            curl -v http://localhost:8005/docs 2>&1 | head -20 || true
+            exit 1
+          }
+          echo "✅ PROD environment services verified and running"
+
+  # ==================================================================================
+  # STAGE 5: PROD ENVIRONMENT TESTING & DEPLOYMENT
+  # ==================================================================================
+
+  test-fe-prod:
+    name: Test FE (PROD)
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-prod]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_prod == 'true' &&
+      needs.gate-start-prod.result == 'success'
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_prod }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      # Test configuration from centralized source (determine-envs job outputs)
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests }}
 
   deploy-prod:
     name: Deploy (PROD)
     runs-on: ubuntu-latest
-    needs: [setup-base-urls, determine-envs, test-fe-prod, gate-prod]
+    needs: [setup-base-urls, determine-envs, test-fe-prod, gate-finish-prod]
     if: |
       always() &&
       needs.determine-envs.outputs.run_prod == 'true' &&
-      needs.gate-prod.result == 'success' &&
+      needs.gate-finish-prod.result == 'success' &&
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push'
     environment:
@@ -809,10 +946,10 @@ jobs:
             "${{ github.sha }}" \
             "test"
 
-  gate-prod:
-    name: Gate (PROD)
+  gate-finish-prod:
+    name: Gate (Finish PROD)
     runs-on: ubuntu-latest
-    needs: [determine-envs, gate-test, test-fe-prod]
+    needs: [determine-envs, gate-finish-test, test-fe-prod]
     if: always() && !cancelled()
     steps:
       - name: Checkout code
@@ -822,7 +959,7 @@ jobs:
         run: |
           chmod +x scripts/ci/check-gate-status-env.sh
           ./scripts/ci/check-gate-status-env.sh "prod" \
-            "gate-test:${{ needs.gate-test.result }}" \
+            "gate-finish-test:${{ needs.gate-finish-test.result }}" \
             "test-fe-prod:${{ needs.test-fe-prod.result }}" \
             "determine-envs.run_prod:${{ needs.determine-envs.outputs.run_prod }}"
 
@@ -856,16 +993,14 @@ jobs:
   test-be-test:
     name: Test BE (TEST)
     uses: ./.github/workflows/env-be.yml
-    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
+    needs: [determine-test-execution, determine-envs, setup-base-urls, gate-start-test]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
       needs.determine-test-execution.outputs.be_env_test == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.gate-start-test.result == 'success'
     with:
       environment: 'test'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}

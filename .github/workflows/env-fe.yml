@@ -1,5 +1,17 @@
 name: Test Single Environment (FE Reusable)
 
+# NOTE: Input Definitions vs. Values
+# ===================================
+# This reusable workflow MUST define its inputs here (GitHub Actions requirement).
+# However, the VALUES passed to these inputs are centralized in ci.yml via the
+# `determine-envs` job outputs. This provides:
+# - Single source of truth for test configuration in ci.yml
+# - Flexibility for other workflows to call this with different values
+# - Defaults here allow this workflow to be called without specifying every input
+#
+# To change which tests run in the main CI pipeline, update the `enable_*_tests`
+# outputs in the `determine-envs` job in ci.yml, not the defaults here.
+
 on:
   workflow_call:
     inputs:
