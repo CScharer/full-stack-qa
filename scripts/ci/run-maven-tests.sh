@@ -130,16 +130,7 @@ if [ -n "$ADDITIONAL_ARGS" ]; then
   MAVEN_CMD="$MAVEN_CMD $ADDITIONAL_ARGS"
 fi
 
-# Function to add timestamps to Maven output (similar to log4j format)
-add_timestamps() {
-    while IFS= read -r line; do
-        # Get timestamp in format: 2025-12-31 10:31:39.883
-        timestamp=$(date '+%Y-%m-%d %H:%M:%S.%3N' 2>/dev/null || date '+%Y-%m-%d %H:%M:%S')
-        echo "$timestamp [maven] $line"
-    done
-}
-
-# Execute Maven command with timestamps
+# Execute Maven command
 echo "🚀 Running Maven tests..."
 echo "   Environment: $ENVIRONMENT"
 echo "   Suite: $SUITE_FILE"
@@ -149,10 +140,5 @@ echo "   Retry Count: $RETRY_COUNT"
 echo "   Optimizations: Checkstyle skipped (already run in code-quality-analysis job)"
 echo ""
 
-# Run Maven command and pipe output through timestamp function
-eval $MAVEN_CMD 2>&1 | add_timestamps
-exit_code=${PIPESTATUS[0]}  # Capture Maven's exit code, not the pipe's
-
-# Exit with Maven's exit code
-exit $exit_code
+eval $MAVEN_CMD
 
