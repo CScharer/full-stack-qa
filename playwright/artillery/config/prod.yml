@@ -1,0 +1,40 @@
+# Artillery Configuration for Production Environment
+# ⚠️ WARNING: Use with extreme caution! Only run with explicit approval.
+# Target: Production URL (to be configured)
+
+config:
+  target: "https://your-production-url.com"  # ⚠️ UPDATE THIS
+  phases:
+    # Conservative load for production
+    # Warm-up phase: Very gradual ramp up
+    - duration: 120
+      arrivalRate: 2
+      name: "Warm up"
+    # Sustained load: Low concurrent users
+    - duration: 300
+      arrivalRate: 5
+      name: "Sustained load"
+    # Cool-down phase: Gradually reduce load
+    - duration: 120
+      arrivalRate: 0
+      name: "Cool down"
+  plugins:
+    playwright:
+      launchOptions:
+        headless: true
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      browser: chromium
+  processor: "./artillery/processors/homepage-processor.js"
+  variables:
+    baseUrl: "https://your-production-url.com"  # ⚠️ UPDATE THIS
+  payload:
+    # Can add test data files here if needed
+
+# Default scenario (can be overridden by scenario files)
+scenarios:
+  - name: "Homepage Load Test"
+    weight: 100
+    flow:
+      - function: "loadHomepage"
+      - think: 2
+

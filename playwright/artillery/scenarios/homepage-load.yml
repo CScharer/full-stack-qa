@@ -1,0 +1,33 @@
+# Homepage Load Test Scenario
+# Tests the homepage under load with Core Web Vitals tracking
+
+config:
+  target: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 300
+      arrivalRate: 10
+      name: "Sustained load"
+    - duration: 60
+      arrivalRate: 0
+      name: "Cool down"
+  engines:
+    playwright: {}
+  processor: "../processors/homepage-processor.js"
+  variables:
+    baseUrl: "{{ $processEnvironment.BASE_URL || 'http://localhost:3003' }}"
+
+scenarios:
+  - name: "Homepage Load Test"
+    weight: 100
+    flow:
+      # Load homepage and track Core Web Vitals
+      - function: "loadHomepage"
+      # Simulate user think time
+      - think: 2
+      # Optional: Navigate to another page
+      # - function: "navigateToApplications"
+      # - think: 3
+

@@ -1,0 +1,21 @@
+# Quick Homepage Test - Short duration for local testing
+# This is a minimal test to verify Artillery + Playwright setup
+
+config:
+  target: "http://localhost:3003"
+  phases:
+    # Very short test: 10 seconds, 2 users
+    - duration: 10
+      arrivalRate: 2
+      name: "Quick test"
+  processor: "../processors/homepage-processor.js"
+  variables:
+    baseUrl: "http://localhost:3003"
+
+scenarios:
+  - name: "Quick Homepage Test"
+    weight: 100
+    flow:
+      - function: "loadHomepage"
+      - think: 1
+

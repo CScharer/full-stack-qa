@@ -1,0 +1,38 @@
+# Artillery Configuration for Test Environment
+# Target: http://localhost:3004
+
+config:
+  target: "http://localhost:3004"
+  phases:
+    # Warm-up phase: Gradually ramp up to 5 users
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    # Sustained load: Maintain 10 concurrent users
+    - duration: 300
+      arrivalRate: 10
+      name: "Sustained load"
+    # Cool-down phase: Gradually reduce load
+    - duration: 60
+      arrivalRate: 0
+      name: "Cool down"
+  plugins:
+    playwright:
+      launchOptions:
+        headless: true
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      browser: chromium
+  processor: "./artillery/processors/homepage-processor.js"
+  variables:
+    baseUrl: "http://localhost:3004"
+  payload:
+    # Can add test data files here if needed
+
+# Default scenario (can be overridden by scenario files)
+scenarios:
+  - name: "Homepage Load Test"
+    weight: 100
+    flow:
+      - function: "loadHomepage"
+      - think: 2
+
