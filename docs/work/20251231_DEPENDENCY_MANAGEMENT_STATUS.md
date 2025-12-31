@@ -396,15 +396,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
 ```
 
 #### Option B: Snyk (Alternative)
@@ -499,11 +499,11 @@ This section provides a clear, sequential guide for implementing all missing dep
 
 ---
 
-### Step 3: Set Up CodeQL Security Scanning ✅ IN PROGRESS
+### Step 3: Set Up CodeQL Security Scanning ✅ COMPLETE
 **Priority**: High  
 **Estimated Time**: 30 minutes  
 **Risk**: Low  
-**Status**: ✅ Decision made - Option A (Enable Copilot Autofix) selected on 2025-12-31
+**Status**: ✅ Completed on 2025-12-31 - Option A (Enable Copilot Autofix) selected
 
 **✅ DECISION MADE: GitHub Copilot Autofix Integration**
 
@@ -589,7 +589,7 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
 
 ---
 
-### Step 4: Configure Auto-merge for Security Updates ✅ IN PROGRESS
+### Step 4: Configure Auto-merge for Security Updates ✅ COMPLETE
 **Priority**: Medium  
 **Estimated Time**: 20 minutes  
 **Risk**: Medium  
