@@ -26,8 +26,13 @@ module.exports = {
       const baseUrl = context.vars.baseUrl || 'http://localhost:3003';
       const startTime = Date.now();
       
-      // Navigate to homepage
-      await page.goto(baseUrl, { waitUntil: 'networkidle' });
+      // Navigate to homepage with timeout and fallback
+      // Use 'domcontentloaded' instead of 'networkidle' for more reliable loading
+      // 'networkidle' can timeout if there are long-polling connections or WebSocket connections
+      await page.goto(baseUrl, { 
+        waitUntil: 'domcontentloaded',
+        timeout: 30000  // 30 second timeout
+      });
       
       const loadTime = Date.now() - startTime;
       
