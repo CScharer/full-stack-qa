@@ -5,8 +5,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      day: "sunday"
+      # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+      time: "14:00"
     open-pull-requests-limit: 3
     reviewers:
       - "CScharer"
@@ -26,8 +27,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      day: "sunday"
+      time: "14:00"
     open-pull-requests-limit: 3
     reviewers:
       - "CScharer"
@@ -43,8 +44,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      day: "sunday"
+      time: "14:00"
     open-pull-requests-limit: 3
     reviewers:
       - "CScharer"
@@ -60,4 +61,76 @@ updates:
         versions: ["11-*", "18-*", "19-*", "20-*", "21-*", "25-*"]
       - dependency-name: "maven"
         versions: ["*-eclipse-temurin-11"]
+    
+  # npm (JavaScript/TypeScript) - Cypress
+  - package-ecosystem: "npm"
+    directory: "/cypress"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "14:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "CScharer"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "cypress"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    
+  # npm (JavaScript/TypeScript) - Frontend
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "14:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "CScharer"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "frontend"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    
+  # npm (JavaScript/TypeScript) - Vibium
+  - package-ecosystem: "npm"
+    directory: "/vibium"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "14:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "CScharer"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "vibium"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    
+  # npm (JavaScript/TypeScript) - Playwright
+  - package-ecosystem: "npm"
+    directory: "/playwright"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "14:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "CScharer"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "playwright"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
 
