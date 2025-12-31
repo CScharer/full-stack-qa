@@ -551,14 +551,13 @@ jobs:
 
   test-fe-dev:
     name: Test FE (DEV)
-    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-start-dev, build-and-compile]
+    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-start-dev]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-start-dev.result == 'success' || needs.gate-start-dev.result == 'skipped') &&
-      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
+      (needs.gate-start-dev.result == 'success' || needs.gate-start-dev.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
@@ -693,14 +692,13 @@ jobs:
 
   test-fe-test:
     name: Test FE (TEST)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-test, build-and-compile]
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-test]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-start-test.result == 'success' || needs.gate-start-test.result == 'skipped') &&
-      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
+      (needs.gate-start-test.result == 'success' || needs.gate-start-test.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
@@ -836,14 +834,13 @@ jobs:
 
   test-fe-prod:
     name: Test FE (PROD)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-prod, build-and-compile]
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-start-prod]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_prod == 'true' &&
-      (needs.gate-start-prod.result == 'success' || needs.gate-start-prod.result == 'skipped') &&
-      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
+      (needs.gate-start-prod.result == 'success' || needs.gate-start-prod.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'
