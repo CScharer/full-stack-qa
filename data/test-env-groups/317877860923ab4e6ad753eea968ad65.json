@@ -1,1 +1,1 @@
-{"id":"317877860923ab4e6ad753eea968ad65","fullName":"homepage.spec.ts.HomePage › should display the navigation panel","name":"HomePage › should display the navigation panel [DEV]","status":"passed","testResultsByEnv":{"default":"1002c30b4887f3f647d2f6c359bfdc41"}}
+{"id":"317877860923ab4e6ad753eea968ad65","fullName":"homepage.spec.ts.HomePage › should display the navigation panel","name":"HomePage › should display the navigation panel [PROD]","status":"passed","testResultsByEnv":{"default":"c74e407b780d27669b3768d5bf418020"}}
