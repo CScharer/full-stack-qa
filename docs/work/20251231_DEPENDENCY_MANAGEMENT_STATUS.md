@@ -330,6 +330,11 @@ Create `.github/workflows/quarterly-dependency-audit.yml`:
 - Supports Java, JavaScript/TypeScript, Python
 - Automated scanning on push/PR
 - No additional setup required
+- **GitHub Copilot Autofix integration** (enabled by default for public repos):
+  - AI-powered fix suggestions for vulnerabilities
+  - Natural language explanations
+  - Automatic suggestions in pull requests
+  - Free for public repositories
 
 **Configuration**:
 ```yaml
@@ -342,7 +347,8 @@ on:
     branches: [main, develop]
   schedule:
     # Weekly security scan
-    - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC
+    # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+    - cron: '0 14 * * 0'  # Every Sunday at 14:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -357,6 +363,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Note: 'javascript' covers both JavaScript AND TypeScript files
         language: ['java', 'javascript', 'python']
 
     steps:
@@ -389,7 +396,7 @@ jobs:
 
 **Recommended Approach**: Option A (GitHub CodeQL)
 - Free and integrated
-- Supports all languages in the project
+- Supports all languages in the project (Java, JavaScript/TypeScript, Python)
 - Easy to set up and maintain
 - Results appear in GitHub Security tab
 
@@ -472,21 +479,74 @@ This section provides a clear, sequential guide for implementing all missing dep
 **Estimated Time**: 30 minutes  
 **Risk**: Low
 
-**Actions**:
+**⚠️ DECISION REQUIRED: GitHub Copilot Autofix Integration**
+
+Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQL alerts:
+
+#### Option A: Enable Copilot Autofix (Recommended for Public Repos)
+**What it does:**
+- Automatically suggests AI-powered fixes for CodeQL security vulnerabilities
+- Provides natural language explanations of issues
+- Generates code suggestions directly in pull requests
+- Available for free on public repositories
+
+**Benefits:**
+- Faster vulnerability remediation
+- Educational explanations help developers learn security best practices
+- Reduces manual fix research time
+- Supports Java, JavaScript, TypeScript, Python (matches your stack)
+
+**How it works:**
+- Enabled by default when CodeQL is set up
+- Activates automatically for alerts on pull requests
+- Suggestions appear in PR review interface
+- You can review, edit, or accept suggestions
+
+**Considerations:**
+- Requires review of AI suggestions (don't auto-accept blindly)
+- Suggestions may need adjustment for project-specific requirements
+- Only available for public repos (free) or GitHub Advanced Security customers
+
+#### Option B: CodeQL Only (No Copilot Autofix)
+**What it does:**
+- CodeQL scanning and alerts only
+- Manual fix research required
+- Standard GitHub Security tab integration
+
+**Benefits:**
+- Full control over fix implementation
+- No AI-generated code in repository
+- Simpler setup (just CodeQL workflow)
+
+**Considerations:**
+- More manual work to fix vulnerabilities
+- Slower remediation process
+- Less educational value for developers
+
+**Recommendation:** Option A (Enable Copilot Autofix) - It's free for public repos, provides value, and you can always review/disable it later if needed.
+
+---
+
+**Actions** (after decision):
 1. Create new file `.github/workflows/codeql-analysis.yml`
 2. Use the CodeQL configuration template provided in section 2.5
-3. Configure for all languages: Java, JavaScript, Python
-4. Set up weekly scheduled scan (Mondays at 9 AM UTC)
-5. Save and commit changes
-6. Manually trigger the workflow via GitHub Actions UI
-7. Wait for analysis to complete (10-30 minutes)
-8. Review results in Security tab
+3. Configure for all languages: Java, JavaScript/TypeScript, Python
+   - **Note**: CodeQL uses `javascript` as the language identifier, which automatically covers both JavaScript AND TypeScript files
+   - The configuration `language: ['java', 'javascript', 'python']` will scan Java, JavaScript, TypeScript, and Python
+4. Set up weekly scheduled scan (Sundays at 14:00 UTC = 08:00 CST / 09:00 CDT)
+5. **If Option A**: Copilot Autofix will be enabled automatically (no additional config needed)
+6. **If Option B**: No additional action needed (Copilot Autofix can be disabled via repository settings if desired)
+7. Save and commit changes
+8. Manually trigger the workflow via GitHub Actions UI
+9. Wait for analysis to complete (10-30 minutes)
+10. Review results in Security tab
 
 **Verification**:
 - [ ] CodeQL workflow runs successfully
 - [ ] Results appear in GitHub Security tab
 - [ ] No critical security issues found (or issues are documented)
 - [ ] Weekly schedule is configured correctly
+- [ ] (If Option A) Copilot Autofix suggestions appear in test PR with CodeQL alerts
 
 ---
 
@@ -615,7 +675,7 @@ This section provides a clear, sequential guide for implementing all missing dep
 ### Phase 4: Security Scanning (High Priority)
 1. ✅ Set up CodeQL analysis
    - [ ] Create `.github/workflows/codeql-analysis.yml`
-   - [ ] Configure for Java, JavaScript, Python
+   - [ ] Configure for Java, JavaScript/TypeScript, Python
    - [ ] Set up weekly scheduled scans
 
 2. ✅ Test CodeQL workflow
