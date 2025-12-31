@@ -235,32 +235,31 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -375,32 +374,31 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -499,32 +497,31 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -626,32 +623,31 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -740,32 +736,31 @@ jobs:
           cache: 'npm'
           cache-dependency-path: cypress/package-lock.json
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Install Cypress dependencies
         working-directory: ./cypress
@@ -835,32 +830,31 @@ jobs:
           cache: 'npm'
           cache-dependency-path: playwright/package-lock.json
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Install Playwright dependencies
         working-directory: ./playwright
@@ -946,59 +940,57 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Verify Services Ready
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
+
+      - name: Start Backend and Frontend Services
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Install Robot Framework dependencies
         run: |
@@ -1134,32 +1126,31 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -1246,32 +1237,31 @@ jobs:
           cache: 'npm'
           cache-dependency-path: vibium/package-lock.json
 
-      - name: Verify Shared Services (Skip Startup)
+      - name: Start Backend and Frontend Services
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🔍 Verifying shared services are ready..."
-          echo "📋 Environment: ${{ inputs.environment }}"
-          # Services should already be started by setup-shared-services job
-          # Just verify they're accessible
-          MAX_WAIT=${MAX_WAIT:-5}
-          elapsed=0
+          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready
+        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "✅ Verifying services are ready..."
+          chmod +x scripts/ci/verify-services.sh
           # Calculate backend URL from frontend URL
           BACKEND_URL="${{ inputs.base_url }}"
           BACKEND_URL="${BACKEND_URL//3003/8003}"
           BACKEND_URL="${BACKEND_URL//3004/8004}"
           BACKEND_URL="${BACKEND_URL//3005/8005}"
-          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
-            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
-               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
-              echo "✅ Services are ready!"
-              exit 0
-            fi
-            sleep 1
-            elapsed=$((elapsed + 1))
-          done
-          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
+          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
+            echo "❌ Services verification failed"
+            exit 1
+          }
+          echo "✅ Services verified and running"
 
       - name: Install Vibium dependencies
         working-directory: ./vibium
