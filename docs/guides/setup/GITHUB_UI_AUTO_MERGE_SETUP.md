@@ -48,6 +48,8 @@ Settings → General → Pull Requests
 
 ### 2.2 Check Existing Rules or Create New Rule
 
+**Important Note**: "Allow auto-merge" is **NOT** a checkbox in branch protection rules. It's only enabled in General settings (Step 1). Branch protection rules just need to be configured correctly to work with auto-merge.
+
 **If you already have branch protection rules:**
 
 1. Click on the rule for `main` (or the branch you want to protect)
@@ -56,7 +58,8 @@ Settings → General → Pull Requests
    - ✅ **Require status checks to pass before merging**
      - Ensure your CI/CD checks are listed (e.g., `test-fe-dev`, `test-be-dev`, etc.)
    - ✅ **Require branches to be up to date before merging**
-   - ✅ **Allow auto-merge** (this should be visible if auto-merge is enabled in General settings)
+3. **Do NOT look for "Allow auto-merge" checkbox here** - it doesn't exist in branch protection rules
+4. Click **"Save changes"** if you made any updates
 
 **If you need to create a branch protection rule:**
 
@@ -67,16 +70,16 @@ Settings → General → Pull Requests
    - ✅ **Require status checks to pass before merging**
      - Select your CI/CD checks from the list
    - ✅ **Require branches to be up to date before merging**
-   - ✅ **Allow auto-merge** (if available)
 4. Click **"Create"** or **"Save changes"**
 
 ### 2.3 Verify Auto-merge is Allowed
 
-**Important**: Even if "Allow auto-merge" is enabled in General settings, you need to ensure branch protection rules don't block it.
+**Important**: "Allow auto-merge" is controlled in **General settings only** (Step 1). Branch protection rules don't have a separate "Allow auto-merge" checkbox.
 
-1. In the branch protection rule, look for:
-   - **"Allow auto-merge"** checkbox (should be checked)
-   - Or ensure there's no setting that explicitly blocks auto-merge
+**What to verify:**
+1. ✅ "Allow auto-merge" is enabled in **Settings → General → Pull Requests** (Step 1)
+2. ✅ Branch protection rules are configured with the required checks (above)
+3. ✅ No settings in branch protection rules explicitly block auto-merge
 
 **Visual Guide:**
 ```
@@ -84,8 +87,9 @@ Settings → Branches → Branch protection rules
 └── [main branch rule]
     ├── ☑️ Require a pull request before merging
     ├── ☑️ Require status checks to pass before merging
-    ├── ☑️ Require branches to be up to date before merging
-    └── ☑️ Allow auto-merge
+    └── ☑️ Require branches to be up to date before merging
+    
+Note: "Allow auto-merge" is NOT here - it's in General settings only
 ```
 
 ---
@@ -127,6 +131,15 @@ After completing the above steps:
 **Solution:**
 - Verify you have admin access to the repository
 - Check organization settings if this is an organization repository
+
+### Issue: "Allow auto-merge" not visible in branch protection rules
+
+**This is normal!** "Allow auto-merge" is **only** in General settings, not in branch protection rules.
+
+**Solution:**
+- Ensure "Allow auto-merge" is enabled in **Settings → General → Pull Requests** (Step 1)
+- Branch protection rules don't need a separate "Allow auto-merge" checkbox
+- As long as branch protection rules don't explicitly block merging, auto-merge will work
 
 ### Issue: Auto-merge button appears but doesn't work
 
