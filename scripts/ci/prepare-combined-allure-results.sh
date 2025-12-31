@@ -9,7 +9,7 @@
 # This script:
 # 1. Merges Allure results from all environments
 # 2. Verifies merged results
-# 3. Converts framework results (Cypress, Playwright, Robot, Vibium) to Allure format
+# 3. Converts framework results (Cypress, Playwright, Robot, Vibium, Artillery) to Allure format
 # 4. Adds environment labels to prevent deduplication
 # 5. Preserves history from previous reports
 # 6. Creates executor.json and categories.json files
@@ -242,6 +242,33 @@ if [ "$VIBIUM_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/vibium-results" ]; then
     done
 fi
 
+# Convert Artillery results for each environment
+ARTILLERY_PROCESSED=0
+for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
+    # Check environment-specific directory first
+    if [ -d "$SOURCE_DIR/results-$env/artillery-results-$env" ]; then
+        echo "   Converting Artillery results ($env)..."
+        chmod +x scripts/ci/convert-artillery-to-allure.sh
+        if [ -d "$SOURCE_DIR/results-$env/artillery-results-$env" ]; then
+            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/artillery-results-$env" "$env" || true
+            ARTILLERY_PROCESSED=1
+        fi
+    fi
+done
+
+# Check merged artillery-results directory only if no environment-specific directories were found
+# IMPORTANT: Only process merged directory for ACTIVE environments (not all environments)
+if [ "$ARTILLERY_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/artillery-results" ]; then
+    echo "   Converting Artillery results (merged artifacts - processing for active environments only)..."
+    chmod +x scripts/ci/convert-artillery-to-allure.sh
+    # Process merged directory only for environments that actually ran
+    for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
+        if [ -d "$SOURCE_DIR/artillery-results" ]; then
+            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
+        fi
+    done
+fi
+
 # Step 4: Add environment labels
 echo ""
 echo "🏷️  Step 4: Adding environment labels..."
@@ -295,6 +322,7 @@ PLAYWRIGHT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Playw
 CYPRESS_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Cypress E2E Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
 ROBOT_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Robot Framework Acceptance Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
 VIBIUM_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Vibium Visual Regression Testing" {} \; 2>/dev/null | wc -l | tr -d ' ')
+ARTILLERY_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Performance Testing" {} \; 2>/dev/null | grep -l "Artillery Load Tests" {} \; 2>/dev/null | wc -l | tr -d ' ')
 # Selenide uses @Epic("HomePage Tests") and @Feature("HomePage Navigation")
 # Match either epic or feature value (pattern searches for the string anywhere in JSON)
 SELENIDE_COUNT=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -lE "HomePage Tests|HomePage Navigation" {} \; 2>/dev/null | wc -l | tr -d ' ')
@@ -303,6 +331,7 @@ echo "   - Playwright: $PLAYWRIGHT_COUNT test(s)"
 echo "   - Cypress: $CYPRESS_COUNT test(s)"
 echo "   - Robot Framework: $ROBOT_COUNT test(s)"
 echo "   - Vibium: $VIBIUM_COUNT test(s)"
+echo "   - Artillery: $ARTILLERY_COUNT test(s)"
 echo "   - Selenide: $SELENIDE_COUNT test(s) (merged from TestNG results)"
 echo ""
 # Debug: Show sample matches for troubleshooting

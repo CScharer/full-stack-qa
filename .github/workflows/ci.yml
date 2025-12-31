@@ -1099,6 +1099,14 @@ jobs:
           path: all-test-results/vibium-results
           merge-multiple: true
 
+      - name: Download Artillery results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "artillery-results-*"
+          path: all-test-results/artillery-results
+          merge-multiple: true
+
       - name: "Debug: Show downloaded artifact structure"
         if: always()
         run: |

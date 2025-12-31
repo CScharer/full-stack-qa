@@ -337,7 +337,37 @@ playwright/
 
 **Status**: ✅ **COMPLETE** - Ready for testing in CI/CD pipeline
 
-### Phase 3: Page Object Reuse & Enhanced Scenarios (Week 2-3)
+### Phase 3: Allure Integration ✅ COMPLETE
+
+**Goals**:
+- ✅ Convert Artillery results to Allure format
+- ✅ Include in combined Allure reports
+- ✅ Track Core Web Vitals in Allure
+
+**Tasks Completed**:
+1. ✅ Created Artillery-to-Allure converter script
+   - ✅ Parse Artillery JSON results
+   - ✅ Convert to Allure result format
+   - ✅ Include Core Web Vitals as parameters
+   - ✅ Include performance metrics (session length, page load time, etc.)
+
+2. ✅ Integrated with combined Allure report generation
+   - ✅ Added Artillery results to `prepare-combined-allure-results.sh`
+   - ✅ Includes environment-specific processing
+   - ✅ Supports both merged and environment-specific artifacts
+
+3. ✅ Updated Allure reporting documentation
+
+**Deliverables**:
+- ✅ Artillery-to-Allure converter: `scripts/ci/convert-artillery-to-allure.sh`
+- ✅ Integration with combined reports
+- ✅ Updated documentation
+
+**Status**: ✅ **COMPLETE** - Artillery tests now appear in Allure reports
+
+---
+
+### Phase 4: Page Object Reuse & Enhanced Scenarios (Future)
 
 **Goals**:
 - Reuse existing Playwright page objects
@@ -365,34 +395,6 @@ playwright/
 - Enhanced metrics collection
 
 **Estimated Time**: 1-2 weeks
-
----
-
-### Phase 4: Allure Integration (Future - Low Priority)
-
-**Goals**:
-- Convert Artillery results to Allure format
-- Include in combined Allure reports
-- Track Core Web Vitals in Allure
-
-**Tasks**:
-1. Create Artillery-to-Allure converter script
-   - Parse Artillery JSON results
-   - Convert to Allure result format
-   - Include Core Web Vitals as attachments/parameters
-
-2. Integrate with combined Allure report generation
-   - Add Artillery results to `prepare-combined-allure-results.sh`
-   - Include in environment-specific reports
-
-3. Update Allure reporting documentation
-
-**Deliverables**:
-- Artillery-to-Allure converter
-- Integration with combined reports
-- Updated documentation
-
-**Estimated Time**: 1 week
 
 ---
 
@@ -733,13 +735,23 @@ module.exports = {
    - Local execution verified successfully
 
 2. ✅ **Phase 2: CI/CD Integration** - COMPLETE
-   - Created reusable workflow: `.github/workflows/env-artillery.yml`
-   - Added jobs to `ci.yml`: `test-artillery-dev` and `test-artillery-test`
-   - Integrated with gate jobs for result checking
-   - Configured to run: dev on branches/PRs, dev+test on main
-   - Artifact collection and upload configured
+   - ✅ Created reusable workflow: `.github/workflows/env-artillery.yml`
+   - ✅ Added jobs to `ci.yml`: `test-artillery-dev` and `test-artillery-test`
+   - ✅ Integrated with gate jobs (`gate-dev`, `gate-test`) for result checking
+   - ✅ Added to pipeline summary for visibility
+   - ✅ Configured to run: dev on branches/PRs, dev+test on main
+   - ✅ Artifact collection and upload configured (JSON results)
+   - ✅ Test type: `smoke` (5 seconds, 1 user) for CI/CD efficiency
 
-### 🎯 Next Steps (Phase 3: Enhanced Scenarios)
+3. ✅ **Phase 3: Allure Integration** - COMPLETE
+   - ✅ Created Artillery-to-Allure converter: `scripts/ci/convert-artillery-to-allure.sh`
+   - ✅ Integrated with `prepare-combined-allure-results.sh`
+   - ✅ Artillery tests now appear in combined Allure reports
+   - ✅ Core Web Vitals and performance metrics included as parameters
+   - ✅ Environment-specific results supported
+   - ✅ Added artifact download in `ci.yml` combined-allure-report job
+
+### 🎯 Next Steps (Phase 4: Enhanced Scenarios)
 
 **Priority**: **MEDIUM** - Enhance test scenarios and reuse page objects
 
@@ -757,21 +769,15 @@ module.exports = {
    - Improve collection reliability
    - Add more metrics (TTFB, DOM Content Loaded, etc.)
 
-4. **Test in CI/CD** (Immediate)
-   - Push to branch → verify `test-artillery-dev` runs
-   - Merge to main → verify both dev and test run
-   - Verify artifacts are uploaded correctly
-
-### 📋 Future Steps (Phase 3+)
+### 📋 Future Steps (Phase 4+)
 - Page object reuse
 - Additional scenarios
-- Allure integration (optional)
 - Artillery Cloud (optional)
 
 ---
 
 **Last Updated**: 2025-12-31  
 **Document Location**: `docs/work/20251231_ARTILLERY_PLAYWRIGHT_INTEGRATION.md`  
-**Status**: ✅ Phase 1 & 2 Complete - Ready for Review & Testing  
+**Status**: ✅ Phase 1, 2 & 3 Complete - Allure Integration Complete  
 **Branch**: `artillery-playwright-integration`
 
