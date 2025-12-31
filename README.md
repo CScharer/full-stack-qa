@@ -773,6 +773,8 @@ This framework maintains security standards that **exceed industry best practice
 - ✅ **AES-256 encryption** at rest - Industry-leading encryption standard
 - ✅ **TLS 1.3 encryption** in transit - Latest transport security protocol
 - ✅ **Automated security scanning** - Pre-commit hooks and CI/CD checks
+- ✅ **CodeQL Security Scanning** - Weekly automated code security analysis with Copilot Autofix
+- ✅ **Dependabot** - Automated dependency updates for npm, Python, Maven, GitHub Actions, and Docker
 - ✅ **Comprehensive audit logging** - Complete security event tracking
 - ✅ **IAM-based access control** - Granular permissions per credential
 - ✅ **Automated secret rotation** - Built-in versioning and rotation

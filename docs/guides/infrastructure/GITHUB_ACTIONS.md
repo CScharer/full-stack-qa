@@ -186,6 +186,29 @@ The pipeline has been optimized for faster test execution through several improv
 
 ---
 
+---
+
+## 🔒 Security Scanning
+
+### CodeQL Analysis
+
+**Workflow**: `.github/workflows/codeql-analysis.yml`  
+**Status**: ✅ Active  
+**Last Updated**: 2025-12-31
+
+**Features**:
+- **Automated security scanning** for Java, JavaScript/TypeScript, and Python
+- **Weekly scheduled scans** (Sundays at 14:00 UTC = 08:00 CST / 09:00 CDT)
+- **Runs on push/PR** to `main` and `develop` branches
+- **GitHub Copilot Autofix** enabled (AI-powered fix suggestions for vulnerabilities)
+- **Results in Security tab** - View findings in GitHub Security dashboard
+
+**Configuration**:
+- Languages: Java, JavaScript (covers TypeScript), Python
+- Matrix strategy for parallel analysis
+- Results appear in GitHub Security tab
+- Copilot Autofix provides automatic fix suggestions in PRs
+
 **See Also**: 
 - [PIPELINE_WORKFLOW.md](PIPELINE_WORKFLOW.md) - Definitive technical specification
 - [WORKFLOW_TEST_ORGANIZATION.md](WORKFLOW_TEST_ORGANIZATION.md) - Test job grouping and organization

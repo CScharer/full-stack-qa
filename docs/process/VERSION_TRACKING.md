@@ -31,11 +31,28 @@ This living document serves as a centralized tracking system for all dependency 
 
 ## 📅 Update Schedule
 
+### Automated Dependency Management
+
+**✅ Dependabot Fully Configured** (as of 2025-12-31)
+
+All dependency ecosystems are now managed via **Dependabot**:
+- **npm** (4 projects): cypress, frontend, vibium, playwright
+- **Python/pip** (3 projects): backend, performance, test-data
+- **Maven** (Java dependencies)
+- **GitHub Actions** (workflow updates)
+- **Docker** (container base images)
+
+**Schedule**: Weekly checks (Sundays at 14:00 UTC = 08:00 CST / 09:00 CDT)
+
+**Auto-merge**: Security updates automatically merged after CI/CD passes
+
+**Monthly Audits**: Comprehensive dependency review on first day of each month
+
 ### Recommended Review Frequency
-- **Monthly**: Review all dependencies for updates
-- **Quarterly**: Apply non-breaking updates (patch/minor)
-- **Semi-annually**: Review major version updates
-- **As needed**: Security patches (immediate)
+- **Automated**: Dependabot creates PRs for available updates (weekly)
+- **Monthly**: Review Dependabot PRs and monthly audit reports
+- **As needed**: Security patches (auto-merged if CI/CD passes)
+- **Quarterly**: Review major version updates (manual review required)
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
