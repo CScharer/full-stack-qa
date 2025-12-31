@@ -478,10 +478,7 @@ jobs:
     name: Gate (SETUP)
     runs-on: ubuntu-latest
     needs: [determine-schedule-type, determine-envs, validate-test-data-json, code-quality-analysis, docker-build-test, build-and-compile, validate-dependency-versions]
-    if: |
-      always() && 
-      needs.determine-schedule-type.outputs.code-changed == 'true' &&
-      !cancelled()
+    if: always() && !cancelled()
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
