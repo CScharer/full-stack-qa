@@ -417,17 +417,20 @@ This section provides a clear, sequential guide for implementing all missing dep
 5. ⏳ Waiting for Dependabot to detect the new configuration (may take a few minutes after commit)
 6. ⏳ Verify Dependabot creates PRs for npm packages (after commit and Dependabot detection)
 
-**Verification** (to be checked after commit):
+**Verification** (to be checked after Dependabot detects configuration):
 - [ ] Dependabot appears in GitHub repository Insights → Dependency graph
 - [ ] Dependabot creates PRs for npm package updates
 - [ ] PRs have correct labels (`dependencies`, `javascript`, project-specific)
 - [ ] PRs are assigned to correct reviewer (`@CScharer`)
 
 **Changes Made**:
-- Added 4 npm ecosystem entries to `.github/dependabot.yml`
-- All entries configured with weekly schedule (Mondays 9:00 AM)
-- Each entry has project-specific labels (cypress, frontend, vibium, playwright)
-- All entries use same reviewer and commit message format as existing ecosystems
+- ✅ Added 4 npm ecosystem entries to `.github/dependabot.yml`
+- ✅ All entries configured with weekly schedule (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
+- ✅ Each entry has project-specific labels (cypress, frontend, vibium, playwright)
+- ✅ All entries use same reviewer and commit message format as existing ecosystems
+- ✅ Added Central Time conversion comment for schedule clarity
+
+**Status**: ✅ Configuration complete and committed. Waiting for Dependabot to detect and create initial PRs.
 
 ---
 
