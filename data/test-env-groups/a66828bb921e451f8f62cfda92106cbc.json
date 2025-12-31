@@ -1,1 +1,1 @@
-{"id":"a66828bb921e451f8f62cfda92106cbc","fullName":"com.cjs.qa.junit.tests.NegativeTests.testDisabledElementInteraction","name":"testDisabledElementInteraction [DEV]","status":"passed","testResultsByEnv":{"default":"60bf81c72db2b471a93ad2a3cd06d173"}}
+{"id":"a66828bb921e451f8f62cfda92106cbc","fullName":"com.cjs.qa.junit.tests.NegativeTests.testDisabledElementInteraction","name":"testDisabledElementInteraction [PROD]","status":"passed","testResultsByEnv":{"default":"33a8db3f6e9ecae7f12c330113ba97bc"}}

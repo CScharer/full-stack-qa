@@ -1,1 +1,1 @@
-{"id":"5260220b70aa2bcb7b60167c4c70e6eb","fullName":"com.cjs.qa.junit.tests.SecretManagerSmokeTest.smokeTestDirectSecretRetrieval","name":"Skip if credentials not available [DEV]","status":"passed","testResultsByEnv":{"default":"b0ac1868da5695449824e18f76379ed1"}}
+{"id":"5260220b70aa2bcb7b60167c4c70e6eb","fullName":"com.cjs.qa.junit.tests.SecretManagerSmokeTest.smokeTestDirectSecretRetrieval","name":"Skip if credentials not available [PROD]","status":"passed","testResultsByEnv":{"default":"39dc0bc399e64bb995ea321c783c75f8"}}
