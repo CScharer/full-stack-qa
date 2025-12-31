@@ -164,8 +164,8 @@ wait_for_service() {
                 echo "✅ $service_name is ready!"
                 return 0
             fi
-            sleep 2
-            elapsed=$((elapsed + 2))
+            sleep 1
+            elapsed=$((elapsed + 1))
             if [ $((elapsed % 10)) -eq 0 ]; then
                 echo "   Still waiting... (${elapsed}s/${MAX_WAIT}s)"
             fi
@@ -199,12 +199,12 @@ stop_port_if_in_use() {
                 if [ "$FORCE_STOP" = "true" ]; then
                     echo "   🛑 Stopping existing $service_name on port $port (PID: $pid)..."
                     kill $pid 2>/dev/null || true
-                    sleep 2
+                    sleep 1
                     if kill -0 $pid 2>/dev/null; then
                         echo "   🛑 Force killing $service_name (PID: $pid)..."
                         kill -9 $pid 2>/dev/null || true
+                        sleep 1
                     fi
-                    sleep 1
                 else
                     return 1  # Port in use and not forcing stop
                 fi
@@ -240,7 +240,7 @@ if is_port_in_use "$API_PORT"; then
         if [ "$FORCE_STOP" = "true" ]; then
             echo "   🛑 Attempting to free port $API_PORT..."
             pkill -f "uvicorn.*:$API_PORT" 2>/dev/null || true
-            sleep 2
+            sleep 1
         fi
     fi
 else
@@ -269,7 +269,7 @@ else
     pip install -q --upgrade pip
     pip install -q -r "$BACKEND_DIR/requirements.txt" || true
 
-    # Start backend in background
+    # Start backend in background (optimized: parallel startup)
     cd "$BACKEND_DIR"
     if [ "$API_RELOAD" = "true" ]; then
         nohup uvicorn app.main:app \
@@ -289,16 +289,9 @@ else
         disown $BACKEND_PID 2>/dev/null || true
     fi
     echo "   ✅ Backend started (PID: $BACKEND_PID)"
-
-    # Wait for backend to be ready
-    wait_for_service "http://localhost:$API_PORT/docs" "Backend API" || {
-        echo "Backend logs:"
-        tail -20 "$SCRIPT_DIR/backend.log" || true
-        exit 1
-    }
 fi  # End of if is_port_in_use "$API_PORT"
 
-# Check and start Frontend
+# Check and start Frontend (optimized: start in parallel with backend)
 echo ""
 echo "📦 Checking Frontend..."
 FRONTEND_PID=""
@@ -326,7 +319,7 @@ if is_port_in_use "$FRONTEND_PORT"; then
             echo "   🛑 Attempting to free port $FRONTEND_PORT..."
             pkill -f "next dev.*:$FRONTEND_PORT" 2>/dev/null || true
             pkill -f "node.*next dev" 2>/dev/null || true
-            sleep 2
+            sleep 1
         fi
     fi
 else
@@ -355,13 +348,54 @@ else
     disown $FRONTEND_PID 2>/dev/null || true
     echo "   ✅ Frontend started (PID: $FRONTEND_PID)"
 
-    # Wait for frontend to be ready
+    echo "   ✅ Frontend started (PID: $FRONTEND_PID)"
+fi  # End of if is_port_in_use "$FRONTEND_PORT"
+
+# Wait for both services in parallel (optimized: wait concurrently)
+echo ""
+echo "⏳ Waiting for services to be ready..."
+if [ -n "$BACKEND_PID" ] && [ -z "$FRONTEND_PID" ]; then
+    # Only backend needs to start
+    wait_for_service "http://localhost:$API_PORT/docs" "Backend API" || {
+        echo "Backend logs:"
+        tail -20 "$SCRIPT_DIR/backend.log" || true
+        exit 1
+    }
+elif [ -z "$BACKEND_PID" ] && [ -n "$FRONTEND_PID" ]; then
+    # Only frontend needs to start
     wait_for_service "http://localhost:$FRONTEND_PORT" "Frontend" || {
         echo "Frontend logs:"
         tail -20 "$SCRIPT_DIR/frontend.log" || true
         exit 1
     }
-fi  # End of if is_port_in_use "$FRONTEND_PORT"
+elif [ -n "$BACKEND_PID" ] && [ -n "$FRONTEND_PID" ]; then
+    # Both need to start - wait in parallel
+    (
+        wait_for_service "http://localhost:$API_PORT/docs" "Backend API" || {
+            echo "Backend logs:"
+            tail -20 "$SCRIPT_DIR/backend.log" || true
+            exit 1
+        }
+    ) &
+    BACKEND_WAIT_PID=$!
+    (
+        wait_for_service "http://localhost:$FRONTEND_PORT" "Frontend" || {
+            echo "Frontend logs:"
+            tail -20 "$SCRIPT_DIR/frontend.log" || true
+            exit 1
+        }
+    ) &
+    FRONTEND_WAIT_PID=$!
+    
+    # Wait for both wait processes
+    wait $BACKEND_WAIT_PID || BACKEND_WAIT_FAILED=1
+    wait $FRONTEND_WAIT_PID || FRONTEND_WAIT_FAILED=1
+    
+    if [ -n "$BACKEND_WAIT_FAILED" ] || [ -n "$FRONTEND_WAIT_FAILED" ]; then
+        echo "❌ One or more services failed to start"
+        exit 1
+    fi
+fi
 
 echo ""
 echo "═══════════════════════════════════════════════════════════════"

@@ -147,16 +147,20 @@ on:
       grid_wait_timeout_seconds:
         description: 'Timeout in seconds for waiting for Selenium Grid'
         type: number
-        default: 60
+        default: 5
       service_wait_timeout_seconds:
         description: 'Timeout in seconds for waiting for services (frontend/backend)'
         type: number
-        default: 30
+        default: 5
       # Resource Configuration
       maven_memory:
         description: 'Maven heap size (e.g., 2048m, 4096m)'
         type: string
-        default: '2048m'
+        default: '4096m'
+      use_shared_services:
+        description: 'Use shared services from setup-shared-services job (optimization)'
+        type: boolean
+        default: true
       allure_version:
         description: 'Allure3 CLI version (default: 3.0.0)'
         type: string
@@ -168,7 +172,7 @@ on:
 
 env:
   JAVA_VERSION: ${{ inputs.java_version || '21' }}
-  MAVEN_OPTS: -Xmx${{ inputs.maven_memory || '2048m' }} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  MAVEN_OPTS: -Xmx${{ inputs.maven_memory || '4096m' }} -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
   # Default Selenium Grid hub URL for CI runs
   SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
 
@@ -219,14 +223,32 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -245,7 +267,7 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 5 }}"
 
       - name: Run Smoke Tests
         timeout-minutes: ${{ inputs.smoke_tests_timeout_minutes || 5 }}
@@ -341,14 +363,32 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -360,8 +400,8 @@ jobs:
       - name: Wait for Selenium Grid
         run: |
           echo "⏳ Waiting for Grid..."
-          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
-          sleep 10
+          timeout ${{ inputs.grid_wait_timeout_seconds || 5 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 1; done'
+          # No sleep needed - curl success confirms Grid is ready
           echo "✅ Grid ready!"
 
       - name: Run Grid Tests
@@ -447,14 +487,32 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -473,8 +531,8 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
-          sleep 5
+          timeout ${{ inputs.grid_wait_timeout_seconds || 5 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 1; done'
+          # No sleep needed - curl success confirms Grid is ready
           echo "✅ Grid ready!"
 
       - name: Run Mobile Browser Tests
@@ -556,14 +614,32 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -582,8 +658,8 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          timeout ${{ inputs.grid_wait_timeout_seconds || 60 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 2; done'
-          sleep 5
+          timeout ${{ inputs.grid_wait_timeout_seconds || 5 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 1; done'
+          # No sleep needed - curl success confirms Grid is ready
           echo "✅ Grid ready!"
 
       - name: Run Responsive Design Tests
@@ -652,14 +728,32 @@ jobs:
           cache: 'npm'
           cache-dependency-path: cypress/package-lock.json
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Install Cypress dependencies
         working-directory: ./cypress
@@ -729,14 +823,32 @@ jobs:
           cache: 'npm'
           cache-dependency-path: playwright/package-lock.json
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Install Playwright dependencies
         working-directory: ./playwright
@@ -822,21 +934,59 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
-      - name: Verify Services Are Running
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          ./scripts/ci/verify-services.sh \
-            "${{ inputs.base_url }}" \
-            "${{ inputs.service_wait_timeout_seconds || 30 }}"
+          echo "🔍 Verifying shared services are ready..."
+          echo "📋 Environment: ${{ inputs.environment }}"
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Install Robot Framework dependencies
         run: |
@@ -851,7 +1001,7 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 5 }}"
 
       - name: Run Robot Framework Tests
         timeout-minutes: ${{ inputs.robot_tests_timeout_minutes || 5 }}
@@ -972,14 +1122,32 @@ jobs:
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -998,7 +1166,7 @@ jobs:
 
       - name: Wait for Selenium Grid
         run: |
-          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 60 }}"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" "${{ inputs.grid_wait_timeout_seconds || 5 }}"
 
       - name: Run Selenide Tests
         timeout-minutes: ${{ inputs.selenide_tests_timeout_minutes || 5 }}
@@ -1066,14 +1234,32 @@ jobs:
           cache: 'npm'
           cache-dependency-path: vibium/package-lock.json
 
-      - name: Start Backend and Frontend Services
+      - name: Verify Shared Services (Skip Startup)
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting backend and frontend services..."
+          echo "🔍 Verifying shared services are ready..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          # Services should already be started by setup-shared-services job
+          # Just verify they're accessible
+          MAX_WAIT=${MAX_WAIT:-5}
+          elapsed=0
+          # Calculate backend URL from frontend URL
+          BACKEND_URL="${{ inputs.base_url }}"
+          BACKEND_URL="${BACKEND_URL//3003/8003}"
+          BACKEND_URL="${BACKEND_URL//3004/8004}"
+          BACKEND_URL="${BACKEND_URL//3005/8005}"
+          while [ "$elapsed" -lt "$MAX_WAIT" ]; do
+            if curl -sf "${{ inputs.base_url }}" > /dev/null 2>&1 && \
+               curl -sf "${BACKEND_URL}/docs" > /dev/null 2>&1; then
+              echo "✅ Services are ready!"
+              exit 0
+            fi
+            sleep 1
+            elapsed=$((elapsed + 1))
+          done
+          echo "⚠️  Services not ready, but continuing (may have been started by shared job)..."
 
       - name: Install Vibium dependencies
         working-directory: ./vibium

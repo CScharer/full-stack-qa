@@ -75,7 +75,7 @@ concurrency:
 
 env:
   JAVA_VERSION: '21'
-  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  MAVEN_OPTS: -Xmx4096m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
   # Environment URLs - Default ports per ONE_GOAL.md
   # APP: DEV=3003, TEST=3004, PROD=3005
   # API: DEV=8003, TEST=8004, PROD=8005
@@ -484,18 +484,86 @@ jobs:
             "validate-dependency-versions:${{ needs.validate-dependency-versions.result }}"
 
   # ==================================================================================
+  # SHARED SERVICE SETUP (Optimization: Start services once for all test jobs)
+  # ==================================================================================
+  setup-shared-services:
+    name: Setup Shared Services
+    runs-on: ubuntu-latest
+    needs: [gate-setup, determine-envs, determine-test-execution]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.gate-setup.result == 'success' &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      (needs.determine-envs.outputs.run_dev == 'true' ||
+       needs.determine-envs.outputs.run_test == 'true' ||
+       needs.determine-envs.outputs.run_prod == 'true')
+    outputs:
+      services_ready: ${{ steps.set-output.outputs.services_ready }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: frontend-deps-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            frontend-deps-${{ runner.os }}-
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/venv
+          key: backend-deps-${{ runner.os }}-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            backend-deps-${{ runner.os }}-
+
+      - name: Start Backend and Frontend Services (Dev)
+        if: needs.determine-envs.outputs.run_dev == 'true'
+        env:
+          ENVIRONMENT: dev
+        run: |
+          echo "🚀 Starting shared services for DEV environment..."
+          ./scripts/start-services-for-ci.sh
+
+      - name: Verify Services Ready (Dev)
+        if: needs.determine-envs.outputs.run_dev == 'true'
+        run: |
+          echo "✅ Verifying services are ready..."
+          curl -f http://localhost:3003 > /dev/null && echo "✅ Frontend ready" || exit 1
+          curl -f http://localhost:8003/docs > /dev/null && echo "✅ Backend ready" || exit 1
+
+      - name: Set Services Ready Output
+        id: set-output
+        run: |
+          echo "services_ready=true" >> "$GITHUB_OUTPUT"
+
+  # ==================================================================================
   # STAGE 3: DEV ENVIRONMENT TESTING & DEPLOYMENT
   # ==================================================================================
 
   test-fe-dev:
     name: Test FE (DEV)
-    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup]
+    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup, setup-shared-services]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped') &&
+      (needs.setup-shared-services.result == 'success' || needs.setup-shared-services.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
@@ -580,7 +648,7 @@ jobs:
 
   test-fe-test:
     name: Test FE (TEST)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-dev]
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-dev, setup-shared-services]
     if: |
       always() &&
       !cancelled() &&
@@ -588,7 +656,8 @@ jobs:
       needs.determine-envs.outputs.run_test == 'true' &&
       (needs.gate-dev.result == 'success' ||
        (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped') &&
+      (needs.setup-shared-services.result == 'success' || needs.setup-shared-services.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
@@ -674,7 +743,7 @@ jobs:
 
   test-fe-prod:
     name: Test FE (PROD)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-test]
+    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-test, setup-shared-services]
     if: |
       always() &&
       !cancelled() &&
@@ -682,7 +751,8 @@ jobs:
       needs.determine-envs.outputs.run_prod == 'true' &&
       (needs.gate-test.result == 'success' ||
        (needs.gate-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped') &&
+      (needs.setup-shared-services.result == 'success' || needs.setup-shared-services.result == 'skipped')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'

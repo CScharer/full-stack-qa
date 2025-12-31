@@ -5,20 +5,20 @@
 # Arguments:
 #   url            - Service URL to check (e.g., http://localhost:3003)
 #   service-name   - Human-readable service name (e.g., "Frontend", "Backend API", "Selenium Grid")
-#   timeout-seconds - Maximum time to wait in seconds (default: 60)
-#   check-interval - Interval between checks in seconds (default: 2)
+#   timeout-seconds - Maximum time to wait in seconds (default: 5)
+#   check-interval - Interval between checks in seconds (default: 1)
 #
 # Examples:
-#   ./scripts/ci/wait-for-service.sh http://localhost:3003 "Frontend" 30
-#   ./scripts/ci/wait-for-service.sh http://localhost:8003/docs "Backend API" 60 2
-#   ./scripts/ci/wait-for-service.sh http://localhost:4444/wd/hub/status "Selenium Grid" 90
+#   ./scripts/ci/wait-for-service.sh http://localhost:3003 "Frontend" 5
+#   ./scripts/ci/wait-for-service.sh http://localhost:8003/docs "Backend API" 5 1
+#   ./scripts/ci/wait-for-service.sh http://localhost:4444/wd/hub/status "Selenium Grid" 5
 
 set -e
 
 URL=${1}
 SERVICE_NAME=${2:-"Service"}
-TIMEOUT=${3:-60}
-CHECK_INTERVAL=${4:-2}
+TIMEOUT=${3:-5}
+CHECK_INTERVAL=${4:-1}
 
 # Validate required arguments
 if [ -z "$URL" ]; then

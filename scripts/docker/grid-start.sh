@@ -26,9 +26,8 @@ esac
 
 echo ""
 echo "⏳ Waiting for Grid to be ready..."
-sleep 10
-
-# Run health check
+# No sleep needed - use proper health check instead
+# Grid should be checked via wait-for-grid.sh or health check script
 if command -v jq &> /dev/null; then
     ./scripts/docker/grid-health.sh
 else
