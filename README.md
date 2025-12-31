@@ -2,14 +2,14 @@
 
 ### CI Pipeline
 ![CI Pipeline (main)](https://github.com/CScharer/full-stack-qa/actions/workflows/ci.yml/badge.svg?branch=main)
-[![Tests](https://img.shields.io/badge/tests-200%20total%20(UI:%20194%20%7C%20API:%206)-brightgreen)](https://github.com/CScharer/full-stack-qa/actions)
+[![Tests](https://img.shields.io/badge/Tests-200%20total%20(UI:%20194%20%7C%20API:%206)-brightgreen)](https://github.com/CScharer/full-stack-qa/actions)
 [![Allure Report](https://img.shields.io/badge/📊_Allure-Report-orange.svg)](https://cscharer.github.io/full-stack-qa/)
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![JavaScript](https://img.shields.io/badge/logo-JavaScript-blue?logo=JavaScript)](https://www.JavaScriptlang.org/)
+[![JavaScript](https://img.shields.io/badge/logo-JavaScript-orange?logo=JavaScript)](https://www.JavaScriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 [![Python](https://img.shields.io/badge/Python-3.13-orange.svg)](https://www.python.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-orange.svg)](https://www.typescriptlang.org/)
 
 [![Cucumber](https://img.shields.io/badge/Cucumber-7.33.0-brightgreen.svg)](https://cucumber.io/)
 [![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.0-blue.svg)](https://rest-assured.io/)
@@ -68,7 +68,7 @@ The badge colors follow a consistent scheme to help you quickly understand the t
   - Languages (TypeScript)
 
 - 🟠 **Orange** - Core languages and reporting
-  - Primary languages (Java, Python)
+  - Primary languages (Java, JavaScript, Python, TypeScript)
   - Test reporting (Allure)
 
 - 🟡 **Yellow** - Categories, groups, and licenses
