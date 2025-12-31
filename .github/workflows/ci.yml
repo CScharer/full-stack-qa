@@ -502,14 +502,13 @@ jobs:
   gate-start-dev:
     name: Gate (Start DEV Services)
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup, build-and-compile]
+    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
+      needs.determine-envs.outputs.run_dev == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -642,15 +641,14 @@ jobs:
   gate-start-test:
     name: Gate (Start TEST Services)
     runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-finish-dev, build-and-compile]
+    needs: [determine-envs, determine-test-execution, gate-finish-dev]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
       (needs.gate-finish-dev.result == 'success' ||
-       (needs.gate-finish-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
+       (needs.gate-finish-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false'))
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -784,15 +782,14 @@ jobs:
   gate-start-prod:
     name: Gate (Start PROD Services)
     runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-finish-test, build-and-compile]
+    needs: [determine-envs, determine-test-execution, gate-finish-test]
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_prod == 'true' &&
       (needs.gate-finish-test.result == 'success' ||
-       (needs.gate-finish-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false')) &&
-      (needs.build-and-compile.result == 'success' || needs.build-and-compile.result == 'skipped')
+       (needs.gate-finish-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false'))
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
