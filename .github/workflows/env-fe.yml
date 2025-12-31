@@ -169,10 +169,6 @@ on:
         description: 'Maven heap size (e.g., 2048m, 4096m)'
         type: string
         default: '4096m'
-      use_shared_services:
-        description: 'Use shared services from setup-shared-services job (optimization)'
-        type: boolean
-        default: true
       allure_version:
         description: 'Allure3 CLI version (default: 3.0.0)'
         type: string
@@ -240,26 +236,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -379,26 +365,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -502,26 +478,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -628,26 +594,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -741,26 +697,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Install Cypress dependencies
         working-directory: ./cypress
@@ -835,26 +781,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Install Playwright dependencies
         working-directory: ./playwright
@@ -945,52 +881,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
-
-      - name: Start Backend and Frontend Services
-        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
-        run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
-          ./scripts/start-services-for-ci.sh
-
-      - name: Verify Services Ready
-        if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
-        run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Install Robot Framework dependencies
         run: |
@@ -1131,26 +1031,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -1242,26 +1132,16 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for ${{ inputs.environment }} environment..."
+          echo "🚀 Starting backend and frontend services..."
+          echo "📋 Environment: ${{ inputs.environment }}"
           ./scripts/start-services-for-ci.sh
 
-      - name: Verify Services Ready
+      - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "✅ Verifying services are ready..."
-          chmod +x scripts/ci/verify-services.sh
-          # Calculate backend URL from frontend URL
-          BACKEND_URL="${{ inputs.base_url }}"
-          BACKEND_URL="${BACKEND_URL//3003/8003}"
-          BACKEND_URL="${BACKEND_URL//3004/8004}"
-          BACKEND_URL="${BACKEND_URL//3005/8005}"
-          ./scripts/ci/verify-services.sh "${{ inputs.base_url }}" 15 || {
-            echo "❌ Services verification failed"
-            exit 1
-          }
-          echo "✅ Services verified and running"
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Install Vibium dependencies
         working-directory: ./vibium
