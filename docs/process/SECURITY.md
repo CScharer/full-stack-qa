@@ -154,10 +154,33 @@ Most CI/CD pipelines include:
 - Basic secret management
 - Manual security reviews
 - Post-deployment monitoring
+- Periodic dependency updates
 
 ### Our Approach: Security-First Pipeline
 
 **✅ Exceeds Industry Standards**
+
+#### Automated Dependency Management
+- **Dependabot** - Automated dependency updates for all ecosystems:
+  - npm (4 projects: cypress, frontend, vibium, playwright)
+  - Python/pip (3 projects: backend, performance, test-data)
+  - Maven (Java dependencies)
+  - GitHub Actions (workflow updates)
+  - Docker (container base images)
+- **Weekly schedule** - All ecosystems checked weekly (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
+- **Auto-merge for security updates** - Security patches automatically merged after CI/CD passes
+- **Monthly dependency audits** - Comprehensive review on first day of each month
+
+#### Code Security Scanning
+- **CodeQL Analysis** - Automated security scanning for Java, JavaScript/TypeScript, and Python
+  - Weekly scheduled scans (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
+  - Runs on every push/PR to `main` and `develop`
+  - Results appear in GitHub Security tab
+- **GitHub Copilot Autofix** - AI-powered fix suggestions for CodeQL vulnerabilities
+  - Automatic suggestions in pull requests
+  - Natural language explanations
+  - Free for public repositories
+  - Does not consume personal Copilot subscription usage
 
 #### Pipeline Security Features
 - **Secret injection** - Credentials injected at runtime, never stored
@@ -309,10 +332,10 @@ Standard monitoring includes:
 ### Operational Practices
 
 #### Regular Security Tasks
-- **Dependency updates** - Regular updates for security patches
+- **Dependency updates** - Automated via Dependabot (weekly schedule)
+- **Security scanning** - CodeQL analysis (weekly scheduled + on push/PR)
 - **Secret rotation** - Periodic credential rotation
 - **Access reviews** - Regular review of permissions
-- **Security scanning** - Continuous vulnerability scanning
 - **Compliance checks** - Regular verification of security posture
 
 #### Incident Response
@@ -334,6 +357,8 @@ Standard monitoring includes:
 | **Encryption at Rest** | AES-256 | AES-128 typical | ✅ Stronger |
 | **Encryption in Transit** | TLS 1.3 | TLS 1.2 typical | ✅ Latest |
 | **Automated Scanning** | Continuous | Periodic | ✅ Continuous |
+| **CodeQL Security Scanning** | Weekly + Push/PR | Not common | ✅ Automated |
+| **Dependabot** | All ecosystems | Partial | ✅ Complete coverage |
 | **Access Auditing** | 100% | Partial | ✅ Complete |
 | **Pre-commit Security** | Enforced | Optional | ✅ Mandatory |
 | **Secret Scanning (GitGuardian)** | Integrated | Not common | ✅ Continuous |
