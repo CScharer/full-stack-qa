@@ -82,7 +82,7 @@ public class EveryoneSocial {
     productLaunchesPage = new ProductLaunchesPage(webDriver);
     signInPage = new SignInPage(webDriver);
     techBeaconPage = new TechBeaconPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 
   private WebDriver getWebDriver() {

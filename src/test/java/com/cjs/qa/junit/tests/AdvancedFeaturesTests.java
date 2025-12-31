@@ -58,7 +58,7 @@ public class AdvancedFeaturesTests {
 
     driver = new RemoteWebDriver(URI.create(gridUrl).toURL(), options);
     LOGGER.info("✅ Driver initialized in {} mode", isHeadless ? "headless" : "headed");
-    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     LOGGER.info("✅ Driver initialized");
   }
 

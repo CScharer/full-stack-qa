@@ -31,7 +31,7 @@ public class WebDriverValidation {
   public WebDriverValidation(WebDriver webDriver) {
     setMapURL(this.mapURL);
     this.webDriver = webDriver;
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 
   public Map<String, String> getMapURL() {

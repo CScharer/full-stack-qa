@@ -16,7 +16,7 @@ public class PluralSightPage {
     loginPage = new LoginPage(webDriver);
     sessionPage = new SessionPage(webDriver);
     tableOfContentsPage = new TableOfContentsPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 
   public LoginPage getLoginPage() {

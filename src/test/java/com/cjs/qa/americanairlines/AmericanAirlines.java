@@ -14,6 +14,6 @@ public class AmericanAirlines {
 
   public AmericanAirlines(WebDriver webDriver) {
     vacationabilityPage = new VacationabilityPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 }

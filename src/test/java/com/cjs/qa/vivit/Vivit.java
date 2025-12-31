@@ -36,7 +36,7 @@ public class Vivit {
     myMemberProfilePage = new MyMemberProfilePage(webDriver);
     searchPage = new SearchPage(webDriver);
     staffPage = new StaffPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
   }
 
   public BlogsPage getBlogsPage() {

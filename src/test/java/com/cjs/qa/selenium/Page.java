@@ -1143,7 +1143,7 @@ public class Page extends JavaHelpers {
    */
   public boolean isTextPresent(String text) {
     try {
-      new WebDriverWait(getWebDriver(), java.time.Duration.ofSeconds(10))
+      new WebDriverWait(getWebDriver(), java.time.Duration.ofSeconds(5))
           .until(ExpectedConditions.textToBePresentInElementLocated(By.tagName("body"), text));
       return true;
     } catch (final Exception e) {

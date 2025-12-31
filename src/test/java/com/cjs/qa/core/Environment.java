@@ -65,8 +65,8 @@ public class Environment {
   private static String browser = ISelenium.BROWSER_DEFAULT;
   private static String company = "CJS";
   private static String environment = "TST";
-  private static int timeOutPage = 300;
-  private static int timeOutElement = 30;
+  private static int timeOutPage = 10;
+  private static int timeOutElement = 5;
   private static int timeOutAlert = 5;
   private static boolean runRemote = true;
   private static boolean scrollToObjects = true;

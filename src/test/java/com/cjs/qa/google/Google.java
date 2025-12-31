@@ -13,7 +13,7 @@ public class Google {
   public Google(WebDriver webDriver) {
     flightsPage = new FlightsPage(webDriver);
     signInPage = new SignInPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 
   public FlightsPage getFlightsPage() {

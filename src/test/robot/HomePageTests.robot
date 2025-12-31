@@ -17,29 +17,29 @@ Home Page Should Load
     [Tags]    homepage    smoke
     
     # Wait for page to be ready
-    Wait Until Page Contains    Job Search    timeout=20s
+    Wait Until Page Contains    Job Search    timeout=10s
     
     # Verify the page title in browser tab
     ${title}=    Get Title
     Should Contain    ${title}    Job Search Application
     
     # Verify page has loaded - use tag: prefix for body element
-    Wait Until Element Is Visible    tag:body    timeout=10s
+    Wait Until Element Is Visible    tag:body    timeout=5s
 
 Home Page Should Display Navigation Panel
     [Documentation]    Test that the navigation panel is visible
     [Tags]    homepage    navigation
     
     # Verify sidebar is visible - use css: prefix for CSS selectors
-    Wait Until Element Is Visible    css:[data-qa="sidebar"]    timeout=10s
+    Wait Until Element Is Visible    css:[data-qa="sidebar"]    timeout=5s
     
     # Verify navigation title is visible and contains "Navigation"
-    Wait Until Element Is Visible    css:[data-qa="sidebar-title"]    timeout=10s
+    Wait Until Element Is Visible    css:[data-qa="sidebar-title"]    timeout=5s
     Element Should Contain    css:[data-qa="sidebar-title"]    Navigation
     
     # Verify navigation elements are present
-    Wait Until Element Is Visible    css:[data-qa="sidebar-navigation"]    timeout=10s
-    Wait Until Element Is Visible    css:[data-qa="sidebar-nav-home"]    timeout=10s
+    Wait Until Element Is Visible    css:[data-qa="sidebar-navigation"]    timeout=5s
+    Wait Until Element Is Visible    css:[data-qa="sidebar-nav-home"]    timeout=5s
 
 *** Keywords ***
 Setup WebDriver And Open Browser
@@ -64,8 +64,8 @@ Setup WebDriver And Open Browser
     ...    Open Browser    ${base_url}    browser=chrome
     
     Maximize Browser Window
-    Set Selenium Implicit Wait    15s
-    Set Selenium Timeout    15s
+    Set Selenium Implicit Wait    5s
+    Set Selenium Timeout    5s
     # Wait for page to fully load
-    Wait Until Page Contains    Job Search    timeout=20s
+    Wait Until Page Contains    Job Search    timeout=10s
     Sleep    2s    # Additional wait for any dynamic content

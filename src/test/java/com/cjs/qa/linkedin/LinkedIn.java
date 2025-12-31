@@ -37,7 +37,7 @@ public class LinkedIn {
     homePage = new HomePage(webDriver);
     loginAlternatePage = new LoginAlternatePage(webDriver);
     loginPage = new LoginPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 
   public ConnectionsPage getConnectionsPage() {

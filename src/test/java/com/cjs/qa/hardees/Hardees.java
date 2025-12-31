@@ -14,6 +14,6 @@ public class Hardees {
 
   public Hardees(WebDriver webDriver) {
     surveyPage = new SurveyPage(webDriver);
-    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(120));
+    webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(10));
   }
 }
