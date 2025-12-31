@@ -1,0 +1,56 @@
+name: Dependency Submission (Python)
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'backend/requirements.txt'
+      - 'requirements.txt'
+      - '.github/workflows/dependency-submission.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'backend/requirements.txt'
+      - 'requirements.txt'
+      - '.github/workflows/dependency-submission.yml'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  submit-backend-dependencies:
+    name: Submit Backend Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+        # GitHub automatically detects and submits dependencies when installed
+
+  submit-performance-dependencies:
+    name: Submit Performance Testing Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+        # GitHub automatically detects and submits dependencies when installed

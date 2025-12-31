@@ -54,7 +54,7 @@ jobs:
         if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only' || inputs.be_test_type == 'smoke'
         run: |
           if [ "${{ inputs.be_test_type }}" == "smoke" ]; then
-            pip install locust==2.20.0 requests==2.32.5
+            pip install locust==2.20.0 requests==2.32.4
           else
             pip install -r requirements.txt
           fi
