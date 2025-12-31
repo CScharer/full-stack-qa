@@ -13,7 +13,7 @@
 | **Dependabot (npm)** | ❌ Not Configured | 4 `package.json` files found |
 | **Dependabot (Python)** | ❌ Not Configured | 3 `requirements.txt` files found |
 | **Auto-merge (Security)** | ❌ Not Configured | No auto-merge settings found |
-| **Quarterly Audits** | ⚠️ Partially Done | Daily/weekly monitoring exists, no quarterly audit |
+| **Monthly Audits** | ⚠️ Partially Done | Daily/weekly monitoring exists, no monthly audit |
 | **Security Scanning** | ❌ Not Configured | No CodeQL or other security scanning tools |
 
 ---
@@ -267,33 +267,53 @@ auto-merge-options:
 
 ---
 
-### 2.4 Quarterly Dependency Audits
+### 2.4 Monthly Dependency Audits
 
 **Status**: ⚠️ Partially Done
 
 **Current State**:
 - ✅ Daily version monitoring (`.github/workflows/version-monitoring.yml`)
 - ✅ Weekly Dependabot checks
-- ❌ No dedicated quarterly audit workflow
+- ❌ No dedicated monthly audit workflow
 
-**Action Required**: Create quarterly audit workflow or enhance existing monitoring
+**Action Required**: Create monthly audit workflow or enhance existing monitoring
+
+**Recommendation**: **Monthly audits** are recommended over quarterly due to:
+- More frequent dependency updates in modern development
+- Timelier catch of outdated dependencies
+- Better alignment with Dependabot's weekly schedule
+- Quarterly may miss important updates for 3 months
 
 **Options**:
 
-#### Option A: Enhance Existing Workflow
-Add quarterly schedule to `version-monitoring.yml`:
+#### Option A: Enhance Existing Workflow (Recommended - Monthly)
+Add monthly schedule to `version-monitoring.yml`:
 ```yaml
 on:
   schedule:
     # Daily monitoring
     - cron: '0 9 * * *'
-    # Quarterly audit (first day of quarter at 9 AM UTC)
-    - cron: '0 9 1 1,4,7,10 *'  # Jan 1, Apr 1, Jul 1, Oct 1
+    # Monthly audit (first day of each month)
+    # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+    - cron: '0 14 1 * *'  # First day of each month at 14:00 UTC
   workflow_dispatch:
 ```
 
-#### Option B: Create Dedicated Quarterly Audit Workflow
-Create `.github/workflows/quarterly-dependency-audit.yml`:
+#### Option B: Quarterly Schedule (Alternative)
+If you prefer quarterly audits:
+```yaml
+on:
+  schedule:
+    # Daily monitoring
+    - cron: '0 9 * * *'
+    # Quarterly audit (first day of quarter)
+    # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+    - cron: '0 14 1 1,4,7,10 *'  # Jan 1, Apr 1, Jul 1, Oct 1 at 14:00 UTC
+  workflow_dispatch:
+```
+
+#### Option B: Create Dedicated Monthly Audit Workflow
+Create `.github/workflows/monthly-dependency-audit.yml`:
 - Run comprehensive dependency audit
 - Generate detailed report
 - Check for known vulnerabilities
@@ -303,7 +323,7 @@ Create `.github/workflows/quarterly-dependency-audit.yml`:
 **Recommended Approach**: Option A (enhance existing workflow)
 - Less maintenance overhead
 - Reuses existing validation logic
-- Can add quarterly-specific reporting
+- Can add monthly-specific reporting
 
 ---
 
@@ -614,29 +634,45 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
 
 ---
 
-### Step 5: Enhance Quarterly Dependency Audit
+### Step 5: Enhance Monthly Dependency Audit
 **Priority**: Low  
 **Estimated Time**: 30 minutes  
 **Risk**: Low
 
+**⚠️ RECOMMENDATION: Monthly vs Quarterly**
+
+Given the frequency of dependency updates in modern development, **monthly audits are recommended** over quarterly:
+- **Monthly**: More timely catch of outdated dependencies
+- **Quarterly**: May miss important updates for 3 months
+- **Current**: Daily monitoring exists, but monthly provides comprehensive review
+
 **Actions**:
 1. Open `.github/workflows/version-monitoring.yml`
-2. Add quarterly schedule to `on.schedule`:
+2. Add monthly schedule to `on.schedule`:
    ```yaml
-   - cron: '0 9 1 1,4,7,10 *'  # First day of each quarter at 9 AM UTC
+   # Monthly audit (first day of each month)
+   # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+   - cron: '0 14 1 * *'  # First day of each month at 14:00 UTC
    ```
-3. Add quarterly-specific reporting logic (optional):
+   **Alternative (Quarterly)** - if you prefer quarterly:
+   ```yaml
+   # Quarterly audit (first day of each quarter)
+   # Time: 14:00 UTC = 08:00 CST (Central Standard Time, UTC-6) / 09:00 CDT (Central Daylight Time, UTC-5)
+   - cron: '0 14 1 1,4,7,10 *'  # Jan 1, Apr 1, Jul 1, Oct 1 at 14:00 UTC
+   ```
+3. Add monthly-specific reporting logic (optional):
    - Generate comprehensive summary report
    - Create GitHub issue with findings
    - List outdated dependencies with update recommendations
+   - Compare with previous month's status
 4. Save and commit changes
 5. Test by manually triggering workflow
-6. Verify quarterly schedule is correct
+6. Verify monthly schedule is correct
 
 **Verification**:
-- [ ] Quarterly schedule is added to workflow
-- [ ] Workflow runs on first day of quarter
-- [ ] Quarterly reports are generated (if implemented)
+- [ ] Monthly schedule is added to workflow
+- [ ] Workflow runs on first day of each month
+- [ ] Monthly reports are generated (if implemented)
 - [ ] Daily monitoring continues to work
 
 ---
@@ -688,13 +724,13 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
 
 ---
 
-### Phase 3: Quarterly Dependency Audits (Low Priority)
+### Phase 3: Monthly Dependency Audits (Low Priority)
 1. ✅ Enhance version monitoring workflow
-   - [ ] Add quarterly schedule (first day of each quarter)
-   - [ ] Add quarterly-specific reporting
+   - [ ] Add monthly schedule (first day of each month at 14:00 UTC = 08:00 CST / 09:00 CDT)
+   - [ ] Add monthly-specific reporting
    - [ ] Create summary issue on completion
 
-2. ✅ Test quarterly schedule
+2. ✅ Test monthly schedule
    - [ ] Verify workflow runs on schedule
    - [ ] Check report generation
    - [ ] Verify issue creation
@@ -734,7 +770,7 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
 
 ### Short-term (This Month)
 4. **Configure auto-merge for security updates** - Reduce manual work for critical patches
-5. **Enhance quarterly audit workflow** - Better long-term dependency management
+5. **Enhance monthly audit workflow** - Better long-term dependency management
 
 ### Long-term (Next Quarter)
 6. **Review and optimize Dependabot settings** - Based on PR volume and patterns
@@ -749,7 +785,7 @@ Before proceeding, decide whether to enable **GitHub Copilot Autofix** for CodeQ
 
 ### Modified Files
 - `.github/dependabot.yml` (add npm and pip ecosystems)
-- `.github/workflows/version-monitoring.yml` (add quarterly schedule)
+- `.github/workflows/version-monitoring.yml` (add monthly schedule)
 
 ### Repository Settings
 - Settings → General → Pull Requests → Allow auto-merge
@@ -767,7 +803,7 @@ After implementation, verify:
 - [ ] Auto-merge works for security updates (if enabled)
 - [ ] CodeQL workflow runs successfully
 - [ ] CodeQL results appear in Security tab
-- [ ] Quarterly audit runs on schedule
+- [ ] Monthly audit runs on schedule
 - [ ] Version monitoring continues to work
 
 ---
@@ -790,10 +826,11 @@ After implementation, verify:
 - Consider running on schedule (weekly) rather than every push
 - Can exclude certain paths if needed for performance
 
-**Quarterly Audits**:
-- Current daily monitoring is more frequent than quarterly
-- Quarterly audit should focus on comprehensive review, not just validation
+**Monthly Audits**:
+- Current daily monitoring is more frequent than monthly
+- Monthly audit should focus on comprehensive review, not just validation
 - Consider creating summary reports and action items
+- Schedule: First day of each month at 14:00 UTC (08:00 CST / 09:00 CDT) to align with Dependabot schedule
 
 ---
 
