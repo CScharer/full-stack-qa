@@ -2,7 +2,7 @@
 
 **Status**: ✅ Active (7-Stage Architecture)
 **Workflow**: `.github/workflows/ci.yml`
-**Last Updated**: December 29, 2025
+**Last Updated**: December 30, 2025
 **Version**: 3.4 - Performance Target Optimization
 
 ---
@@ -104,6 +104,37 @@ A separate workflow (`.github/workflows/verify-formatting.yml`) enforces formatt
 - Automatic blocking of non-compliant code
 
 **See**: [Code Quality Guide](../java/CODE_QUALITY.md) for complete documentation
+
+---
+
+## 📦 Dependency Submission
+
+### Python Dependency Submission
+
+A dedicated workflow (`.github/workflows/dependency-submission.yml`) automatically submits Python dependencies to GitHub's dependency graph for security scanning and vulnerability detection.
+
+**What it does**:
+- Submits dependencies from `backend/requirements.txt` (FastAPI backend project)
+- Submits dependencies from `requirements.txt` (performance testing tools)
+- Runs automatically on push/PR when dependency files change
+- Can be triggered manually via `workflow_dispatch`
+
+**Benefits**:
+- ✅ Automatic dependency tracking for security scanning
+- ✅ Proper validation of Python projects in subdirectories
+- ✅ Resolves GitHub's automatic dependency submission validation errors
+- ✅ Separate tracking for backend and performance testing dependencies
+
+**Workflow Structure**:
+- **Job 1**: `submit-backend-dependencies` - Submits FastAPI backend dependencies
+- **Job 2**: `submit-performance-dependencies` - Submits performance testing dependencies
+
+**Triggers**:
+- Push to `main` or `develop` branches (when dependency files change)
+- Pull requests targeting `main` or `develop` (when dependency files change)
+- Manual workflow dispatch
+
+**Note**: This workflow replaces GitHub's automatic dependency submission, which was failing because it couldn't validate the repository root as a Python project. The custom workflow correctly targets the actual Python projects in their respective directories.
 
 ---
 
