@@ -83,11 +83,42 @@ jobs:
         env:
           BASE_URL: ${{ inputs.base_url }}
         run: |
+          echo "🔍 DEBUG: Current working directory: $(pwd)"
+          echo "🔍 DEBUG: Checking if artillery directory exists..."
+          if [ -d "artillery" ]; then
+            echo "  ✅ artillery/ directory exists"
+            echo "  📂 Contents:"
+            find artillery -type f -name "*.yml" 2>/dev/null | head -10 | while IFS= read -r f; do
+              echo "    📄 $f"
+            done
+          else
+            echo "  ❌ artillery/ directory NOT found!"
+          fi
+          echo ""
+          echo "🔍 DEBUG: Checking if artillery-results directory exists before running tests..."
+          if [ -d "artillery-results" ]; then
+            echo "  ✅ artillery-results/ exists (will be reused)"
+          else
+            echo "  ℹ️  artillery-results/ does not exist yet (will be created)"
+          fi
+          echo ""
           chmod +x ../scripts/ci/run-artillery-tests.sh
           ../scripts/ci/run-artillery-tests.sh \
             "${{ inputs.environment }}" \
             "${{ inputs.artillery_test_type }}" \
             "${{ inputs.base_url }}"
+          echo ""
+          echo "🔍 DEBUG: After test execution, checking artillery-results..."
+          if [ -d "artillery-results" ]; then
+            echo "  ✅ artillery-results/ directory exists"
+            echo "  📂 Contents:"
+            find artillery-results -type f 2>/dev/null | while IFS= read -r f; do
+              size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
+              echo "    📄 $f (size: $size bytes)"
+            done || echo "    (empty or error)"
+          else
+            echo "  ❌ artillery-results/ directory NOT found after test execution!"
+          fi
 
       - name: Verify FS Test Results
         if: always()
@@ -98,16 +129,27 @@ jobs:
           echo "Checking playwright/artillery-results/ from repo root:"
           if [ -d "playwright/artillery-results" ]; then
             echo "  ✅ Directory exists"
+            echo "  📂 Full path: $(pwd)/playwright/artillery-results"
             echo "  📂 Contents:"
-            find playwright/artillery-results -maxdepth 1 -type f -o -type d 2>/dev/null | while IFS= read -r item; do
-              echo "    $item"
+            find playwright/artillery-results -maxdepth 2 -type f -o -type d 2>/dev/null | while IFS= read -r item; do
+              if [ -f "$item" ]; then
+                size=$(stat -f%z "$item" 2>/dev/null || stat -c%s "$item" 2>/dev/null || echo "unknown")
+                echo "    📄 $item (size: $size bytes)"
+              else
+                echo "    📁 $item"
+              fi
             done || echo "    (empty or error)"
             echo ""
-            echo "  📄 JSON files:"
+            echo "  📄 JSON files (detailed):"
+            json_count=0
             find playwright/artillery-results -name "*.json" -type f 2>/dev/null | while IFS= read -r f; do
+              json_count=$((json_count + 1))
               size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
               echo "    📄 $f (size: $size bytes)"
-            done || echo "    (no JSON files found)"
+            done
+            if [ "$json_count" -eq 0 ]; then
+              echo "    ⚠️  NO JSON FILES FOUND"
+            fi
           else
             echo "  ❌ Directory does not exist!"
             echo ""
@@ -122,6 +164,14 @@ jobs:
                 echo "  ✅ playwright/artillery-results/ exists"
               else
                 echo "  ❌ playwright/artillery-results/ does not exist"
+                echo ""
+                echo "  🔍 Searching for any artillery-results directories:"
+                find . -type d -name "artillery-results" 2>/dev/null | while IFS= read -r d; do
+                  echo "    Found: $d"
+                  find "$d" -name "*.json" -type f 2>/dev/null | while IFS= read -r f; do
+                    echo "      📄 $f"
+                  done
+                done
               fi
             fi
           fi
