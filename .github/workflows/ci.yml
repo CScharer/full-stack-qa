@@ -1115,6 +1115,26 @@ jobs:
         run: |
           echo "📊 Downloaded artifact summary:"
           echo ""
+          echo "🔍 FS (Full-Stack) Test Results:"
+          echo "  Checking fs-results directory:"
+          if [ -d "all-test-results/fs-results" ]; then
+            echo "    ✅ fs-results directory exists"
+            echo "    📂 Directory structure:"
+            find all-test-results/fs-results -type d 2>/dev/null | head -20 | while read -r d; do
+              echo "      📁 $d"
+            done
+            echo ""
+            echo "    📄 JSON files found:"
+            find all-test-results/fs-results -name "*.json" -type f 2>/dev/null | while read -r f; do
+              echo "      📄 $f"
+            done
+            echo ""
+            echo "    📊 File count:"
+            find all-test-results/fs-results -name "*.json" -type f 2>/dev/null | wc -l | xargs -I {} echo "      Total JSON files: {}"
+          else
+            echo "    ❌ fs-results directory NOT found"
+          fi
+          echo ""
           echo "🔍 TestNG-based results (should include Selenide):"
           echo "  DEV environment:"
           find all-test-results/results-dev -name "*-result.json" -path "*/selenide-results-*/*" 2>/dev/null | wc -l | xargs -I {} echo "    Selenide results (in results-dev): {} files"
