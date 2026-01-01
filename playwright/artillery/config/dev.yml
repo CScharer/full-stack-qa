@@ -4,9 +4,9 @@
 config:
   target: "http://localhost:3003"
   phases:
-    # Warm-up phase: Gradually ramp up to 5 users
+    # Warm-up phase: Gradually ramp up to 3 users (dev environment)
     - duration: 60
-      arrivalRate: 5
+      arrivalRate: 3
       name: "Warm up"
     # Sustained load: Maintain 10 concurrent users
     - duration: 300
