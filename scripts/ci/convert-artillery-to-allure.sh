@@ -18,6 +18,17 @@ echo "   Allure Results: $ALLURE_RESULTS_DIR"
 echo "   Artillery Results: $ARTILLERY_RESULTS_DIR"
 echo "   Environment: ${ENVIRONMENT:-not specified}"
 echo ""
+echo "🔍 Debug: Searching for JSON files in: $ARTILLERY_RESULTS_DIR"
+if [ ! -d "$ARTILLERY_RESULTS_DIR" ]; then
+    echo "   ⚠️  Directory does not exist!"
+    exit 0
+fi
+echo "   ✅ Directory exists"
+echo "   📂 Directory structure:"
+find "$ARTILLERY_RESULTS_DIR" -type f -name "*.json" 2>/dev/null | head -10 | while read f; do
+    echo "      📄 $f"
+done || echo "      (no JSON files found yet)"
+echo ""
 
 # Ensure Allure results directory exists
 mkdir -p "$ALLURE_RESULTS_DIR"
