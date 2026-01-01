@@ -2,10 +2,10 @@
 # Tests the homepage under load with Core Web Vitals tracking
 
 config:
-  target: "http://localhost:3003"  # Default, overridden by --variable flag
+  target: "http://localhost:3003"  # Default, overridden by environment config
   phases:
+    # arrivalRate for warm-up is set by environment config (dev: 5, test: 4, prod: 3)
     - duration: 60
-      arrivalRate: 5
       name: "Warm up"
     - duration: 300
       arrivalRate: 10
