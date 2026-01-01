@@ -20,6 +20,8 @@
 #   fe-prod-result - Result of test-fe-prod job
 #   be-dev-result  - Result of test-be-dev job
 #   be-test-result - Result of test-be-test job
+#   artillery-dev-result - Result of test-artillery-dev job
+#   artillery-test-result - Result of test-artillery-test job
 #
 # Environment Variables (fallback if not provided as args):
 #   GITHUB_SHA, GITHUB_REF_NAME, GITHUB_ACTOR
@@ -43,6 +45,8 @@ FE_TEST_RESULT="${14:-}"
 FE_PROD_RESULT="${15:-}"
 BE_DEV_RESULT="${16:-}"
 BE_TEST_RESULT="${17:-}"
+ARTILLERY_DEV_RESULT="${18:-}"
+ARTILLERY_TEST_RESULT="${19:-}"
 
 # GitHub context (from environment or defaults)
 GITHUB_SHA="${GITHUB_SHA:-unknown}"
@@ -114,6 +118,28 @@ if [ "$CODE_CHANGED" = "true" ]; then
                 echo "- ✅ **BE (TEST)**: Tests passed" >> "$SUMMARY_FILE"
             else
                 echo "- ❌ **BE (TEST)**: ${BE_TEST_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            fi
+        fi
+    fi
+
+    # Add Artillery tests section
+    if [ -n "$ARTILLERY_DEV_RESULT" ] || [ -n "$ARTILLERY_TEST_RESULT" ]; then
+        echo "" >> "$SUMMARY_FILE"
+        echo "### Artillery Load Tests:" >> "$SUMMARY_FILE"
+        
+        if [ "$RUN_DEV" = "true" ] && [ -n "$ARTILLERY_DEV_RESULT" ]; then
+            if [ "$ARTILLERY_DEV_RESULT" = "success" ]; then
+                echo "- ✅ **Artillery (DEV)**: Tests passed" >> "$SUMMARY_FILE"
+            else
+                echo "- ❌ **Artillery (DEV)**: ${ARTILLERY_DEV_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            fi
+        fi
+
+        if [ "$RUN_TEST" = "true" ] && [ -n "$ARTILLERY_TEST_RESULT" ]; then
+            if [ "$ARTILLERY_TEST_RESULT" = "success" ]; then
+                echo "- ✅ **Artillery (TEST)**: Tests passed" >> "$SUMMARY_FILE"
+            else
+                echo "- ❌ **Artillery (TEST)**: ${ARTILLERY_TEST_RESULT:-unknown}" >> "$SUMMARY_FILE"
             fi
         fi
     fi
