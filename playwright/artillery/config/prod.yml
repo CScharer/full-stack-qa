@@ -3,9 +3,13 @@
 # Target: Production URL (to be configured)
 
 config:
-  target: "https://your-production-url.com"  # ⚠️ UPDATE THIS
+  target: "http://localhost:3005"  # Production environment (local testing)
   phases:
     # Conservative load for production
+    # Smoke test phase: Quick 5-second test (prod: 3 users)
+    - duration: 5
+      arrivalRate: 3
+      name: "Single user test"
     # Warm-up phase: Very gradual ramp up to 3 users (prod environment)
     - duration: 120
       arrivalRate: 3
@@ -26,7 +30,7 @@ config:
       browser: chromium
   processor: "./artillery/processors/homepage-processor.js"
   variables:
-    baseUrl: "https://your-production-url.com"  # ⚠️ UPDATE THIS
+    baseUrl: "http://localhost:3005"  # Production environment (local testing)
   payload:
     # Can add test data files here if needed
 

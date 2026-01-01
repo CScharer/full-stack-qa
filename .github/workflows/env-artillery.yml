@@ -86,34 +86,44 @@ jobs:
           echo "🎯 Running Artillery tests (${{ inputs.environment }})..."
           echo "Test Type: ${{ inputs.artillery_test_type }}"
           echo "Base URL: $BASE_URL"
+          echo "Environment Config: artillery/config/${{ inputs.environment }}.yml"
+          
+          # Set environment-specific config file
+          ENV_CONFIG="artillery/config/${{ inputs.environment }}.yml"
           
           case "${{ inputs.artillery_test_type }}" in
             smoke)
               echo "Running smoke test (minimal homepage load test)..."
               npx artillery run artillery/scenarios/homepage-minimal-test.yml \
+                --config "$ENV_CONFIG" \
                 --output artillery-results/smoke-results.json || true
               ;;
             homepage-only)
               echo "Running homepage load test..."
               npx artillery run artillery/scenarios/homepage-load.yml \
+                --config "$ENV_CONFIG" \
                 --output artillery-results/homepage-results.json || true
               ;;
             applications-only)
               echo "Running applications flow load test..."
               npx artillery run artillery/scenarios/applications-flow.yml \
+                --config "$ENV_CONFIG" \
                 --output artillery-results/applications-results.json || true
               ;;
             all)
               echo "Running all Artillery test scenarios..."
               npx artillery run artillery/scenarios/homepage-load.yml \
+                --config "$ENV_CONFIG" \
                 --output artillery-results/homepage-results.json || true
               npx artillery run artillery/scenarios/applications-flow.yml \
+                --config "$ENV_CONFIG" \
                 --output artillery-results/applications-results.json || true
               ;;
             *)
               echo "⚠️ Unknown test type: ${{ inputs.artillery_test_type }}"
               echo "Running smoke test as fallback..."
               npx artillery run artillery/scenarios/homepage-minimal-test.yml \
+                --config "$ENV_CONFIG" \
                 --output artillery-results/smoke-results.json || true
               ;;
           esac

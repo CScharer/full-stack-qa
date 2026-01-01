@@ -2,15 +2,15 @@
 # This is the fastest test to verify Artillery + Playwright setup
 
 config:
-  target: "http://localhost:3003"  # Default, overridden by --variable flag
+  target: "http://localhost:3003"  # Default, overridden by environment config
   phases:
-    # Single user, 5 seconds - Quick smoke test for CI/CD
+    # Quick smoke test for CI/CD
+    # arrivalRate is set by environment config (dev: 5, test: 4, prod: 3)
     - duration: 5
-      arrivalRate: 1
       name: "Single user test"
   processor: "../processors/homepage-processor.js"
   variables:
-    baseUrl: "http://localhost:3003"  # Default, overridden by --variable flag
+    baseUrl: "http://localhost:3003"  # Default, overridden by environment config
 
 scenarios:
   - name: "Minimal Homepage Test"
