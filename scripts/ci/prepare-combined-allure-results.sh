@@ -254,149 +254,82 @@ echo "   🔍 Checking for FS test results in dev and test environments only..."
 # Process FS test results for each environment
 # Artifacts: uploaded as "fs-results-{env}" from "playwright/artillery-results/"
 # Downloaded to: "all-test-results/fs-results" with merge-multiple: true
-# With merge-multiple: true, structure is: fs-results/fs-results-{env}/playwright/artillery-results/*.json
-
-# Convert FS (Full-Stack) test results for each environment
-# IMPORTANT: FS tests only run in dev and test (never prod)
-# Only process environments where FS tests actually ran
-FS_ENVIRONMENTS=("dev" "test")
-FS_PROCESSED_ENVS=()
-
-echo "   📊 FS (Full-Stack) tests run only in: dev, test (never prod)"
-echo "   🔍 Checking for FS test results in dev and test environments only..."
-
-# Process FS test results for each environment
-# Artifacts: uploaded as "fs-results-{env}" from "playwright/artillery-results/"
-# Downloaded to: "all-test-results/fs-results" with merge-multiple: true
-# With merge-multiple: true, structure is: fs-results/fs-results-{env}/artillery-results/*.json
+# When merged, structure is: fs-results/fs-results-{env}/artillery-results/*.json
 # (The artifact name becomes a directory, and the uploaded path is preserved inside it)
 
-FS_PROCESSED=0
-# First check environment-specific directories (like other frameworks do)
-for env in "${FS_ENVIRONMENTS[@]}"; do
-    # Skip if this environment wasn't active
-    if [[ ! " ${ACTIVE_ENVIRONMENTS[@]} " =~ " ${env} " ]]; then
-        echo "   ⏭️  Skipping FS test conversion for $env (environment not active)"
-        continue
-    fi
+if [ -d "$SOURCE_DIR/fs-results" ]; then
+    echo "   ✅ Found fs-results directory"
     
-    echo "   🔍 Processing FS test results for $env..."
-    
-    # Check environment-specific directory first (matches pattern used by Playwright, Robot, etc.)
-    # This handles case where artifacts might be in results-{env}/fs-results-{env}
-    if [ -d "$SOURCE_DIR/results-$env/fs-results-$env" ]; then
-        echo "   📂 DEBUG: Found results-$env/fs-results-$env directory"
-        json_files=$(find "$SOURCE_DIR/results-$env/fs-results-$env" -name "*.json" -type f 2>/dev/null)
-        if [ -n "$json_files" ]; then
-            json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-            echo "   ✅ Found $json_count JSON file(s) at: results-$env/fs-results-$env"
-            chmod +x scripts/ci/convert-artillery-to-allure.sh
-            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/fs-results-$env" "$env" || true
-            FS_PROCESSED=1
-            FS_PROCESSED_ENVS+=("$env")
-            continue
-        fi
-    fi
-done
-
-# Check merged fs-results directory only if no environment-specific directories were found
-# IMPORTANT: Only process merged directory for ACTIVE environments (not all environments)
-if [ "$FS_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/fs-results" ]; then
-    echo "   Converting FS test results (merged artifacts - processing for active environments only)..."
-    echo "   📂 DEBUG: Directory structure:"
-    find "$SOURCE_DIR/fs-results" -type d 2>/dev/null | head -20 | while IFS= read -r d; do
-        echo "      📁 $d"
-    done
-    echo ""
-    echo "   📄 DEBUG: All JSON files:"
-    all_json=$(find "$SOURCE_DIR/fs-results" -type f -name "*.json" 2>/dev/null)
-    if [ -n "$all_json" ]; then
-        echo "$all_json" | while IFS= read -r f; do
-            echo "      📄 $f"
-        done
-    else
-        echo "      ⚠️  NO JSON FILES FOUND"
-    fi
-    echo ""
-    
-    # Process merged directory only for environments that actually ran
-    # When artifacts are merged with merge-multiple: true, structure is:
-    # fs-results/fs-results-{env}/artillery-results/*.json
+    # Process each active environment
     for env in "${FS_ENVIRONMENTS[@]}"; do
         # Skip if this environment wasn't active
         if [[ ! " ${ACTIVE_ENVIRONMENTS[@]} " =~ " ${env} " ]]; then
+            echo "   ⏭️  Skipping FS test conversion for $env (environment not active)"
             continue
         fi
         
-        echo "   🔍 Processing FS test results for $env (merged artifacts)..."
+        ENV_PROCESSED=0
         
-        # Try exact path: fs-results/fs-results-{env}/artillery-results/*.json
-        # This is the expected structure when uploading from playwright/artillery-results/
-        exact_path="$SOURCE_DIR/fs-results/fs-results-$env/artillery-results"
-        echo "   📂 DEBUG: Checking exact path: $exact_path"
-        
-        if [ -d "$exact_path" ]; then
-            json_files=$(find "$exact_path" -name "*.json" -type f 2>/dev/null)
-            if [ -n "$json_files" ]; then
-                json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-                echo "   ✅ Found $json_count JSON file(s) for $env at: $exact_path"
-                chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$exact_path" "$env" || true
-                FS_PROCESSED_ENVS+=("$env")
-                FS_PROCESSED=1
-                continue
-            else
-                echo "   ⚠️  DEBUG: No JSON files found in $exact_path"
+        # Check for environment-specific subdirectory (most common case with merge-multiple: true)
+        # Structure: fs-results/fs-results-{env}/artillery-results/*.json
+        env_dir="$SOURCE_DIR/fs-results/fs-results-$env"
+        if [ -d "$env_dir" ]; then
+            # First try: fs-results/fs-results-{env}/artillery-results/*.json
+            artillery_dir="$env_dir/artillery-results"
+            if [ -d "$artillery_dir" ]; then
+                json_count=$(find "$artillery_dir" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                if [ "$json_count" -gt 0 ]; then
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/artillery-results/)..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$artillery_dir" "$env" || true
+                    ENV_PROCESSED=1
+                fi
             fi
-        else
-            echo "   ⚠️  DEBUG: Directory not found: $exact_path"
+            
+            # If not found in artillery-results subdirectory, check if files are directly in fs-results-{env}
+            if [ "$ENV_PROCESSED" -eq 0 ]; then
+                json_files=$(find "$env_dir" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
+                if [ -n "$json_files" ]; then
+                    json_count=$(echo "$json_files" | wc -l | tr -d ' ')
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/)..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$env_dir" "$env" || true
+                    ENV_PROCESSED=1
+                fi
+            fi
         fi
         
-        # Fallback: Check parent directory (fs-results-{env}) - files might be directly in artifact root
-        fallback_path="$SOURCE_DIR/fs-results/fs-results-$env"
-        echo "   📂 DEBUG: Checking fallback path: $fallback_path"
-        
-        if [ -d "$fallback_path" ]; then
-            json_files=$(find "$fallback_path" -name "*.json" -type f 2>/dev/null)
+        # If not found in subdirectory, check if files are in the root (flat merge)
+        if [ "$ENV_PROCESSED" -eq 0 ]; then
+            json_files=$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
             if [ -n "$json_files" ]; then
                 json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-                echo "   ✅ Found $json_count JSON file(s) for $env at: $fallback_path"
+                echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in root)..."
                 chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$fallback_path" "$env" || true
-                FS_PROCESSED_ENVS+=("$env")
-                FS_PROCESSED=1
-                continue
-            else
-                echo "   ⚠️  DEBUG: No JSON files found in $fallback_path"
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env" || true
+                ENV_PROCESSED=1
             fi
-        else
-            echo "   ⚠️  DEBUG: Directory not found: $fallback_path"
         fi
         
-        # Final fallback: Search entire fs-results directory recursively for this environment
-        echo "   🔍 DEBUG: Searching recursively for $env results in entire fs-results directory..."
-        all_json_files=$(find "$SOURCE_DIR/fs-results" -name "*.json" -type f 2>/dev/null)
-        if [ -n "$all_json_files" ]; then
-            # Check if any files are in a path containing the environment name
-            env_files=$(echo "$all_json_files" | grep -i "fs-results-$env" || echo "")
-            if [ -n "$env_files" ]; then
-                # Use the directory containing the first matching file
-                first_file=$(echo "$env_files" | head -1)
-                file_dir=$(dirname "$first_file")
-                json_count=$(echo "$env_files" | wc -l | tr -d ' ')
-                echo "   ✅ Found $json_count JSON file(s) for $env (recursive search, using: $file_dir)"
-                chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$file_dir" "$env" || true
+        # Verify results were created
+        if [ "$ENV_PROCESSED" -eq 1 ]; then
+            # Count results created for this environment
+            env_results=$(find "$TARGET_DIR" -name "*-result.json" -newer "$SOURCE_DIR/fs-results" -exec grep -l "\"environment\", \"value\": \"$env\"" {} \; 2>/dev/null | wc -l | tr -d ' ')
+            # Fallback: just count recent results if the above doesn't work
+            if [ "$env_results" -eq 0 ]; then
+                env_results=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Artillery.*$env" {} \; 2>/dev/null | wc -l | tr -d ' ')
+            fi
+            if [ "$env_results" -gt 0 ]; then
                 FS_PROCESSED_ENVS+=("$env")
-                FS_PROCESSED=1
+                echo "   ✅ FS test results processed for $env ($env_results result file(s))"
             else
-                echo "   ⚠️  No environment-specific files found for $env in fs-results"
+                echo "   ⚠️  FS test conversion ran for $env but no results were created"
             fi
         else
-            echo "   ⚠️  No FS test JSON files found for $env"
+            echo "   ⚠️  No FS test results found for $env"
         fi
     done
-elif [ "$FS_PROCESSED" -eq 0 ]; then
+else
     echo "   ⚠️  fs-results directory not found at: $SOURCE_DIR/fs-results"
 fi
 # Warn if prod is in active environments but FS tests shouldn't run there
