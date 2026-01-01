@@ -243,42 +243,43 @@ if [ "$VIBIUM_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/vibium-results" ]; then
 fi
 
 # Convert Artillery results for each environment
-ARTILLERY_PROCESSED=0
+# Process each environment separately to ensure proper labeling
 for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
+    ENV_PROCESSED=0
+    
     # Check environment-specific directory first
     if [ -d "$SOURCE_DIR/results-$env/artillery-results-$env" ]; then
-        echo "   Converting Artillery results ($env)..."
+        echo "   Converting Artillery results ($env) from environment-specific directory..."
         chmod +x scripts/ci/convert-artillery-to-allure.sh
         ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/artillery-results-$env" "$env" || true
-        ARTILLERY_PROCESSED=1
+        ENV_PROCESSED=1
     fi
-done
-
-# Check merged artillery-results directory
-# When artifacts are merged, they may preserve their artifact name as a subdirectory
-# e.g., artillery-results/artillery-results-dev/... or just artillery-results/...
-if [ -d "$SOURCE_DIR/artillery-results" ]; then
-    echo "   Converting Artillery results (merged artifacts - processing for active environments only)..."
-    chmod +x scripts/ci/convert-artillery-to-allure.sh
-    # Process merged directory for each environment that actually ran
-    for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
+    
+    # If not found in environment-specific directory, check merged artillery-results directory
+    # When artifacts are merged, they may preserve their artifact name as a subdirectory
+    # e.g., artillery-results/artillery-results-dev/... or just artillery-results/...
+    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/artillery-results" ]; then
         # First, check if there's an environment-specific subdirectory in the merged artifacts
         if [ -d "$SOURCE_DIR/artillery-results/artillery-results-$env" ]; then
-            echo "   Found environment-specific Artillery directory: artillery-results-$env"
+            echo "   Converting Artillery results ($env) from merged artifacts (environment-specific subdirectory)..."
+            chmod +x scripts/ci/convert-artillery-to-allure.sh
             ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results/artillery-results-$env" "$env" || true
-            ARTILLERY_PROCESSED=1
+            ENV_PROCESSED=1
         # If no environment-specific subdirectory, check the merged root directory
         # This handles the case where artifacts are merged flat
-        elif [ "$ARTILLERY_PROCESSED" -eq 0 ]; then
-            # Only process if we haven't processed any environment-specific directories yet
-            # Check if there are any JSON files in the root
-            if find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null | grep -q .; then
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
-                ARTILLERY_PROCESSED=1
-            fi
+        # Process for each environment to ensure proper environment labeling
+        elif find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null | grep -q .; then
+            echo "   Converting Artillery results ($env) from merged artifacts (flat structure)..."
+            chmod +x scripts/ci/convert-artillery-to-allure.sh
+            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
+            ENV_PROCESSED=1
         fi
-    done
-fi
+    fi
+    
+    if [ "$ENV_PROCESSED" -eq 0 ]; then
+        echo "   ⚠️  No Artillery results found for environment: $env"
+    fi
+done
 
 # Step 4: Add environment labels
 echo ""
