@@ -89,6 +89,43 @@ jobs:
             "${{ inputs.artillery_test_type }}" \
             "${{ inputs.base_url }}"
 
+      - name: Verify FS Test Results
+        if: always()
+        run: |
+          echo "🔍 Verifying FS test results..."
+          echo "Current directory: $(pwd)"
+          echo ""
+          echo "Checking playwright/artillery-results/ from repo root:"
+          if [ -d "playwright/artillery-results" ]; then
+            echo "  ✅ Directory exists"
+            echo "  📂 Contents:"
+            find playwright/artillery-results -maxdepth 1 -type f -o -type d 2>/dev/null | while IFS= read -r item; do
+              echo "    $item"
+            done || echo "    (empty or error)"
+            echo ""
+            echo "  📄 JSON files:"
+            find playwright/artillery-results -name "*.json" -type f 2>/dev/null | while IFS= read -r f; do
+              size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
+              echo "    📄 $f (size: $size bytes)"
+            done || echo "    (no JSON files found)"
+          else
+            echo "  ❌ Directory does not exist!"
+            echo ""
+            echo "Checking from playwright directory:"
+            if [ -d "playwright" ]; then
+              echo "  playwright/ exists"
+              echo "  Contents of playwright/:"
+              find playwright -maxdepth 1 -type f -o -type d 2>/dev/null | head -20 | while IFS= read -r item; do
+                echo "    $item"
+              done
+              if [ -d "playwright/artillery-results" ]; then
+                echo "  ✅ playwright/artillery-results/ exists"
+              else
+                echo "  ❌ playwright/artillery-results/ does not exist"
+              fi
+            fi
+          fi
+
       - name: Upload FS Test Results
         uses: actions/upload-artifact@v4
         if: always()

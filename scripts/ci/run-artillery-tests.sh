@@ -100,15 +100,40 @@ esac
 
 echo ""
 echo "🔍 DEBUG: Checking for result files..."
+echo "Current working directory: $(pwd)"
+echo "Artillery results directory: $(pwd)/artillery-results"
+echo ""
+
+# Check if directory exists
+if [ ! -d "artillery-results" ]; then
+    echo "❌ ERROR: artillery-results directory does not exist!"
+    echo "   Attempting to create it..."
+    mkdir -p artillery-results
+    echo "   ✅ Created artillery-results directory"
+fi
+
+# List directory contents
+echo "📂 Contents of artillery-results/:"
+ls -la artillery-results/ || echo "   (directory is empty or error listing)"
+
+# Find result files
 RESULT_FILES=$(find artillery-results -name "*.json" -type f 2>/dev/null || true)
 if [ -n "$RESULT_FILES" ]; then
+    echo ""
     echo "✅ Found result files:"
     echo "$RESULT_FILES" | while read f; do
-        size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
-        echo "   📄 $f (size: $size bytes)"
+        if [ -f "$f" ]; then
+            size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
+            echo "   📄 $f (size: $size bytes)"
+        else
+            echo "   ⚠️  $f (file not found or not accessible)"
+        fi
     done
 else
+    echo ""
     echo "⚠️  No result files found in artillery-results/"
+    echo "   This may indicate Artillery tests failed to generate output"
+    echo "   Check Artillery logs above for errors"
 fi
 
 echo ""
