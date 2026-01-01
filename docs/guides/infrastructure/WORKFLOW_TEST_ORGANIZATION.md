@@ -6,7 +6,7 @@
 **Related Files**: 
 - `.github/workflows/env-fe.yml` (reusable workflow for frontend tests)
 - `.github/workflows/env-be.yml` (reusable workflow for backend/API performance tests)
-- `.github/workflows/env-artillery.yml` (reusable workflow for full-stack browser load tests)
+- `.github/workflows/env-fs.yml` (reusable workflow for full-stack browser load tests)
 - `.github/workflows/ci.yml` (main orchestrator workflow)
 
 ---
@@ -39,7 +39,7 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 The CI/CD pipeline uses three reusable workflows for environment-specific testing. Each serves a distinct purpose:
 
-| Aspect | BE Reusable<br/>(`env-be.yml`) | FE Reusable<br/>(`env-fe.yml`) | FS Reusable<br/>(`env-artillery.yml`) |
+| Aspect | BE Reusable<br/>(`env-be.yml`) | FE Reusable<br/>(`env-fe.yml`) | FS Reusable<br/>(`env-fs.yml`) |
 |--------|-------------------------------|-------------------------------|--------------------------------------|
 | **Purpose** | Protocol-Level Performance Testing | Functional Testing | Browser-Based Load Testing |
 | **Workflow Name** | Test Single Environment (BE Reusable) | Test Single Environment (FE Reusable) | Test Single Environment (FS Reusable) |

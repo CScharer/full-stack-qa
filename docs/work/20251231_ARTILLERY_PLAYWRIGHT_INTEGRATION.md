@@ -294,22 +294,22 @@ playwright/
 
 **Tasks Completed**:
 
-1. ✅ **Created Reusable Workflow** (`.github/workflows/env-artillery.yml`)
+1. ✅ **Created Reusable Workflow** (`.github/workflows/env-fs.yml`)
    - Accepts inputs: `environment`, `base_url`, `artillery_test_type`
    - Starts services (FE + BE) - same as BE tests
    - Installs Artillery and Playwright dependencies
-   - Runs Artillery tests based on test type
-   - Uploads JSON results and HTML reports as artifacts
+   - Runs FS (Full-Stack) tests based on test type
+   - Uploads JSON results as artifacts
 
 2. ✅ **Added Jobs to `ci.yml`**
-   - ✅ `test-artillery-dev` job (runs on branches/PRs - dev only)
-   - ✅ `test-artillery-test` job (runs on main - test environment)
+   - ✅ `test-fs-dev` job (runs on branches/PRs - dev only)
+   - ✅ `test-fs-test` job (runs on main - test environment)
    - ✅ Follows same pattern as `test-be-dev` and `test-be-test`
    - ✅ Integrated with gate jobs for result checking
 
 3. ✅ **Environment Configuration**
-   - ✅ **Branches/PRs**: Run `test-artillery-dev` only (dev environment)
-   - ✅ **Main branch**: Run both `test-artillery-dev` and `test-artillery-test`
+   - ✅ **Branches/PRs**: Run `test-fs-dev` only (dev environment)
+   - ✅ **Main branch**: Run both `test-fs-dev` and `test-fs-test`
    - ✅ **Never run on prod** (same as performance tests)
 
 4. ✅ **Test Types** (Similar to BE test types)
@@ -319,18 +319,17 @@ playwright/
    - ✅ `applications-only` - Applications flow only
 
 5. ✅ **Results Collection**
-   - ✅ Upload Artillery JSON results as artifacts (`artillery-results-{env}`)
-   - ✅ Upload Artillery HTML reports (`artillery-reports-{env}`)
-   - ✅ 7-day retention for artifacts
+   - ✅ Upload FS test JSON results as artifacts (`fs-results-{env}`)
+   - ✅ 3-day retention for artifacts
 
 6. ✅ **Gate Integration**
-   - ✅ Added Artillery results to `gate-dev` checks
-   - ✅ Added Artillery results to `gate-test` checks
-   - ✅ Added Artillery results to pipeline summary
+   - ✅ Added FS test results to `gate-dev` checks
+   - ✅ Added FS test results to `gate-test` checks
+   - ✅ Added FS test results to pipeline summary
 
 **Deliverables**:
-- ✅ Reusable workflow: `.github/workflows/env-artillery.yml`
-- ✅ CI/CD jobs in `ci.yml`: `test-artillery-dev`, `test-artillery-test`
+- ✅ Reusable workflow: `.github/workflows/env-fs.yml`
+- ✅ CI/CD jobs in `ci.yml`: `test-fs-dev`, `test-fs-test`
 - ✅ Environment-specific execution (dev on branches, dev+test on main)
 - ✅ Artifact collection and upload
 - ✅ Integration with gate jobs
@@ -731,7 +730,7 @@ module.exports = {
 
 2. ✅ **Phase 2: CI/CD Integration** - COMPLETE
    - ✅ Created reusable workflow: `.github/workflows/env-artillery.yml`
-   - ✅ Added jobs to `ci.yml`: `test-artillery-dev` and `test-artillery-test`
+   - ✅ Added jobs to `ci.yml`: `test-fs-dev` and `test-fs-test`
    - ✅ Integrated with gate jobs (`gate-dev`, `gate-test`) for result checking
    - ✅ Added to pipeline summary for visibility
    - ✅ Configured to run: dev on branches/PRs, dev+test on main

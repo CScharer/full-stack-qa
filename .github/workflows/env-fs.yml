@@ -21,8 +21,8 @@ env:
   MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 jobs:
-  artillery-tests:
-    name: Artillery Tests (${{ inputs.environment }})
+  fs-tests:
+    name: Test FS (${{ inputs.environment }})
     runs-on: ubuntu-latest
 
     steps:
@@ -52,7 +52,7 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "🚀 Starting services for Artillery tests (${{ inputs.environment }})..."
+          echo "🚀 Starting services for FS (Full-Stack) tests (${{ inputs.environment }})..."
           chmod +x scripts/start-services-for-ci.sh
           ./scripts/start-services-for-ci.sh
           # No sleep needed - start-services-for-ci.sh waits for services to be ready
@@ -74,11 +74,11 @@ jobs:
         working-directory: ./playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Create Artillery results directory
+      - name: Create FS test results directory
         working-directory: ./playwright
         run: mkdir -p artillery-results
 
-      - name: Run Artillery Tests
+      - name: Run FS Tests
         working-directory: ./playwright
         env:
           BASE_URL: ${{ inputs.base_url }}
@@ -89,20 +89,20 @@ jobs:
             "${{ inputs.artillery_test_type }}" \
             "${{ inputs.base_url }}"
 
-      - name: Upload Artillery Results
+      - name: Upload FS Test Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: artillery-results-${{ inputs.environment }}
+          name: fs-results-${{ inputs.environment }}
           path: playwright/artillery-results/
           retention-days: 3
           if-no-files-found: ignore
 
-      - name: Note on Artillery Reporting
+      - name: Note on FS Test Reporting
         if: always()
         run: |
-          echo "ℹ️  Artillery HTML report generation has been deprecated."
-          echo "📊 JSON results are available in the 'artillery-results-${{ inputs.environment }}' artifact."
+          echo "ℹ️  FS (Full-Stack) load test results are available."
+          echo "📊 JSON results are available in the 'fs-results-${{ inputs.environment }}' artifact."
           echo "🌐 For visualization, use Artillery Cloud: https://app.artillery.io"
           echo ""
           echo "To view results locally, you can:"

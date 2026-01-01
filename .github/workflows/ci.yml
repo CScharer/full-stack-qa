@@ -554,7 +554,7 @@ jobs:
   gate-dev:
     name: Gate (DEV)
     runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-setup, test-fe-dev, test-be-dev, test-artillery-dev]
+    needs: [determine-envs, determine-test-execution, gate-setup, test-fe-dev, test-be-dev, test-fs-dev]
     if: always() && !cancelled()
     steps:
       - name: Checkout code
@@ -567,7 +567,7 @@ jobs:
             "gate-setup:${{ needs.gate-setup.result }}" \
             "test-fe-dev:${{ needs.test-fe-dev.result }}" \
             "test-be-dev:${{ needs.test-be-dev.result }}" \
-            "test-artillery-dev:${{ needs.test-artillery-dev.result }}" \
+            "test-fs-dev:${{ needs.test-fs-dev.result }}" \
             "determine-envs.run_dev:${{ needs.determine-envs.outputs.run_dev }}" \
             "determine-test-execution.run_ui_tests:${{ needs.determine-test-execution.outputs.run_ui_tests }}" \
             "determine-test-execution.run_be_tests:${{ needs.determine-test-execution.outputs.run_be_tests }}" \
@@ -649,7 +649,7 @@ jobs:
   gate-test:
     name: Gate (TEST)
     runs-on: ubuntu-latest
-    needs: [determine-envs, determine-test-execution, gate-dev, test-fe-test, test-be-test, test-artillery-test]
+    needs: [determine-envs, determine-test-execution, gate-dev, test-fe-test, test-be-test, test-fs-test]
     if: always() && !cancelled()
     steps:
       - name: Checkout code
@@ -662,7 +662,7 @@ jobs:
             "gate-dev:${{ needs.gate-dev.result }}" \
             "test-fe-test:${{ needs.test-fe-test.result }}" \
             "test-be-test:${{ needs.test-be-test.result }}" \
-            "test-artillery-test:${{ needs.test-artillery-test.result }}" \
+            "test-fs-test:${{ needs.test-fs-test.result }}" \
             "determine-envs.run_test:${{ needs.determine-envs.outputs.run_test }}" \
             "determine-test-execution.run_ui_tests:${{ needs.determine-test-execution.outputs.run_ui_tests }}" \
             "determine-test-execution.run_be_tests:${{ needs.determine-test-execution.outputs.run_be_tests }}" \
@@ -805,19 +805,19 @@ jobs:
     secrets: inherit
 
   # ==================================================================================
-  # STAGE 6: ARTILLERY BROWSER LOAD TESTS (Run in parallel with FE and BE tests)
-  # Artillery tests run in dev/test only (never prod)
-  # Uses reusable workflow: env-artillery.yml
+  # STAGE 6: FS (FULL-STACK) BROWSER LOAD TESTS (Run in parallel with FE and BE tests)
+  # FS tests run in dev/test only (never prod)
+  # Uses reusable workflow: env-fs.yml
   # ==================================================================================
 
-  test-artillery-dev:
-    name: Test Artillery (DEV)
-    uses: ./.github/workflows/env-artillery.yml
+  test-fs-dev:
+    name: Test FS (DEV)
+    uses: ./.github/workflows/env-fs.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
-    # Note: Artillery tests run when:
+    # Note: FS (Full-Stack) tests run when:
     # - Tests are enabled (run_ui_tests == 'true' or run_be_tests == 'true')
     # - Dev environment is selected (run_dev == 'true')
-    # Artillery tests should run whenever BE tests run (they're both performance tests)
+    # FS tests should run whenever BE tests run (they're both performance tests)
     if: |
       always() &&
       !cancelled() &&
@@ -831,11 +831,11 @@ jobs:
       base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
     secrets: inherit
 
-  test-artillery-test:
-    name: Test Artillery (TEST)
-    uses: ./.github/workflows/env-artillery.yml
+  test-fs-test:
+    name: Test FS (TEST)
+    uses: ./.github/workflows/env-fs.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
-    # Note: Artillery tests run on main branch only (test environment)
+    # Note: FS (Full-Stack) tests run on main branch only (test environment)
     if: |
       always() &&
       !cancelled() &&
@@ -989,7 +989,7 @@ jobs:
   combined-allure-report:
     name: Combined Allure Report (All Environments)
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, test-fe-test, test-fe-prod, allure-conversion-be, test-artillery-dev, test-artillery-test]
+    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, test-fe-test, test-fe-prod, allure-conversion-be, test-fs-dev, test-fs-test]
     if: |
       always() &&
       !cancelled() &&
@@ -1102,12 +1102,12 @@ jobs:
           path: all-test-results/vibium-results
           merge-multiple: true
 
-      - name: Download Artillery results
+      - name: Download FS results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          pattern: "artillery-results-*"
-          path: all-test-results/artillery-results
+          pattern: "fs-results-*"
+          path: all-test-results/fs-results
           merge-multiple: true
 
       - name: "Debug: Show downloaded artifact structure"
@@ -1300,7 +1300,7 @@ jobs:
   pipeline-summary:
     name: Pipeline Summary
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, deploy-dev, test-fe-test, deploy-test, test-fe-prod, deploy-prod, combined-allure-report, test-be-dev, test-be-test, test-artillery-dev, test-artillery-test, allure-conversion-be]
+    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, deploy-dev, test-fe-test, deploy-test, test-fe-prod, deploy-prod, combined-allure-report, test-be-dev, test-be-test, test-fs-dev, test-fs-test, allure-conversion-be]
     if: always()
 
     steps:
@@ -1328,5 +1328,5 @@ jobs:
             "${{ needs.test-fe-prod.result }}" \
             "${{ needs.test-be-dev.result }}" \
             "${{ needs.test-be-test.result }}" \
-            "${{ needs.test-artillery-dev.result }}" \
-            "${{ needs.test-artillery-test.result }}"
+            "${{ needs.test-fs-dev.result }}" \
+            "${{ needs.test-fs-test.result }}"
