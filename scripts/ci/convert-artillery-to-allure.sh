@@ -47,10 +47,12 @@ converted = 0
 # Look for Artillery JSON result files recursively
 json_files = []
 if os.path.isdir(artillery_dir):
-    # Search recursively for JSON files with 'results' in the name
+    # Search recursively for ANY JSON files (Artillery outputs various JSON files)
+    # Files like: smoke-results.json, homepage-results.json, applications-results.json
     for root, dirs, files in os.walk(artillery_dir):
         for file in files:
-            if file.endswith('.json') and 'results' in file.lower():
+            if file.endswith('.json'):
+                # Accept any JSON file - Artillery creates various result files
                 json_files.append(os.path.join(root, file))
 
 if not json_files:

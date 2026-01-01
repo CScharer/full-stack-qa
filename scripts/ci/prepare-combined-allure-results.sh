@@ -250,87 +250,68 @@ ARTILLERY_PROCESSED_ENVS=()
 
 echo "   📊 Artillery runs only in: dev, test (never prod)"
 echo "   🔍 Checking for Artillery results in dev and test environments only..."
-echo "   📂 Source directory: $SOURCE_DIR"
-echo "   📂 Checking for artillery-results directory: $SOURCE_DIR/artillery-results"
 
-# Debug: Show what's actually in the artillery-results directory
+# Process Artillery results for each environment
+# Artifacts are downloaded as artillery-results-{env} and merged into artillery-results/
+# When merged, they preserve the artifact name as a subdirectory: artillery-results/artillery-results-{env}/
 if [ -d "$SOURCE_DIR/artillery-results" ]; then
     echo "   ✅ Found artillery-results directory"
-    echo "   📋 Contents:"
-    find "$SOURCE_DIR/artillery-results" -maxdepth 2 -type d 2>/dev/null | head -10 | while read d; do
-        json_count=$(find "$d" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
-        echo "      📁 $d ($json_count JSON files)"
-    done || echo "      (empty or error)"
+    
+    # Process each active environment
+    for env in "${ARTILLERY_ENVIRONMENTS[@]}"; do
+        # Skip if this environment wasn't active
+        if [[ ! " ${ACTIVE_ENVIRONMENTS[@]} " =~ " ${env} " ]]; then
+            echo "   ⏭️  Skipping Artillery conversion for $env (environment not active)"
+            continue
+        fi
+        
+        ENV_PROCESSED=0
+        
+        # Check for environment-specific subdirectory (most common case with merge-multiple: true)
+        env_dir="$SOURCE_DIR/artillery-results/artillery-results-$env"
+        if [ -d "$env_dir" ]; then
+            json_count=$(find "$env_dir" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+            if [ "$json_count" -gt 0 ]; then
+                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) in artillery-results-$env/)..."
+                chmod +x scripts/ci/convert-artillery-to-allure.sh
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$env_dir" "$env" || true
+                ENV_PROCESSED=1
+            fi
+        fi
+        
+        # If not found in subdirectory, check if files are in the root (flat merge)
+        if [ "$ENV_PROCESSED" -eq 0 ]; then
+            json_files=$(find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
+            if [ -n "$json_files" ]; then
+                json_count=$(echo "$json_files" | wc -l | tr -d ' ')
+                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) in root)..."
+                chmod +x scripts/ci/convert-artillery-to-allure.sh
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
+                ENV_PROCESSED=1
+            fi
+        fi
+        
+        # Verify results were created
+        if [ "$ENV_PROCESSED" -eq 1 ]; then
+            # Count results created for this environment
+            env_results=$(find "$TARGET_DIR" -name "*-result.json" -newer "$SOURCE_DIR/artillery-results" -exec grep -l "\"environment\", \"value\": \"$env\"" {} \; 2>/dev/null | wc -l | tr -d ' ')
+            # Fallback: just count recent results if the above doesn't work
+            if [ "$env_results" -eq 0 ]; then
+                env_results=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Artillery.*$env" {} \; 2>/dev/null | wc -l | tr -d ' ')
+            fi
+            if [ "$env_results" -gt 0 ]; then
+                ARTILLERY_PROCESSED_ENVS+=("$env")
+                echo "   ✅ Artillery results processed for $env ($env_results result file(s))"
+            else
+                echo "   ⚠️  Artillery conversion ran for $env but no results were created"
+            fi
+        else
+            echo "   ⚠️  No Artillery results found for environment: $env"
+        fi
+    done
 else
     echo "   ⚠️  artillery-results directory not found at: $SOURCE_DIR/artillery-results"
 fi
-
-for env in "${ARTILLERY_ENVIRONMENTS[@]}"; do
-    # Skip if this environment wasn't active
-    if [[ ! " ${ACTIVE_ENVIRONMENTS[@]} " =~ " ${env} " ]]; then
-        echo "   ⏭️  Skipping Artillery conversion for $env (environment not active)"
-        continue
-    fi
-    
-    ENV_PROCESSED=0
-    FILES_PROCESSED=()
-    
-    # Check environment-specific directory first (if Artillery was included in *-results-* artifacts)
-    if [ -d "$SOURCE_DIR/results-$env/artillery-results-$env" ]; then
-        json_count=$(find "$SOURCE_DIR/results-$env/artillery-results-$env" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
-        echo "   Converting Artillery results ($env) from environment-specific directory ($json_count JSON file(s))..."
-        chmod +x scripts/ci/convert-artillery-to-allure.sh
-        ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/artillery-results-$env" "$env" || true
-        ENV_PROCESSED=1
-        FILES_PROCESSED+=("results-$env/artillery-results-$env")
-    fi
-    
-    # Check merged artillery-results directory (Artillery artifacts are downloaded separately)
-    # When artifacts are merged, they may preserve their artifact name as a subdirectory
-    # e.g., artillery-results/artillery-results-dev/... or just artillery-results/...
-    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/artillery-results" ]; then
-        # First, check if there's an environment-specific subdirectory in the merged artifacts
-        # This is the most common case when merge-multiple: true preserves artifact names
-        if [ -d "$SOURCE_DIR/artillery-results/artillery-results-$env" ]; then
-            json_count=$(find "$SOURCE_DIR/artillery-results/artillery-results-$env" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
-            echo "   Converting Artillery results ($env) from merged artifacts (environment-specific subdirectory: artillery-results-$env, $json_count JSON file(s))..."
-            chmod +x scripts/ci/convert-artillery-to-allure.sh
-            ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results/artillery-results-$env" "$env" || true
-            ENV_PROCESSED=1
-            FILES_PROCESSED+=("artillery-results/artillery-results-$env")
-        # If no environment-specific subdirectory, check recursively for JSON files
-        # This handles cases where the structure might be different
-        elif [ "$env" != "prod" ]; then
-            # Search recursively for JSON files in the artillery-results directory
-            json_files=$(find "$SOURCE_DIR/artillery-results" -name "*.json" -type f 2>/dev/null | grep -i "results\|smoke\|homepage\|applications" | head -10)
-            if [ -n "$json_files" ]; then
-                json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-                echo "   Converting Artillery results ($env) from merged artifacts (recursive search found $json_count JSON file(s))..."
-                echo "   ⚠️  Note: Processing all JSON files found - results will be labeled for $env environment"
-                chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
-                ENV_PROCESSED=1
-                FILES_PROCESSED+=("artillery-results (recursive)")
-            # Fallback: check the merged root directory for any JSON files
-            elif find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null | grep -q .; then
-                json_count=$(find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
-                echo "   Converting Artillery results ($env) from merged artifacts (flat structure, $json_count JSON file(s))..."
-                echo "   ⚠️  Note: Flat structure detected - results will be labeled for $env environment"
-                chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
-                ENV_PROCESSED=1
-                FILES_PROCESSED+=("artillery-results (flat)")
-            fi
-        fi
-    fi
-    
-    if [ "$ENV_PROCESSED" -eq 1 ]; then
-        ARTILLERY_PROCESSED_ENVS+=("$env")
-        echo "   ✅ Artillery results processed for $env from: ${FILES_PROCESSED[*]}"
-    else
-        echo "   ⚠️  No Artillery results found for environment: $env"
-    fi
-done
 
 # Warn if prod is in active environments but Artillery shouldn't run there
 if [[ " ${ACTIVE_ENVIRONMENTS[@]} " =~ " prod " ]]; then
