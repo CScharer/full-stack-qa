@@ -815,11 +815,13 @@ jobs:
     uses: ./.github/workflows/env-artillery.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
     # Note: Artillery tests run when:
-    # - Tests are enabled (run_tests == 'true' or run_be_tests == 'true')
+    # - Tests are enabled (run_ui_tests == 'true' or run_be_tests == 'true')
     # - Dev environment is selected (run_dev == 'true')
     if: |
       always() &&
       !cancelled() &&
+      (needs.determine-test-execution.outputs.run_ui_tests == 'true' ||
+       needs.determine-test-execution.outputs.run_be_tests == 'true') &&
       needs.determine-envs.outputs.run_dev == 'true' &&
       (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
     with:
