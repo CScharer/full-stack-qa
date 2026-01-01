@@ -83,8 +83,8 @@ jobs:
         env:
           BASE_URL: ${{ inputs.base_url }}
         run: |
-          chmod +x ../../scripts/ci/run-artillery-tests.sh
-          ../../scripts/ci/run-artillery-tests.sh \
+          chmod +x ../scripts/ci/run-artillery-tests.sh
+          ../scripts/ci/run-artillery-tests.sh \
             "${{ inputs.environment }}" \
             "${{ inputs.artillery_test_type }}" \
             "${{ inputs.base_url }}"
