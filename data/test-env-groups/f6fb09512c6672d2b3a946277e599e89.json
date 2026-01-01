@@ -1,1 +1,1 @@
-{"id":"f6fb09512c6672d2b3a946277e599e89","fullName":"com.cjs.qa.utilities.DataProviderTest.testDataProviderIntegration","name":"testDataProviderIntegration [PROD]","status":"passed","testResultsByEnv":{"default":"b5c88a7021e354cbf8cda87bac3b7580"}}
+{"id":"f6fb09512c6672d2b3a946277e599e89","fullName":"com.cjs.qa.utilities.DataProviderTest.testDataProviderIntegration","name":"testDataProviderIntegration [DEV]","status":"passed","testResultsByEnv":{"default":"4ad8ce3cdc55e7f66f549396c4511f82"}}
