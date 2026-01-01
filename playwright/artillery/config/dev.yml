@@ -26,7 +26,7 @@ config:
         headless: true
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       browser: chromium
-  processor: "./artillery/processors/homepage-processor.js"
+  processor: "../processors/homepage-processor.js"
   variables:
     baseUrl: "http://localhost:3003"
   payload:
