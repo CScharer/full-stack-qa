@@ -6,9 +6,9 @@ config:
   target: "https://your-production-url.com"  # ⚠️ UPDATE THIS
   phases:
     # Conservative load for production
-    # Warm-up phase: Very gradual ramp up
+    # Warm-up phase: Very gradual ramp up to 3 users (prod environment)
     - duration: 120
-      arrivalRate: 2
+      arrivalRate: 3
       name: "Warm up"
     # Sustained load: Low concurrent users
     - duration: 300
