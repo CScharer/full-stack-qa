@@ -268,26 +268,52 @@ if [ -d "$SOURCE_DIR/artillery-results" ]; then
         ENV_PROCESSED=0
         
         # Check for environment-specific subdirectory (most common case with merge-multiple: true)
+        # Structure: all-test-results/artillery-results/artillery-results-{env}/playwright/artillery-results/*.json
         env_dir="$SOURCE_DIR/artillery-results/artillery-results-$env"
+        
+        # Debug: Show what we're looking for
+        echo "   🔍 Checking for Artillery results in: $env_dir"
         if [ -d "$env_dir" ]; then
+            echo "   ✅ Found directory: $env_dir"
+            echo "   📂 Directory contents:"
+            find "$env_dir" -type f -name "*.json" 2>/dev/null | head -5 | while read f; do
+                echo "      📄 $f"
+            done || echo "      (no JSON files found)"
+            
+            # Search recursively for JSON files (artifacts preserve playwright/artillery-results/ path)
             json_count=$(find "$env_dir" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
             if [ "$json_count" -gt 0 ]; then
-                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) in artillery-results-$env/)..."
+                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) recursively in artillery-results-$env/)..."
                 chmod +x scripts/ci/convert-artillery-to-allure.sh
                 ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$env_dir" "$env" || true
                 ENV_PROCESSED=1
+            else
+                echo "   ⚠️  Directory exists but no JSON files found"
             fi
+        else
+            echo "   ⚠️  Directory not found: $env_dir"
         fi
         
-        # If not found in subdirectory, check if files are in the root (flat merge)
+        # If not found in subdirectory, check if files are in the root (flat merge or different structure)
         if [ "$ENV_PROCESSED" -eq 0 ]; then
-            json_files=$(find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
-            if [ -n "$json_files" ]; then
-                json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) in root)..."
+            # Search recursively in the entire artillery-results directory for this environment's files
+            # This handles cases where structure might be different
+            all_json_files=$(find "$SOURCE_DIR/artillery-results" -name "*.json" -type f 2>/dev/null)
+            if [ -n "$all_json_files" ]; then
+                json_count=$(echo "$all_json_files" | wc -l | tr -d ' ')
+                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) in artillery-results/, processing all for $env)..."
+                echo "   📋 Files found:"
+                echo "$all_json_files" | head -5 | while read f; do
+                    echo "      📄 $f"
+                done
                 chmod +x scripts/ci/convert-artillery-to-allure.sh
+                # Pass the entire artillery-results directory - conversion script searches recursively
                 ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
                 ENV_PROCESSED=1
+            else
+                echo "   ⚠️  No JSON files found anywhere in artillery-results directory"
+                echo "   📂 Directory structure:"
+                find "$SOURCE_DIR/artillery-results" -type d 2>/dev/null | head -10 || echo "      (empty or error)"
             fi
         fi
         
