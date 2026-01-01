@@ -817,13 +817,14 @@ jobs:
     # Note: Artillery tests run when:
     # - Tests are enabled (run_ui_tests == 'true' or run_be_tests == 'true')
     # - Dev environment is selected (run_dev == 'true')
+    # Artillery tests should run whenever BE tests run (they're both performance tests)
     if: |
       always() &&
       !cancelled() &&
       (needs.determine-test-execution.outputs.run_ui_tests == 'true' ||
        needs.determine-test-execution.outputs.run_be_tests == 'true') &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped' || needs.gate-setup.result == 'failure')
     with:
       environment: 'dev'
       artillery_test_type: 'smoke'  # Quick smoke test for CI/CD
@@ -988,7 +989,7 @@ jobs:
   combined-allure-report:
     name: Combined Allure Report (All Environments)
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, test-fe-test, test-fe-prod, allure-conversion-be]
+    needs: [determine-schedule-type, determine-test-execution, determine-envs, test-fe-dev, test-fe-test, test-fe-prod, allure-conversion-be, test-artillery-dev, test-artillery-test]
     if: |
       always() &&
       !cancelled() &&
