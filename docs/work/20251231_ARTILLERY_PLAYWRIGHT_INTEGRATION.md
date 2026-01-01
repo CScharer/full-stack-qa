@@ -97,7 +97,7 @@ config:
   target: "http://localhost:3003"
   phases:
     - duration: 60
-      arrivalRate: 5
+      arrivalRate: 5  # Dev: 5, Test: 4, Prod: 3 (different rates help identify environment in results)
       name: "Warm up"
     - duration: 300
       arrivalRate: 10
@@ -462,7 +462,7 @@ config:
   target: "http://localhost:3003"
   phases:
     - duration: 60
-      arrivalRate: 5
+      arrivalRate: 5  # Dev: 5, Test: 4, Prod: 3 (different rates help identify environment in results)
       name: "Warm up"
     - duration: 300
       arrivalRate: 10

@@ -4,7 +4,7 @@
 config:
   target: "http://localhost:3003"
   phases:
-    # Warm-up phase: Gradually ramp up to 5 users
+    # Warm-up phase: Gradually ramp up to 5 users (dev environment)
     - duration: 60
       arrivalRate: 5
       name: "Warm up"
