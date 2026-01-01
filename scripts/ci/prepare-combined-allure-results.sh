@@ -353,7 +353,6 @@ if [ "$ARTILLERY_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/artillery-results" ]; t
 elif [ "$ARTILLERY_PROCESSED" -eq 0 ]; then
     echo "   ⚠️  artillery-results directory not found at: $SOURCE_DIR/artillery-results"
 fi
-
 # Warn if prod is in active environments but Artillery shouldn't run there
 if [[ " ${ACTIVE_ENVIRONMENTS[@]} " =~ " prod " ]]; then
     echo "   ℹ️  Note: prod is active, but Artillery tests never run in prod (skipped)"
