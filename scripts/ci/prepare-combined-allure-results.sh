@@ -287,46 +287,73 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
         
         echo "   🔍 Processing FS test results for $env..."
         
-        # Try exact path: fs-results/fs-results-{env}/playwright/artillery-results/*.json
-        exact_path="$SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results"
-        echo "   📂 DEBUG: Checking exact path: $exact_path"
+        # When artifacts are uploaded from playwright/artillery-results/, the downloaded structure can vary:
+        # Option 1: fs-results/fs-results-{env}/artillery-results/*.json (preserves subdirectory)
+        # Option 2: fs-results/fs-results-{env}/*.json (flattened, files directly in artifact root)
+        # Option 3: fs-results/fs-results-{env}/playwright/artillery-results/*.json (full path preserved)
         
-        if [ -d "$exact_path" ]; then
-            json_files=$(find "$exact_path" -name "*.json" -type f 2>/dev/null)
+        # Try Option 1: fs-results/fs-results-{env}/artillery-results/*.json
+        path1="$SOURCE_DIR/fs-results/fs-results-$env/artillery-results"
+        echo "   📂 DEBUG: Checking path 1: $path1"
+        if [ -d "$path1" ]; then
+            json_files=$(find "$path1" -name "*.json" -type f 2>/dev/null)
             if [ -n "$json_files" ]; then
                 json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-                echo "   ✅ Found $json_count JSON file(s) for $env at: $exact_path"
+                echo "   ✅ Found $json_count JSON file(s) for $env at: $path1"
                 chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$exact_path" "$env" || true
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$path1" "$env" || true
                 FS_PROCESSED_ENVS+=("$env")
                 FS_PROCESSED=1
                 continue
-            else
-                echo "   ⚠️  DEBUG: No JSON files found in $exact_path"
             fi
-        else
-            echo "   ⚠️  DEBUG: Directory not found: $exact_path"
         fi
         
-        # Fallback: Check parent directory (fs-results-{env})
-        fallback_path="$SOURCE_DIR/fs-results/fs-results-$env"
-        echo "   📂 DEBUG: Checking fallback path: $fallback_path"
-        
-        if [ -d "$fallback_path" ]; then
-            json_files=$(find "$fallback_path" -name "*.json" -type f 2>/dev/null)
+        # Try Option 2: fs-results/fs-results-{env}/*.json (files directly in artifact)
+        path2="$SOURCE_DIR/fs-results/fs-results-$env"
+        echo "   📂 DEBUG: Checking path 2: $path2"
+        if [ -d "$path2" ]; then
+            json_files=$(find "$path2" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
             if [ -n "$json_files" ]; then
                 json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-                echo "   ✅ Found $json_count JSON file(s) for $env at: $fallback_path"
+                echo "   ✅ Found $json_count JSON file(s) for $env at: $path2 (direct)"
                 chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$fallback_path" "$env" || true
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$path2" "$env" || true
                 FS_PROCESSED_ENVS+=("$env")
                 FS_PROCESSED=1
                 continue
-            else
-                echo "   ⚠️  DEBUG: No JSON files found in $fallback_path"
             fi
-        else
-            echo "   ⚠️  DEBUG: Directory not found: $fallback_path"
+        fi
+        
+        # Try Option 3: fs-results/fs-results-{env}/playwright/artillery-results/*.json
+        path3="$SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results"
+        echo "   📂 DEBUG: Checking path 3: $path3"
+        if [ -d "$path3" ]; then
+            json_files=$(find "$path3" -name "*.json" -type f 2>/dev/null)
+            if [ -n "$json_files" ]; then
+                json_count=$(echo "$json_files" | wc -l | tr -d ' ')
+                echo "   ✅ Found $json_count JSON file(s) for $env at: $path3"
+                chmod +x scripts/ci/convert-artillery-to-allure.sh
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$path3" "$env" || true
+                FS_PROCESSED_ENVS+=("$env")
+                FS_PROCESSED=1
+                continue
+            fi
+        fi
+        
+        # Try recursive search in fs-results-{env} directory
+        path4="$SOURCE_DIR/fs-results/fs-results-$env"
+        echo "   📂 DEBUG: Checking path 4 (recursive): $path4"
+        if [ -d "$path4" ]; then
+            json_files=$(find "$path4" -name "*.json" -type f 2>/dev/null)
+            if [ -n "$json_files" ]; then
+                json_count=$(echo "$json_files" | wc -l | tr -d ' ')
+                echo "   ✅ Found $json_count JSON file(s) for $env at: $path4 (recursive)"
+                chmod +x scripts/ci/convert-artillery-to-allure.sh
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$path4" "$env" || true
+                FS_PROCESSED_ENVS+=("$env")
+                FS_PROCESSED=1
+                continue
+            fi
         fi
         
         # Final fallback: Search for any JSON files in fs-results that might be for this environment
