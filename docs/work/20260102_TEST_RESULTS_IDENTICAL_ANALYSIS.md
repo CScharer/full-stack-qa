@@ -957,3 +957,65 @@ if env and env not in ["unknown", "combined"]:
 - Execution times are different
 - CI Run IDs are present
 
+---
+
+## Post-Implementation Analysis (January 2, 2026)
+
+### Metadata Implementation Status: ✅ COMPLETED
+
+All converter scripts have been updated to include verification metadata:
+- ✅ FS (Artillery) tests - `convert-artillery-to-allure.sh`
+- ✅ Cypress tests - `convert-cypress-to-allure.sh`
+- ✅ Playwright tests - `convert-playwright-to-allure.sh`
+- ✅ Robot Framework tests - `convert-robot-to-allure.sh`
+- ✅ Vibium tests - `convert-vibium-to-allure.sh`
+- ✅ BE Performance tests - `convert-performance-to-allure.sh`
+
+**Shared Utilities Created:**
+- ✅ `scripts/ci/allure_metadata_utils.py` - Python utility for metadata generation
+- ✅ `scripts/ci/allure-metadata-utils.sh` - Bash utility for metadata generation
+
+### GitHub Results Verification
+
+**Date:** January 2, 2026  
+**Pipeline Run:** Post-PR #50 merge
+
+**Metadata Analysis Results:**
+
+| Parameter | Dev | Test | Prod | Status |
+|-----------|-----|------|------|--------|
+| **Environment** | DEV | TEST | PROD | ✅ Different (as expected) |
+| **Base URL** | Same | Same | Same | ❌ **IDENTICAL** (should be different) |
+| **Test Execution Time** | Same | Same | Same | ❌ **IDENTICAL** (should be different) |
+| **CI Run ID** | Same | Same | Same | ✅ Same (expected - same pipeline) |
+| **CI Run Number** | Same | Same | Same | ✅ Same (expected - same pipeline) |
+
+**Key Finding:**
+The metadata confirms that **only the Environment parameter differs** across environments. All other metadata (Base URL, Test Execution Time) is identical, which proves the fallback logic is still processing the same artifact files for each environment.
+
+**Root Cause Confirmed:**
+The fallback logic in `prepare-combined-allure-results.sh` is processing the same merged artifact files for each environment in the loop, creating duplicate Allure results with:
+- ✅ Different environment labels (DEV, TEST, PROD)
+- ❌ Identical test data and metrics
+- ❌ Identical Base URLs (should be :3003, :3004, :3005)
+- ❌ Identical execution timestamps (should be different if from different runs)
+
+### Next Steps
+
+**Priority:** HIGH - The fallback logic issue needs to be fixed to prevent duplicate processing.
+
+**Recommended Actions:**
+1. **Fix Fallback Logic:** Update `prepare-combined-allure-results.sh` to:
+   - Only process environment-specific artifact subdirectories
+   - Skip fallback processing if environment-specific directories are not found
+   - Add explicit checks to prevent processing the same files multiple times
+
+2. **Improve Artifact Structure:** Ensure artifacts are uploaded with environment-specific directory structures to avoid triggering fallback logic
+
+3. **Add Validation:** Add checks to verify Base URLs differ before processing, and fail if they don't
+
+4. **Monitor:** After fixes, verify in Allure report that:
+   - Base URLs are different per environment
+   - Test Execution Times are different (or at least not identical)
+   - Results truly represent different test runs
+
