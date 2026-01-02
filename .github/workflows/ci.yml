@@ -550,7 +550,9 @@ jobs:
 
   test-fe-dev:
     name: Test FE (DEV)
-    needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup]
+    # ⚠️ TEMPORARY: Removed gate-setup from needs to ensure FE tests always run
+    # TODO: REVERT - Restore gate-setup to needs list before merging PR
+    needs: [setup-base-urls, determine-test-execution, determine-envs]
     # ⚠️ TEMPORARY: Force FE tests to always run
     # TODO: REVERT - Restore original conditions before merging PR
     if: always() && !cancelled()
@@ -639,7 +641,9 @@ jobs:
 
   test-fe-test:
     name: Test FE (TEST)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-dev]
+    # ⚠️ TEMPORARY: Removed gate-setup and gate-dev from needs to ensure FE tests always run
+    # TODO: REVERT - Restore gate-setup and gate-dev to needs list before merging PR
+    needs: [setup-base-urls, determine-envs, determine-test-execution]
     # ⚠️ TEMPORARY: Force FE tests to always run
     # TODO: REVERT - Restore original conditions before merging PR
     if: always() && !cancelled()
@@ -729,7 +733,9 @@ jobs:
 
   test-fe-prod:
     name: Test FE (PROD)
-    needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-test]
+    # ⚠️ TEMPORARY: Removed gate-setup and gate-test from needs to ensure FE tests always run
+    # TODO: REVERT - Restore gate-setup and gate-test to needs list before merging PR
+    needs: [setup-base-urls, determine-envs, determine-test-execution]
     # ⚠️ TEMPORARY: Force FE tests to always run
     # TODO: REVERT - Restore original conditions before merging PR
     if: always() && !cancelled()
