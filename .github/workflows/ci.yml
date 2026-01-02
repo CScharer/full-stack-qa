@@ -268,6 +268,15 @@ jobs:
             "${{ github.event_name }}" \
             "$ENV_INPUT" \
             "$SUITE_INPUT"
+          
+          # ⚠️ TEMPORARY: Verify outputs were set
+          echo "🔍 DEBUG: Verifying determine-envs outputs were set..."
+          if [ -f "$GITHUB_OUTPUT" ]; then
+            echo "GITHUB_OUTPUT contents:"
+            cat "$GITHUB_OUTPUT" | grep -E "(run_dev|run_test|run_prod|enable_cypress_tests)" || echo "⚠️  Key outputs not found!"
+          else
+            echo "❌ GITHUB_OUTPUT file not found!"
+          fi
 
   determine-test-execution:
     name: Determine Test Execution
@@ -309,20 +318,25 @@ jobs:
             "$PERF_TYPE_INPUT" \
             "$PERF_ENV_INPUT"
           
-          # ⚠️ TEMPORARY: Verify outputs were set
+          # ⚠️ TEMPORARY: Verify and force outputs
           echo "🔍 DEBUG: Verifying outputs were set..."
           if [ -f "$GITHUB_OUTPUT" ]; then
-            echo "GITHUB_OUTPUT contents:"
+            echo "GITHUB_OUTPUT contents (before verification):"
             cat "$GITHUB_OUTPUT" | grep -E "(run_ui_tests|run_be_tests)" || echo "⚠️  No run_ui_tests or run_be_tests found!"
           else
-            echo "❌ GITHUB_OUTPUT file not found!"
+            echo "❌ GITHUB_OUTPUT file not found! Creating it..."
+            touch "$GITHUB_OUTPUT"
           fi
           
-          # ⚠️ TEMPORARY: Force run_ui_tests if not set
-          if ! grep -q "^run_ui_tests=" "$GITHUB_OUTPUT" 2>/dev/null; then
-            echo "⚠️  run_ui_tests not found in output, forcing it..."
-            echo "run_ui_tests=true" >> "$GITHUB_OUTPUT"
-          fi
+          # ⚠️ TEMPORARY: ALWAYS force run_ui_tests=true at the end (overwrites any previous value)
+          echo "⚠️  TEMPORARY OVERRIDE: Forcing run_ui_tests=true (final override)"
+          # Remove any existing run_ui_tests line and add the forced value
+          grep -v "^run_ui_tests=" "$GITHUB_OUTPUT" > "$GITHUB_OUTPUT.tmp" 2>/dev/null || true
+          mv "$GITHUB_OUTPUT.tmp" "$GITHUB_OUTPUT" 2>/dev/null || true
+          echo "run_ui_tests=true" >> "$GITHUB_OUTPUT"
+          
+          echo "🔍 DEBUG: Final GITHUB_OUTPUT contents:"
+          cat "$GITHUB_OUTPUT" | grep -E "(run_ui_tests|run_be_tests)" || echo "⚠️  Still no run_ui_tests or run_be_tests found!"
 
   # ==================================================================================
   # STAGE 2: SHARED SETUP (Run once for all environments)
