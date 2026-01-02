@@ -1,0 +1,23 @@
+# Artillery Configuration for Development Environment - Smoke Test Only
+# Target: http://localhost:3003
+# This config only includes the smoke test phase for quick validation
+
+config:
+  target: "http://localhost:3003"
+  phases:
+    # Smoke test phase: Quick 10-second test with light load (dev: 1 user/sec)
+    # Reduced load to avoid overwhelming services during startup
+    - duration: 10
+      arrivalRate: 1
+      name: "Smoke test - light load"
+  processor: "../processors/homepage-processor.js"
+  variables:
+    baseUrl: "http://localhost:3003"
+
+# Default scenario (can be overridden by scenario files)
+scenarios:
+  - name: "Homepage Load Test"
+    weight: 100
+    flow:
+      - function: "loadHomepage"
+

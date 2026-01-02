@@ -64,8 +64,15 @@ EXIT_CODE=0
 case "$TEST_TYPE" in
     smoke)
         echo "Running smoke test (minimal homepage load test)..."
+        # Use smoke-specific config that only has the smoke phase
+        SMOKE_CONFIG="artillery/config/${ENVIRONMENT}-smoke.yml"
+        if [ ! -f "$SMOKE_CONFIG" ]; then
+            echo "⚠️  Warning: Smoke config not found: $SMOKE_CONFIG"
+            echo "   Falling back to full config (will run all phases)"
+            SMOKE_CONFIG="$ENV_CONFIG"
+        fi
         npx artillery run artillery/scenarios/homepage-minimal-test.yml \
-            --config "$ENV_CONFIG" \
+            --config "$SMOKE_CONFIG" \
             --output artillery-results/smoke-results.json || EXIT_CODE=$?
         ;;
     homepage-only)
