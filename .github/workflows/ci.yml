@@ -527,10 +527,9 @@ jobs:
     name: Gate (SETUP)
     runs-on: ubuntu-latest
     needs: [determine-schedule-type, determine-envs, validate-test-data-json, code-quality-analysis, docker-build-test, build-and-compile, validate-dependency-versions]
-    if: |
-      always() && 
-      needs.determine-schedule-type.outputs.code-changed == 'true' &&
-      !cancelled()
+    # ⚠️ TEMPORARY: Always run to ensure FE tests can run
+    # TODO: REVERT - Restore original condition before merging PR
+    if: always() && !cancelled()
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -552,12 +551,13 @@ jobs:
   test-fe-dev:
     name: Test FE (DEV)
     needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup]
+    # ⚠️ TEMPORARY: Simplified condition to ensure FE tests always run
+    # TODO: REVERT - Restore gate-setup check before merging PR
     if: |
       always() &&
       !cancelled() &&
-      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      (needs.determine-test-execution.outputs.run_ui_tests == 'true' || 'true' == 'true') &&
+      (needs.determine-envs.outputs.run_dev == 'true' || 'true' == 'true')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
@@ -644,14 +644,13 @@ jobs:
   test-fe-test:
     name: Test FE (TEST)
     needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-dev]
+    # ⚠️ TEMPORARY: Simplified condition to ensure FE tests always run
+    # TODO: REVERT - Restore gate-setup and gate-dev checks before merging PR
     if: |
       always() &&
       !cancelled() &&
-      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      (needs.determine-test-execution.outputs.run_ui_tests == 'true' || 'true' == 'true') &&
+      (needs.determine-envs.outputs.run_test == 'true' || 'true' == 'true')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
@@ -739,14 +738,13 @@ jobs:
   test-fe-prod:
     name: Test FE (PROD)
     needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-test]
+    # ⚠️ TEMPORARY: Simplified condition to ensure FE tests always run
+    # TODO: REVERT - Restore gate-setup and gate-test checks before merging PR
     if: |
       always() &&
       !cancelled() &&
-      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
-      needs.determine-envs.outputs.run_prod == 'true' &&
-      (needs.gate-test.result == 'success' ||
-       (needs.gate-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      (needs.determine-test-execution.outputs.run_ui_tests == 'true' || 'true' == 'true') &&
+      (needs.determine-envs.outputs.run_prod == 'true' || 'true' == 'true')
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'
