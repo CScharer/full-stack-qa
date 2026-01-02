@@ -130,29 +130,42 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     fi
     
     # Also check merged directory with environment-specific subdirectory (cypress-results/cypress-results-{env}/)
+    # Artifacts preserve full upload path: cypress-results/cypress-results-{env}/cypress/cypress/results/
     if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env" ]; then
         echo "   Converting Cypress results ($env) from merged cypress-results/cypress-results-$env..."
         chmod +x scripts/ci/convert-cypress-to-allure.sh
-        json_file=$(find "$SOURCE_DIR/cypress-results/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/results/*.json" \) 2>/dev/null | head -1)
-        if [ -n "$json_file" ] && [ -f "$json_file" ]; then
-            json_dir=$(dirname "$json_file")
-            echo "   📄 Found Cypress JSON file: $json_file"
-            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
-                ENV_PROCESSED=1
-                echo "   ✅ Cypress conversion successful for $env"
-            else
-                echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
-            fi
-        elif [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/results" ]; then
-            echo "   📂 Found Cypress results directory: $SOURCE_DIR/cypress-results/cypress-results-$env/results"
-            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress-results-$env/results" "$env"; then
+        # Check nested path first (artifacts preserve full upload path)
+        if [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results" ]; then
+            echo "   📂 Found Cypress results directory (nested path): $SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results"
+            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results" "$env"; then
                 ENV_PROCESSED=1
                 echo "   ✅ Cypress conversion successful for $env"
             else
                 echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
             fi
         else
-            echo "   ⚠️  No Cypress JSON files found in $SOURCE_DIR/cypress-results/cypress-results-$env"
+            # Fallback: search for JSON files recursively
+            json_file=$(find "$SOURCE_DIR/cypress-results/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/results/*.json" \) 2>/dev/null | head -1)
+            if [ -n "$json_file" ] && [ -f "$json_file" ]; then
+                json_dir=$(dirname "$json_file")
+                echo "   📄 Found Cypress JSON file: $json_file"
+                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Cypress conversion successful for $env"
+                else
+                    echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+                fi
+            elif [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/results" ]; then
+                echo "   📂 Found Cypress results directory: $SOURCE_DIR/cypress-results/cypress-results-$env/results"
+                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress-results-$env/results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Cypress conversion successful for $env"
+                else
+                    echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+                fi
+            else
+                echo "   ⚠️  No Cypress JSON files found in $SOURCE_DIR/cypress-results/cypress-results-$env"
+            fi
         fi
     fi
     
@@ -162,6 +175,7 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "      Checked locations:"
         echo "        - $SOURCE_DIR/results-$env/cypress-results-$env"
         echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env"
+        echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results (nested path)"
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
@@ -186,14 +200,29 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     fi
     
     # Also check merged directory with environment-specific subdirectory (playwright-results/playwright-results-{env}/)
-    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" ]; then
+    # Artifacts preserve full upload path: playwright-results/playwright-results-{env}/playwright/test-results/
+    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env" ]; then
         echo "   Converting Playwright results ($env) from merged playwright-results/playwright-results-$env..."
         chmod +x scripts/ci/convert-playwright-to-allure.sh
-        if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" "$env"; then
-            ENV_PROCESSED=1
-            echo "   ✅ Playwright conversion successful for $env"
+        # Check nested path first (artifacts preserve full upload path)
+        if [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results" ]; then
+            echo "   📂 Found Playwright results directory (nested path): $SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results"
+            if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Playwright conversion successful for $env"
+            else
+                echo "   ⚠️  Playwright conversion failed for $env (exit code: $?)"
+            fi
+        elif [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" ]; then
+            echo "   📂 Found Playwright results directory: $SOURCE_DIR/playwright-results/playwright-results-$env/test-results"
+            if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Playwright conversion successful for $env"
+            else
+                echo "   ⚠️  Playwright conversion failed for $env (exit code: $?)"
+            fi
         else
-            echo "   ⚠️  Playwright conversion failed for $env (exit code: $?)"
+            echo "   ⚠️  No Playwright test-results directory found in $SOURCE_DIR/playwright-results/playwright-results-$env"
         fi
     fi
     
@@ -203,6 +232,7 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "      Checked locations:"
         echo "        - $SOURCE_DIR/results-$env/playwright-results-$env/test-results"
         echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/test-results"
+        echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results (nested path)"
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
@@ -230,13 +260,15 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     fi
     
     # Also check merged directory with environment-specific subdirectory (robot-results/robot-results-{env}/)
+    # Artifacts preserve full upload path: robot-results/robot-results-{env}/target/robot-reports/
     if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/robot-results/robot-results-$env" ]; then
         echo "   Converting Robot Framework results ($env) from merged robot-results/robot-results-$env..."
         chmod +x scripts/ci/convert-robot-to-allure.sh
-        output_xml=$(find "$SOURCE_DIR/robot-results/robot-results-$env" -name "output.xml" 2>/dev/null | head -1)
+        # Check nested path first (artifacts preserve full upload path)
+        output_xml=$(find "$SOURCE_DIR/robot-results/robot-results-$env/target/robot-reports" -name "output.xml" 2>/dev/null | head -1)
         if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
             output_dir=$(dirname "$output_xml")
-            echo "   📄 Found Robot output.xml: $output_xml"
+            echo "   📄 Found Robot output.xml (nested path): $output_xml"
             if ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env"; then
                 ENV_PROCESSED=1
                 echo "   ✅ Robot conversion successful for $env"
@@ -244,7 +276,20 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
                 echo "   ⚠️  Robot conversion failed for $env (exit code: $?)"
             fi
         else
-            echo "   ⚠️  No Robot output.xml found in $SOURCE_DIR/robot-results/robot-results-$env"
+            # Fallback: search for output.xml anywhere in the directory
+            output_xml=$(find "$SOURCE_DIR/robot-results/robot-results-$env" -name "output.xml" 2>/dev/null | head -1)
+            if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
+                output_dir=$(dirname "$output_xml")
+                echo "   📄 Found Robot output.xml: $output_xml"
+                if ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Robot conversion successful for $env"
+                else
+                    echo "   ⚠️  Robot conversion failed for $env (exit code: $?)"
+                fi
+            else
+                echo "   ⚠️  No Robot output.xml found in $SOURCE_DIR/robot-results/robot-results-$env"
+            fi
         fi
     fi
     
@@ -254,6 +299,7 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "      Checked locations:"
         echo "        - $SOURCE_DIR/results-$env (searching for output.xml)"
         echo "        - $SOURCE_DIR/robot-results/robot-results-$env"
+        echo "        - $SOURCE_DIR/robot-results/robot-results-$env/target/robot-reports (nested path)"
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
@@ -287,10 +333,29 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     fi
     
     # Also check merged directory with environment-specific subdirectory (vibium-results/vibium-results-{env}/)
+    # Artifacts preserve full upload path: vibium-results/vibium-results-{env}/vibium/test-results/ or vibium-results/vibium-results-{env}/vibium/.vitest/
     if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env" ]; then
         echo "   Converting Vibium results ($env) from merged vibium-results/vibium-results-$env..."
         chmod +x scripts/ci/convert-vibium-to-allure.sh
-        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" ]; then
+        # Check nested paths first (artifacts preserve full upload path)
+        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results" ]; then
+            echo "   📂 Found Vibium results directory (nested path): $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results"
+            if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Vibium conversion successful for $env"
+            else
+                echo "   ⚠️  Vibium conversion failed for $env (exit code: $?)"
+            fi
+        elif [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest" ]; then
+            echo "   📂 Found Vibium .vitest directory (nested path): $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest"
+            if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Vibium conversion successful for $env"
+            else
+                echo "   ⚠️  Vibium conversion failed for $env (exit code: $?)"
+            fi
+        elif [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" ]; then
+            echo "   📂 Found Vibium results directory: $SOURCE_DIR/vibium-results/vibium-results-$env/test-results"
             if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" "$env"; then
                 ENV_PROCESSED=1
                 echo "   ✅ Vibium conversion successful for $env"
@@ -298,6 +363,7 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
                 echo "   ⚠️  Vibium conversion failed for $env (exit code: $?)"
             fi
         elif [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" ]; then
+            echo "   📂 Found Vibium .vitest directory: $SOURCE_DIR/vibium-results/vibium-results-$env/.vitest"
             if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" "$env"; then
                 ENV_PROCESSED=1
                 echo "   ✅ Vibium conversion successful for $env"
@@ -317,6 +383,8 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "        - $SOURCE_DIR/results-$env/vibium-results-$env/.vitest"
         echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/test-results"
         echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/.vitest"
+        echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results (nested path)"
+        echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest (nested path)"
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,

@@ -1,7 +1,7 @@
 # Test Results Appearing Identical Across Environments - Comprehensive Analysis
 
 **Date:** January 2, 2026  
-**Last Updated:** January 2, 2026  
+**Last Updated:** January 2, 2026 (Pipeline fixes for missing results)  
 **Issue:** Test results from **ALL frameworks** (FS, Cypress, Playwright, Robot, Vibium, Selenide, BE tests) appear identical across dev, test, and prod environments in the Allure report.
 
 **Important Note:** It's acceptable if tests produce identical results/data. The concern is **verifying that results are truly from different test runs in different environments**, not that the results themselves are different.
