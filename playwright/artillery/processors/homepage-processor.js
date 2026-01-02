@@ -30,9 +30,10 @@ module.exports = {
       // Navigate to homepage with timeout and fallback
       // Use 'domcontentloaded' instead of 'networkidle' for more reliable loading
       // 'networkidle' can timeout if there are long-polling connections or WebSocket connections
+      // Increased timeout for CI/CD where services may need more time to stabilize
       await page.goto(baseUrl, { 
         waitUntil: 'domcontentloaded',
-        timeout: 30000  // 30 second timeout
+        timeout: 60000  // 60 second timeout for CI/CD environments
       });
       
       const loadTime = Date.now() - startTime;

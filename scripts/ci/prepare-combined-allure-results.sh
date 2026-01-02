@@ -242,51 +242,71 @@ if [ "$VIBIUM_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/vibium-results" ]; then
     done
 fi
 
-# Convert Artillery results for each environment
-# IMPORTANT: Artillery tests only run in dev and test (never prod)
-# Only process environments where Artillery actually ran
-ARTILLERY_ENVIRONMENTS=("dev" "test")
-ARTILLERY_PROCESSED_ENVS=()
+# Convert FS (Full-Stack) test results for each environment
+# IMPORTANT: FS tests only run in dev and test (never prod)
+# Only process environments where FS tests actually ran
+FS_ENVIRONMENTS=("dev" "test")
+FS_PROCESSED_ENVS=()
 
-echo "   📊 Artillery runs only in: dev, test (never prod)"
-echo "   🔍 Checking for Artillery results in dev and test environments only..."
+echo "   📊 FS (Full-Stack) tests run only in: dev, test (never prod)"
+echo "   🔍 Checking for FS test results in dev and test environments only..."
 
-# Process Artillery results for each environment
-# Artifacts are downloaded as artillery-results-{env} and merged into artillery-results/
-# When merged, they preserve the artifact name as a subdirectory: artillery-results/artillery-results-{env}/
-if [ -d "$SOURCE_DIR/artillery-results" ]; then
-    echo "   ✅ Found artillery-results directory"
+# Process FS test results for each environment
+# Artifacts: uploaded as "fs-results-{env}" from "playwright/artillery-results/"
+# Downloaded to: "all-test-results/fs-results" with merge-multiple: true
+# When merged, structure is: fs-results/fs-results-{env}/artillery-results/*.json
+# (The artifact name becomes a directory, and the uploaded path is preserved inside it)
+
+if [ -d "$SOURCE_DIR/fs-results" ]; then
+    echo "   ✅ Found fs-results directory"
     
     # Process each active environment
-    for env in "${ARTILLERY_ENVIRONMENTS[@]}"; do
+    for env in "${FS_ENVIRONMENTS[@]}"; do
         # Skip if this environment wasn't active
         if [[ ! " ${ACTIVE_ENVIRONMENTS[@]} " =~ " ${env} " ]]; then
-            echo "   ⏭️  Skipping Artillery conversion for $env (environment not active)"
+            echo "   ⏭️  Skipping FS test conversion for $env (environment not active)"
             continue
         fi
         
         ENV_PROCESSED=0
         
         # Check for environment-specific subdirectory (most common case with merge-multiple: true)
-        env_dir="$SOURCE_DIR/artillery-results/artillery-results-$env"
+        # Structure: fs-results/fs-results-{env}/artillery-results/*.json
+        env_dir="$SOURCE_DIR/fs-results/fs-results-$env"
         if [ -d "$env_dir" ]; then
-            json_count=$(find "$env_dir" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
-            if [ "$json_count" -gt 0 ]; then
-                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) in artillery-results-$env/)..."
-                chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$env_dir" "$env" || true
-                ENV_PROCESSED=1
+            # First try: fs-results/fs-results-{env}/artillery-results/*.json
+            artillery_dir="$env_dir/artillery-results"
+            if [ -d "$artillery_dir" ]; then
+                json_count=$(find "$artillery_dir" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                if [ "$json_count" -gt 0 ]; then
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/artillery-results/)..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$artillery_dir" "$env" || true
+                    ENV_PROCESSED=1
+                fi
+            fi
+            
+            # If not found in artillery-results subdirectory, check if files are directly in fs-results-{env}
+            if [ "$ENV_PROCESSED" -eq 0 ]; then
+                json_files=$(find "$env_dir" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
+                if [ -n "$json_files" ]; then
+                    json_count=$(echo "$json_files" | wc -l | tr -d ' ')
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/)..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$env_dir" "$env" || true
+                    ENV_PROCESSED=1
+                fi
             fi
         fi
         
         # If not found in subdirectory, check if files are in the root (flat merge)
         if [ "$ENV_PROCESSED" -eq 0 ]; then
-            json_files=$(find "$SOURCE_DIR/artillery-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
+            json_files=$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
             if [ -n "$json_files" ]; then
                 json_count=$(echo "$json_files" | wc -l | tr -d ' ')
-                echo "   🔄 Converting Artillery results for $env (found $json_count JSON file(s) in root)..."
+                echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in root)..."
                 chmod +x scripts/ci/convert-artillery-to-allure.sh
-                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/artillery-results" "$env" || true
+                ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env" || true
                 ENV_PROCESSED=1
             fi
         fi
@@ -294,34 +314,33 @@ if [ -d "$SOURCE_DIR/artillery-results" ]; then
         # Verify results were created
         if [ "$ENV_PROCESSED" -eq 1 ]; then
             # Count results created for this environment
-            env_results=$(find "$TARGET_DIR" -name "*-result.json" -newer "$SOURCE_DIR/artillery-results" -exec grep -l "\"environment\", \"value\": \"$env\"" {} \; 2>/dev/null | wc -l | tr -d ' ')
+            env_results=$(find "$TARGET_DIR" -name "*-result.json" -newer "$SOURCE_DIR/fs-results" -exec grep -l "\"environment\", \"value\": \"$env\"" {} \; 2>/dev/null | wc -l | tr -d ' ')
             # Fallback: just count recent results if the above doesn't work
             if [ "$env_results" -eq 0 ]; then
                 env_results=$(find "$TARGET_DIR" -name "*-result.json" -exec grep -l "Artillery.*$env" {} \; 2>/dev/null | wc -l | tr -d ' ')
             fi
             if [ "$env_results" -gt 0 ]; then
-                ARTILLERY_PROCESSED_ENVS+=("$env")
-                echo "   ✅ Artillery results processed for $env ($env_results result file(s))"
+                FS_PROCESSED_ENVS+=("$env")
+                echo "   ✅ FS test results processed for $env ($env_results result file(s))"
             else
-                echo "   ⚠️  Artillery conversion ran for $env but no results were created"
+                echo "   ⚠️  FS test conversion ran for $env but no results were created"
             fi
         else
-            echo "   ⚠️  No Artillery results found for environment: $env"
+            echo "   ⚠️  No FS test results found for $env"
         fi
     done
 else
-    echo "   ⚠️  artillery-results directory not found at: $SOURCE_DIR/artillery-results"
+    echo "   ⚠️  fs-results directory not found at: $SOURCE_DIR/fs-results"
 fi
-
-# Warn if prod is in active environments but Artillery shouldn't run there
+# Warn if prod is in active environments but FS tests shouldn't run there
 if [[ " ${ACTIVE_ENVIRONMENTS[@]} " =~ " prod " ]]; then
-    echo "   ℹ️  Note: prod is active, but Artillery tests never run in prod (skipped)"
+    echo "   ℹ️  Note: prod is active, but FS tests never run in prod (skipped)"
 fi
 
-if [ ${#ARTILLERY_PROCESSED_ENVS[@]} -gt 0 ]; then
-    echo "   ✅ Artillery results processed for: ${ARTILLERY_PROCESSED_ENVS[*]}"
+if [ ${#FS_PROCESSED_ENVS[@]} -gt 0 ]; then
+    echo "   ✅ FS test results processed for: ${FS_PROCESSED_ENVS[*]}"
 else
-    echo "   ⚠️  No Artillery results were processed for any environment"
+    echo "   ⚠️  No FS test results were processed for any environment"
 fi
 
 # Step 4: Add environment labels
@@ -386,7 +405,7 @@ echo "   - Playwright: $PLAYWRIGHT_COUNT test(s)"
 echo "   - Cypress: $CYPRESS_COUNT test(s)"
 echo "   - Robot Framework: $ROBOT_COUNT test(s)"
 echo "   - Vibium: $VIBIUM_COUNT test(s)"
-echo "   - Artillery: $ARTILLERY_COUNT test(s)"
+echo "   - FS (Full-Stack): $ARTILLERY_COUNT test(s)"
 echo "   - Selenide: $SELENIDE_COUNT test(s) (merged from TestNG results)"
 echo ""
 # Debug: Show sample matches for troubleshooting

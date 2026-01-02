@@ -1,5 +1,6 @@
-# Artillery Configuration for Test Environment
+# Artillery Configuration for Test Environment - Smoke Test Only
 # Target: http://localhost:3004
+# This config only includes the smoke test phase for quick validation
 
 config:
   target: "http://localhost:3004"
@@ -9,19 +10,9 @@ config:
     - duration: 10
       arrivalRate: 1
       name: "Smoke test - light load"
-    # Warm-up phase: Gradually ramp up to 4 users (test environment)
-    - duration: 60
-      arrivalRate: 4
-      name: "Warm up"
-    # Sustained load: Maintain 10 concurrent users
-    - duration: 300
-      arrivalRate: 10
-      name: "Sustained load"
   processor: "../processors/homepage-processor.js"
   variables:
     baseUrl: "http://localhost:3004"
-  payload:
-    # Can add test data files here if needed
 
 # Default scenario (can be overridden by scenario files)
 scenarios:
@@ -29,5 +20,4 @@ scenarios:
     weight: 100
     flow:
       - function: "loadHomepage"
-      - think: 2
 

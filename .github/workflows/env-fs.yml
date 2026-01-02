@@ -1,0 +1,203 @@
+name: Test Single Environment (FS Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to Test (dev, test)'
+        required: true
+        type: string
+      artillery_test_type:
+        description: 'Artillery Test Type (smoke, all, homepage-only, applications-only)'
+        required: true
+        type: string
+      base_url:
+        description: 'Base URL for the Environment'
+        required: true
+        type: string
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+jobs:
+  fs-tests:
+    name: Test FS (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine Ports and URLs
+        id: ports
+        run: |
+          chmod +x scripts/ci/determine-ports.sh
+          ./scripts/ci/determine-ports.sh "${{ inputs.environment }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: playwright/package-lock.json
+
+      - name: Start Backend and Frontend Services
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "🚀 Starting services for FS (Full-Stack) tests (${{ inputs.environment }})..."
+          chmod +x scripts/start-services-for-ci.sh
+          ./scripts/start-services-for-ci.sh
+          # No sleep needed - start-services-for-ci.sh waits for services to be ready
+
+      - name: Verify Services Are Running
+        run: |
+          chmod +x scripts/ci/verify-services.sh
+          ./scripts/ci/verify-services.sh \
+            "${{ inputs.base_url }}" \
+            "30"
+          
+      - name: Wait for Services to Stabilize
+        run: |
+          echo "⏳ Waiting 5 seconds for services to fully stabilize before load testing..."
+          sleep 5
+          echo "✅ Services should be ready for load testing"
+
+      - name: Install Playwright dependencies
+        working-directory: ./playwright
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ./playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Create FS test results directory
+        working-directory: ./playwright
+        run: mkdir -p artillery-results
+
+      - name: Run FS Tests
+        working-directory: ./playwright
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          echo "🔍 DEBUG: Current working directory: $(pwd)"
+          echo "🔍 DEBUG: Checking if artillery directory exists..."
+          if [ -d "artillery" ]; then
+            echo "  ✅ artillery/ directory exists"
+            echo "  📂 Contents:"
+            find artillery -type f -name "*.yml" 2>/dev/null | head -10 | while IFS= read -r f; do
+              echo "    📄 $f"
+            done
+          else
+            echo "  ❌ artillery/ directory NOT found!"
+          fi
+          echo ""
+          echo "🔍 DEBUG: Checking if artillery-results directory exists before running tests..."
+          if [ -d "artillery-results" ]; then
+            echo "  ✅ artillery-results/ exists (will be reused)"
+          else
+            echo "  ℹ️  artillery-results/ does not exist yet (will be created)"
+          fi
+          echo ""
+          chmod +x ../scripts/ci/run-artillery-tests.sh
+          ../scripts/ci/run-artillery-tests.sh \
+            "${{ inputs.environment }}" \
+            "${{ inputs.artillery_test_type }}" \
+            "${{ inputs.base_url }}"
+          echo ""
+          echo "🔍 DEBUG: After test execution, checking artillery-results..."
+          if [ -d "artillery-results" ]; then
+            echo "  ✅ artillery-results/ directory exists"
+            echo "  📂 Contents:"
+            find artillery-results -type f 2>/dev/null | while IFS= read -r f; do
+              size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
+              echo "    📄 $f (size: $size bytes)"
+            done || echo "    (empty or error)"
+          else
+            echo "  ❌ artillery-results/ directory NOT found after test execution!"
+          fi
+
+      - name: Verify FS Test Results
+        if: always()
+        run: |
+          echo "🔍 Verifying FS test results..."
+          echo "Current directory: $(pwd)"
+          echo ""
+          echo "Checking playwright/artillery-results/ from repo root:"
+          if [ -d "playwright/artillery-results" ]; then
+            echo "  ✅ Directory exists"
+            echo "  📂 Full path: $(pwd)/playwright/artillery-results"
+            echo "  📂 Contents:"
+            find playwright/artillery-results -maxdepth 2 -type f -o -type d 2>/dev/null | while IFS= read -r item; do
+              if [ -f "$item" ]; then
+                size=$(stat -f%z "$item" 2>/dev/null || stat -c%s "$item" 2>/dev/null || echo "unknown")
+                echo "    📄 $item (size: $size bytes)"
+              else
+                echo "    📁 $item"
+              fi
+            done || echo "    (empty or error)"
+            echo ""
+            echo "  📄 JSON files (detailed):"
+            json_count=0
+            find playwright/artillery-results -name "*.json" -type f 2>/dev/null | while IFS= read -r f; do
+              json_count=$((json_count + 1))
+              size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
+              echo "    📄 $f (size: $size bytes)"
+            done
+            if [ "$json_count" -eq 0 ]; then
+              echo "    ⚠️  NO JSON FILES FOUND"
+            fi
+          else
+            echo "  ❌ Directory does not exist!"
+            echo ""
+            echo "Checking from playwright directory:"
+            if [ -d "playwright" ]; then
+              echo "  playwright/ exists"
+              echo "  Contents of playwright/:"
+              find playwright -maxdepth 1 -type f -o -type d 2>/dev/null | head -20 | while IFS= read -r item; do
+                echo "    $item"
+              done
+              if [ -d "playwright/artillery-results" ]; then
+                echo "  ✅ playwright/artillery-results/ exists"
+              else
+                echo "  ❌ playwright/artillery-results/ does not exist"
+                echo ""
+                echo "  🔍 Searching for any artillery-results directories:"
+                find . -type d -name "artillery-results" 2>/dev/null | while IFS= read -r d; do
+                  echo "    Found: $d"
+                  find "$d" -name "*.json" -type f 2>/dev/null | while IFS= read -r f; do
+                    echo "      📄 $f"
+                  done
+                done
+              fi
+            fi
+          fi
+
+      - name: Upload FS Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fs-results-${{ inputs.environment }}
+          path: playwright/artillery-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Note on FS Test Reporting
+        if: always()
+        run: |
+          echo "ℹ️  FS (Full-Stack) load test results are available."
+          echo "📊 JSON results are available in the 'fs-results-${{ inputs.environment }}' artifact."
+          echo "🌐 For visualization, use Artillery Cloud: https://app.artillery.io"
+          echo ""
+          echo "To view results locally, you can:"
+          echo "  1. Download the JSON artifact"
+          echo "  2. Upload to Artillery Cloud for visualization"
+          echo "  3. Or parse the JSON directly for metrics"
+

@@ -2,9 +2,11 @@
 
 > **Living Document** - This document explains how test jobs are organized and grouped in the GitHub Actions workflow, including the rationale for the grouping structure.
 
-**Last Updated**: 2025-12-27  
+**Last Updated**: 2025-12-31  
 **Related Files**: 
 - `.github/workflows/env-fe.yml` (reusable workflow for frontend tests)
+- `.github/workflows/env-be.yml` (reusable workflow for backend/API performance tests)
+- `.github/workflows/env-fs.yml` (reusable workflow for full-stack browser load tests)
 - `.github/workflows/ci.yml` (main orchestrator workflow)
 
 ---
@@ -12,6 +14,7 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Reusable Workflows Comparison](#reusable-workflows-comparison)
 - [Test Job Groups](#test-job-groups)
 - [Technical Differences Between Test Categories](#technical-differences-between-test-categories)
 - [Test Result Reporting](#test-result-reporting)
@@ -29,6 +32,34 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 - **Maintain consistency** - Similar tests are grouped together
 
 **Key Principle**: All test jobs run in **parallel** (no dependencies between test jobs). The grouping is organizational, not functional.
+
+---
+
+## Reusable Workflows Comparison
+
+The CI/CD pipeline uses three reusable workflows for environment-specific testing. Each serves a distinct purpose:
+
+| Aspect | BE Reusable<br/>(`env-be.yml`) | FE Reusable<br/>(`env-fe.yml`) | FS Reusable<br/>(`env-fs.yml`) |
+|--------|-------------------------------|-------------------------------|--------------------------------------|
+| **Purpose** | Protocol-Level Performance Testing | Functional Testing | Browser-Based Load Testing |
+| **Workflow Name** | Test Single Environment (BE Reusable) | Test Single Environment (FE Reusable) | Test Single Environment (FS Reusable) |
+| **Uses Browsers?** | ❌ No | ✅ Yes (for functionality) | ✅ Yes (for performance) |
+| **Test Focus** | API endpoints, database performance, HTTP/HTTPS protocol | UI behavior, user workflows, feature correctness | Full stack (frontend + backend) under load with real browser rendering |
+| **Frameworks/Tools** | Gatling, JMeter, Locust | Selenium, Cypress, Playwright, Robot, Selenide, Vibium | Artillery + Playwright |
+| **Execution Level** | Protocol layer (HTTP/HTTPS requests) | Application layer (browser interactions) | Browser layer (real rendering + JavaScript) |
+| **Metrics Collected** | Response times, throughput, concurrent users | Test pass/fail, screenshots, logs | Core Web Vitals (LCP, FID, CLS, FCP), page load times, browser metrics |
+| **Primary Question** | How fast/stable are the APIs under load? | Does it work correctly? | How does the app perform in real browsers under load? |
+| **Service Requirements** | Frontend + Backend | Frontend + Backend + Selenium Grid (for some tests) | Frontend + Backend |
+| **Environments** | dev, test | dev, test, prod | dev, test |
+| **Language/Runtime** | Java (Gatling/JMeter), Python (Locust) | Java (TestNG), Node.js, Python | Node.js (Artillery + Playwright) |
+
+### Key Distinctions
+
+- **BE Reusable**: Tests **API performance** - measures protocol-level performance without browsers
+- **FE Reusable**: Tests **functionality** - verifies features work as expected
+- **FS Reusable**: Tests **browser performance** - measures full-stack performance with real browser rendering
+
+**Note**: The FS (Full-Stack) Reusable workflow was previously named "Artillery Reusable" but was renamed to better reflect its purpose of testing the entire application stack (frontend + backend) under browser load conditions.
 
 ---
 
@@ -259,7 +290,7 @@ GitHub Actions UI groups jobs visually based on:
 
 ---
 
-**Last Updated**: 2025-12-27  
+**Last Updated**: 2025-12-31  
 **Maintained By**: Development Team  
 **Review Frequency**: When test job organization changes
 
