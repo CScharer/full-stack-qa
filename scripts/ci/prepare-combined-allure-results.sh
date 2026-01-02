@@ -239,41 +239,41 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         fi
     fi
     
-    # Debug: Report if Cypress results were not found for this environment
+    # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
+    # Only process for first environment to prevent duplicates, or if we can determine environment from file content
     if [ "$ENV_PROCESSED" -eq 0 ]; then
-        echo "   ⚠️  No Cypress results found for $env environment"
-        echo "      Checked locations:"
-        echo "        - $SOURCE_DIR/results-$env/cypress-results-$env"
-        if [ -d "$SOURCE_DIR/results-$env/cypress-results-$env" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/results-$env/cypress-results-$env" -name "*.json" -o -name "mochawesome.json" -o -name "cypress-results.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
+        # Check if flat structure exists (cypress-results/results/ or cypress-results/cypress/cypress/results/)
+        if [ -d "$SOURCE_DIR/cypress-results/results" ] || [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
+            # Only process for first environment to prevent duplicate processing
+            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
+                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
+                echo "   📂 Found Cypress results in flat structure, processing for first environment: $env"
+                chmod +x scripts/ci/convert-cypress-to-allure.sh
+                if [ -d "$SOURCE_DIR/cypress-results/results" ]; then
+                    if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Cypress conversion successful for $env (flat structure)"
+                    fi
+                elif [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
+                    if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/cypress/results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Cypress conversion successful for $env (flat structure, nested path)"
+                    fi
+                fi
+            else
+                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]})"
+            fi
         else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env"
-        if [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/cypress-results/cypress-results-$env" -name "*.json" -o -name "mochawesome.json" -o -name "cypress-results.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
-        else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results (nested path)"
-        if [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results" -name "*.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
-        else
-            echo "          Directory does not exist"
+            # Debug: Report if Cypress results were not found for this environment
+            echo "   ⚠️  No Cypress results found for $env environment"
+            echo "      Checked locations:"
+            echo "        - $SOURCE_DIR/results-$env/cypress-results-$env"
+            echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env"
+            echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results (nested path)"
+            echo "        - $SOURCE_DIR/cypress-results/results (flat structure)"
+            echo "        - $SOURCE_DIR/cypress-results/cypress/cypress/results (flat structure, nested path)"
         fi
     fi
-    
-    # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-    # we cannot determine which environment the files belong to, so skip to prevent duplicates
 done
 
 # Convert Playwright results for each environment
@@ -320,41 +320,40 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         fi
     fi
     
-    # Debug: Report if Playwright results were not found for this environment
+    # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
     if [ "$ENV_PROCESSED" -eq 0 ]; then
-        echo "   ⚠️  No Playwright results found for $env environment"
-        echo "      Checked locations:"
-        echo "        - $SOURCE_DIR/results-$env/playwright-results-$env/test-results"
-        if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" ]; then
-            echo "          Directory exists, searching for JUnit XML files:"
-            find "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" -name "*.xml" -o -name "junit.xml" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no XML files found)"
+        # Check if flat structure exists (playwright-results/test-results/ or playwright-results/playwright/test-results/)
+        if [ -d "$SOURCE_DIR/playwright-results/test-results" ] || [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
+            # Only process for first environment to prevent duplicate processing
+            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
+                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
+                echo "   📂 Found Playwright results in flat structure, processing for first environment: $env"
+                chmod +x scripts/ci/convert-playwright-to-allure.sh
+                if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
+                    if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Playwright conversion successful for $env (flat structure)"
+                    fi
+                elif [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
+                    if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright/test-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Playwright conversion successful for $env (flat structure, nested path)"
+                    fi
+                fi
+            else
+                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]})"
+            fi
         else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/test-results"
-        if [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" ]; then
-            echo "          Directory exists, searching for JUnit XML files:"
-            find "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" -name "*.xml" -o -name "junit.xml" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no XML files found)"
-        else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results (nested path)"
-        if [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results" ]; then
-            echo "          Directory exists, searching for JUnit XML files:"
-            find "$SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results" -name "*.xml" -o -name "junit.xml" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no XML files found)"
-        else
-            echo "          Directory does not exist"
+            # Debug: Report if Playwright results were not found for this environment
+            echo "   ⚠️  No Playwright results found for $env environment"
+            echo "      Checked locations:"
+            echo "        - $SOURCE_DIR/results-$env/playwright-results-$env/test-results"
+            echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/test-results"
+            echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results (nested path)"
+            echo "        - $SOURCE_DIR/playwright-results/test-results (flat structure)"
+            echo "        - $SOURCE_DIR/playwright-results/playwright/test-results (flat structure, nested path)"
         fi
     fi
-    
-    # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-    # we cannot determine which environment the files belong to, so skip to prevent duplicates
 done
 
 # Convert Robot Framework results for each environment
@@ -517,68 +516,43 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         fi
     fi
     
-    # Debug: Report if Vibium results were not found for this environment
+    # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
     if [ "$ENV_PROCESSED" -eq 0 ]; then
-        echo "   ⚠️  No Vibium results found for $env environment"
-        echo "      Checked locations:"
-        echo "        - $SOURCE_DIR/results-$env/vibium-results-$env/test-results"
-        if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" -name "*.json" -o -name "vitest-results.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
+        # Check if flat structure exists (vibium-results/test-results/ or vibium-results/.vitest/)
+        if [ -d "$SOURCE_DIR/vibium-results/test-results" ] || [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
+            # Only process for first environment to prevent duplicate processing
+            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
+                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
+                echo "   📂 Found Vibium results in flat structure, processing for first environment: $env"
+                chmod +x scripts/ci/convert-vibium-to-allure.sh
+                if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
+                    if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Vibium conversion successful for $env (flat structure)"
+                    fi
+                elif [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
+                    if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/.vitest" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Vibium conversion successful for $env (flat structure, .vitest path)"
+                    fi
+                fi
+            else
+                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]})"
+            fi
         else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/results-$env/vibium-results-$env/.vitest"
-        if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" -name "*.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
-        else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/test-results"
-        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" -name "*.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
-        else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/.vitest"
-        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" -name "*.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
-        else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results (nested path)"
-        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results" -name "*.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
-        else
-            echo "          Directory does not exist"
-        fi
-        echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest (nested path)"
-        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest" ]; then
-            echo "          Directory exists, searching for JSON files:"
-            find "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest" -name "*.json" 2>/dev/null | head -5 | while read f; do
-                echo "            Found: $f"
-            done || echo "            (no JSON files found)"
-        else
-            echo "          Directory does not exist"
+            # Debug: Report if Vibium results were not found for this environment
+            echo "   ⚠️  No Vibium results found for $env environment"
+            echo "      Checked locations:"
+            echo "        - $SOURCE_DIR/results-$env/vibium-results-$env/test-results"
+            echo "        - $SOURCE_DIR/results-$env/vibium-results-$env/.vitest"
+            echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/test-results"
+            echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/.vitest"
+            echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results (nested path)"
+            echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest (nested path)"
+            echo "        - $SOURCE_DIR/vibium-results/test-results (flat structure)"
+            echo "        - $SOURCE_DIR/vibium-results/.vitest (flat structure)"
         fi
     fi
-    
-    # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-    # we cannot determine which environment the files belong to, so skip to prevent duplicates
 done
 
 # Convert FS (Full-Stack) test results for each environment
