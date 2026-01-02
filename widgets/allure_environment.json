@@ -1,1 +1,1 @@
-[{"name":"Environments","values":["combined, dev"]},{"name":"Report.Type","values":["Combined"]},{"name":"Execution.Type","values":["CI/CD"]},{"name":"Multi.Environment","values":["true"]}]
+[{"name":"Environments","values":["dev, prod, test"]},{"name":"Report.Type","values":["Combined"]},{"name":"Execution.Type","values":["CI/CD"]},{"name":"Multi.Environment","values":["true"]}]
