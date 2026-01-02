@@ -239,7 +239,11 @@ echo "    Container JSON files: $CONTAINER_COUNT"
 echo "    Attachment files: $ATTACHMENT_COUNT"
 
 if [ "$RESULT_COUNT" -eq 0 ]; then
-    echo "⚠️  No test results found, generating placeholder result..."
-    printf '{"name": "Pipeline Execution (No results found)", "status": "passed", "stage": "finished", "start": %s, "stop": %s, "uuid": "%s"}' "$(date +%s%3N)" "$(date +%s%3N)" "$(uuidgen 2>/dev/null || echo 'placeholder-uuid')" > "$TARGET_DIR/placeholder-result.json"
-    echo "✅ Placeholder result created"
+    echo "⚠️  No test results found after merging Allure results"
+    echo "   This is expected if only framework-specific tests (Cypress, Playwright, Robot, Vibium, FS) ran"
+    echo "   Framework-specific results are converted separately in prepare-combined-allure-results.sh"
+    echo "   Not creating placeholder - framework converters will create results if they find test output"
+    # Don't create placeholder - let framework converters handle it
+    # printf '{"name": "Pipeline Execution (No results found)", "status": "passed", "stage": "finished", "start": %s, "stop": %s, "uuid": "%s"}' "$(date +%s%3N)" "$(date +%s%3N)" "$(uuidgen 2>/dev/null || echo 'placeholder-uuid')" > "$TARGET_DIR/placeholder-result.json"
+    # echo "✅ Placeholder result created"
 fi

@@ -40,6 +40,14 @@ fi
 if [ -z "$OUTPUT_XML" ] || [ ! -f "$OUTPUT_XML" ]; then
     echo "ℹ️  No Robot Framework output.xml found in $ROBOT_RESULTS_DIR"
     echo "   This is expected if Robot Framework tests haven't run"
+    echo "   🔍 Debug: Listing directory contents:"
+    if [ -d "$ROBOT_RESULTS_DIR" ]; then
+        find "$ROBOT_RESULTS_DIR" -maxdepth 3 -type f -name "*.xml" -o -name "*.json" 2>/dev/null | head -10 | while read f; do
+            echo "      Found: $f"
+        done || echo "      (no XML/JSON files found)"
+    else
+        echo "      Directory does not exist: $ROBOT_RESULTS_DIR"
+    fi
     exit 0
 fi
 

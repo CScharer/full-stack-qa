@@ -577,6 +577,8 @@ jobs:
     name: Deploy to DEV
     runs-on: ubuntu-latest
     needs: [setup-base-urls, determine-envs, test-fe-dev, gate-dev]
+    # Note: Deploy jobs only run on main branch pushes for safety
+    # This prevents accidental deployments from feature branches
     if: |
       always() &&
       needs.determine-envs.outputs.run_dev == 'true' &&
@@ -670,6 +672,8 @@ jobs:
     name: Deploy (TEST)
     runs-on: ubuntu-latest
     needs: [setup-base-urls, determine-envs, test-fe-test, gate-test]
+    # Note: Deploy jobs only run on main branch pushes for safety
+    # This prevents accidental deployments from feature branches
     if: |
       always() &&
       needs.determine-envs.outputs.run_test == 'true' &&

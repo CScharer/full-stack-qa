@@ -83,7 +83,24 @@ ACTIVE_ENVIRONMENTS=()
 
 for env in "${ENVIRONMENTS[@]}"; do
     # Check if this environment has any artifacts (any directory with results)
+    # Also check merged framework-specific directories
+    has_results=false
+    
+    # Check environment-specific directory
     if [ -d "$SOURCE_DIR/results-$env" ] && [ -n "$(find "$SOURCE_DIR/results-$env" -mindepth 1 -maxdepth 1 2>/dev/null)" ]; then
+        has_results=true
+    fi
+    
+    # Check merged framework directories
+    if [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env" ] || \
+       [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env" ] || \
+       [ -d "$SOURCE_DIR/robot-results/robot-results-$env" ] || \
+       [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env" ] || \
+       [ -d "$SOURCE_DIR/fs-results/fs-results-$env" ]; then
+        has_results=true
+    fi
+    
+    if [ "$has_results" = true ]; then
         ACTIVE_ENVIRONMENTS+=("$env")
         echo "   ✅ Detected active environment: $env"
     fi
@@ -298,8 +315,32 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "   ⚠️  No Robot results found for $env environment"
         echo "      Checked locations:"
         echo "        - $SOURCE_DIR/results-$env (searching for output.xml)"
+        if [ -d "$SOURCE_DIR/results-$env" ]; then
+            echo "          Directory exists, contents:"
+            find "$SOURCE_DIR/results-$env" -name "output.xml" -o -name "*.xml" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no XML files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/robot-results/robot-results-$env"
+        if [ -d "$SOURCE_DIR/robot-results/robot-results-$env" ]; then
+            echo "          Directory exists, searching for output.xml:"
+            find "$SOURCE_DIR/robot-results/robot-results-$env" -name "output.xml" 2>/dev/null | head -3 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no output.xml found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/robot-results/robot-results-$env/target/robot-reports (nested path)"
+        if [ -d "$SOURCE_DIR/robot-results/robot-results-$env/target/robot-reports" ]; then
+            echo "          Directory exists, searching for output.xml:"
+            find "$SOURCE_DIR/robot-results/robot-results-$env/target/robot-reports" -name "output.xml" 2>/dev/null | head -3 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no output.xml found)"
+        else
+            echo "          Directory does not exist"
+        fi
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
