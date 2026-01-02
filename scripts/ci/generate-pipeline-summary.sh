@@ -77,27 +77,59 @@ if [ "$CODE_CHANGED" = "true" ]; then
 
     echo "### FE Tests - Environments Tested:" >> "$SUMMARY_FILE"
 
+    # Count tests per environment from Allure results (if available)
+    ALLURE_RESULTS_DIR="allure-results-combined"
+    if [ -d "$ALLURE_RESULTS_DIR" ]; then
+        # Count tests by environment parameter or label
+        # Environment can be stored as:
+        # 1. Parameter: "name": "Environment", "value": "DEV" (uppercase)
+        # 2. Label: "name": "environment", "value": "dev" (lowercase)
+        # JSON may have whitespace/newlines, so use flexible patterns
+        # Match files that contain both the name and value patterns (may be on different lines)
+        DEV_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"Environment".*"DEV"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        if [ "$DEV_TEST_COUNT" -eq 0 ]; then
+            # Fallback: try lowercase label format
+            DEV_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"environment".*"dev"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        fi
+        
+        TEST_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"Environment".*"TEST"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        if [ "$TEST_TEST_COUNT" -eq 0 ]; then
+            # Fallback: try lowercase label format
+            TEST_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"environment".*"test"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        fi
+        
+        PROD_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"Environment".*"PROD"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        if [ "$PROD_TEST_COUNT" -eq 0 ]; then
+            # Fallback: try lowercase label format
+            PROD_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"environment".*"prod"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        fi
+    else
+        DEV_TEST_COUNT="?"
+        TEST_TEST_COUNT="?"
+        PROD_TEST_COUNT="?"
+    fi
+
     if [ "$RUN_DEV" = "true" ]; then
         if [ "$FE_DEV_RESULT" = "success" ]; then
-            echo "- ✅ **DEV**: Tests passed, Deployed" >> "$SUMMARY_FILE"
+            echo "- ✅ **DEV**: Tests passed ($DEV_TEST_COUNT test(s)), Deployed" >> "$SUMMARY_FILE"
         else
-            echo "- ❌ **DEV**: ${FE_DEV_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            echo "- ❌ **DEV**: ${FE_DEV_RESULT:-unknown} ($DEV_TEST_COUNT test(s))" >> "$SUMMARY_FILE"
         fi
     fi
 
     if [ "$RUN_TEST" = "true" ]; then
         if [ "$FE_TEST_RESULT" = "success" ]; then
-            echo "- ✅ **TEST**: Tests passed, Deployed" >> "$SUMMARY_FILE"
+            echo "- ✅ **TEST**: Tests passed ($TEST_TEST_COUNT test(s)), Deployed" >> "$SUMMARY_FILE"
         else
-            echo "- ❌ **TEST**: ${FE_TEST_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            echo "- ❌ **TEST**: ${FE_TEST_RESULT:-unknown} ($TEST_TEST_COUNT test(s))" >> "$SUMMARY_FILE"
         fi
     fi
 
     if [ "$RUN_PROD" = "true" ]; then
         if [ "$FE_PROD_RESULT" = "success" ]; then
-            echo "- ✅ **PROD**: Tests passed, Deployed" >> "$SUMMARY_FILE"
+            echo "- ✅ **PROD**: Tests passed ($PROD_TEST_COUNT test(s)), Deployed" >> "$SUMMARY_FILE"
         else
-            echo "- ❌ **PROD**: ${FE_PROD_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            echo "- ❌ **PROD**: ${FE_PROD_RESULT:-unknown} ($PROD_TEST_COUNT test(s))" >> "$SUMMARY_FILE"
         fi
     fi
 

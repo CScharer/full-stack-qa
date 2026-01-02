@@ -1379,6 +1379,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Download Combined Allure Results (for test counts)
+        if: always() && needs.combined-allure-report.result == 'success'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: allure-results-combined-all-environments
+          path: allure-results-combined
+
       - name: Generate Pipeline Summary
         run: |
           chmod +x scripts/ci/generate-pipeline-summary.sh
