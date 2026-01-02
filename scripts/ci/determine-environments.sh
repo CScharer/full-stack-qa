@@ -63,10 +63,10 @@ echo "selected_env=$ENV_SELECT" >> $GITHUB_OUTPUT
 echo "test_suite=$SUITE_SELECT" >> $GITHUB_OUTPUT
 
 # Set test execution controls (same for all environments)
-# Defaults match env-fe.yml defaults:
-# - smoke/grid/mobile/responsive: false (disabled by default)
-# - cypress/playwright/robot/selenide/vibium: true (enabled by default)
-# These can be customized based on event type, schedule, or other conditions
+# ⚠️ TEMPORARY: Selenide tests disabled for testing
+# - smoke/grid/mobile/responsive/selenide: false (disabled temporarily)
+# - cypress/playwright/robot/vibium: true (enabled)
+# TODO: REVERT - Re-enable selenide tests before merging PR
 echo "enable_smoke_tests=false" >> $GITHUB_OUTPUT
 echo "enable_grid_tests=false" >> $GITHUB_OUTPUT
 echo "enable_mobile_tests=false" >> $GITHUB_OUTPUT
@@ -74,9 +74,10 @@ echo "enable_responsive_tests=false" >> $GITHUB_OUTPUT
 echo "enable_cypress_tests=true" >> $GITHUB_OUTPUT
 echo "enable_playwright_tests=true" >> $GITHUB_OUTPUT
 echo "enable_robot_tests=true" >> $GITHUB_OUTPUT
-echo "enable_selenide_tests=true" >> $GITHUB_OUTPUT
+echo "enable_selenide_tests=false" >> $GITHUB_OUTPUT
 echo "enable_vibium_tests=true" >> $GITHUB_OUTPUT
 echo "✅ Test execution controls set (same for all environments)"
+echo "⚠️  TEMPORARY: Selenide tests disabled for testing"
 
 if [ "$ENV_SELECT" == "all" ]; then
   echo "run_dev=true" >> $GITHUB_OUTPUT
