@@ -157,6 +157,12 @@ try:
             params = []
             if env and env not in ["unknown", "combined"]:
                 params.append({"name": "Environment", "value": env.upper()})
+                # Add verification metadata
+                params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", os.environ.get("ROBOT_BASE_URL", "unknown"))})
+                # Use current time (Robot Framework doesn't provide execution timestamp in output.xml)
+                params.append({"name": "Test Execution Time", "value": datetime.now().isoformat()})
+                params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
+                params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
             
             result = {
                 "uuid": test_uuid,
@@ -211,6 +217,12 @@ try:
         params = []
         if env and env not in ["unknown", "combined"]:
             params.append({"name": "Environment", "value": env.upper()})
+            # Add verification metadata
+            params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", os.environ.get("ROBOT_BASE_URL", "unknown"))})
+            # Use current time (Robot Framework doesn't provide execution timestamp in output.xml)
+            params.append({"name": "Test Execution Time", "value": datetime.now().isoformat()})
+            params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
+            params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
         
         result = {
             "uuid": test_uuid,
