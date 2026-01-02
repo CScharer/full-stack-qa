@@ -836,12 +836,13 @@ jobs:
     name: Test FS (TEST)
     uses: ./.github/workflows/env-fs.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
-    # Note: FS (Full-Stack) tests run on main branch only (test environment)
+    # ⚠️ TEMPORARY: Removed github.ref == 'refs/heads/main' condition for testing fallback logic fix
+    # TODO: REVERT - Restore 'github.ref == 'refs/heads/main' &&' before merging PR
+    # Note: FS (Full-Stack) tests normally run on main branch only (test environment)
     if: |
       always() &&
       !cancelled() &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      github.ref == 'refs/heads/main' &&
       (needs.gate-dev.result == 'success' ||
        (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
       (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
