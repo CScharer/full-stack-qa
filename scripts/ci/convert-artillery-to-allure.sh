@@ -129,6 +129,13 @@ for json_file in json_files:
         params = []
         if env and env not in ["unknown", "combined"]:
             params.append({"name": "Environment", "value": env.upper()})
+            # Add verification metadata
+            params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", "unknown")})
+            # Use firstMetricAt from Artillery results (actual test execution time)
+            test_timestamp = datetime.fromtimestamp(first_metric_at / 1000).isoformat() if first_metric_at > 0 else datetime.now().isoformat()
+            params.append({"name": "Test Execution Time", "value": test_timestamp})
+            params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
+            params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
         
         # Add performance metrics as parameters
         if 'vusers.session_length' in summaries:
