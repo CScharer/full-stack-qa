@@ -1,9 +1,34 @@
 # Test Results Appearing Identical Across Environments - Comprehensive Analysis
 
 **Date:** January 2, 2026  
+**Last Updated:** January 2, 2026  
 **Issue:** Test results from **ALL frameworks** (FS, Cypress, Playwright, Robot, Vibium, Selenide, BE tests) appear identical across dev, test, and prod environments in the Allure report.
 
 **Important Note:** It's acceptable if tests produce identical results/data. The concern is **verifying that results are truly from different test runs in different environments**, not that the results themselves are different.
+
+## Current Status (Post-Metadata Implementation)
+
+**Verification Metadata Implementation:** ✅ **COMPLETED**  
+**Metadata Parameters Added:**
+- Environment (DEV, TEST, PROD)
+- Base URL (http://localhost:3003, :3004, :3005)
+- Test Execution Time (ISO timestamp)
+- CI Run ID (GitHub Actions run ID)
+- CI Run Number (GitHub Actions run number)
+
+**GitHub Results Analysis (Post-PR #50):**
+After reviewing the Allure report metadata in GitHub Actions results, the following was observed:
+
+**Finding:** The **only difference** in metadata across environments is the **Environment** parameter itself. All other metadata parameters (Base URL, Test Execution Time, CI Run ID, CI Run Number) are **identical** across dev, test, and prod environments.
+
+**This confirms the fallback logic issue is still occurring:**
+- ✅ Environment parameter correctly shows DEV, TEST, PROD
+- ❌ Base URL is the same across all environments (should be different)
+- ❌ Test Execution Time is identical (should be different if from different runs)
+- ❌ CI Run ID is identical (expected if same pipeline, but timestamps should differ)
+- ❌ CI Run Number is identical (expected if same pipeline, but timestamps should differ)
+
+**Conclusion:** The fallback logic in `prepare-combined-allure-results.sh` is still processing the **same artifact files** for each environment, creating duplicate results with different environment labels but identical underlying data and metadata (except the environment label itself).
 
 ## Problem Statement
 
@@ -34,14 +59,25 @@ This is unexpected because:
 
 ## Root Cause Analysis
 
-### CRITICAL ISSUE: Fallback Logic Processing Same Files for All Environments
+### CRITICAL ISSUE: Fallback Logic Processing Same Files for All Environments ⚠️ **CONFIRMED**
 
 **Location:** `scripts/ci/prepare-combined-allure-results.sh`
 
 **Affected Frameworks:** ALL frameworks (Cypress, Playwright, Robot, Vibium, FS)
 
+**Status:** ⚠️ **STILL OCCURRING** - Verified via metadata analysis in GitHub Actions results
+
 **The Problem:**
 When artifacts are downloaded with `merge-multiple: true`, if the structure is flat (all files in root directory), the fallback logic processes the **SAME files for EACH environment** in a loop, creating duplicate results with different environment labels but identical test data.
+
+**Verification Evidence (Post-Metadata Implementation):**
+- ✅ Environment parameter correctly differentiates (DEV, TEST, PROD)
+- ❌ Base URL is identical across all environments (should be different: :3003, :3004, :3005)
+- ❌ Test Execution Time is identical (should differ if from different test runs)
+- ❌ CI Run ID is identical (expected for same pipeline, but timestamps prove same file processed)
+- ❌ CI Run Number is identical (expected for same pipeline, but timestamps prove same file processed)
+
+**This confirms:** The same artifact files are being processed multiple times (once per environment), with only the environment label being changed. The underlying test data, timestamps, and all other metadata remain identical.
 
 **Evidence in Code:**
 
