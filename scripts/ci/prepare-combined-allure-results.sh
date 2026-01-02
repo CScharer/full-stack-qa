@@ -109,11 +109,23 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         json_file=$(find "$SOURCE_DIR/results-$env/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
         if [ -n "$json_file" ] && [ -f "$json_file" ]; then
             json_dir=$(dirname "$json_file")
-            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
-            ENV_PROCESSED=1
+            echo "   📄 Found Cypress JSON file: $json_file"
+            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Cypress conversion successful for $env"
+            else
+                echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+            fi
         elif [ -d "$SOURCE_DIR/results-$env/cypress-results-$env/results" ]; then
-            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/cypress-results-$env/results" "$env" || true
-            ENV_PROCESSED=1
+            echo "   📂 Found Cypress results directory: $SOURCE_DIR/results-$env/cypress-results-$env/results"
+            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/cypress-results-$env/results" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Cypress conversion successful for $env"
+            else
+                echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+            fi
+        else
+            echo "   ⚠️  No Cypress JSON files found in $SOURCE_DIR/results-$env/cypress-results-$env"
         fi
     fi
     
@@ -124,12 +136,32 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         json_file=$(find "$SOURCE_DIR/cypress-results/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/results/*.json" \) 2>/dev/null | head -1)
         if [ -n "$json_file" ] && [ -f "$json_file" ]; then
             json_dir=$(dirname "$json_file")
-            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
-            ENV_PROCESSED=1
+            echo "   📄 Found Cypress JSON file: $json_file"
+            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Cypress conversion successful for $env"
+            else
+                echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+            fi
         elif [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/results" ]; then
-            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress-results-$env/results" "$env" || true
-            ENV_PROCESSED=1
+            echo "   📂 Found Cypress results directory: $SOURCE_DIR/cypress-results/cypress-results-$env/results"
+            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress-results-$env/results" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Cypress conversion successful for $env"
+            else
+                echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+            fi
+        else
+            echo "   ⚠️  No Cypress JSON files found in $SOURCE_DIR/cypress-results/cypress-results-$env"
         fi
+    fi
+    
+    # Debug: Report if Cypress results were not found for this environment
+    if [ "$ENV_PROCESSED" -eq 0 ]; then
+        echo "   ⚠️  No Cypress results found for $env environment"
+        echo "      Checked locations:"
+        echo "        - $SOURCE_DIR/results-$env/cypress-results-$env"
+        echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env"
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
