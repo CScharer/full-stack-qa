@@ -1,17 +1,6 @@
 # Minimal Homepage Test - Single user for quick testing
 # This is the fastest test to verify Artillery + Playwright setup
-
-config:
-  target: "http://localhost:3003"  # Default, overridden by environment config
-  phases:
-    # Quick smoke test for CI/CD - very light load
-    # Start with 1 user, then gradually increase to avoid overwhelming services
-    - duration: 10
-      arrivalRate: 1
-      name: "Smoke test - single user"
-  processor: "../processors/homepage-processor.js"
-  variables:
-    baseUrl: "http://localhost:3003"  # Default, overridden by environment config
+# NOTE: When using --config flag, phases are defined in the config file, not here
 
 scenarios:
   - name: "Minimal Homepage Test"
