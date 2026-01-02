@@ -157,10 +157,10 @@ jobs:
     # TODO: REVERT - Restore original condition before merging PR
     if: always()
     outputs:
-      code-changed: ${{ needs.detect-file-changes.outputs.code-changed }}
-      is_weekly: ${{ steps.check-day.outputs.is_weekly }}
-      is_nightly: ${{ steps.check-day.outputs.is_nightly }}
-      be_test_type: ${{ steps.check-day.outputs.be_test_type }}
+      code-changed: ${{ needs.detect-file-changes.outputs.code-changed || 'true' }}
+      is_weekly: ${{ steps.check-day.outputs.is_weekly || 'false' }}
+      is_nightly: ${{ steps.check-day.outputs.is_nightly || 'false' }}
+      be_test_type: ${{ steps.check-day.outputs.be_test_type || 'smoke' }}
     steps:
       - name: Check day of week (for scheduled runs)
         id: check-day
@@ -222,21 +222,21 @@ jobs:
     # TODO: REVERT - Restore original condition before merging PR
     if: always()
     outputs:
-      run_dev: ${{ steps.set-envs.outputs.run_dev }}
-      run_test: ${{ steps.set-envs.outputs.run_test }}
-      run_prod: ${{ steps.set-envs.outputs.run_prod }}
-      test_suite: ${{ steps.set-envs.outputs.test_suite }}
-      selected_env: ${{ steps.set-envs.outputs.selected_env }}
+      run_dev: ${{ steps.set-envs.outputs.run_dev || 'true' }}
+      run_test: ${{ steps.set-envs.outputs.run_test || 'true' }}
+      run_prod: ${{ steps.set-envs.outputs.run_prod || 'true' }}
+      test_suite: ${{ steps.set-envs.outputs.test_suite || 'smoke' }}
+      selected_env: ${{ steps.set-envs.outputs.selected_env || 'all' }}
       # Test execution controls - same for all environments
-      enable_smoke_tests: ${{ steps.set-envs.outputs.enable_smoke_tests }}
-      enable_grid_tests: ${{ steps.set-envs.outputs.enable_grid_tests }}
-      enable_mobile_tests: ${{ steps.set-envs.outputs.enable_mobile_tests }}
-      enable_responsive_tests: ${{ steps.set-envs.outputs.enable_responsive_tests }}
-      enable_cypress_tests: ${{ steps.set-envs.outputs.enable_cypress_tests }}
-      enable_playwright_tests: ${{ steps.set-envs.outputs.enable_playwright_tests }}
-      enable_robot_tests: ${{ steps.set-envs.outputs.enable_robot_tests }}
-      enable_selenide_tests: ${{ steps.set-envs.outputs.enable_selenide_tests }}
-      enable_vibium_tests: ${{ steps.set-envs.outputs.enable_vibium_tests }}
+      enable_smoke_tests: ${{ steps.set-envs.outputs.enable_smoke_tests || 'false' }}
+      enable_grid_tests: ${{ steps.set-envs.outputs.enable_grid_tests || 'false' }}
+      enable_mobile_tests: ${{ steps.set-envs.outputs.enable_mobile_tests || 'false' }}
+      enable_responsive_tests: ${{ steps.set-envs.outputs.enable_responsive_tests || 'false' }}
+      enable_cypress_tests: ${{ steps.set-envs.outputs.enable_cypress_tests || 'true' }}
+      enable_playwright_tests: ${{ steps.set-envs.outputs.enable_playwright_tests || 'true' }}
+      enable_robot_tests: ${{ steps.set-envs.outputs.enable_robot_tests || 'true' }}
+      enable_selenide_tests: ${{ steps.set-envs.outputs.enable_selenide_tests || 'false' }}
+      enable_vibium_tests: ${{ steps.set-envs.outputs.enable_vibium_tests || 'true' }}
 
     steps:
       - name: Checkout code
