@@ -551,13 +551,9 @@ jobs:
   test-fe-dev:
     name: Test FE (DEV)
     needs: [setup-base-urls, determine-test-execution, determine-envs, gate-setup]
-    # ⚠️ TEMPORARY: Simplified condition to ensure FE tests always run
-    # TODO: REVERT - Restore gate-setup check before merging PR
-    if: |
-      always() &&
-      !cancelled() &&
-      (needs.determine-test-execution.outputs.run_ui_tests == 'true' || 'true' == 'true') &&
-      (needs.determine-envs.outputs.run_dev == 'true' || 'true' == 'true')
+    # ⚠️ TEMPORARY: Force FE tests to always run
+    # TODO: REVERT - Restore original conditions before merging PR
+    if: always() && !cancelled()
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
@@ -644,13 +640,9 @@ jobs:
   test-fe-test:
     name: Test FE (TEST)
     needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-dev]
-    # ⚠️ TEMPORARY: Simplified condition to ensure FE tests always run
-    # TODO: REVERT - Restore gate-setup and gate-dev checks before merging PR
-    if: |
-      always() &&
-      !cancelled() &&
-      (needs.determine-test-execution.outputs.run_ui_tests == 'true' || 'true' == 'true') &&
-      (needs.determine-envs.outputs.run_test == 'true' || 'true' == 'true')
+    # ⚠️ TEMPORARY: Force FE tests to always run
+    # TODO: REVERT - Restore original conditions before merging PR
+    if: always() && !cancelled()
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
@@ -738,13 +730,9 @@ jobs:
   test-fe-prod:
     name: Test FE (PROD)
     needs: [setup-base-urls, determine-envs, determine-test-execution, gate-setup, gate-test]
-    # ⚠️ TEMPORARY: Simplified condition to ensure FE tests always run
-    # TODO: REVERT - Restore gate-setup and gate-test checks before merging PR
-    if: |
-      always() &&
-      !cancelled() &&
-      (needs.determine-test-execution.outputs.run_ui_tests == 'true' || 'true' == 'true') &&
-      (needs.determine-envs.outputs.run_prod == 'true' || 'true' == 'true')
+    # ⚠️ TEMPORARY: Force FE tests to always run
+    # TODO: REVERT - Restore original conditions before merging PR
+    if: always() && !cancelled()
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'
@@ -828,17 +816,9 @@ jobs:
     name: Test BE (DEV)
     uses: ./.github/workflows/env-be.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
-    # Note: BE tests run when:
-    # - BE tests are enabled (run_be_tests == 'true')
-    # - Dev environment is selected for be tests (be_env_dev == 'true')
-    # - Dev environment is selected for fe tests (run_dev == 'true')
-    if: |
-      always() &&
-      !cancelled() &&
-      needs.determine-test-execution.outputs.run_be_tests == 'true' &&
-      needs.determine-test-execution.outputs.be_env_dev == 'true' &&
-      needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+    # ⚠️ TEMPORARY: Force BE tests to always run
+    # TODO: REVERT - Restore original conditions before merging PR
+    if: always() && !cancelled()
     with:
       environment: 'dev'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
@@ -849,15 +829,9 @@ jobs:
     name: Test BE (TEST)
     uses: ./.github/workflows/env-be.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
-    if: |
-      always() &&
-      !cancelled() &&
-      needs.determine-test-execution.outputs.run_be_tests == 'true' &&
-      needs.determine-test-execution.outputs.be_env_test == 'true' &&
-      needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+    # ⚠️ TEMPORARY: Force BE tests to always run
+    # TODO: REVERT - Restore original conditions before merging PR
+    if: always() && !cancelled()
     with:
       environment: 'test'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
