@@ -18,8 +18,9 @@ COPY mvnw pom.xml ./
 # Download dependencies (this layer will be cached)
 # Note: dependency:go-offline may fail for some plugins, continue anyway
 # Clear any cached failures first to ensure fresh downloads
+# Use 'mvn' directly since the base image already has Maven 3.9.9 installed
 RUN rm -rf ~/.m2/repository/org/apache/maven/plugins/maven-compiler-plugin || true
-RUN ./mvnw -ntp dependency:go-offline -B || echo "Some dependencies could not be resolved offline"
+RUN mvn -ntp dependency:go-offline -B || echo "Some dependencies could not be resolved offline"
 
 # Copy source code
 COPY src ./src
@@ -32,8 +33,9 @@ COPY checkstyle-custom.xml checkstyle-suppressions.xml ./
 
 # Build the project (skip tests in build stage)
 # Clear cached failures and force update to ensure fresh downloads
+# Use 'mvn' directly since the base image already has Maven 3.9.9 installed
 RUN rm -rf ~/.m2/repository/org/apache/maven/plugins/maven-compiler-plugin || true
-RUN ./mvnw -ntp -U clean package -DskipTests
+RUN mvn -ntp -U clean package -DskipTests
 
 # Stage 2: Runtime stage
 FROM eclipse-temurin:21-jdk
