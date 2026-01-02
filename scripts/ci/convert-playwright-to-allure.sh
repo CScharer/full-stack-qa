@@ -230,6 +230,13 @@ for full_name, attempts in test_attempts.items():
             params = []
             if env and env not in ["unknown", "combined"]:
                 params.append({"name": "Environment", "value": env.upper()})
+                # Add verification metadata
+                params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", os.environ.get("PLAYWRIGHT_BASE_URL", "unknown"))})
+                # Use timestamp from Playwright test result (already available)
+                test_timestamp = datetime.fromtimestamp(timestamp / 1000).isoformat() if timestamp > 0 else datetime.now().isoformat()
+                params.append({"name": "Test Execution Time", "value": test_timestamp})
+                params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
+                params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
             
             status_details = {
                 "known": False,
