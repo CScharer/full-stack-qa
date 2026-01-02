@@ -49,6 +49,29 @@ import uuid
 import hashlib
 from datetime import datetime
 
+# Import shared metadata utilities
+# Try to find the script directory (for embedded Python scripts, use current working directory)
+script_dir = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'ci') if len(sys.argv) > 0 else os.path.join(os.getcwd(), 'scripts', 'ci')
+if not os.path.exists(os.path.join(script_dir, 'allure_metadata_utils.py')):
+    script_dir = os.path.join(os.getcwd(), 'scripts', 'ci')
+sys.path.insert(0, script_dir)
+try:
+    from allure_metadata_utils import add_verification_metadata_to_params
+except (ImportError, SystemError):
+    # Fallback: define function inline if import fails
+    def add_verification_metadata_to_params(params, env=None, test_timestamp=None, base_url_env_var="BASE_URL"):
+        if not env or env in ["unknown", "combined"]:
+            return params
+        params.append({"name": "Base URL", "value": os.environ.get(base_url_env_var, "unknown")})
+        if test_timestamp and test_timestamp > 0:
+            test_timestamp_iso = datetime.fromtimestamp(test_timestamp / 1000).isoformat()
+        else:
+            test_timestamp_iso = datetime.now().isoformat()
+        params.append({"name": "Test Execution Time", "value": test_timestamp_iso})
+        params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
+        params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
+        return params
+
 artillery_dir = "$ARTILLERY_RESULTS_DIR"
 allure_dir = "$ALLURE_RESULTS_DIR"
 env = "$ENVIRONMENT" if "$ENVIRONMENT" else None
@@ -129,6 +152,9 @@ for json_file in json_files:
         params = []
         if env and env not in ["unknown", "combined"]:
             params.append({"name": "Environment", "value": env.upper()})
+            # Add verification metadata using shared utility
+            # Use firstMetricAt from Artillery results (actual test execution time)
+            params = add_verification_metadata_to_params(params, env, first_metric_at)
         
         # Add performance metrics as parameters
         if 'vusers.session_length' in summaries:
