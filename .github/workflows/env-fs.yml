@@ -63,6 +63,12 @@ jobs:
           ./scripts/ci/verify-services.sh \
             "${{ inputs.base_url }}" \
             "30"
+          
+      - name: Wait for Services to Stabilize
+        run: |
+          echo "⏳ Waiting 5 seconds for services to fully stabilize before load testing..."
+          sleep 5
+          echo "✅ Services should be ready for load testing"
 
       - name: Install Playwright dependencies
         working-directory: ./playwright

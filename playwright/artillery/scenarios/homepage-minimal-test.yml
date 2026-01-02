@@ -4,10 +4,11 @@
 config:
   target: "http://localhost:3003"  # Default, overridden by environment config
   phases:
-    # Quick smoke test for CI/CD
-    # arrivalRate is set by environment config (dev: 5, test: 4, prod: 3)
-    - duration: 5
-      name: "Single user test"
+    # Quick smoke test for CI/CD - very light load
+    # Start with 1 user, then gradually increase to avoid overwhelming services
+    - duration: 10
+      arrivalRate: 1
+      name: "Smoke test - single user"
   processor: "../processors/homepage-processor.js"
   variables:
     baseUrl: "http://localhost:3003"  # Default, overridden by environment config

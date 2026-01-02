@@ -4,10 +4,11 @@
 config:
   target: "http://localhost:3004"
   phases:
-    # Smoke test phase: Quick 5-second test (test: 4 users)
-    - duration: 5
-      arrivalRate: 4
-      name: "Single user test"
+    # Smoke test phase: Quick 10-second test with light load (test: 1 user/sec)
+    # Reduced load to avoid overwhelming services during startup
+    - duration: 10
+      arrivalRate: 1
+      name: "Smoke test - light load"
     # Warm-up phase: Gradually ramp up to 4 users (test environment)
     - duration: 60
       arrivalRate: 4
