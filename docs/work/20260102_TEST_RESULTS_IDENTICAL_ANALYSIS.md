@@ -895,11 +895,13 @@ if env and env not in ["unknown", "combined"]:
 
 **Note:** Use suite duration timestamp if available from Vibium results.
 
-### Step 6: Update BE Performance Tests Converter
+### Step 6: Update BE Performance Tests Converter ✅ COMPLETED
 
-**File:** `scripts/ci/prepare-be-results.sh`
+**File:** `scripts/convert-performance-to-allure.sh`
 
-**Location:** Find where Allure results are created (inspect file to find exact location)
+**Location:** In the `create_allure_result` function, update the parameters array building section (around line 85-94)
+
+**Status:** ✅ Implemented - Verification metadata added to BE performance tests converter
 
 **Change:**
 Add similar verification metadata when creating Allure results for Gatling, JMeter, and Locust.

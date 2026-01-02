@@ -85,10 +85,32 @@ create_allure_result() {
     # Build parameters array
     local params_json="[]"
     if [ -n "$environment" ] && [ "$environment" != "unknown" ] && [ "$environment" != "combined" ]; then
+        # Get verification metadata from environment variables
+        local base_url="${BASE_URL:-unknown}"
+        local test_timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S")
+        local ci_run_id="${GITHUB_RUN_ID:-local}"
+        local ci_run_number="${GITHUB_RUN_NUMBER:-unknown}"
+        
         params_json="[
     {
       \"name\": \"Environment\",
       \"value\": \"$(echo $environment | tr '[:lower:]' '[:upper:]')\"
+    },
+    {
+      \"name\": \"Base URL\",
+      \"value\": \"$base_url\"
+    },
+    {
+      \"name\": \"Test Execution Time\",
+      \"value\": \"$test_timestamp\"
+    },
+    {
+      \"name\": \"CI Run ID\",
+      \"value\": \"$ci_run_id\"
+    },
+    {
+      \"name\": \"CI Run Number\",
+      \"value\": \"$ci_run_number\"
     }
   ]"
     fi
