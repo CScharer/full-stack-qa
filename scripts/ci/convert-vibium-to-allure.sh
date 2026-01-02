@@ -143,6 +143,13 @@ if total_tests > 0 and test_results:
             params = []
             if env and env not in ["unknown", "combined"]:
                 params.append({"name": "Environment", "value": env.upper()})
+                # Add verification metadata
+                params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", os.environ.get("VIBIUM_BASE_URL", "unknown"))})
+                # Use suite execution time if available, otherwise current time
+                test_timestamp = datetime.fromtimestamp(timestamp / 1000).isoformat() if timestamp > 0 else datetime.now().isoformat()
+                params.append({"name": "Test Execution Time", "value": test_timestamp})
+                params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
+                params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
             
             description = f"Vibium Visual Regression Test Suite: {test_name}"
             if suite_num_total > 0:
@@ -213,6 +220,13 @@ if total_tests > 0 and test_results:
                 params = []
                 if env and env not in ["unknown", "combined"]:
                     params.append({"name": "Environment", "value": env.upper()})
+                    # Add verification metadata
+                    params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", os.environ.get("VIBIUM_BASE_URL", "unknown"))})
+                    # Use test execution time from Vibium results (timestamp is already calculated)
+                    test_timestamp = datetime.fromtimestamp(timestamp / 1000).isoformat() if timestamp > 0 else datetime.now().isoformat()
+                    params.append({"name": "Test Execution Time", "value": test_timestamp})
+                    params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
+                    params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
                 
                 result = {
                     "uuid": test_uuid,
