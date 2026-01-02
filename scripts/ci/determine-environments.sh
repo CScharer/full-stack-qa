@@ -16,8 +16,7 @@ SUITE_INPUT=$3
 # ⚠️ TEMPORARY CHANGE FOR TESTING FALLBACK LOGIC FIX ⚠️
 # This temporarily makes all branch pushes run all environments (dev, test, prod)
 # to test the fix for identical results across environments.
-# TODO: REVERT THIS BEFORE MERGING THE PR - restore original logic that only
-#       runs 'dev' for feature branch pushes and 'all' only for main/develop pushes.
+# TODO: REVERT THIS BEFORE MERGING THE PR - uncomment original logic below
 IS_BRANCH_PUSH=false
 if [ "$EVENT_NAME" == "pull_request" ]; then
   IS_BRANCH_PUSH=true
@@ -27,6 +26,9 @@ elif [ "$EVENT_NAME" == "push" ]; then
   echo "📦 Push detected - TEMPORARILY running ALL environments for fallback logic testing"
   echo "⚠️  WARNING: This is a temporary change - revert before merging PR"
   IS_BRANCH_PUSH=false  # Force 'all' environments
+  # ORIGINAL CODE (commented out for testing - uncomment before merge):
+  # echo "📦 Main/develop push detected - defaulting to ALL environments"
+  # # Original logic would check if branch is main/develop here
 else
   if [ "$EVENT_NAME" == "workflow_dispatch" ]; then
     echo "📦 Manual trigger - defaulting to ALL environments (inputs can override)"
