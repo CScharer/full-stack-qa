@@ -45,8 +45,18 @@ def get_verification_metadata(
     
     params = []
     
-    # Base URL
-    base_url = os.environ.get(base_url_env_var, "unknown")
+    # Base URL - derive from environment if not set
+    base_url = os.environ.get(base_url_env_var)
+    if not base_url or base_url == "unknown":
+        # Derive BASE_URL from environment name if not set
+        if env == "dev":
+            base_url = "http://localhost:3003"
+        elif env == "test":
+            base_url = "http://localhost:3004"
+        elif env == "prod":
+            base_url = "http://localhost:3005"
+        else:
+            base_url = "unknown"
     params.append({"name": "Base URL", "value": base_url})
     
     # Test Execution Time

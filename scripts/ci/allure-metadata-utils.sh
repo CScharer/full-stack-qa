@@ -22,7 +22,24 @@ get_verification_metadata_json() {
     fi
     
     # Get values from environment variables
-    local base_url="${!base_url_env_var:-unknown}"
+    local base_url="${!base_url_env_var:-}"
+    # Derive BASE_URL from environment if not set
+    if [ -z "$base_url" ] || [ "$base_url" = "unknown" ]; then
+        case "$env" in
+            dev)
+                base_url="http://localhost:3003"
+                ;;
+            test)
+                base_url="http://localhost:3004"
+                ;;
+            prod)
+                base_url="http://localhost:3005"
+                ;;
+            *)
+                base_url="unknown"
+                ;;
+        esac
+    fi
     local ci_run_id="${GITHUB_RUN_ID:-local}"
     local ci_run_number="${GITHUB_RUN_NUMBER:-unknown}"
     
