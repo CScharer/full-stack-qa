@@ -191,8 +191,32 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "   ⚠️  No Cypress results found for $env environment"
         echo "      Checked locations:"
         echo "        - $SOURCE_DIR/results-$env/cypress-results-$env"
+        if [ -d "$SOURCE_DIR/results-$env/cypress-results-$env" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/results-$env/cypress-results-$env" -name "*.json" -o -name "mochawesome.json" -o -name "cypress-results.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env"
+        if [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/cypress-results/cypress-results-$env" -name "*.json" -o -name "mochawesome.json" -o -name "cypress-results.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results (nested path)"
+        if [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
@@ -248,8 +272,32 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "   ⚠️  No Playwright results found for $env environment"
         echo "      Checked locations:"
         echo "        - $SOURCE_DIR/results-$env/playwright-results-$env/test-results"
+        if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" ]; then
+            echo "          Directory exists, searching for JUnit XML files:"
+            find "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" -name "*.xml" -o -name "junit.xml" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no XML files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/test-results"
+        if [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" ]; then
+            echo "          Directory exists, searching for JUnit XML files:"
+            find "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" -name "*.xml" -o -name "junit.xml" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no XML files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results (nested path)"
+        if [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results" ]; then
+            echo "          Directory exists, searching for JUnit XML files:"
+            find "$SOURCE_DIR/playwright-results/playwright-results-$env/playwright/test-results" -name "*.xml" -o -name "junit.xml" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no XML files found)"
+        else
+            echo "          Directory does not exist"
+        fi
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
@@ -421,11 +469,59 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         echo "   ⚠️  No Vibium results found for $env environment"
         echo "      Checked locations:"
         echo "        - $SOURCE_DIR/results-$env/vibium-results-$env/test-results"
+        if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" -name "*.json" -o -name "vitest-results.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/results-$env/vibium-results-$env/.vitest"
+        if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/test-results"
+        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/.vitest"
+        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results (nested path)"
+        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/test-results" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
         echo "        - $SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest (nested path)"
+        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest" ]; then
+            echo "          Directory exists, searching for JSON files:"
+            find "$SOURCE_DIR/vibium-results/vibium-results-$env/vibium/.vitest" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                echo "            Found: $f"
+            done || echo "            (no JSON files found)"
+        else
+            echo "          Directory does not exist"
+        fi
     fi
     
     # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
@@ -547,8 +643,32 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
             echo "   ⚠️  No FS test results found for $env"
             echo "      Checked locations:"
             echo "        - $SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results/ (nested path)"
+            if [ -d "$SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results" ]; then
+                echo "          Directory exists, searching for JSON files:"
+                find "$SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                    echo "            Found: $f"
+                done || echo "            (no JSON files found)"
+            else
+                echo "          Directory does not exist"
+            fi
             echo "        - $SOURCE_DIR/fs-results/fs-results-$env/artillery-results/"
+            if [ -d "$SOURCE_DIR/fs-results/fs-results-$env/artillery-results" ]; then
+                echo "          Directory exists, searching for JSON files:"
+                find "$SOURCE_DIR/fs-results/fs-results-$env/artillery-results" -name "*.json" 2>/dev/null | head -5 | while read f; do
+                    echo "            Found: $f"
+                done || echo "            (no JSON files found)"
+            else
+                echo "          Directory does not exist"
+            fi
             echo "        - $SOURCE_DIR/fs-results/fs-results-$env/"
+            if [ -d "$SOURCE_DIR/fs-results/fs-results-$env" ]; then
+                echo "          Directory exists, searching for JSON files:"
+                find "$SOURCE_DIR/fs-results/fs-results-$env" -maxdepth 1 -name "*.json" 2>/dev/null | head -5 | while read f; do
+                    echo "            Found: $f"
+                done || echo "            (no JSON files found)"
+            else
+                echo "          Directory does not exist"
+            fi
         fi
     done
 else
