@@ -43,7 +43,7 @@ fi
 # Try to run mvnw --version, but don't fail if network is unavailable
 echo "  Testing mvnw execution (may require network for Maven download)..."
 set +e  # Temporarily disable exit on error for this check
-mvnw_output=$(docker run --rm --entrypoint="/bin/bash" "$IMAGE_NAME" -c "cd /app && timeout 30 ./mvnw --version 2>&1" 2>&1)
+mvnw_output=$(docker run --rm --entrypoint="/bin/bash" "$IMAGE_NAME" -c "cd /app && timeout 3 ./mvnw --version 2>&1" 2>&1)
 mvnw_exit_code=$?
 set -e  # Re-enable exit on error
 
