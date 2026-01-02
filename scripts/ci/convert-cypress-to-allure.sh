@@ -215,13 +215,47 @@ try:
     failures = stats.get('failures', 0)
     pending = stats.get('pending', 0)
     
+    # Extract test execution start time from stats (Cypress provides start/end times)
+    # Try multiple possible timestamp fields
+    test_start_time = None
+    if 'start' in stats:
+        test_start_time = stats.get('start')
+    elif 'startedAt' in stats:
+        test_start_time = stats.get('startedAt')
+    elif 'startTime' in stats:
+        test_start_time = stats.get('startTime')
+    
+    # Convert to milliseconds if it's a string (ISO format) or already a timestamp
+    if test_start_time:
+        if isinstance(test_start_time, str):
+            try:
+                # Parse ISO format timestamp
+                dt = datetime.fromisoformat(test_start_time.replace('Z', '+00:00'))
+                test_start_time = int(dt.timestamp() * 1000)
+            except:
+                test_start_time = None
+        elif isinstance(test_start_time, (int, float)):
+            # If already a timestamp, ensure it's in milliseconds
+            if test_start_time < 10000000000:  # Likely seconds, convert to milliseconds
+                test_start_time = int(test_start_time * 1000)
+            else:
+                test_start_time = int(test_start_time)
+    
+    # Fallback to current time if no timestamp found
+    if not test_start_time:
+        test_start_time = int(datetime.now().timestamp() * 1000)
+    
     print(f"📊 Cypress Stats: {total} tests, {passes} passed, {failures} failed, {pending} pending")
+    print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
     
     # Find all individual tests
     all_tests = find_tests(data)
     
     if all_tests and len(all_tests) > 0:
         print(f"📊 Found {len(all_tests)} individual test(s) to convert")
+        
+        # Track test start times to calculate relative timestamps
+        test_index = 0
         
         # Create individual Allure results for each test
         for test in all_tests:
@@ -241,7 +275,10 @@ try:
                 status = "passed"  # Default to passed
             
             test_uuid = uuid.uuid4().hex[:32]
-            timestamp = int(datetime.now().timestamp() * 1000)
+            # Use test execution start time + offset for each test to maintain relative timing
+            # Each test starts after the previous one (simplified model)
+            timestamp = test_start_time + (test_index * 100)  # Small offset per test
+            test_index += 1
             full_name = f"Cypress.{test_full_title}"
             history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
             

@@ -97,180 +97,135 @@ fi
 echo "   📊 Active environments: ${ACTIVE_ENVIRONMENTS[*]}"
 
 # Convert Cypress results for each environment
-CYPRESS_PROCESSED=0
+# FIXED: Check BOTH environment-specific directories AND merged directories for each environment
+# This ensures we find results regardless of artifact download structure
 for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-    # Check environment-specific directory first
+    ENV_PROCESSED=0
+    
+    # Check environment-specific directory first (results-dev/cypress-results-dev/)
     if [ -d "$SOURCE_DIR/results-$env/cypress-results-$env" ]; then
-        echo "   Converting Cypress results ($env)..."
+        echo "   Converting Cypress results ($env) from results-$env/cypress-results-$env..."
         chmod +x scripts/ci/convert-cypress-to-allure.sh
         json_file=$(find "$SOURCE_DIR/results-$env/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
         if [ -n "$json_file" ] && [ -f "$json_file" ]; then
             json_dir=$(dirname "$json_file")
             ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
-            CYPRESS_PROCESSED=1
+            ENV_PROCESSED=1
         elif [ -d "$SOURCE_DIR/results-$env/cypress-results-$env/results" ]; then
             ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/cypress-results-$env/results" "$env" || true
-            CYPRESS_PROCESSED=1
+            ENV_PROCESSED=1
         fi
     fi
-done
-
-# Check merged cypress-results directory only if no environment-specific directories were found
-# FIXED: Only process environment-specific subdirectories, skip flat merge fallback to prevent duplicate processing
-if [ "$CYPRESS_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/cypress-results" ]; then
-    echo "   Converting Cypress results (merged artifacts - processing environment-specific subdirectories only)..."
-    chmod +x scripts/ci/convert-cypress-to-allure.sh
-    # Process merged directory for each environment that actually ran
-    # When artifacts are merged, they may preserve their artifact name as a subdirectory
-    # e.g., cypress-results/cypress-results-dev/... or cypress-results/cypress-results-test/...
-    for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-        # Only process if there's an environment-specific subdirectory in the merged artifacts
-        if [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env" ]; then
-            echo "   Found environment-specific Cypress directory: cypress-results-$env"
-            json_file=$(find "$SOURCE_DIR/cypress-results/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/results/*.json" \) 2>/dev/null | head -1)
-            if [ -n "$json_file" ] && [ -f "$json_file" ]; then
-                json_dir=$(dirname "$json_file")
-                ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
-                CYPRESS_PROCESSED=1
-            elif [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/results" ]; then
-                ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress-results-$env/results" "$env" || true
-                CYPRESS_PROCESSED=1
-            fi
-        # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-        # we cannot determine which environment the files belong to, so skip to prevent duplicates
-        # else
-        #     # REMOVED: This was causing duplicate processing - same files converted for each environment
-        #     # json_file=$(find "$SOURCE_DIR/cypress-results" ...)
-        #     # ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
+    
+    # Also check merged directory with environment-specific subdirectory (cypress-results/cypress-results-{env}/)
+    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env" ]; then
+        echo "   Converting Cypress results ($env) from merged cypress-results/cypress-results-$env..."
+        chmod +x scripts/ci/convert-cypress-to-allure.sh
+        json_file=$(find "$SOURCE_DIR/cypress-results/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/results/*.json" \) 2>/dev/null | head -1)
+        if [ -n "$json_file" ] && [ -f "$json_file" ]; then
+            json_dir=$(dirname "$json_file")
+            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env" || true
+            ENV_PROCESSED=1
+        elif [ -d "$SOURCE_DIR/cypress-results/cypress-results-$env/results" ]; then
+            ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress-results-$env/results" "$env" || true
+            ENV_PROCESSED=1
         fi
-    done
-fi
+    fi
+    
+    # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
+    # we cannot determine which environment the files belong to, so skip to prevent duplicates
+done
 
 # Convert Playwright results for each environment
-PLAYWRIGHT_PROCESSED=0
+# FIXED: Check BOTH environment-specific directories AND merged directories for each environment
 for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-    # Check environment-specific directory first
-    if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env" ]; then
-        echo "   Converting Playwright results ($env)..."
+    ENV_PROCESSED=0
+    
+    # Check environment-specific directory first (results-dev/playwright-results-dev/)
+    if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" ]; then
+        echo "   Converting Playwright results ($env) from results-$env/playwright-results-$env..."
         chmod +x scripts/ci/convert-playwright-to-allure.sh
-        if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" ]; then
-            ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" "$env" || true
-            PLAYWRIGHT_PROCESSED=1
-        fi
+        ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" "$env" || true
+        ENV_PROCESSED=1
     fi
+    
+    # Also check merged directory with environment-specific subdirectory (playwright-results/playwright-results-{env}/)
+    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" ]; then
+        echo "   Converting Playwright results ($env) from merged playwright-results/playwright-results-$env..."
+        chmod +x scripts/ci/convert-playwright-to-allure.sh
+        ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" "$env" || true
+        ENV_PROCESSED=1
+    fi
+    
+    # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
+    # we cannot determine which environment the files belong to, so skip to prevent duplicates
 done
-
-# Check merged playwright-results directory only if no environment-specific directories were found
-# FIXED: Only process environment-specific subdirectories, skip flat merge fallback to prevent duplicate processing
-if [ "$PLAYWRIGHT_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/playwright-results" ]; then
-    echo "   Converting Playwright results (merged artifacts - processing environment-specific subdirectories only)..."
-    chmod +x scripts/ci/convert-playwright-to-allure.sh
-    # Process only environment-specific subdirectories to prevent duplicate processing
-    for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-        # Only process if there's an environment-specific subdirectory
-        if [ -d "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" ]; then
-            echo "   Found environment-specific Playwright directory: playwright-results-$env"
-            ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright-results-$env/test-results" "$env" || true
-            PLAYWRIGHT_PROCESSED=1
-        fi
-        # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-        # we cannot determine which environment the files belong to, so skip to prevent duplicates
-        # if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
-        #     # REMOVED: This was causing duplicate processing - same directory converted for each environment
-        #     # ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$env" || true
-        # fi
-    done
-fi
 
 # Convert Robot Framework results for each environment
-ROBOT_PROCESSED=0
+# FIXED: Check BOTH environment-specific directories AND merged directories for each environment
 for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-    # Check environment-specific directory first
-    if [ -d "$SOURCE_DIR/results-$env" ]; then
-        output_xml=$(find "$SOURCE_DIR/results-$env" -name "output.xml" 2>/dev/null | head -1)
+    ENV_PROCESSED=0
+    
+    # Check environment-specific directory first (results-dev/)
+    output_xml=$(find "$SOURCE_DIR/results-$env" -name "output.xml" 2>/dev/null | head -1)
+    if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
+        echo "   Converting Robot Framework results ($env) from results-$env..."
+        chmod +x scripts/ci/convert-robot-to-allure.sh
+        output_dir=$(dirname "$output_xml")
+        ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env" || true
+        ENV_PROCESSED=1
+    fi
+    
+    # Also check merged directory with environment-specific subdirectory (robot-results/robot-results-{env}/)
+    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/robot-results/robot-results-$env" ]; then
+        echo "   Converting Robot Framework results ($env) from merged robot-results/robot-results-$env..."
+        chmod +x scripts/ci/convert-robot-to-allure.sh
+        output_xml=$(find "$SOURCE_DIR/robot-results/robot-results-$env" -name "output.xml" 2>/dev/null | head -1)
         if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
-            echo "   Converting Robot Framework results ($env)..."
-            chmod +x scripts/ci/convert-robot-to-allure.sh
             output_dir=$(dirname "$output_xml")
             ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env" || true
-            ROBOT_PROCESSED=1
+            ENV_PROCESSED=1
         fi
     fi
+    
+    # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
+    # we cannot determine which environment the files belong to, so skip to prevent duplicates
 done
-
-# Check merged robot-results directory only if no environment-specific directories were found
-# FIXED: Only process environment-specific subdirectories, skip flat merge fallback to prevent duplicate processing
-if [ "$ROBOT_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/robot-results" ]; then
-    echo "   Converting Robot Framework results (merged artifacts - processing environment-specific subdirectories only)..."
-    chmod +x scripts/ci/convert-robot-to-allure.sh
-    # Process only environment-specific subdirectories to prevent duplicate processing
-    for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-        # Only process if there's an environment-specific subdirectory
-        if [ -d "$SOURCE_DIR/robot-results/robot-results-$env" ]; then
-            echo "   Found environment-specific Robot directory: robot-results-$env"
-            output_xml=$(find "$SOURCE_DIR/robot-results/robot-results-$env" -name "output.xml" 2>/dev/null | head -1)
-            if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
-                output_dir=$(dirname "$output_xml")
-                ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env" || true
-                ROBOT_PROCESSED=1
-            fi
-        fi
-        # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-        # we cannot determine which environment the files belong to, so skip to prevent duplicates
-        # output_xml=$(find "$SOURCE_DIR/robot-results" -name "output.xml" 2>/dev/null | head -1)
-        # if [ -n "$output_xml" ] && [ -f "$output_xml" ]; then
-        #     # REMOVED: This was causing duplicate processing - same output.xml converted for each environment
-        #     # ./scripts/ci/convert-robot-to-allure.sh "$TARGET_DIR" "$output_dir" "$env" || true
-        # fi
-    done
-fi
 
 # Convert Vibium results for each environment
-VIBIUM_PROCESSED=0
+# FIXED: Check BOTH environment-specific directories AND merged directories for each environment
 for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-    # Check environment-specific directory first
-    if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env" ]; then
-        echo "   Converting Vibium results ($env)..."
+    ENV_PROCESSED=0
+    
+    # Check environment-specific directory first (results-dev/vibium-results-dev/)
+    if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" ]; then
+        echo "   Converting Vibium results ($env) from results-$env/vibium-results-$env..."
         chmod +x scripts/ci/convert-vibium-to-allure.sh
-        if [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" ]; then
-            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" "$env" || true
-            VIBIUM_PROCESSED=1
-        elif [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" ]; then
-            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" "$env" || true
-            VIBIUM_PROCESSED=1
+        ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/vibium-results-$env/test-results" "$env" || true
+        ENV_PROCESSED=1
+    elif [ -d "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" ]; then
+        echo "   Converting Vibium results ($env) from results-$env/vibium-results-$env..."
+        chmod +x scripts/ci/convert-vibium-to-allure.sh
+        ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/vibium-results-$env/.vitest" "$env" || true
+        ENV_PROCESSED=1
+    fi
+    
+    # Also check merged directory with environment-specific subdirectory (vibium-results/vibium-results-{env}/)
+    if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env" ]; then
+        echo "   Converting Vibium results ($env) from merged vibium-results/vibium-results-$env..."
+        chmod +x scripts/ci/convert-vibium-to-allure.sh
+        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" ]; then
+            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" "$env" || true
+            ENV_PROCESSED=1
+        elif [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" ]; then
+            ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" "$env" || true
+            ENV_PROCESSED=1
         fi
     fi
+    
+    # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
+    # we cannot determine which environment the files belong to, so skip to prevent duplicates
 done
-
-# Check merged vibium-results directory only if no environment-specific directories were found
-# FIXED: Only process environment-specific subdirectories, skip flat merge fallback to prevent duplicate processing
-if [ "$VIBIUM_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/vibium-results" ]; then
-    echo "   Converting Vibium results (merged artifacts - processing environment-specific subdirectories only)..."
-    chmod +x scripts/ci/convert-vibium-to-allure.sh
-    # Process only environment-specific subdirectories to prevent duplicate processing
-    for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
-        # Only process if there's an environment-specific subdirectory
-        if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env" ]; then
-            echo "   Found environment-specific Vibium directory: vibium-results-$env"
-            if [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" ]; then
-                ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/test-results" "$env" || true
-                VIBIUM_PROCESSED=1
-            elif [ -d "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" ]; then
-                ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/vibium-results-$env/.vitest" "$env" || true
-                VIBIUM_PROCESSED=1
-            fi
-        fi
-        # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-        # we cannot determine which environment the files belong to, so skip to prevent duplicates
-        # if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
-        #     # REMOVED: This was causing duplicate processing - same directory converted for each environment
-        #     # ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$env" || true
-        # elif [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
-        #     # REMOVED: This was causing duplicate processing - same directory converted for each environment
-        #     # ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/.vitest" "$env" || true
-        # fi
-    done
-fi
 
 # Convert FS (Full-Stack) test results for each environment
 # IMPORTANT: FS tests only run in dev and test (never prod)
