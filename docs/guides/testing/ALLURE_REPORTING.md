@@ -569,6 +569,9 @@ The system uses artifact name patterns to detect environments:
 - `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright results to Allure format (individual tests, deduplicates retries)
 - `scripts/ci/convert-robot-to-allure.sh` - Converts Robot Framework results to Allure format (individual tests)
 - `scripts/ci/convert-vibium-to-allure.sh` - Converts Vibium/Vitest results to Allure format (individual tests)
+- `scripts/ci/convert-artillery-to-allure.sh` - Converts Artillery (FS) load test results to Allure format
+- `scripts/ci/allure_metadata_utils.py` - Shared Python utilities for adding verification metadata to Allure results
+- `scripts/ci/allure-metadata-utils.sh` - Shared bash functions for adding verification metadata to Allure results
 
 #### Environment Labeling
 
@@ -609,6 +612,15 @@ Frontend framework test results are converted to Allure format:
 - `scripts/ci/convert-playwright-to-allure.sh` - Converts Playwright JUnit XML results, deduplicates retry attempts intelligently
 - `scripts/ci/convert-robot-to-allure.sh` - Converts Robot Framework XML results
 - `scripts/ci/convert-vibium-to-allure.sh` - Converts Vibium/Vitest JSON results
+- `scripts/ci/convert-artillery-to-allure.sh` - Converts Artillery (FS) load test results to Allure format
+
+**Shared Utilities**:
+- `scripts/ci/allure_metadata_utils.py` - Python module providing `add_verification_metadata_to_params()` function
+  - Adds Base URL, Test Execution Time, CI Run ID, and CI Run Number as Allure parameters
+  - Used by all Python-based converters (Artillery, Cypress, Playwright, Robot, Vibium)
+- `scripts/ci/allure-metadata-utils.sh` - Bash functions providing `get_verification_metadata_json()` function
+  - Used by bash-based converters (BE Performance Tests)
+  - Ensures consistent verification metadata across all frameworks
 
 #### Performance Test Conversion
 
@@ -618,6 +630,7 @@ Backend test results are converted to Allure format:
 - **JMeter**: Test results converted to Allure format
 
 **Script**: `scripts/convert-performance-to-allure.sh`
+  - Uses shared utility `scripts/ci/allure-metadata-utils.sh` for verification metadata
 
 ### Known Limitations
 
@@ -633,7 +646,28 @@ Backend test results are converted to Allure format:
 
 ---
 
-**Last Updated**: December 30, 2025
+**Last Updated**: January 2, 2026
+
+### Verification Metadata (Added January 2, 2026)
+
+All test result converters now include verification metadata to prove results are from different test runs and environments:
+
+**Metadata Parameters Added:**
+- **Base URL**: Environment-specific URL (e.g., localhost:3003, 3004, 3005)
+- **Test Execution Time**: Actual timestamp when test ran (ISO format)
+- **CI Run ID**: GitHub Actions run identifier
+- **CI Run Number**: GitHub Actions run number
+
+**Implementation:**
+- All converters use shared utility functions to ensure consistency
+- Python-based converters: Use `scripts/ci/allure_metadata_utils.py`
+- Bash-based converters: Use `scripts/ci/allure-metadata-utils.sh`
+- Metadata is visible in Allure report under "Parameters" tab for each test
+
+**Purpose:**
+- Verify that test results are truly from different test runs in different environments
+- Distinguish between legitimate identical results vs. duplicate processing
+- Provides audit trail for test execution across environments
 
 ## 📚 Implementation History & Key Fixes
 

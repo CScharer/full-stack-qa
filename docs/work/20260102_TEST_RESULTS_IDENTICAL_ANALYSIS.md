@@ -736,10 +736,10 @@ if env and env not in ["unknown", "combined"]:
 
 ## Implementation Steps for Simple Verification Mechanism
 
-**Status:** ✅ **This approach is CORRECT** - It will allow visual verification that results are from different runs.
+**Status:** ✅ **COMPLETED AND REFACTORED** - All converters now use shared utility functions.
 
 **What It Does:**
-- Adds Base URL, Test Execution Time, and CI Run ID as Allure parameters
+- Adds Base URL, Test Execution Time, CI Run ID, and CI Run Number as Allure parameters
 - These parameters are visible in Allure UI under "Parameters" tab
 - Allows easy verification that results are from different environments/runs
 - No test config or data changes needed
@@ -750,103 +750,69 @@ if env and env not in ["unknown", "combined"]:
 - **CI Run ID** proves same or different pipeline runs
 - If all three are different = ✅ Confirmed different test runs
 
-### Step 1: Update FS Test Converter (Artillery) ✅ COMPLETED
+**Implementation Approach:**
+- ✅ **Shared Utilities Created**: All converters now use centralized utility functions
+- ✅ **Python Module**: `scripts/ci/allure_metadata_utils.py` - Provides `add_verification_metadata_to_params()` function
+- ✅ **Bash Functions**: `scripts/ci/allure-metadata-utils.sh` - Provides `get_verification_metadata_json()` function
+- ✅ **DRY Principle**: Single source of truth for metadata generation, eliminates code duplication
+- ✅ **Fallback Support**: All converters include inline fallback functions if import fails
+
+### Step 1: Update FS Test Converter (Artillery) ✅ COMPLETED & REFACTORED
 
 **File:** `scripts/ci/convert-artillery-to-allure.sh`
 
-**Location:** After line 131 (where params are created, inside the `if env` block)
+**Status:** ✅ Implemented and refactored to use shared utility
 
-**Status:** ✅ Implemented - Verification metadata added to Artillery converter
+**Implementation:**
+- Imports `add_verification_metadata_to_params()` from `allure_metadata_utils.py`
+- Uses `first_metric_at` timestamp from Artillery results (actual test execution time)
+- Single line call: `params = add_verification_metadata_to_params(params, env, first_metric_at)`
 
-**Change:**
-```python
-# Find this section (around line 129-131):
-params = []
-if env and env not in ["unknown", "combined"]:
-    params.append({"name": "Environment", "value": env.upper()})
+**Shared Utility:** `scripts/ci/allure_metadata_utils.py`
 
-# Add after line 131 (inside the if block):
-    # Add verification metadata
-    import os
-    from datetime import datetime
-    params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", "unknown")})
-    # Use firstMetricAt from Artillery results (actual test execution time)
-    test_timestamp = datetime.fromtimestamp(first_metric_at / 1000).isoformat() if first_metric_at > 0 else datetime.now().isoformat()
-    params.append({"name": "Test Execution Time", "value": test_timestamp})
-    params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
-    params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
-```
-
-**Note:** `first_metric_at` is already available from line 107, so we use the actual test execution timestamp from Artillery results.
-
-### Step 2: Update Cypress Converter ✅ COMPLETED
+### Step 2: Update Cypress Converter ✅ COMPLETED & REFACTORED
 
 **File:** `scripts/ci/convert-cypress-to-allure.sh`
 
-**Location:** In Python section, after line 237 (where params are created)
+**Status:** ✅ Implemented and refactored to use shared utility
 
-**Status:** ✅ Implemented - Verification metadata added to Cypress converter
+**Implementation:**
+- Imports `add_verification_metadata_to_params()` from `allure_metadata_utils.py`
+- Uses test execution timestamp from Cypress results
+- Overrides Base URL if `CYPRESS_baseUrl` is available
+- Single line call: `params = add_verification_metadata_to_params(params, env, timestamp, "BASE_URL")`
 
-**Change:**
-```python
-# Find this section (around line 235-237):
-params = []
-if env and env not in ["unknown", "combined"]:
-    params.append({"name": "Environment", "value": env.upper()})
+**Shared Utility:** `scripts/ci/allure_metadata_utils.py`
 
-# Add after line 237 (inside the if block):
-    # Add verification metadata
-    import os
-    from datetime import datetime
-    base_url = os.environ.get("BASE_URL") or os.environ.get("CYPRESS_baseUrl") or test.get('baseUrl', 'unknown')
-    params.append({"name": "Base URL", "value": str(base_url)})
-    # Use test execution time from Cypress results if available
-    test_timestamp = datetime.fromtimestamp(test_duration / 1000).isoformat() if test_duration > 0 else datetime.now().isoformat()
-    params.append({"name": "Test Execution Time", "value": test_timestamp})
-    params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
-    params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
-```
-
-**Note:** For Cypress, we extract base URL from environment or test data, and use test duration for timestamp.
-
-### Step 3: Update Playwright Converter ✅ COMPLETED
+### Step 3: Update Playwright Converter ✅ COMPLETED & REFACTORED
 
 **File:** `scripts/ci/convert-playwright-to-allure.sh`
 
-**Location:** After line 232 (where params are created)
+**Status:** ✅ Implemented and refactored to use shared utility
 
-**Status:** ✅ Implemented - Verification metadata added to Playwright converter
+**Implementation:**
+- Imports `add_verification_metadata_to_params()` from `allure_metadata_utils.py`
+- Uses timestamp from Playwright test results
+- Overrides Base URL if `PLAYWRIGHT_BASE_URL` is available
+- Single line call: `params = add_verification_metadata_to_params(params, env, timestamp, "BASE_URL")`
 
-**Change:**
-```python
-# Find this section (around line 230-232):
-params = []
-if env and env not in ["unknown", "combined"]:
-    params.append({"name": "Environment", "value": env.upper()})
+**Shared Utility:** `scripts/ci/allure_metadata_utils.py`
 
-# Add after line 232 (inside the if block):
-    # Add verification metadata
-    import os
-    from datetime import datetime
-    params.append({"name": "Base URL", "value": os.environ.get("BASE_URL", os.environ.get("PLAYWRIGHT_BASE_URL", "unknown"))})
-    # Use timestamp from Playwright test result (already available)
-    test_timestamp = datetime.fromtimestamp(timestamp / 1000).isoformat() if timestamp > 0 else datetime.now().isoformat()
-    params.append({"name": "Test Execution Time", "value": test_timestamp})
-    params.append({"name": "CI Run ID", "value": os.environ.get("GITHUB_RUN_ID", "local")})
-    params.append({"name": "CI Run Number", "value": os.environ.get("GITHUB_RUN_NUMBER", "unknown")})
-```
-
-**Note:** `timestamp` is already available from line 217 in the Playwright converter.
-
-### Step 4: Update Robot Framework Converter ✅ COMPLETED
+### Step 4: Update Robot Framework Converter ✅ COMPLETED & REFACTORED
 
 **File:** `scripts/ci/convert-robot-to-allure.sh`
 
-**Location:** After line 159 (where params are created)
+**Status:** ✅ Implemented and refactored to use shared utility (both individual tests and fallback summary)
 
-**Status:** ✅ Implemented - Verification metadata added to Robot Framework converter (both individual tests and fallback summary)
+**Implementation:**
+- Imports `add_verification_metadata_to_params()` from `allure_metadata_utils.py`
+- Uses current time (Robot Framework doesn't provide execution timestamp)
+- Overrides Base URL if `ROBOT_BASE_URL` is available
+- Single line call: `params = add_verification_metadata_to_params(params, env, None, "BASE_URL")`
 
-**Change:**
+**Shared Utility:** `scripts/ci/allure_metadata_utils.py`
+
+**Previous Implementation:**
 ```python
 # Find this section (around line 157-159):
 params = []
@@ -895,18 +861,19 @@ if env and env not in ["unknown", "combined"]:
 
 **Note:** Use suite duration timestamp if available from Vibium results.
 
-### Step 6: Update BE Performance Tests Converter ✅ COMPLETED
+### Step 6: Update BE Performance Tests Converter ✅ COMPLETED & REFACTORED
 
 **File:** `scripts/convert-performance-to-allure.sh`
 
-**Location:** In the `create_allure_result` function, update the parameters array building section (around line 85-94)
+**Status:** ✅ Implemented and refactored to use shared utility
 
-**Status:** ✅ Implemented - Verification metadata added to BE performance tests converter
+**Implementation:**
+- Sources `allure-metadata-utils.sh` to get `get_verification_metadata_json()` function
+- Uses bash function to generate JSON metadata
+- Applies to all BE performance tests (Gatling, JMeter, Locust)
+- Single function call: `verification_metadata=$(get_verification_metadata_json "$environment")`
 
-**Change:**
-Add similar verification metadata when creating Allure results for Gatling, JMeter, and Locust.
-
-**Note:** This file may need inspection to find exact location where parameters are set.
+**Shared Utility:** `scripts/ci/allure-metadata-utils.sh`
 
 ### Step 7: Test and Verify
 

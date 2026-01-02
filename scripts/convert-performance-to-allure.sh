@@ -4,6 +4,43 @@
 
 set -e
 
+# Source shared metadata utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/ci/allure-metadata-utils.sh" 2>/dev/null || {
+    # Fallback if sourcing fails
+    get_verification_metadata_json() {
+        local env="$1"
+        if [ -z "$env" ] || [ "$env" = "unknown" ] || [ "$env" = "combined" ]; then
+            echo "[]"
+            return
+        fi
+        local base_url="${BASE_URL:-unknown}"
+        local test_timestamp_iso=$(date -u +"%Y-%m-%dT%H:%M:%S" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S")
+        local ci_run_id="${GITHUB_RUN_ID:-local}"
+        local ci_run_number="${GITHUB_RUN_NUMBER:-unknown}"
+        cat <<EOF
+[
+    {
+      "name": "Base URL",
+      "value": "$base_url"
+    },
+    {
+      "name": "Test Execution Time",
+      "value": "$test_timestamp_iso"
+    },
+    {
+      "name": "CI Run ID",
+      "value": "$ci_run_id"
+    },
+    {
+      "name": "CI Run Number",
+      "value": "$ci_run_number"
+    }
+]
+EOF
+    }
+}
+
 ALLURE_RESULTS_DIR="${1:-target/allure-results}"
 PERFORMANCE_RESULTS_DIR="${2:-target}"
 
@@ -85,33 +122,23 @@ create_allure_result() {
     # Build parameters array
     local params_json="[]"
     if [ -n "$environment" ] && [ "$environment" != "unknown" ] && [ "$environment" != "combined" ]; then
-        # Get verification metadata from environment variables
-        local base_url="${BASE_URL:-unknown}"
-        local test_timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S")
-        local ci_run_id="${GITHUB_RUN_ID:-local}"
-        local ci_run_number="${GITHUB_RUN_NUMBER:-unknown}"
+        # Get verification metadata using shared utility
+        local verification_metadata=$(get_verification_metadata_json "$environment")
         
+        # Build params JSON with Environment and verification metadata
         params_json="[
     {
       \"name\": \"Environment\",
       \"value\": \"$(echo $environment | tr '[:lower:]' '[:upper:]')\"
-    },
-    {
-      \"name\": \"Base URL\",
-      \"value\": \"$base_url\"
-    },
-    {
-      \"name\": \"Test Execution Time\",
-      \"value\": \"$test_timestamp\"
-    },
-    {
-      \"name\": \"CI Run ID\",
-      \"value\": \"$ci_run_id\"
-    },
-    {
-      \"name\": \"CI Run Number\",
-      \"value\": \"$ci_run_number\"
-    }
+    }"
+        
+        # Append verification metadata (remove outer brackets and add comma)
+        if [ "$verification_metadata" != "[]" ]; then
+            params_json="${params_json},
+$(echo "$verification_metadata" | sed 's/^\[//;s/\]$//')"
+        fi
+        
+        params_json="${params_json}
   ]"
     fi
     
