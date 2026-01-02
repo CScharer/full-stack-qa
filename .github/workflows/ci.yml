@@ -153,7 +153,9 @@ jobs:
     name: Determine Schedule Type
     runs-on: ubuntu-latest
     needs: [detect-file-changes]
-    if: always() && needs.detect-file-changes.result == 'success'
+    # ⚠️ TEMPORARY: Always run to ensure outputs are available
+    # TODO: REVERT - Restore original condition before merging PR
+    if: always()
     outputs:
       code-changed: ${{ needs.detect-file-changes.outputs.code-changed }}
       is_weekly: ${{ steps.check-day.outputs.is_weekly }}
@@ -304,13 +306,18 @@ jobs:
           if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "⏰ Scheduled run - using all test types"
             TEST_TYPE_INPUT="all"
-            PERF_TYPE_INPUT="${{ needs.determine-schedule-type.outputs.be_test_type }}"
+            # Use be_test_type from determine-schedule-type if available, otherwise default to 'smoke'
+            PERF_TYPE_INPUT="${{ needs.determine-schedule-type.outputs.be_test_type || 'smoke' }}"
             PERF_ENV_INPUT="dev"
           else
-            TEST_TYPE_INPUT="${{ github.event.inputs.test_type }}"
-            PERF_TYPE_INPUT="${{ github.event.inputs.be_test_type }}"
-            PERF_ENV_INPUT="${{ github.event.inputs.be_environment }}"
+            TEST_TYPE_INPUT="${{ github.event.inputs.test_type || 'fe-only' }}"
+            PERF_TYPE_INPUT="${{ github.event.inputs.be_test_type || 'smoke' }}"
+            PERF_ENV_INPUT="${{ github.event.inputs.be_environment || 'dev' }}"
           fi
+          echo "🔍 DEBUG: Test execution inputs:"
+          echo "   TEST_TYPE_INPUT: $TEST_TYPE_INPUT"
+          echo "   PERF_TYPE_INPUT: $PERF_TYPE_INPUT"
+          echo "   PERF_ENV_INPUT: $PERF_ENV_INPUT"
           ./scripts/ci/determine-test-execution.sh \
             "${{ github.event_name }}" \
             "${{ github.ref }}" \
