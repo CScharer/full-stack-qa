@@ -216,7 +216,9 @@ jobs:
     name: Determine Environments
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    # ⚠️ TEMPORARY: Force job to run even if code-changed is false
+    # TODO: REVERT - Restore original condition before merging PR
+    if: always() && needs.determine-schedule-type.result == 'success'
     outputs:
       run_dev: ${{ steps.set-envs.outputs.run_dev }}
       run_test: ${{ steps.set-envs.outputs.run_test }}
@@ -271,13 +273,15 @@ jobs:
     name: Determine Test Execution
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    # ⚠️ TEMPORARY: Force job to run even if code-changed is false
+    # TODO: REVERT - Restore original condition before merging PR
+    if: always() && needs.determine-schedule-type.result == 'success'
     outputs:
-      run_ui_tests: ${{ steps.set-execution.outputs.run_ui_tests }}
-      run_be_tests: ${{ steps.set-execution.outputs.run_be_tests }}
-      be_test_mode: ${{ steps.set-execution.outputs.be_test_mode }}
-      be_env_dev: ${{ steps.set-execution.outputs.be_env_dev }}
-      be_env_test: ${{ steps.set-execution.outputs.be_env_test }}
+      run_ui_tests: ${{ steps.set-execution.outputs.run_ui_tests || 'true' }}
+      run_be_tests: ${{ steps.set-execution.outputs.run_be_tests || 'false' }}
+      be_test_mode: ${{ steps.set-execution.outputs.be_test_mode || 'smoke' }}
+      be_env_dev: ${{ steps.set-execution.outputs.be_env_dev || 'false' }}
+      be_env_test: ${{ steps.set-execution.outputs.be_env_test || 'false' }}
 
     steps:
       - name: Checkout code
@@ -304,6 +308,21 @@ jobs:
             "$TEST_TYPE_INPUT" \
             "$PERF_TYPE_INPUT" \
             "$PERF_ENV_INPUT"
+          
+          # ⚠️ TEMPORARY: Verify outputs were set
+          echo "🔍 DEBUG: Verifying outputs were set..."
+          if [ -f "$GITHUB_OUTPUT" ]; then
+            echo "GITHUB_OUTPUT contents:"
+            cat "$GITHUB_OUTPUT" | grep -E "(run_ui_tests|run_be_tests)" || echo "⚠️  No run_ui_tests or run_be_tests found!"
+          else
+            echo "❌ GITHUB_OUTPUT file not found!"
+          fi
+          
+          # ⚠️ TEMPORARY: Force run_ui_tests if not set
+          if ! grep -q "^run_ui_tests=" "$GITHUB_OUTPUT" 2>/dev/null; then
+            echo "⚠️  run_ui_tests not found in output, forcing it..."
+            echo "run_ui_tests=true" >> "$GITHUB_OUTPUT"
+          fi
 
   # ==================================================================================
   # STAGE 2: SHARED SETUP (Run once for all environments)

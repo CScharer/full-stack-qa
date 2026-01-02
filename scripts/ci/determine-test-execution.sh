@@ -150,3 +150,8 @@ fi
 # TODO: REVERT - Remove this final override before merging PR
 echo "run_ui_tests=true" >> $GITHUB_OUTPUT
 echo "⚠️  TEMPORARY OVERRIDE: Forced run_ui_tests=true (will be reverted before merge)"
+echo ""
+echo "🔍 FINAL VERIFICATION:"
+echo "   run_ui_tests=$(grep '^run_ui_tests=' $GITHUB_OUTPUT | tail -1 | cut -d'=' -f2)"
+echo "   run_be_tests=$(grep '^run_be_tests=' $GITHUB_OUTPUT | tail -1 | cut -d'=' -f2)"
+echo "   ✅ FE tests WILL run (run_ui_tests=true forced)"
