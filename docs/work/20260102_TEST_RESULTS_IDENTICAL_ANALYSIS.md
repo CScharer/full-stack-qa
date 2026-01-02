@@ -1019,3 +1019,46 @@ The fallback logic in `prepare-combined-allure-results.sh` is processing the sam
    - Test Execution Times are different (or at least not identical)
    - Results truly represent different test runs
 
+---
+
+## ⚠️ TEMPORARY WORKFLOW CHANGE FOR TESTING
+
+**Date:** January 2, 2026  
+**Branch:** `fix/identical-results-fallback-logic`
+
+**Temporary Change Made:**
+To test the fallback logic fix without merging the branch, the workflow has been temporarily modified to run **all environments (dev, test, prod)** on any branch push, instead of the normal behavior where feature branch pushes only run the 'dev' environment.
+
+**File Modified:** `scripts/ci/determine-environments.sh`
+
+**Change Details:**
+- Modified push event handling to force `IS_BRANCH_PUSH=false` for all push events
+- This makes all branch pushes default to 'all' environments instead of 'dev' only
+- Added clear warning comments in the script indicating this is temporary
+
+**⚠️ CRITICAL: REVERT BEFORE MERGING PR**
+Before merging the PR, this temporary change MUST be reverted to restore the original behavior:
+- Feature branch pushes should only run 'dev' environment
+- Only pushes to main/develop should run 'all' environments
+
+**Revert Instructions:**
+1. In `scripts/ci/determine-environments.sh`, restore the original logic:
+   - Remove the temporary comment block
+   - Change `IS_BRANCH_PUSH=false` back to checking if branch is main/develop
+   - Remove the warning echo statements
+
+**Original Logic (to restore):**
+```bash
+elif [ "$EVENT_NAME" == "push" ]; then
+  echo "📦 Main/develop push detected - defaulting to ALL environments"
+  # Check if branch is main or develop to determine if all environments should run
+  # Feature branches should only run dev
+```
+
+**Testing Purpose:**
+This temporary change allows us to verify that:
+- All three environments (dev, test, prod) produce results
+- Base URLs are correctly different for each environment
+- Test Execution Times are different (proving different runs)
+- The fallback logic fix prevents duplicate processing
+
