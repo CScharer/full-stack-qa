@@ -246,7 +246,8 @@ try:
         test_start_time = int(datetime.now().timestamp() * 1000)
     
     print(f"📊 Cypress Stats: {total} tests, {passes} passed, {failures} failed, {pending} pending")
-    print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
+    if test_start_time:
+        print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
     
     # Find all individual tests
     all_tests = find_tests(data)

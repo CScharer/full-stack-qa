@@ -109,6 +109,99 @@ try:
     
     print(f"📊 Robot Framework Stats: {total} tests, {passed} passed, {failed} failed")
     
+    # Extract test execution start time from Robot Framework XML
+    # Robot Framework XML has timestamp in the root <robot> element or in suite elements
+    test_start_time = None
+    
+    # Try to get timestamp from root element
+    robot_timestamp = root.get('generated') or root.get('generator') or root.get('timestamp')
+    if robot_timestamp:
+        try:
+            # Robot Framework timestamps are typically in format "YYYYMMDD HH:MM:SS.mmm"
+            # or ISO format
+            if 'T' in robot_timestamp or '-' in robot_timestamp:
+                # ISO format
+                dt = datetime.fromisoformat(robot_timestamp.replace('Z', '+00:00'))
+                test_start_time = int(dt.timestamp() * 1000)
+            elif len(robot_timestamp) > 10 and ' ' in robot_timestamp:
+                # Format: "YYYYMMDD HH:MM:SS.mmm"
+                date_part, time_part = robot_timestamp.split(' ', 1)
+                year = int(date_part[:4])
+                month = int(date_part[4:6])
+                day = int(date_part[6:8])
+                time_parts = time_part.split(':')
+                hour = int(time_parts[0])
+                minute = int(time_parts[1])
+                sec_parts = time_parts[2].split('.')
+                second = int(sec_parts[0])
+                microsecond = int(sec_parts[1]) * 1000 if len(sec_parts) > 1 else 0
+                dt = datetime(year, month, day, hour, minute, second, microsecond)
+                test_start_time = int(dt.timestamp() * 1000)
+        except:
+            pass
+    
+    # If not found in root, try to get from first suite or test status
+    if not test_start_time:
+        first_suite = root.find('.//suite')
+        if first_suite is not None:
+            suite_timestamp = first_suite.get('starttime') or first_suite.get('timestamp')
+            if suite_timestamp:
+                try:
+                    if 'T' in suite_timestamp or '-' in suite_timestamp:
+                        dt = datetime.fromisoformat(suite_timestamp.replace('Z', '+00:00'))
+                        test_start_time = int(dt.timestamp() * 1000)
+                    elif len(suite_timestamp) > 10 and ' ' in suite_timestamp:
+                        # Format: "YYYYMMDD HH:MM:SS.mmm"
+                        date_part, time_part = suite_timestamp.split(' ', 1)
+                        year = int(date_part[:4])
+                        month = int(date_part[4:6])
+                        day = int(date_part[6:8])
+                        time_parts = time_part.split(':')
+                        hour = int(time_parts[0])
+                        minute = int(time_parts[1])
+                        sec_parts = time_parts[2].split('.')
+                        second = int(sec_parts[0])
+                        microsecond = int(sec_parts[1]) * 1000 if len(sec_parts) > 1 else 0
+                        dt = datetime(year, month, day, hour, minute, second, microsecond)
+                        test_start_time = int(dt.timestamp() * 1000)
+                except:
+                    pass
+    
+    # If still not found, try to get from first test status starttime
+    if not test_start_time:
+        first_test = root.find('.//test')
+        if first_test is not None:
+            first_status = first_test.find('status')
+            if first_status is not None:
+                status_starttime = first_status.get('starttime')
+                if status_starttime:
+                    try:
+                        if 'T' in status_starttime or '-' in status_starttime:
+                            dt = datetime.fromisoformat(status_starttime.replace('Z', '+00:00'))
+                            test_start_time = int(dt.timestamp() * 1000)
+                        elif len(status_starttime) > 10 and ' ' in status_starttime:
+                            # Format: "YYYYMMDD HH:MM:SS.mmm"
+                            date_part, time_part = status_starttime.split(' ', 1)
+                            year = int(date_part[:4])
+                            month = int(date_part[4:6])
+                            day = int(date_part[6:8])
+                            time_parts = time_part.split(':')
+                            hour = int(time_parts[0])
+                            minute = int(time_parts[1])
+                            sec_parts = time_parts[2].split('.')
+                            second = int(sec_parts[0])
+                            microsecond = int(sec_parts[1]) * 1000 if len(sec_parts) > 1 else 0
+                            dt = datetime(year, month, day, hour, minute, second, microsecond)
+                            test_start_time = int(dt.timestamp() * 1000)
+                    except:
+                        pass
+    
+    # Fallback to current time if no timestamp found
+    if not test_start_time:
+        test_start_time = int(datetime.now().timestamp() * 1000)
+    
+    print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
+    
     converted = 0
     
     # Find all test elements and create individual Allure results
@@ -116,6 +209,9 @@ try:
     
     if all_tests and len(all_tests) > 0:
         print(f"📊 Found {len(all_tests)} individual test(s) to convert")
+        
+        # Track test index for relative timestamps
+        test_index = 0
         
         # Create individual Allure results for each test
         for test_elem in all_tests:
@@ -160,7 +256,9 @@ try:
             full_name = f"RobotFramework.{suite_name}.{test_name}" if suite_name else f"RobotFramework.{test_name}"
             
             test_uuid = uuid.uuid4().hex[:32]
-            timestamp = int(datetime.now().timestamp() * 1000)
+            # Use test execution start time + offset for each test to maintain relative timing
+            timestamp = test_start_time + (test_index * 100)  # Small offset per test
+            test_index += 1
             history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
             
             labels = [
@@ -177,8 +275,8 @@ try:
             if env and env not in ["unknown", "combined"]:
                 params.append({"name": "Environment", "value": env.upper()})
                 # Add verification metadata using shared utility
-                # Robot Framework doesn't provide execution timestamp, so pass None
-                params = add_verification_metadata_to_params(params, env, None, "BASE_URL")
+                # Use test execution start time extracted from XML
+                params = add_verification_metadata_to_params(params, env, timestamp, "BASE_URL")
                 # Override Base URL if ROBOT_BASE_URL is available
                 base_url = os.environ.get("BASE_URL") or os.environ.get("ROBOT_BASE_URL", "unknown")
                 if base_url != "unknown":
@@ -222,7 +320,8 @@ try:
         duration = 60000  # Default 1 minute
         
         test_uuid = uuid.uuid4().hex[:32]
-        timestamp = int(datetime.now().timestamp() * 1000)
+        # Use test execution start time for summary result
+        timestamp = test_start_time
         test_name = "Robot Framework Test Suite"
         full_name = f"RobotFramework.{test_name}"
         history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
@@ -241,7 +340,8 @@ try:
         if env and env not in ["unknown", "combined"]:
             params.append({"name": "Environment", "value": env.upper()})
             # Add verification metadata using shared utility
-            params = add_verification_metadata_to_params(params, env, None, "BASE_URL")
+            # Use test execution start time extracted from XML
+            params = add_verification_metadata_to_params(params, env, timestamp, "BASE_URL")
             # Override Base URL if ROBOT_BASE_URL is available
             base_url = os.environ.get("BASE_URL") or os.environ.get("ROBOT_BASE_URL", "unknown")
             if base_url != "unknown":
