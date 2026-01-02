@@ -23,7 +23,8 @@
     "@playwright/test": "^1.57.0",
     "@types/node": "^25.0.0",
     "typescript": "^5.9.3",
-    "artillery": "^2.0.0"
+    "artillery": "^2.0.0",
+    "artillery-plugin-playwright": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0",

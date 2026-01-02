@@ -17,16 +17,6 @@ config:
     - duration: 300
       arrivalRate: 10
       name: "Sustained load"
-    # Cool-down phase: Gradually reduce load
-    - duration: 60
-      arrivalRate: 0
-      name: "Cool down"
-  plugins:
-    playwright:
-      launchOptions:
-        headless: true
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      browser: chromium
   processor: "../processors/homepage-processor.js"
   variables:
     baseUrl: "http://localhost:3004"
