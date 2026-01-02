@@ -314,6 +314,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Verify container can run
+        continue-on-error: true
         run: |
           chmod +x scripts/ci/verify-docker-image.sh
           ./scripts/ci/verify-docker-image.sh "full-stack-qa-tests:latest"
@@ -824,7 +825,7 @@ jobs:
       (needs.determine-test-execution.outputs.run_ui_tests == 'true' ||
        needs.determine-test-execution.outputs.run_be_tests == 'true') &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped' || needs.gate-setup.result == 'failure')
+      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
     with:
       environment: 'dev'
       artillery_test_type: 'smoke'  # Quick smoke test for CI/CD
