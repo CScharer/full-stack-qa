@@ -112,6 +112,59 @@ if [ ${#ACTIVE_ENVIRONMENTS[@]} -eq 0 ]; then
 fi
 
 echo "   📊 Active environments: ${ACTIVE_ENVIRONMENTS[*]}"
+echo ""
+echo "🔍 Debug: Checking for framework-specific artifact directories..."
+echo "   Cypress: $([ -d "$SOURCE_DIR/cypress-results" ] && echo "✅ exists" || echo "❌ not found")"
+echo "   Playwright: $([ -d "$SOURCE_DIR/playwright-results" ] && echo "✅ exists" || echo "❌ not found")"
+echo "   Robot: $([ -d "$SOURCE_DIR/robot-results" ] && echo "✅ exists" || echo "❌ not found")"
+echo "   Vibium: $([ -d "$SOURCE_DIR/vibium-results" ] && echo "✅ exists" || echo "❌ not found")"
+echo "   FS: $([ -d "$SOURCE_DIR/fs-results" ] && echo "✅ exists" || echo "❌ not found")"
+echo ""
+if [ -d "$SOURCE_DIR/cypress-results" ]; then
+    echo "   📂 Cypress results structure:"
+    find "$SOURCE_DIR/cypress-results" -maxdepth 3 -type d 2>/dev/null | head -15 | while read d; do
+        file_count=$(find "$d" -maxdepth 1 -type f 2>/dev/null | wc -l | tr -d ' ')
+        echo "      - $d ($file_count files)"
+    done
+    echo "   📄 Cypress JSON files found:"
+    find "$SOURCE_DIR/cypress-results" -name "*.json" -type f 2>/dev/null | head -10 | while read f; do
+        echo "      - $f ($(du -h "$f" 2>/dev/null | cut -f1))"
+    done || echo "      (no JSON files found)"
+fi
+if [ -d "$SOURCE_DIR/playwright-results" ]; then
+    echo "   📂 Playwright results structure:"
+    find "$SOURCE_DIR/playwright-results" -maxdepth 3 -type d 2>/dev/null | head -15 | while read d; do
+        file_count=$(find "$d" -maxdepth 1 -type f 2>/dev/null | wc -l | tr -d ' ')
+        echo "      - $d ($file_count files)"
+    done
+    echo "   📄 Playwright XML files found:"
+    find "$SOURCE_DIR/playwright-results" -name "*.xml" -type f 2>/dev/null | head -10 | while read f; do
+        echo "      - $f ($(du -h "$f" 2>/dev/null | cut -f1))"
+    done || echo "      (no XML files found)"
+fi
+if [ -d "$SOURCE_DIR/robot-results" ]; then
+    echo "   📂 Robot results structure:"
+    find "$SOURCE_DIR/robot-results" -maxdepth 3 -type d 2>/dev/null | head -15 | while read d; do
+        file_count=$(find "$d" -maxdepth 1 -type f 2>/dev/null | wc -l | tr -d ' ')
+        echo "      - $d ($file_count files)"
+    done
+    echo "   📄 Robot XML files found:"
+    find "$SOURCE_DIR/robot-results" -name "output.xml" -type f 2>/dev/null | head -10 | while read f; do
+        echo "      - $f ($(du -h "$f" 2>/dev/null | cut -f1))"
+    done || echo "      (no output.xml files found)"
+fi
+if [ -d "$SOURCE_DIR/vibium-results" ]; then
+    echo "   📂 Vibium results structure:"
+    find "$SOURCE_DIR/vibium-results" -maxdepth 3 -type d 2>/dev/null | head -15 | while read d; do
+        file_count=$(find "$d" -maxdepth 1 -type f 2>/dev/null | wc -l | tr -d ' ')
+        echo "      - $d ($file_count files)"
+    done
+    echo "   📄 Vibium JSON files found:"
+    find "$SOURCE_DIR/vibium-results" -name "*.json" -type f 2>/dev/null | head -10 | while read f; do
+        echo "      - $f ($(du -h "$f" 2>/dev/null | cut -f1))"
+    done || echo "      (no JSON files found)"
+fi
+echo ""
 
 # Convert Cypress results for each environment
 # FIXED: Check BOTH environment-specific directories AND merged directories for each environment
