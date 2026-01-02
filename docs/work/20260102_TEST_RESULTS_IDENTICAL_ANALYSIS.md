@@ -1062,3 +1062,57 @@ This temporary change allows us to verify that:
 - Test Execution Times are different (proving different runs)
 - The fallback logic fix prevents duplicate processing
 
+---
+
+## Pipeline Fixes for Missing Results
+
+**Date:** January 2, 2026  
+**Branch:** `fix/identical-results-fallback-logic`  
+**Issue:** Artillery, Cypress, Playwright, and Vibium tests not showing up in Allure Report
+
+### Root Cause Identified
+
+**Problem:** Artifacts preserve the full upload path when downloaded with `merge-multiple: true`. The path detection logic was only checking for files directly in the artifact subdirectory, but not the nested paths that preserve the original upload structure.
+
+**Artifact Upload Paths:**
+- Cypress: `cypress/cypress/results/` → artifact `cypress-results-{env}` → downloaded to `cypress-results/cypress-results-{env}/cypress/cypress/results/`
+- Playwright: `playwright/test-results/` → artifact `playwright-results-{env}` → downloaded to `playwright-results/playwright-results-{env}/playwright/test-results/`
+- Robot: `target/robot-reports/` → artifact `robot-results-{env}` → downloaded to `robot-results/robot-results-{env}/target/robot-reports/`
+- Vibium: `vibium/test-results/` or `vibium/.vitest/` → artifact `vibium-results-{env}` → downloaded to `vibium-results/vibium-results-{env}/vibium/test-results/` or `vibium-results/vibium-results-{env}/vibium/.vitest/`
+
+### Fixes Applied
+
+**File:** `scripts/ci/prepare-combined-allure-results.sh`
+
+**Changes Made:**
+
+1. **Cypress Path Detection (Lines 132-157):**
+   - ✅ Added check for nested path: `cypress-results/cypress-results-{env}/cypress/cypress/results/`
+   - ✅ Maintains fallback to search for JSON files recursively
+   - ✅ Updated debug output to show nested path in checked locations
+
+2. **Playwright Path Detection (Lines 188-204):**
+   - ✅ Added check for nested path: `playwright-results/playwright-results-{env}/playwright/test-results/`
+   - ✅ Maintains fallback to check `playwright-results/playwright-results-{env}/test-results/`
+   - ✅ Updated debug output to show nested path in checked locations
+
+3. **Robot Path Detection (Lines 211-235):**
+   - ✅ Added check for nested path: `robot-results/robot-results-{env}/target/robot-reports/`
+   - ✅ Maintains fallback to search for `output.xml` recursively
+   - ✅ Updated debug output to show nested path in checked locations
+
+4. **Vibium Path Detection (Lines 289-323):**
+   - ✅ Added check for nested paths: `vibium-results/vibium-results-{env}/vibium/test-results/` and `vibium-results/vibium-results-{env}/vibium/.vitest/`
+   - ✅ Maintains fallback to check non-nested paths
+   - ✅ Updated debug output to show nested paths in checked locations
+
+**Reasoning:**
+When GitHub Actions downloads artifacts with `merge-multiple: true`, it preserves the full directory structure from the upload. Since artifacts are uploaded from paths like `cypress/cypress/results/`, the downloaded structure becomes `cypress-results/cypress-results-{env}/cypress/cypress/results/`. The previous logic only checked for files directly in `cypress-results-{env}/` or `cypress-results-{env}/results/`, missing the nested structure.
+
+**Expected Result:**
+- Cypress, Playwright, Robot, and Vibium results should now be found and converted
+- Debug output will show which paths are being checked
+- Conversion success/failure will be clearly reported
+
+**Status:** ✅ **FIXED** - Awaiting pipeline run to verify
+
