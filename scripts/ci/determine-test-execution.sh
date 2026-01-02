@@ -76,8 +76,9 @@ if [ "$PERF_ENV" == "prod" ]; then
   PERF_ENV="dev"
 fi
 
-# ⚠️ TEMPORARY: Force UI tests to run in all environments for testing
+# ⚠️ TEMPORARY: ALWAYS force UI tests to run regardless of test_type
 # TODO: REVERT - Remove this temporary override before merging PR
+# This ensures FE tests run in all environments during testing
 if [ "$TEST_TYPE" == "fe-only" ] || [ -z "$TEST_TYPE" ]; then
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=false" >> $GITHUB_OUTPUT
@@ -89,7 +90,8 @@ if [ "$TEST_TYPE" == "fe-only" ] || [ -z "$TEST_TYPE" ]; then
     echo "✅ Will run FE tests only"
   fi
 elif [ "$TEST_TYPE" == "be-only" ]; then
-  echo "run_ui_tests=false" >> $GITHUB_OUTPUT
+  # ⚠️ TEMPORARY: Force UI tests even for be-only
+  echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=true" >> $GITHUB_OUTPUT
   echo "be_test_mode=$PERF_TYPE" >> $GITHUB_OUTPUT
   # Determine BE test environments
@@ -107,7 +109,7 @@ elif [ "$TEST_TYPE" == "be-only" ]; then
     echo "be_env_test=false" >> $GITHUB_OUTPUT
     echo "⚠️  Unknown be_environment, defaulting to dev"
   fi
-  echo "✅ Will run BE tests only ($PERF_TYPE) in $PERF_ENV"
+  echo "✅ TEMPORARY: Will run BOTH FE and BE tests (be-only overridden to include FE)"
 elif [ "$TEST_TYPE" == "all" ]; then
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=true" >> $GITHUB_OUTPUT
@@ -143,3 +145,8 @@ else
   echo "be_env_test=false" >> $GITHUB_OUTPUT
   echo "⚠️  Unknown test_type '$TEST_TYPE', defaulting to fe-only (TEMPORARY: forcing UI tests)"
 fi
+
+# ⚠️ TEMPORARY: Final override - ALWAYS ensure UI tests are enabled
+# TODO: REVERT - Remove this final override before merging PR
+echo "run_ui_tests=true" >> $GITHUB_OUTPUT
+echo "⚠️  TEMPORARY OVERRIDE: Forced run_ui_tests=true (will be reverted before merge)"
