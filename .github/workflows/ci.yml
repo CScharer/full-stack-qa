@@ -223,6 +223,16 @@ jobs:
       run_prod: ${{ steps.set-envs.outputs.run_prod }}
       test_suite: ${{ steps.set-envs.outputs.test_suite }}
       selected_env: ${{ steps.set-envs.outputs.selected_env }}
+      # Test execution controls - same for all environments
+      enable_smoke_tests: ${{ steps.set-envs.outputs.enable_smoke_tests }}
+      enable_grid_tests: ${{ steps.set-envs.outputs.enable_grid_tests }}
+      enable_mobile_tests: ${{ steps.set-envs.outputs.enable_mobile_tests }}
+      enable_responsive_tests: ${{ steps.set-envs.outputs.enable_responsive_tests }}
+      enable_cypress_tests: ${{ steps.set-envs.outputs.enable_cypress_tests }}
+      enable_playwright_tests: ${{ steps.set-envs.outputs.enable_playwright_tests }}
+      enable_robot_tests: ${{ steps.set-envs.outputs.enable_robot_tests }}
+      enable_selenide_tests: ${{ steps.set-envs.outputs.enable_selenide_tests }}
+      enable_vibium_tests: ${{ steps.set-envs.outputs.enable_vibium_tests }}
 
     steps:
       - name: Checkout code
@@ -513,15 +523,15 @@ jobs:
       environment: 'dev'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests }}
 
   deploy-dev:
     name: Deploy to DEV
@@ -607,15 +617,15 @@ jobs:
       environment: 'test'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_test }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests }}
 
   deploy-test:
     name: Deploy (TEST)
@@ -702,15 +712,15 @@ jobs:
       environment: 'prod'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_prod }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests }}
 
   deploy-prod:
     name: Deploy (PROD)

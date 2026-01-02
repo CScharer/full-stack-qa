@@ -62,19 +62,19 @@ on:
       enable_smoke_tests:
         description: 'Enable Smoke Tests'
         type: boolean
-        default: false
+        default: true
       enable_grid_tests:
         description: 'Enable Grid Tests'
         type: boolean
-        default: false
+        default: true
       enable_mobile_tests:
         description: 'Enable Mobile Browser Tests'
         type: boolean
-        default: false
+        default: true
       enable_responsive_tests:
         description: 'Enable Responsive Design Tests'
         type: boolean
-        default: false
+        default: true
       enable_stop_services:
         # SKIPPED: Services automatically stop when job completes (runner is destroyed)
         description: 'Enable Stop Backend and Frontend Services'

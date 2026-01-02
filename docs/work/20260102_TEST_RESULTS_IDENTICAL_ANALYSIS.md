@@ -1,7 +1,7 @@
 # Test Results Appearing Identical Across Environments - Comprehensive Analysis
 
 **Date:** January 2, 2026  
-**Last Updated:** January 2, 2026 (Pipeline fixes for missing results)  
+**Last Updated:** January 2, 2026 (Test execution control + nested path fixes)  
 **Issue:** Test results from **ALL frameworks** (FS, Cypress, Playwright, Robot, Vibium, Selenide, BE tests) appear identical across dev, test, and prod environments in the Allure report.
 
 **Important Note:** It's acceptable if tests produce identical results/data. The concern is **verifying that results are truly from different test runs in different environments**, not that the results themselves are different.
@@ -1115,4 +1115,32 @@ When GitHub Actions downloads artifacts with `merge-multiple: true`, it preserve
 - Conversion success/failure will be clearly reported
 
 **Status:** ✅ **FIXED** - Awaiting pipeline run to verify
+
+---
+
+## Additional Fix: FS Tests Nested Path Detection
+
+**Date:** January 2, 2026  
+**Issue:** FS (Artillery) tests still not showing up after initial nested path fix
+
+### Root Cause
+
+FS tests upload from `playwright/artillery-results/`, so when artifacts are downloaded with `merge-multiple: true`, the nested path structure is:
+- `fs-results/fs-results-{env}/playwright/artillery-results/*.json`
+
+The initial fix only checked:
+- `fs-results/fs-results-{env}/artillery-results/*.json` (missing the `playwright/` part)
+
+### Fix Applied
+
+**File:** `scripts/ci/prepare-combined-allure-results.sh` (Lines 422-448)
+
+**Changes Made:**
+1. ✅ Added check for nested path: `fs-results/fs-results-{env}/playwright/artillery-results/`
+2. ✅ Maintains fallback to check `fs-results/fs-results-{env}/artillery-results/`
+3. ✅ Final fallback to check files directly in `fs-results-{env}/`
+4. ✅ Enhanced error reporting with exit codes and success/failure messages
+5. ✅ Updated debug output to show nested path in checked locations
+
+**Status:** ✅ **FIXED** - All frameworks now have nested path detection
 

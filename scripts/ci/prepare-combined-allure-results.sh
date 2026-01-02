@@ -420,30 +420,57 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
         ENV_PROCESSED=0
         
         # Check for environment-specific subdirectory (most common case with merge-multiple: true)
-        # Structure: fs-results/fs-results-{env}/artillery-results/*.json
+        # Artifacts preserve full upload path: fs-results/fs-results-{env}/playwright/artillery-results/*.json
         env_dir="$SOURCE_DIR/fs-results/fs-results-$env"
         if [ -d "$env_dir" ]; then
-            # First try: fs-results/fs-results-{env}/artillery-results/*.json
-            artillery_dir="$env_dir/artillery-results"
+            # First try: nested path (artifacts preserve full upload path)
+            # Structure: fs-results/fs-results-{env}/playwright/artillery-results/*.json
+            artillery_dir="$env_dir/playwright/artillery-results"
             if [ -d "$artillery_dir" ]; then
                 json_count=$(find "$artillery_dir" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
                 if [ "$json_count" -gt 0 ]; then
-                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/artillery-results/)..."
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/playwright/artillery-results/)..."
                     chmod +x scripts/ci/convert-artillery-to-allure.sh
-                    ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$artillery_dir" "$env" || true
-                    ENV_PROCESSED=1
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$artillery_dir" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env"
+                    else
+                        echo "   ⚠️  FS conversion failed for $env (exit code: $?)"
+                    fi
                 fi
             fi
             
-            # If not found in artillery-results subdirectory, check if files are directly in fs-results-{env}
+            # Fallback: check non-nested path fs-results/fs-results-{env}/artillery-results/*.json
+            if [ "$ENV_PROCESSED" -eq 0 ]; then
+                artillery_dir="$env_dir/artillery-results"
+                if [ -d "$artillery_dir" ]; then
+                    json_count=$(find "$artillery_dir" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                    if [ "$json_count" -gt 0 ]; then
+                        echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/artillery-results/)..."
+                        chmod +x scripts/ci/convert-artillery-to-allure.sh
+                        if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$artillery_dir" "$env"; then
+                            ENV_PROCESSED=1
+                            echo "   ✅ FS conversion successful for $env"
+                        else
+                            echo "   ⚠️  FS conversion failed for $env (exit code: $?)"
+                        fi
+                    fi
+                fi
+            fi
+            
+            # Final fallback: check if files are directly in fs-results-{env}
             if [ "$ENV_PROCESSED" -eq 0 ]; then
                 json_files=$(find "$env_dir" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
                 if [ -n "$json_files" ]; then
                     json_count=$(echo "$json_files" | wc -l | tr -d ' ')
                     echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s) in fs-results-$env/)..."
                     chmod +x scripts/ci/convert-artillery-to-allure.sh
-                    ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$env_dir" "$env" || true
-                    ENV_PROCESSED=1
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$env_dir" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env"
+                    else
+                        echo "   ⚠️  FS conversion failed for $env (exit code: $?)"
+                    fi
                 fi
             fi
         fi
@@ -478,6 +505,7 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
         else
             echo "   ⚠️  No FS test results found for $env"
             echo "      Checked locations:"
+            echo "        - $SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results/ (nested path)"
             echo "        - $SOURCE_DIR/fs-results/fs-results-$env/artillery-results/"
             echo "        - $SOURCE_DIR/fs-results/fs-results-$env/"
         fi
