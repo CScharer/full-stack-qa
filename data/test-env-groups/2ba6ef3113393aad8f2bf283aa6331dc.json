@@ -1,1 +1,1 @@
-{"id":"2ba6ef3113393aad8f2bf283aa6331dc","fullName":"com.cjs.qa.junit.tests.NegativeTests.testNonExistentElement","name":"testNonExistentElement [DEV]","status":"passed","testResultsByEnv":{"default":"46f40ed5969bbcad6580cad96c03344c"}}
+{"id":"2ba6ef3113393aad8f2bf283aa6331dc","fullName":"com.cjs.qa.junit.tests.NegativeTests.testNonExistentElement","name":"testNonExistentElement [PROD]","status":"passed","testResultsByEnv":{"default":"46f40ed5969bbcad6580cad96c03344c"}}
