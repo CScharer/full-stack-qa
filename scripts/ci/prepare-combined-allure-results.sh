@@ -240,28 +240,23 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     fi
     
     # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
-    # Only process for first environment to prevent duplicates, or if we can determine environment from file content
+    # Process for each environment - the converter will label results with the correct environment
     if [ "$ENV_PROCESSED" -eq 0 ]; then
         # Check if flat structure exists (cypress-results/results/ or cypress-results/cypress/cypress/results/)
         if [ -d "$SOURCE_DIR/cypress-results/results" ] || [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
-            # Only process for first environment to prevent duplicate processing
-            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
-                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
-                echo "   📂 Found Cypress results in flat structure, processing for first environment: $env"
-                chmod +x scripts/ci/convert-cypress-to-allure.sh
-                if [ -d "$SOURCE_DIR/cypress-results/results" ]; then
-                    if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/results" "$env"; then
-                        ENV_PROCESSED=1
-                        echo "   ✅ Cypress conversion successful for $env (flat structure)"
-                    fi
-                elif [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
-                    if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/cypress/results" "$env"; then
-                        ENV_PROCESSED=1
-                        echo "   ✅ Cypress conversion successful for $env (flat structure, nested path)"
-                    fi
+            echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env"
+            echo "   📂 Found Cypress results in flat structure, processing for environment: $env"
+            chmod +x scripts/ci/convert-cypress-to-allure.sh
+            if [ -d "$SOURCE_DIR/cypress-results/results" ]; then
+                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Cypress conversion successful for $env (flat structure)"
                 fi
-            else
-                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]})"
+            elif [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
+                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/cypress/results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Cypress conversion successful for $env (flat structure, nested path)"
+                fi
             fi
         else
             # Debug: Report if Cypress results were not found for this environment
@@ -321,27 +316,23 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     fi
     
     # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
+    # Process for each environment - the converter will label results with the correct environment
     if [ "$ENV_PROCESSED" -eq 0 ]; then
         # Check if flat structure exists (playwright-results/test-results/ or playwright-results/playwright/test-results/)
         if [ -d "$SOURCE_DIR/playwright-results/test-results" ] || [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
-            # Only process for first environment to prevent duplicate processing
-            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
-                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
-                echo "   📂 Found Playwright results in flat structure, processing for first environment: $env"
-                chmod +x scripts/ci/convert-playwright-to-allure.sh
-                if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
-                    if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$env"; then
-                        ENV_PROCESSED=1
-                        echo "   ✅ Playwright conversion successful for $env (flat structure)"
-                    fi
-                elif [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
-                    if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright/test-results" "$env"; then
-                        ENV_PROCESSED=1
-                        echo "   ✅ Playwright conversion successful for $env (flat structure, nested path)"
-                    fi
+            echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env"
+            echo "   📂 Found Playwright results in flat structure, processing for environment: $env"
+            chmod +x scripts/ci/convert-playwright-to-allure.sh
+            if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
+                if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Playwright conversion successful for $env (flat structure)"
                 fi
-            else
-                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]})"
+            elif [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
+                if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright/test-results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Playwright conversion successful for $env (flat structure, nested path)"
+                fi
             fi
         else
             # Debug: Report if Playwright results were not found for this environment
@@ -517,27 +508,23 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     fi
     
     # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
+    # Process for each environment - the converter will label results with the correct environment
     if [ "$ENV_PROCESSED" -eq 0 ]; then
         # Check if flat structure exists (vibium-results/test-results/ or vibium-results/.vitest/)
         if [ -d "$SOURCE_DIR/vibium-results/test-results" ] || [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
-            # Only process for first environment to prevent duplicate processing
-            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
-                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
-                echo "   📂 Found Vibium results in flat structure, processing for first environment: $env"
-                chmod +x scripts/ci/convert-vibium-to-allure.sh
-                if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
-                    if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$env"; then
-                        ENV_PROCESSED=1
-                        echo "   ✅ Vibium conversion successful for $env (flat structure)"
-                    fi
-                elif [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
-                    if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/.vitest" "$env"; then
-                        ENV_PROCESSED=1
-                        echo "   ✅ Vibium conversion successful for $env (flat structure, .vitest path)"
-                    fi
+            echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env"
+            echo "   📂 Found Vibium results in flat structure, processing for environment: $env"
+            chmod +x scripts/ci/convert-vibium-to-allure.sh
+            if [ -d "$SOURCE_DIR/vibium-results/test-results" ]; then
+                if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/test-results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Vibium conversion successful for $env (flat structure)"
                 fi
-            else
-                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]})"
+            elif [ -d "$SOURCE_DIR/vibium-results/.vitest" ]; then
+                if ./scripts/ci/convert-vibium-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/vibium-results/.vitest" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Vibium conversion successful for $env (flat structure, .vitest path)"
+                fi
             fi
         else
             # Debug: Report if Vibium results were not found for this environment
@@ -640,29 +627,25 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
         fi
         
         # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
+        # Process for each environment - the converter will label results with the correct environment
         if [ "$ENV_PROCESSED" -eq 0 ]; then
             # Check if flat structure exists (fs-results/*.json or fs-results/playwright/artillery-results/*.json)
             if [ -d "$SOURCE_DIR/fs-results" ] && [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 2 -name "*.json" -type f 2>/dev/null)" ]; then
-                # Only process for first environment to prevent duplicate processing
-                if [ "$env" == "${FS_ENVIRONMENTS[0]}" ]; then
-                    echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
-                    echo "   📂 Found FS results in flat structure, processing for first environment: $env"
-                    chmod +x scripts/ci/convert-artillery-to-allure.sh
-                    # Check for nested path first
-                    if [ -d "$SOURCE_DIR/fs-results/playwright/artillery-results" ]; then
-                        if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results/playwright/artillery-results" "$env"; then
-                            ENV_PROCESSED=1
-                            echo "   ✅ FS conversion successful for $env (flat structure, nested path)"
-                        fi
-                    # Check for direct JSON files in fs-results root
-                    elif [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)" ]; then
-                        if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env"; then
-                            ENV_PROCESSED=1
-                            echo "   ✅ FS conversion successful for $env (flat structure)"
-                        fi
+                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env"
+                echo "   📂 Found FS results in flat structure, processing for environment: $env"
+                chmod +x scripts/ci/convert-artillery-to-allure.sh
+                # Check for nested path first
+                if [ -d "$SOURCE_DIR/fs-results/playwright/artillery-results" ]; then
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results/playwright/artillery-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (flat structure, nested path)"
                     fi
-                else
-                    echo "   ⏭️  Skipping $env (flat structure already processed for ${FS_ENVIRONMENTS[0]})"
+                # Check for direct JSON files in fs-results root
+                elif [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)" ]; then
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (flat structure)"
+                    fi
                 fi
             fi
         fi
