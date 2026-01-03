@@ -1265,6 +1265,9 @@ jobs:
     if: always()
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: List available artifacts (debug)
         if: always()
         run: |
