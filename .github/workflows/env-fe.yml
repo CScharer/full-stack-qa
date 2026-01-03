@@ -1348,7 +1348,11 @@ jobs:
             exit 0
           fi
 
-          # 1. Parse Maven Surefire XML files (TEST-*.xml)
+          # Note: Artifacts are merged with merge-multiple: true, which preserves artifact names as directories
+          # Structure: test-results/{artifact-name}/... (e.g., test-results/cypress-results-dev/..., test-results/playwright-results-dev/playwright/test-results/...)
+          # So we need to search recursively through all subdirectories
+
+          # 1. Parse Maven Surefire XML files (TEST-*.xml) - recursively search
           echo "📊 Parsing Maven Surefire XML results..."
           while IFS= read -r xml_file; do
             if [ -f "$xml_file" ]; then
@@ -1362,7 +1366,7 @@ jobs:
             fi
           done < <(find test-results -type f -name "TEST-*.xml" 2>/dev/null || true)
 
-          # 2. Parse Allure result JSON files (*-result.json)
+          # 2. Parse Allure result JSON files (*-result.json) - recursively search
           echo "📊 Parsing Allure JSON results..."
           while IFS= read -r json_file; do
             if [ -f "$json_file" ]; then
@@ -1379,26 +1383,34 @@ jobs:
             fi
           done < <(find test-results -type f -name "*-result.json" 2>/dev/null || true)
 
-          # 3. Parse Playwright result JSON files (results.json)
-          echo "📊 Parsing Playwright JSON results..."
-          while IFS= read -r json_file; do
-            if [ -f "$json_file" ]; then
-              # Playwright results structure: { "stats": { "total": N, "expected": M, ... } }
-              total=$(grep -oP '"total"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
-              expected=$(grep -oP '"expected"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
-              if [ -n "$total" ] && [ "$total" != "0" ]; then
-                TOTAL_TESTS=$((TOTAL_TESTS + ${total:-0}))
-                failed=$((total - expected))
-                if [ "$failed" -gt 0 ]; then
-                  TOTAL_FAILURES=$((TOTAL_FAILURES + failed))
-                else
-                  TOTAL_PASSED=$((TOTAL_PASSED + expected))
-                fi
+          # 3. Parse Playwright JUnit XML files (junit.xml) - recursively search
+          # Playwright files are in: playwright-results-{env}/playwright/test-results/junit.xml
+          echo "📊 Parsing Playwright JUnit XML results..."
+          while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+              # Playwright JUnit XML structure: <testsuites tests="N" failures="M" errors="K">...
+              # Count from testsuites element (aggregate) or sum individual testsuite elements
+              tests=$(grep -oP '<testsuites[^>]*tests="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              failures=$(grep -oP '<testsuites[^>]*failures="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              errors=$(grep -oP '<testsuites[^>]*errors="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+              
+              # If no testsuites aggregate, count from individual testsuite elements
+              if [ "$tests" = "0" ]; then
+                tests=$(grep -oP '<testsuite[^>]*tests="\K[0-9]+' "$xml_file" | awk '{sum+=$1} END {print sum+0}' || echo "0")
+                failures=$(grep -oP '<testsuite[^>]*failures="\K[0-9]+' "$xml_file" | awk '{sum+=$1} END {print sum+0}' || echo "0")
+                errors=$(grep -oP '<testsuite[^>]*errors="\K[0-9]+' "$xml_file" | awk '{sum+=$1} END {print sum+0}' || echo "0")
+              fi
+              
+              if [ -n "$tests" ] && [ "$tests" != "0" ]; then
+                TOTAL_TESTS=$((TOTAL_TESTS + ${tests:-0}))
+                TOTAL_FAILURES=$((TOTAL_FAILURES + ${failures:-0}))
+                TOTAL_ERRORS=$((TOTAL_ERRORS + ${errors:-0}))
               fi
             fi
-          done < <(find test-results -type f -name "results.json" 2>/dev/null || true)
+          done < <(find test-results -type f -name "junit.xml" -o -name "*junit*.xml" 2>/dev/null | grep -v "target/surefire-reports" || true)
 
-          # 4. Parse Cypress result JSON files (mochawesome.json or similar)
+          # 4. Parse Cypress result JSON files (mochawesome.json or cypress-results.json) - recursively search
+          # Cypress files are in: cypress-results-{env}/cypress/cypress/results/cypress-results.json
           echo "📊 Parsing Cypress JSON results..."
           while IFS= read -r json_file; do
             if [ -f "$json_file" ]; then
@@ -1412,7 +1424,8 @@ jobs:
             fi
           done < <(find test-results -type f \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null || true)
 
-          # 5. Parse Robot Framework XML files (output.xml)
+          # 5. Parse Robot Framework XML files (output.xml) - recursively search
+          # Robot files are in: robot-results-{env}/target/robot-reports/output.xml
           echo "📊 Parsing Robot Framework XML results..."
           while IFS= read -r xml_file; do
             if [ -f "$xml_file" ]; then
@@ -1430,6 +1443,23 @@ jobs:
               fi
             fi
           done < <(find test-results -type f -name "output.xml" 2>/dev/null || true)
+
+          # 6. Parse Vibium/Vitest result JSON files (vitest-results.json) - recursively search
+          # Vibium files are in: vibium-results-{env}/vibium/.vitest/vitest-results.json
+          echo "📊 Parsing Vibium/Vitest JSON results..."
+          while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+              # Vitest results structure: { "numTotalTests": N, "numPassedTests": M, "numFailedTests": K, ... }
+              total=$(grep -oP '"numTotalTests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+              passed=$(grep -oP '"numPassedTests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+              failed=$(grep -oP '"numFailedTests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+              if [ -n "$total" ] && [ "$total" != "0" ]; then
+                TOTAL_TESTS=$((TOTAL_TESTS + ${total:-0}))
+                TOTAL_FAILURES=$((TOTAL_FAILURES + ${failed:-0}))
+                TOTAL_PASSED=$((TOTAL_PASSED + ${passed:-0}))
+              fi
+            fi
+          done < <(find test-results -type f -name "vitest-results.json" 2>/dev/null || true)
 
           # Calculate passed tests if not already calculated
           if [ "$TOTAL_PASSED" -eq 0 ] && [ "$TOTAL_TESTS" -gt 0 ]; then
