@@ -80,28 +80,44 @@ if [ "$CODE_CHANGED" = "true" ]; then
     # Count tests per environment from Allure results (if available)
     ALLURE_RESULTS_DIR="allure-results-combined"
     if [ -d "$ALLURE_RESULTS_DIR" ]; then
-        # Count tests by environment parameter or label
+        # Count tests by environment using jq for accurate JSON parsing
         # Environment can be stored as:
         # 1. Parameter: "name": "Environment", "value": "DEV" (uppercase)
         # 2. Label: "name": "environment", "value": "dev" (lowercase)
-        # JSON may have whitespace/newlines, so use flexible patterns
-        # Match files that contain both the name and value patterns (may be on different lines)
-        DEV_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"Environment".*"DEV"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-        if [ "$DEV_TEST_COUNT" -eq 0 ]; then
-            # Fallback: try lowercase label format
-            DEV_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"environment".*"dev"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-        fi
         
-        TEST_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"Environment".*"TEST"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-        if [ "$TEST_TEST_COUNT" -eq 0 ]; then
-            # Fallback: try lowercase label format
-            TEST_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"environment".*"test"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-        fi
+        # Count tests per environment using jq for accurate JSON parsing
+        # Environment can be stored as:
+        # 1. Parameter: "name": "Environment", "value": "DEV" (uppercase)
+        # 2. Label: "name": "environment", "value": "dev" (lowercase)
         
-        PROD_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"Environment".*"PROD"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-        if [ "$PROD_TEST_COUNT" -eq 0 ]; then
-            # Fallback: try lowercase label format
-            PROD_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -exec grep -l '"environment".*"prod"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        if command -v jq &> /dev/null; then
+            # Use jq to properly parse JSON and count tests with environment matching
+            # Count by checking both parameters and labels (case-insensitive)
+            DEV_TEST_COUNT=0
+            TEST_TEST_COUNT=0
+            PROD_TEST_COUNT=0
+            
+            # Process each result file
+            while IFS= read -r -d '' file; do
+                # Extract environment from parameters (uppercase "Environment": "DEV")
+                env_param=$(jq -r '.parameters[]? | select(.name == "Environment") | .value' "$file" 2>/dev/null | tr '[:upper:]' '[:lower:]' | head -1)
+                # Extract environment from labels (lowercase "environment": "dev")
+                env_label=$(jq -r '.labels[]? | select(.name == "environment") | .value' "$file" 2>/dev/null | tr '[:upper:]' '[:lower:]' | head -1)
+                
+                # Count based on environment match
+                if [ "$env_param" = "dev" ] || [ "$env_label" = "dev" ]; then
+                    DEV_TEST_COUNT=$((DEV_TEST_COUNT + 1))
+                elif [ "$env_param" = "test" ] || [ "$env_label" = "test" ]; then
+                    TEST_TEST_COUNT=$((TEST_TEST_COUNT + 1))
+                elif [ "$env_param" = "prod" ] || [ "$env_label" = "prod" ]; then
+                    PROD_TEST_COUNT=$((PROD_TEST_COUNT + 1))
+                fi
+            done < <(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -print0 2>/dev/null)
+        else
+            # Fallback to grep if jq not available (less accurate but works)
+            DEV_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -exec grep -l '"Environment".*"DEV"\|"environment".*"dev"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+            TEST_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -exec grep -l '"Environment".*"TEST"\|"environment".*"test"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+            PROD_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -exec grep -l '"Environment".*"PROD"\|"environment".*"prod"' {} \; 2>/dev/null | wc -l | tr -d ' ')
         fi
     else
         DEV_TEST_COUNT="?"
