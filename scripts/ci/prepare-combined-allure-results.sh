@@ -723,7 +723,7 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
     # because FS tests might have run even if other tests didn't, and we want to ensure
     # both dev and test FS results are processed if they exist
     for env in "${FS_ENVIRONMENTS[@]}"; do
-        
+        echo "   🔍 Processing FS results for environment: $env"
         ENV_PROCESSED=0
         
         # Check environment-specific directory first (results-dev, results-test)
@@ -877,6 +877,24 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
                 else
                     echo "   ⏭️  Skipping $env (flat structure already processed for ${FS_ENVIRONMENTS[0]} - cannot distinguish environments in flat structure)"
                 fi
+            fi
+        fi
+        
+        # Debug: Report if environment was processed
+        if [ "$ENV_PROCESSED" -eq 0 ]; then
+            echo "   ⚠️  WARNING: No FS results found for $env environment"
+            echo "   🔍 Debug: Checked paths for $env:"
+            [ -d "$SOURCE_DIR/results-$env/fs-results-$env/playwright/artillery-results" ] && echo "      ✅ $SOURCE_DIR/results-$env/fs-results-$env/playwright/artillery-results" || echo "      ❌ $SOURCE_DIR/results-$env/fs-results-$env/playwright/artillery-results"
+            [ -d "$SOURCE_DIR/results-$env/fs-results-$env/artillery-results" ] && echo "      ✅ $SOURCE_DIR/results-$env/fs-results-$env/artillery-results" || echo "      ❌ $SOURCE_DIR/results-$env/fs-results-$env/artillery-results"
+            [ -d "$SOURCE_DIR/results-$env/playwright/artillery-results" ] && echo "      ✅ $SOURCE_DIR/results-$env/playwright/artillery-results" || echo "      ❌ $SOURCE_DIR/results-$env/playwright/artillery-results"
+            [ -d "$SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results" ] && echo "      ✅ $SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results" || echo "      ❌ $SOURCE_DIR/fs-results/fs-results-$env/playwright/artillery-results"
+            [ -d "$SOURCE_DIR/fs-results/fs-results-$env/artillery-results" ] && echo "      ✅ $SOURCE_DIR/fs-results/fs-results-$env/artillery-results" || echo "      ❌ $SOURCE_DIR/fs-results/fs-results-$env/artillery-results"
+            [ -d "$SOURCE_DIR/fs-results/fs-results-$env" ] && echo "      ✅ $SOURCE_DIR/fs-results/fs-results-$env (exists)" || echo "      ❌ $SOURCE_DIR/fs-results/fs-results-$env (not found)"
+            if [ -d "$SOURCE_DIR/fs-results/fs-results-$env" ]; then
+                echo "      📂 Contents of fs-results-$env:"
+                find "$SOURCE_DIR/fs-results/fs-results-$env" -type f -name "*.json" 2>/dev/null | head -5 | while read -r f; do
+                    echo "         📄 $f"
+                done || echo "         (no JSON files found)"
             fi
         fi
         
