@@ -91,22 +91,29 @@ while IFS= read -r xml_file; do
     fi
 done < <(find "$TEST_RESULTS_DIR" -type f -name "TEST-*.xml" 2>/dev/null || true)
 
-# 2. Parse Allure result JSON files (*-result.json) - recursively search
-echo "📊 Parsing Allure JSON results..."
-while IFS= read -r json_file; do
-    if [ -f "$json_file" ]; then
-        # Allure result JSON structure: { "status": "passed|failed|broken", ... }
-        status=$(grep -oP '"status"\s*:\s*"\K[^"]+' "$json_file" | head -1 || echo "")
-        if [ -n "$status" ]; then
-            TOTAL_TESTS=$((TOTAL_TESTS + 1))
-            if [ "$status" = "failed" ] || [ "$status" = "broken" ]; then
-                TOTAL_FAILURES=$((TOTAL_FAILURES + 1))
-            else
-                TOTAL_PASSED=$((TOTAL_PASSED + 1))
+# 2. Parse Allure result JSON files (*-result.json) - BUT ONLY if no original test files found
+# Note: Allure JSON files are converted versions of original test results
+# We count from original files (TEST-*.xml, junit.xml, etc.) to avoid double-counting
+# Only count Allure JSON if we haven't found any original test result files
+if [ "$TOTAL_TESTS" -eq 0 ]; then
+    echo "📊 Parsing Allure JSON results (fallback - no original test files found)..."
+    while IFS= read -r json_file; do
+        if [ -f "$json_file" ]; then
+            # Allure result JSON structure: { "status": "passed|failed|broken", ... }
+            status=$(grep -oP '"status"\s*:\s*"\K[^"]+' "$json_file" | head -1 || echo "")
+            if [ -n "$status" ]; then
+                TOTAL_TESTS=$((TOTAL_TESTS + 1))
+                if [ "$status" = "failed" ] || [ "$status" = "broken" ]; then
+                    TOTAL_FAILURES=$((TOTAL_FAILURES + 1))
+                else
+                    TOTAL_PASSED=$((TOTAL_PASSED + 1))
+                fi
             fi
         fi
-    fi
-done < <(find "$TEST_RESULTS_DIR" -type f -name "*-result.json" 2>/dev/null || true)
+    done < <(find "$TEST_RESULTS_DIR" -type f -name "*-result.json" 2>/dev/null || true)
+else
+    echo "📊 Skipping Allure JSON results (already counted from original test files)"
+fi
 
 # 3. Parse Playwright JUnit XML files (junit.xml) - recursively search
 # Playwright files are in: playwright-results-{env}/playwright/test-results/junit.xml
