@@ -77,47 +77,98 @@ if [ "$CODE_CHANGED" = "true" ]; then
 
     echo "### FE Tests - Environments Tested:" >> "$SUMMARY_FILE"
 
-    # Count tests per environment from Allure results (if available)
-    ALLURE_RESULTS_DIR="allure-results-combined"
-    if [ -d "$ALLURE_RESULTS_DIR" ]; then
-        # Count tests by environment using jq for accurate JSON parsing
-        # Environment can be stored as:
-        # 1. Parameter: "name": "Environment", "value": "DEV" (uppercase)
-        # 2. Label: "name": "environment", "value": "dev" (lowercase)
+    # Count tests per environment from original test result files (same method as environment summaries)
+    # This ensures consistency between environment summaries and pipeline summary
+    DEV_TEST_COUNT="?"
+    TEST_TEST_COUNT="?"
+    PROD_TEST_COUNT="?"
+    
+    # Function to count tests from test result files (same logic as generate-environment-test-summary.sh)
+    count_tests_from_results() {
+        local test_results_dir="$1"
+        local total=0
         
-        if command -v jq &> /dev/null; then
-            # Use jq to properly parse JSON and count tests with environment matching
-            # Count by checking both parameters and labels (case-insensitive)
-            DEV_TEST_COUNT=0
-            TEST_TEST_COUNT=0
-            PROD_TEST_COUNT=0
-            
-            # Process each result file
-            while IFS= read -r -d '' file; do
-                # Extract environment from parameters (uppercase "Environment": "DEV")
-                env_param=$(jq -r '.parameters[]? | select(.name == "Environment") | .value' "$file" 2>/dev/null | tr '[:upper:]' '[:lower:]' | head -1)
-                # Extract environment from labels (lowercase "environment": "dev")
-                env_label=$(jq -r '.labels[]? | select(.name == "environment") | .value' "$file" 2>/dev/null | tr '[:upper:]' '[:lower:]' | head -1)
-                
-                # Count based on environment match
-                if [ "$env_param" = "dev" ] || [ "$env_label" = "dev" ]; then
-                    DEV_TEST_COUNT=$((DEV_TEST_COUNT + 1))
-                elif [ "$env_param" = "test" ] || [ "$env_label" = "test" ]; then
-                    TEST_TEST_COUNT=$((TEST_TEST_COUNT + 1))
-                elif [ "$env_param" = "prod" ] || [ "$env_label" = "prod" ]; then
-                    PROD_TEST_COUNT=$((PROD_TEST_COUNT + 1))
-                fi
-            done < <(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -print0 2>/dev/null)
-        else
-            # Fallback to grep if jq not available (less accurate but works)
-            DEV_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -exec grep -l '"Environment".*"DEV"\|"environment".*"dev"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-            TEST_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -exec grep -l '"Environment".*"TEST"\|"environment".*"test"' {} \; 2>/dev/null | wc -l | tr -d ' ')
-            PROD_TEST_COUNT=$(find "$ALLURE_RESULTS_DIR" -name "*-result.json" -type f -exec grep -l '"Environment".*"PROD"\|"environment".*"prod"' {} \; 2>/dev/null | wc -l | tr -d ' ')
+        if [ ! -d "$test_results_dir" ]; then
+            echo "0"
+            return
         fi
-    else
-        DEV_TEST_COUNT="?"
-        TEST_TEST_COUNT="?"
-        PROD_TEST_COUNT="?"
+        
+        # Count from Maven Surefire XML
+        while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+                tests=$(grep -oP 'tests="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                total=$((total + ${tests:-0}))
+            fi
+        done < <(find "$test_results_dir" -type f -name "TEST-*.xml" 2>/dev/null || true)
+        
+        # Count from Playwright JUnit XML
+        while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+                tests=$(grep -oP '<testsuites[^>]*tests="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                if [ "$tests" = "0" ]; then
+                    tests=$(grep -oP '<testsuite[^>]*tests="\K[0-9]+' "$xml_file" | awk '{sum+=$1} END {print sum+0}' || echo "0")
+                fi
+                if [ -n "$tests" ] && [ "$tests" != "0" ]; then
+                    total=$((total + ${tests:-0}))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f -name "junit.xml" -o -name "*junit*.xml" 2>/dev/null | grep -v "target/surefire-reports" || true)
+        
+        # Count from Cypress JSON
+        while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+                tests=$(grep -oP '"tests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+                if [ -n "$tests" ] && [ "$tests" != "0" ]; then
+                    total=$((total + ${tests:-0}))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null || true)
+        
+        # Count from Robot Framework XML
+        while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+                pass=$(grep -oP '<total><stat[^>]*pass="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                fail=$(grep -oP '<total><stat[^>]*fail="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                if [ -n "$pass" ] || [ -n "$fail" ]; then
+                    total=$((total + pass + fail))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f -name "output.xml" 2>/dev/null || true)
+        
+        # Count from Vibium/Vitest JSON
+        while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+                total_val=$(grep -oP '"numTotalTests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+                if [ -n "$total_val" ] && [ "$total_val" != "0" ]; then
+                    total=$((total + ${total_val:-0}))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f -name "vitest-results.json" 2>/dev/null || true)
+        
+        echo "$total"
+    }
+    
+    # Count tests for each environment from downloaded artifacts
+    # Artifacts are downloaded with pattern: *-results-{env}
+    if [ "$RUN_DEV" = "true" ]; then
+        DEV_RESULTS_DIR="test-results-dev"
+        if [ -d "$DEV_RESULTS_DIR" ]; then
+            DEV_TEST_COUNT=$(count_tests_from_results "$DEV_RESULTS_DIR")
+        fi
+    fi
+    
+    if [ "$RUN_TEST" = "true" ]; then
+        TEST_RESULTS_DIR="test-results-test"
+        if [ -d "$TEST_RESULTS_DIR" ]; then
+            TEST_TEST_COUNT=$(count_tests_from_results "$TEST_RESULTS_DIR")
+        fi
+    fi
+    
+    if [ "$RUN_PROD" = "true" ]; then
+        PROD_RESULTS_DIR="test-results-prod"
+        if [ -d "$PROD_RESULTS_DIR" ]; then
+            PROD_TEST_COUNT=$(count_tests_from_results "$PROD_RESULTS_DIR")
+        fi
     fi
 
     if [ "$RUN_DEV" = "true" ]; then

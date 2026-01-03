@@ -1387,6 +1387,33 @@ jobs:
           name: allure-results-combined-all-environments
           path: allure-results-combined
 
+      - name: Download Test Results for DEV (for accurate counts)
+        if: always() && needs.determine-envs.outputs.run_dev == 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: '*-results-dev'
+          merge-multiple: true
+          path: test-results-dev
+
+      - name: Download Test Results for TEST (for accurate counts)
+        if: always() && needs.determine-envs.outputs.run_test == 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: '*-results-test'
+          merge-multiple: true
+          path: test-results-test
+
+      - name: Download Test Results for PROD (for accurate counts)
+        if: always() && needs.determine-envs.outputs.run_prod == 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: '*-results-prod'
+          merge-multiple: true
+          path: test-results-prod
+
       - name: Generate Pipeline Summary
         run: |
           chmod +x scripts/ci/generate-pipeline-summary.sh
