@@ -2,17 +2,17 @@
 
 ## Pre-Commit Hook Analysis
 
-**Runs**: `format-code.sh --skip-compilation`
+**Runs**: `format-code.sh --skip-compilation --skip-quality-checks`
 
 ### Checks Performed:
 1. ✅ **Prettier** - Formats code (JavaScript, TypeScript, JSON, YAML, etc.)
 2. ✅ **Spotless** - Removes unused imports and reorders imports (java,javax,org,com)
 3. ✅ **Google Java Format** - Fixes line length issues
-4. ✅ **Checkstyle** - Verifies code quality (warnings only, not blocking)
-5. ✅ **PMD** - Code analysis (warnings only, not blocking)
-6. ❌ **Compilation** - SKIPPED (saves time on commit)
+4. ❌ **Checkstyle** - SKIPPED (moved to pre-push)
+5. ❌ **PMD** - SKIPPED (moved to pre-push)
+6. ❌ **Compilation** - SKIPPED (moved to pre-push)
 
-**Result**: Code is formatted and imports are cleaned. Quality checks run but don't block commit.
+**Result**: Code is formatted and imports are cleaned. **No validation checks** - all validation happens in pre-push.
 
 ---
 
@@ -57,8 +57,8 @@
 - ✅ **Google Java Format** - Pre-commit only (line length)
 
 ### Code Quality Checks
-- ✅ **Checkstyle** - Pre-commit (warnings) + Pre-push (verification)
-- ✅ **PMD** - Pre-commit (warnings) + Pre-push (verification)
+- ✅ **Checkstyle** - Pre-push only (verification)
+- ✅ **PMD** - Pre-push only (verification)
 
 ### Compilation Checks
 - ✅ **Maven Compilation** - Pre-push only (via validate-pre-commit.sh)
@@ -80,8 +80,8 @@
 - Google Java Format: ✅ Pre-commit
 
 ### ✅ All Code Quality Checks: PRESERVED
-- Checkstyle: ✅ Pre-commit (warnings) + Pre-push (verification)
-- PMD: ✅ Pre-commit (warnings) + Pre-push (verification)
+- Checkstyle: ✅ Pre-push only (verification)
+- PMD: ✅ Pre-push only (verification)
 
 ### ✅ All Compilation Checks: PRESERVED
 - Maven: ✅ Pre-push (via validate-pre-commit.sh)

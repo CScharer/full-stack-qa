@@ -72,7 +72,7 @@ if [ -n "$CODE_FILES" ]; then
     
     if [ -f "scripts/format-code.sh" ]; then
         chmod +x scripts/format-code.sh
-        if ./scripts/format-code.sh --skip-compilation; then
+        if ./scripts/format-code.sh --skip-compilation --skip-quality-checks; then
             # Stage any auto-fixed files
             git add -u
             echo -e "${GREEN}✅ Code formatting completed${NC}"

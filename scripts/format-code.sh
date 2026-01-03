@@ -60,6 +60,7 @@ CI_MODE=false
 SKIP_IMPORTS=false
 SKIP_FORMATTING=false
 SKIP_COMPILATION=false
+SKIP_QUALITY_CHECKS=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -79,14 +80,19 @@ while [[ $# -gt 0 ]]; do
             SKIP_COMPILATION=true
             shift
             ;;
+        --skip-quality-checks|--formatting-only)
+            SKIP_QUALITY_CHECKS=true
+            shift
+            ;;
         --help)
-            echo "Usage: $0 [--ci-mode|--verify-only] [--skip-imports] [--skip-formatting] [--skip-compilation] [--help]"
+            echo "Usage: $0 [--ci-mode|--verify-only] [--skip-imports] [--skip-formatting] [--skip-compilation] [--skip-quality-checks|--formatting-only] [--help]"
             echo ""
             echo "Flags:"
-            echo "  --ci-mode, --verify-only: Skip formatting, skip compilation, only verify"
+            echo "  --ci-mode, --verify-only: Skip formatting, skip compilation, only verify (Checkstyle & PMD)"
             echo "  --skip-imports: Skip unused import removal"
             echo "  --skip-formatting: Skip Prettier and Google Java Format"
             echo "  --skip-compilation: Skip compilation check (formatting only)"
+            echo "  --skip-quality-checks, --formatting-only: Skip Checkstyle and PMD checks (formatting only)"
             echo "  --help: Show this help message"
             exit 0
             ;;
@@ -131,6 +137,10 @@ if [ "$CI_MODE" = false ] && [ "$SKIP_FORMATTING" = false ]; then
 fi
 if [ "$CI_MODE" = true ]; then
     TOTAL_STEPS=2  # Only Checkstyle and PMD
+fi
+if [ "$SKIP_QUALITY_CHECKS" = true ]; then
+    # Subtract Checkstyle and PMD steps
+    TOTAL_STEPS=$((TOTAL_STEPS - 2))
 fi
 
 STEP_NUM=1
@@ -201,33 +211,35 @@ if [ "$SKIP_FORMATTING" = false ] && [ "$CI_MODE" = false ]; then
 fi
 
 # Step 3: Checkstyle - Verify no violations
-echo -e "${YELLOW}Step ${STEP_NUM}/${TOTAL_STEPS}: Running Checkstyle (verifying code quality)...${NC}"
-if run_maven checkstyle:check > /tmp/checkstyle-output.log 2>&1; then
-    # Extract violation count (compatible with macOS grep)
-    VIOLATION_COUNT=$(grep "You have" /tmp/checkstyle-output.log | grep -oE "[0-9]+" | head -1 || echo "0")
-    if [ "$VIOLATION_COUNT" = "0" ] || [ -z "$VIOLATION_COUNT" ]; then
-        echo -e "${GREEN}✅ Checkstyle: No violations found${NC}"
-    else
-        echo -e "${YELLOW}⚠️  Checkstyle: ${VIOLATION_COUNT} violation(s) found${NC}"
-        echo ""
-        echo "Violation summary:"
-        grep -E "(LineLength|Indentation|EmptyLineSeparator|ConstantName)" /tmp/checkstyle-output.log | head -10 || true
-        echo ""
-        if [ "$CI_MODE" = true ]; then
-            echo -e "${YELLOW}Note: Checkstyle violations are warnings in CI mode${NC}"
+if [ "$SKIP_QUALITY_CHECKS" = false ]; then
+    echo -e "${YELLOW}Step ${STEP_NUM}/${TOTAL_STEPS}: Running Checkstyle (verifying code quality)...${NC}"
+    if run_maven checkstyle:check > /tmp/checkstyle-output.log 2>&1; then
+        # Extract violation count (compatible with macOS grep)
+        VIOLATION_COUNT=$(grep "You have" /tmp/checkstyle-output.log | grep -oE "[0-9]+" | head -1 || echo "0")
+        if [ "$VIOLATION_COUNT" = "0" ] || [ -z "$VIOLATION_COUNT" ]; then
+            echo -e "${GREEN}✅ Checkstyle: No violations found${NC}"
         else
-            echo -e "${YELLOW}Note: Some violations may require manual fixes${NC}"
+            echo -e "${YELLOW}⚠️  Checkstyle: ${VIOLATION_COUNT} violation(s) found${NC}"
+            echo ""
+            echo "Violation summary:"
+            grep -E "(LineLength|Indentation|EmptyLineSeparator|ConstantName)" /tmp/checkstyle-output.log | head -10 || true
+            echo ""
+            if [ "$CI_MODE" = true ]; then
+                echo -e "${YELLOW}Note: Checkstyle violations are warnings in CI mode${NC}"
+            else
+                echo -e "${YELLOW}Note: Some violations may require manual fixes${NC}"
+            fi
+            # Don't exit with error - violations are warnings, not blocking
         fi
-        # Don't exit with error - violations are warnings, not blocking
+    else
+        echo -e "${RED}❌ Checkstyle check failed${NC}"
+        echo "Error output:"
+        tail -20 /tmp/checkstyle-output.log
+        exit 2
     fi
-else
-    echo -e "${RED}❌ Checkstyle check failed${NC}"
-    echo "Error output:"
-    tail -20 /tmp/checkstyle-output.log
-    exit 2
+    echo ""
+    STEP_NUM=$((STEP_NUM + 1))
 fi
-echo ""
-STEP_NUM=$((STEP_NUM + 1))
 
 # Step 4: Compilation - Verify code compiles
 if [ "$CI_MODE" = false ] && [ "$SKIP_COMPILATION" = false ]; then
@@ -262,33 +274,36 @@ if [ "$CI_MODE" = false ] && [ "$SKIP_COMPILATION" = false ]; then
 fi
 
 # Step 5: PMD - Code analysis
-echo -e "${YELLOW}Step ${STEP_NUM}/${TOTAL_STEPS}: Running PMD code analysis...${NC}"
-if run_maven pmd:check > /tmp/pmd-output.log 2>&1; then
-    # Extract violation count (compatible with macOS grep)
-    # Pattern: "PMD 7.14.0 has found 1260 violations"
-    VIOLATION_COUNT=$(grep -E "PMD.*has found.*violation" /tmp/pmd-output.log | grep -oE "[0-9]+ violations" | grep -oE "[0-9]+" | head -1 || echo "0")
-    if [ "$VIOLATION_COUNT" = "0" ] || [ -z "$VIOLATION_COUNT" ]; then
-        echo -e "${GREEN}✅ PMD: No violations found${NC}"
-    else
-        echo -e "${YELLOW}⚠️  PMD: ${VIOLATION_COUNT} violation(s) found${NC}"
-        echo ""
-        echo "Violation summary:"
-        grep -E "PMD Failure" /tmp/pmd-output.log | head -10 || true
-        echo ""
-        if [ "$CI_MODE" = true ]; then
-            echo -e "${YELLOW}Note: PMD violations are warnings in CI mode${NC}"
+if [ "$SKIP_QUALITY_CHECKS" = false ]; then
+    echo -e "${YELLOW}Step ${STEP_NUM}/${TOTAL_STEPS}: Running PMD code analysis...${NC}"
+    if run_maven pmd:check > /tmp/pmd-output.log 2>&1; then
+        # Extract violation count (compatible with macOS grep)
+        # Pattern: "PMD 7.14.0 has found 1260 violations"
+        VIOLATION_COUNT=$(grep -E "PMD.*has found.*violation" /tmp/pmd-output.log | grep -oE "[0-9]+ violations" | grep -oE "[0-9]+" | head -1 || echo "0")
+        if [ "$VIOLATION_COUNT" = "0" ] || [ -z "$VIOLATION_COUNT" ]; then
+            echo -e "${GREEN}✅ PMD: No violations found${NC}"
         else
-            echo -e "${YELLOW}Note: PMD violations are warnings, not blocking${NC}"
+            echo -e "${YELLOW}⚠️  PMD: ${VIOLATION_COUNT} violation(s) found${NC}"
+            echo ""
+            echo "Violation summary:"
+            grep -E "PMD Failure" /tmp/pmd-output.log | head -10 || true
+            echo ""
+            if [ "$CI_MODE" = true ]; then
+                echo -e "${YELLOW}Note: PMD violations are warnings in CI mode${NC}"
+            else
+                echo -e "${YELLOW}Note: PMD violations are warnings, not blocking${NC}"
+            fi
+            # Don't exit with error - violations are warnings, not blocking
         fi
-        # Don't exit with error - violations are warnings, not blocking
+    else
+        echo -e "${RED}❌ PMD check failed${NC}"
+        echo "Error output:"
+        tail -20 /tmp/pmd-output.log
+        exit 4
     fi
-else
-    echo -e "${RED}❌ PMD check failed${NC}"
-    echo "Error output:"
-    tail -20 /tmp/pmd-output.log
-    exit 4
+    echo ""
+    STEP_NUM=$((STEP_NUM + 1))
 fi
-echo ""
 
 # Success summary
 echo -e "${BLUE}========================================${NC}"
@@ -317,11 +332,15 @@ fi
 if [ "$SKIP_FORMATTING" = false ] && [ "$CI_MODE" = false ]; then
     echo "  ✅ Line length issues fixed (Google Java Format)"
 fi
-echo "  ✅ Code quality verified (Checkstyle)"
+if [ "$SKIP_QUALITY_CHECKS" = false ]; then
+    echo "  ✅ Code quality verified (Checkstyle)"
+fi
 if [ "$CI_MODE" = false ] && [ "$SKIP_COMPILATION" = false ]; then
     echo "  ✅ Compilation verified"
 fi
-echo "  ✅ Code analysis completed (PMD)"
+if [ "$SKIP_QUALITY_CHECKS" = false ]; then
+    echo "  ✅ Code analysis completed (PMD)"
+fi
 echo ""
 
 exit 0
