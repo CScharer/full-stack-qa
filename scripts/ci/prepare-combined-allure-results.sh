@@ -726,30 +726,17 @@ if [ -d "$SOURCE_DIR/fs-results-dev" ] || [ -d "$SOURCE_DIR/fs-results-test" ]; 
     echo ""
 fi
 
-# Also check for merged fs-results directory (fallback for old structure)
-if [ -d "$SOURCE_DIR/fs-results" ]; then
-    echo "   ✅ Found fs-results directory (merged structure - may contain overwritten files)"
-    echo "   🔍 Debug: Listing fs-results directory structure:"
-    find "$SOURCE_DIR/fs-results" -type d 2>/dev/null | head -10 | while read -r d; do
-        echo "      📁 $d"
-    done || echo "      (error listing directories)"
-    echo "   🔍 Debug: Listing JSON files in fs-results:"
-    find "$SOURCE_DIR/fs-results" -name "*.json" -type f 2>/dev/null | head -10 | while read -r f; do
-        echo "      📄 $f"
-    done || echo "      (no JSON files found)"
-    echo ""
+# Process each FS environment (dev and test only)
+# Note: We check for FS results directly rather than relying on ACTIVE_ENVIRONMENTS
+# because FS tests might have run even if other tests didn't, and we want to ensure
+# both dev and test FS results are processed if they exist
+for env in "${FS_ENVIRONMENTS[@]}"; do
+    echo "   🔍 Processing FS results for environment: $env"
+    ENV_PROCESSED=0
     
-    # Process each FS environment (dev and test only)
-    # Note: We check for FS results directly rather than relying on ACTIVE_ENVIRONMENTS
-    # because FS tests might have run even if other tests didn't, and we want to ensure
-    # both dev and test FS results are processed if they exist
-    for env in "${FS_ENVIRONMENTS[@]}"; do
-        echo "   🔍 Processing FS results for environment: $env"
-        ENV_PROCESSED=0
-        
-        # Check environment-specific FS results directory first (fs-results-dev, fs-results-test)
-        # This is the PRIMARY source - ensures we use environment-specific data
-        if [ -d "$SOURCE_DIR/fs-results-$env" ]; then
+    # Check environment-specific FS results directory first (fs-results-dev, fs-results-test)
+    # This is the PRIMARY source - ensures we use environment-specific data
+    if [ -d "$SOURCE_DIR/fs-results-$env" ]; then
             # Check for nested path: fs-results-{env}/playwright/artillery-results/
             if [ -d "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" ]; then
                 json_count=$(find "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
@@ -1024,6 +1011,48 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
             fi
         fi
     done
+
+# Also check for merged fs-results directory (fallback for old structure)
+if [ -d "$SOURCE_DIR/fs-results" ]; then
+    echo "   ✅ Found fs-results directory (merged structure - may contain overwritten files)"
+    echo "   🔍 Debug: Listing fs-results directory structure:"
+    find "$SOURCE_DIR/fs-results" -type d 2>/dev/null | head -10 | while read -r d; do
+        echo "      📁 $d"
+    done || echo "      (error listing directories)"
+    echo "   🔍 Debug: Listing JSON files in fs-results:"
+    find "$SOURCE_DIR/fs-results" -name "*.json" -type f 2>/dev/null | head -10 | while read -r f; do
+        echo "      📄 $f"
+    done || echo "      (no JSON files found)"
+    echo ""
+    
+    # Process merged structure for each environment (fallback)
+    for env in "${FS_ENVIRONMENTS[@]}"; do
+        if [ "$ENV_PROCESSED" -eq 0 ]; then
+            # Check flat structure as fallback
+            if [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 2 -name "*.json" -type f 2>/dev/null)" ]; then
+                echo "   ⚠️  WARNING: Processing merged flat structure for $env (fallback)"
+                chmod +x scripts/ci/convert-artillery-to-allure.sh
+                if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ FS conversion successful for $env (merged structure)"
+                fi
+            fi
+        fi
+    done
+fi
+
+# Also check for merged fs-results directory (fallback for old structure)
+if [ -d "$SOURCE_DIR/fs-results" ]; then
+    echo "   ✅ Found fs-results directory (merged structure - may contain overwritten files)"
+    echo "   🔍 Debug: Listing fs-results directory structure:"
+    find "$SOURCE_DIR/fs-results" -type d 2>/dev/null | head -10 | while read -r d; do
+        echo "      📁 $d"
+    done || echo "      (error listing directories)"
+    echo "   🔍 Debug: Listing JSON files in fs-results:"
+    find "$SOURCE_DIR/fs-results" -name "*.json" -type f 2>/dev/null | head -10 | while read -r f; do
+        echo "      📄 $f"
+    done || echo "      (no JSON files found)"
+    echo ""
 else
     echo "   ⚠️  fs-results directory not found at: $SOURCE_DIR/fs-results"
     echo "      This is expected if FS tests did not run or artifacts were not uploaded"
