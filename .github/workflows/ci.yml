@@ -1132,12 +1132,20 @@ jobs:
           path: all-test-results/vibium-results
           merge-multiple: true
 
-      - name: Download FS results
+      - name: Download FS results (DEV)
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          pattern: "fs-results-*"
-          path: all-test-results/fs-results
+          pattern: "fs-results-dev"
+          path: all-test-results/fs-results-dev
+          merge-multiple: true
+
+      - name: Download FS results (TEST)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: "fs-results-test"
+          path: all-test-results/fs-results-test
           merge-multiple: true
 
       - name: "Debug: Show downloaded artifact structure"

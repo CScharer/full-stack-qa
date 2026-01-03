@@ -706,8 +706,29 @@ echo "   🔍 Checking for FS test results in dev and test environments only..."
 #   - results-{env}/fs-results-{env}/playwright/artillery-results/*.json (environment-specific directory)
 # (The artifact name becomes a directory, and the uploaded path is preserved inside it)
 
+# Check for environment-specific FS results directories first (fs-results-dev, fs-results-test)
+# These are downloaded separately per environment to preserve environment-specific data
+if [ -d "$SOURCE_DIR/fs-results-dev" ] || [ -d "$SOURCE_DIR/fs-results-test" ]; then
+    echo "   ✅ Found environment-specific FS results directories"
+    for env_dir in "$SOURCE_DIR/fs-results-dev" "$SOURCE_DIR/fs-results-test"; do
+        if [ -d "$env_dir" ]; then
+            env_name=$(basename "$env_dir" | sed 's/fs-results-//')
+            echo "   🔍 Debug: Listing $env_name FS results directory structure:"
+            find "$env_dir" -type d 2>/dev/null | head -10 | while read -r d; do
+                echo "      📁 $d"
+            done || echo "      (error listing directories)"
+            echo "   🔍 Debug: Listing JSON files in fs-results-$env_name:"
+            find "$env_dir" -name "*.json" -type f 2>/dev/null | head -10 | while read -r f; do
+                echo "      📄 $f"
+            done || echo "      (no JSON files found)"
+        fi
+    done
+    echo ""
+fi
+
+# Also check for merged fs-results directory (fallback for old structure)
 if [ -d "$SOURCE_DIR/fs-results" ]; then
-    echo "   ✅ Found fs-results directory"
+    echo "   ✅ Found fs-results directory (merged structure - may contain overwritten files)"
     echo "   🔍 Debug: Listing fs-results directory structure:"
     find "$SOURCE_DIR/fs-results" -type d 2>/dev/null | head -10 | while read -r d; do
         echo "      📁 $d"
@@ -726,9 +747,40 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
         echo "   🔍 Processing FS results for environment: $env"
         ENV_PROCESSED=0
         
-        # Check environment-specific directory first (results-dev, results-test)
+        # Check environment-specific FS results directory first (fs-results-dev, fs-results-test)
         # This is the PRIMARY source - ensures we use environment-specific data
-        if [ -d "$SOURCE_DIR/results-$env" ]; then
+        if [ -d "$SOURCE_DIR/fs-results-$env" ]; then
+            # Check for nested path: fs-results-{env}/playwright/artillery-results/
+            if [ -d "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" ]; then
+                json_count=$(find "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                if [ "$json_count" -gt 0 ]; then
+                    echo "   ✅ Found environment-specific FS directory: fs-results-$env/playwright/artillery-results"
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s))..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (environment-specific data)"
+                    else
+                        echo "   ⚠️  FS conversion failed for $env (exit code: $?)"
+                    fi
+                fi
+            # Check for direct JSON files in fs-results-{env} root
+            elif [ -n "$(find "$SOURCE_DIR/fs-results-$env" -maxdepth 1 -name "*.json" -type f 2>/dev/null)" ]; then
+                json_count=$(find "$SOURCE_DIR/fs-results-$env" -maxdepth 1 -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                if [ "$json_count" -gt 0 ]; then
+                    echo "   ✅ Found environment-specific FS directory: fs-results-$env"
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s))..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results-$env" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (environment-specific data)"
+                    else
+                        echo "   ⚠️  FS conversion failed for $env (exit code: $?)"
+                    fi
+                fi
+            fi
+        # Check environment-specific directory in results-{env} (results-dev, results-test)
+        elif [ -d "$SOURCE_DIR/results-$env" ]; then
             # Try multiple possible structures in results-$env
             # Structure 1: results-$env/fs-results-$env/playwright/artillery-results/
             if [ -d "$SOURCE_DIR/results-$env/fs-results-$env/playwright/artillery-results" ]; then
@@ -781,6 +833,40 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
                     echo "   🔄 Converting FS test results for $env from $json_dir..."
                     chmod +x scripts/ci/convert-artillery-to-allure.sh
                     if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (environment-specific data)"
+                    else
+                        echo "   ⚠️  FS conversion failed for $env (exit code: $?)"
+                    fi
+                fi
+            fi
+        fi
+        
+        # Also check environment-specific FS results directory (fs-results-{env}/)
+        # This is downloaded separately per environment to preserve environment-specific data
+        if [ "$ENV_PROCESSED" -eq 0 ] && [ -d "$SOURCE_DIR/fs-results-$env" ]; then
+            # Check for nested path: fs-results-{env}/playwright/artillery-results/
+            if [ -d "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" ]; then
+                json_count=$(find "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                if [ "$json_count" -gt 0 ]; then
+                    echo "   ✅ Found environment-specific FS directory: fs-results-$env/playwright/artillery-results"
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s))..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results-$env/playwright/artillery-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (environment-specific data)"
+                    else
+                        echo "   ⚠️  FS conversion failed for $env (exit code: $?)"
+                    fi
+                fi
+            # Check for direct JSON files in fs-results-{env} root
+            elif [ -n "$(find "$SOURCE_DIR/fs-results-$env" -maxdepth 1 -name "*.json" -type f 2>/dev/null)" ]; then
+                json_count=$(find "$SOURCE_DIR/fs-results-$env" -maxdepth 1 -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                if [ "$json_count" -gt 0 ]; then
+                    echo "   ✅ Found environment-specific FS directory: fs-results-$env"
+                    echo "   🔄 Converting FS test results for $env (found $json_count JSON file(s))..."
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results-$env" "$env"; then
                         ENV_PROCESSED=1
                         echo "   ✅ FS conversion successful for $env (environment-specific data)"
                     else
@@ -848,34 +934,28 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
             fi  # Close: if [ -d "$env_dir" ]
         fi  # Close: if [ "$ENV_PROCESSED" -eq 0 ]
         
-        # FIXED: Check flat structure as LAST RESORT (when merge-multiple: true creates flat structure)
-        # WARNING: Flat structure cannot distinguish environments - only process once to avoid duplicate data
+        # Check flat structure as LAST RESORT (when merge-multiple: true creates flat structure)
+        # Process flat structure for EACH environment - converter will label results correctly
+        # This allows both dev and test to show results even when artifacts are merged into flat structure
         if [ "$ENV_PROCESSED" -eq 0 ]; then
             # Check if flat structure exists (fs-results/*.json or fs-results/playwright/artillery-results/*.json)
             if [ -d "$SOURCE_DIR/fs-results" ] && [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 2 -name "*.json" -type f 2>/dev/null)" ]; then
-                # Only process for first FS environment to avoid processing same files multiple times
-                # Flat structure means we can't distinguish which environment the files belong to
-                if [ "$env" == "${FS_ENVIRONMENTS[0]}" ]; then
-                    echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure"
-                    echo "   ⚠️  WARNING: Flat structure cannot distinguish environments - processing for ${FS_ENVIRONMENTS[0]} only"
-                    echo "   ⚠️  WARNING: Other environments will not have FS results if flat structure is used"
-                    echo "   📂 Found FS results in flat structure, processing for environment: $env"
-                    chmod +x scripts/ci/convert-artillery-to-allure.sh
-                    # Check for nested path first
-                    if [ -d "$SOURCE_DIR/fs-results/playwright/artillery-results" ]; then
-                        if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results/playwright/artillery-results" "$env"; then
-                            ENV_PROCESSED=1
-                            echo "   ✅ FS conversion successful for $env (flat structure, nested path - WARNING: same data for all environments)"
-                        fi
-                    # Check for direct JSON files in fs-results root
-                    elif [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)" ]; then
-                        if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env"; then
-                            ENV_PROCESSED=1
-                            echo "   ✅ FS conversion successful for $env (flat structure - WARNING: same data for all environments)"
-                        fi
+                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env"
+                echo "   ⚠️  WARNING: Flat structure may contain merged results - converter will label with environment: $env"
+                echo "   📂 Found FS results in flat structure, processing for environment: $env"
+                chmod +x scripts/ci/convert-artillery-to-allure.sh
+                # Check for nested path first
+                if [ -d "$SOURCE_DIR/fs-results/playwright/artillery-results" ]; then
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results/playwright/artillery-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (flat structure, nested path - labeled with environment: $env)"
                     fi
-                else
-                    echo "   ⏭️  Skipping $env (flat structure already processed for ${FS_ENVIRONMENTS[0]} - cannot distinguish environments in flat structure)"
+                # Check for direct JSON files in fs-results root
+                elif [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)" ]; then
+                    if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ FS conversion successful for $env (flat structure - labeled with environment: $env)"
+                    fi
                 fi
             fi
         fi
