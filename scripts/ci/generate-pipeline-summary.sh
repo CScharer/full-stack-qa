@@ -85,11 +85,6 @@ if [ "$CODE_CHANGED" = "true" ]; then
         # 1. Parameter: "name": "Environment", "value": "DEV" (uppercase)
         # 2. Label: "name": "environment", "value": "dev" (lowercase)
         
-        # Count tests per environment using jq for accurate JSON parsing
-        # Environment can be stored as:
-        # 1. Parameter: "name": "Environment", "value": "DEV" (uppercase)
-        # 2. Label: "name": "environment", "value": "dev" (lowercase)
-        
         if command -v jq &> /dev/null; then
             # Use jq to properly parse JSON and count tests with environment matching
             # Count by checking both parameters and labels (case-insensitive)
