@@ -125,7 +125,11 @@ public class Encoder {
     int number = 0;
     final int textLength = sText.length();
     for (int loop = 0; loop < textLength; loop++) {
-      number += characterSet.indexOf(sText.charAt(0)) * Math.pow(characterSet.length(), loop);
+      // Explicit cast to int to avoid implicit cast warning (double from Math.pow to int)
+      number =
+          (int)
+              (number
+                  + characterSet.indexOf(sText.charAt(0)) * Math.pow(characterSet.length(), loop));
       sText = sText.substring(1);
     }
     return number;

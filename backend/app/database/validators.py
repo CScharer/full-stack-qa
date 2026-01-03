@@ -29,6 +29,32 @@ ALLOWED_SORT_FIELDS = {
     ],
 }
 
+# Whitelist of allowed filter fields for each entity
+ALLOWED_FILTER_FIELDS = {
+    "application": [
+        "id", "status", "position", "work_setting", "location", 
+        "compensation", "created_on", "modified_on", "company_id", "client_id",
+        "a.status", "a.company_id", "a.client_id"  # Aliased fields for joins
+    ],
+    "company": [
+        "id", "name", "city", "state", "country", "job_type",
+        "created_on", "modified_on", "job_type"
+    ],
+    "client": [
+        "id", "name", "created_on", "modified_on"
+    ],
+    "contact": [
+        "id", "first_name", "last_name", "title", "contact_type", "company_id", 
+        "application_id", "client_id", "created_on", "modified_on"
+    ],
+    "note": [
+        "id", "application_id", "created_on", "modified_on"
+    ],
+    "job_search_site": [
+        "id", "name", "created_on", "modified_on"
+    ],
+}
+
 
 def validate_sort_field(entity: str, sort_field: str) -> str:
     """
@@ -53,3 +79,29 @@ def validate_sort_field(entity: str, sort_field: str) -> str:
         )
     
     return sort_field
+
+
+def validate_filter_field(entity: str, filter_field: str) -> str:
+    """
+    Validate that filter field is in the whitelist for the entity.
+    This prevents SQL injection by ensuring only allowed column names are used.
+    
+    Args:
+        entity: Entity name (e.g., "application", "company")
+        filter_field: Filter field to validate (may include table alias like "a.status")
+        
+    Returns:
+        Validated filter field
+        
+    Raises:
+        ValidationError: If filter field is not allowed
+    """
+    allowed_fields = ALLOWED_FILTER_FIELDS.get(entity, [])
+    
+    if filter_field not in allowed_fields:
+        raise ValidationError(
+            f"Invalid filter field '{filter_field}'. Allowed fields: {', '.join(allowed_fields)}",
+            field="filter"
+        )
+    
+    return filter_field

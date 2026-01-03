@@ -66,18 +66,21 @@ This document describes the automated version monitoring and alerting system imp
 **Location**: `.git/hooks/pre-commit` and `.git/hooks/pre-push` (installed via `scripts/install-git-hooks.sh`)
 
 **Pre-Commit Hook Features**:
-- Automatically formats code if code files are being committed (runs `scripts/format-code.sh --skip-compilation`)
+- Automatically formats code if code files are being committed (runs `scripts/format-code.sh --skip-compilation --skip-quality-checks`)
 - Skips formatting for documentation-only changes (`.md`, `.log`, `.txt`, `.rst`, `.adoc` files)
+- **Formatting only**: Prettier, Spotless (imports), Google Java Format
+- **No validation**: Checkstyle, PMD, and compilation are skipped (moved to pre-push)
 - Fast commits: Documentation-only commits complete in <1 second
-- Code commits: Formatting takes 20-40 seconds (no compilation/validation on commit)
+- Code commits: Formatting takes 15-30 seconds (no validation overhead)
 - Can be bypassed with `git commit --no-verify` (use with caution)
 
 **Pre-Push Hook Features**:
-- Automatically formats, compiles, and validates code if code files are being pushed
+- Automatically validates code if code files are being pushed
 - Skips all checks for documentation-only changes
-- Runs `scripts/format-code.sh` (with compilation) and `scripts/validate-pre-commit.sh`
+- **All validation**: Runs `scripts/format-code.sh --ci-mode` (Checkstyle & PMD) and `scripts/validate-pre-commit.sh` (compilation, Node.js, TypeScript, GitHub Actions, Shell scripts, security)
+- **No formatting**: Code is already formatted in pre-commit hook
 - Validates GitHub Actions workflow files using `actionlint`
-- Ensures code quality before reaching main branch
+- Ensures code quality before reaching main branch (15-30 seconds, faster than before)
 - Can be bypassed with `git push --no-verify` (use with caution)
 
 **Installation**:

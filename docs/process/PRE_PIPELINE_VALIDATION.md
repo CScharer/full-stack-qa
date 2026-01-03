@@ -469,8 +469,10 @@ Git hooks are automatically installed via `scripts/install-git-hooks.sh` and pro
 
 **Behavior**:
 - **Documentation-only changes**: Skips all checks (<1 second)
-- **Code changes**: Automatically formats code using `scripts/format-code.sh --skip-compilation` (20-40 seconds)
-- Formats code but does NOT compile or validate (compilation/validation happens in pre-push hook)
+- **Code changes**: Automatically formats code using `scripts/format-code.sh --skip-compilation --skip-quality-checks` (15-30 seconds)
+- **Formatting only**: Prettier, Spotless (imports), Google Java Format
+- **No validation**: Checkstyle, PMD, and compilation are skipped (happens in pre-push hook)
+- Fast commits: Only formatting, no validation overhead
 
 **Installation**:
 ```bash
@@ -482,10 +484,10 @@ Git hooks are automatically installed via `scripts/install-git-hooks.sh` and pro
 **Behavior**:
 - **Documentation-only changes**: Skips all checks (<1 second)
 - **Code changes**: 
-  - Formats code using `scripts/format-code.sh` (with compilation)
-  - Validates code using `scripts/validate-pre-commit.sh` (compilation, Node.js, security)
-  - Validates GitHub Actions workflow files using `actionlint`
-  - Ensures code quality before reaching main branch (30-60 seconds)
+  - Runs code quality checks using `scripts/format-code.sh --ci-mode` (Checkstyle & PMD verification)
+  - Validates code using `scripts/validate-pre-commit.sh` (compilation, Node.js, TypeScript, GitHub Actions, Shell scripts, security)
+  - **No formatting**: Code is already formatted in pre-commit hook
+  - Ensures code quality before reaching main branch (15-30 seconds, faster than before)
 
 **Workflow Validation**:
 - Validates all `.github/workflows/*.yml` files using `actionlint`

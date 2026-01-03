@@ -168,12 +168,13 @@ The code quality pipeline has been optimized for CI/CD:
 
 **Benefits**:
 - ✅ CI pipeline 20-50 seconds faster (no formatting, no compilation duplication)
-- ✅ Clear separation: pre-commit (formatting only) vs pre-push (format, compile, validate)
+- ✅ Clear separation: pre-commit (formatting only) vs pre-push (validation only)
 - ✅ Fast documentation-only commits/pushes (<1 second)
-- ✅ Automatic code formatting on commit (20-40 seconds for code changes)
-- ✅ Full validation on push before reaching main (30-60 seconds for code changes)
+- ✅ Automatic code formatting on commit (15-30 seconds for code changes, no validation overhead)
+- ✅ Full validation on push before reaching main (15-30 seconds for code changes, faster than before)
 - ✅ Consistent import ordering (Prettier alphabetical → Spotless java,javax,org,com → Google Java Format skips imports)
 - ✅ Automatic import cleanup before commit
+- ✅ No duplicate checks: Formatting happens once (pre-commit), validation happens once (pre-push)
 - ✅ Server-side enforcement via GitHub branch protection
 - ✅ Workflow validation prevents broken CI pipelines
 

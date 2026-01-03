@@ -94,6 +94,15 @@ public class XML {
   public static Document createDocument(File xml) throws Exception {
     Document document = null;
     final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    // Disable external entity expansion to prevent XXE attacks
+    documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+    documentBuilderFactory.setFeature(
+        "http://xml.org/sax/features/external-general-entities", false);
+    documentBuilderFactory.setFeature(
+        "http://xml.org/sax/features/external-parameter-entities", false);
+    documentBuilderFactory.setFeature(
+        "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+    documentBuilderFactory.setExpandEntityReferences(false);
     final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
     document = documentBuilder.parse(xml);
     // read this -
@@ -111,6 +120,15 @@ public class XML {
   public static Document createDocument(String xml) throws Exception {
     Document document = null;
     final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    // Disable external entity expansion to prevent XXE attacks
+    documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+    documentBuilderFactory.setFeature(
+        "http://xml.org/sax/features/external-general-entities", false);
+    documentBuilderFactory.setFeature(
+        "http://xml.org/sax/features/external-parameter-entities", false);
+    documentBuilderFactory.setFeature(
+        "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+    documentBuilderFactory.setExpandEntityReferences(false);
     final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
     try (StringReader stringReader = new StringReader(xml)) {
       document = documentBuilder.parse(new InputSource(stringReader));
@@ -400,11 +418,18 @@ public class XML {
     InputSource inputSource = new InputSource("");
     try (StringReader stringReader = new StringReader(xml)) {
       inputSource = new InputSource(stringReader);
-      element =
-          DocumentBuilderFactory.newInstance()
-              .newDocumentBuilder()
-              .parse(inputSource)
-              .getDocumentElement();
+      final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+      // Disable external entity expansion to prevent XXE attacks
+      documentBuilderFactory.setFeature(
+          "http://apache.org/xml/features/disallow-doctype-decl", true);
+      documentBuilderFactory.setFeature(
+          "http://xml.org/sax/features/external-general-entities", false);
+      documentBuilderFactory.setFeature(
+          "http://xml.org/sax/features/external-parameter-entities", false);
+      documentBuilderFactory.setFeature(
+          "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      documentBuilderFactory.setExpandEntityReferences(false);
+      element = documentBuilderFactory.newDocumentBuilder().parse(inputSource).getDocumentElement();
     } catch (SAXException | IOException | ParserConfigurationException e) {
       throw new QAException(
           "DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(" + inputSource + ")",

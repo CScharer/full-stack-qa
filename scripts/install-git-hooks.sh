@@ -72,7 +72,7 @@ if [ -n "$CODE_FILES" ]; then
     
     if [ -f "scripts/format-code.sh" ]; then
         chmod +x scripts/format-code.sh
-        if ./scripts/format-code.sh --skip-compilation; then
+        if ./scripts/format-code.sh --skip-compilation --skip-quality-checks; then
             # Stage any auto-fixed files
             git add -u
             echo -e "${GREEN}✅ Code formatting completed${NC}"
@@ -161,33 +161,34 @@ if [ -z "$CODE_FILES" ] && [ -n "$CHANGED_FILES" ]; then
     exit 0
 fi
 
-# Code files changed - format code and run quality checks
+# Code files changed - run all validation checks (formatting already done in pre-commit)
 if [ -n "$CODE_FILES" ]; then
-    echo -e "${BLUE}📝 Code files changed - formatting and validating code...${NC}"
+    echo -e "${BLUE}📝 Code files changed - running validation checks...${NC}"
+    echo -e "${BLUE}   (Formatting was already done in pre-commit hook)${NC}"
     echo ""
     
-    # Step 1: Format code (auto-fix formatting issues)
+    # Step 1: Run code quality checks (Checkstyle and PMD)
+    # Note: Formatting is skipped since it was already done in pre-commit
     if [ -f "scripts/format-code.sh" ]; then
-        echo -e "${BLUE}📝 Formatting code and removing unused imports...${NC}"
+        echo -e "${BLUE}🔍 Running code quality checks (Checkstyle & PMD)...${NC}"
         chmod +x scripts/format-code.sh
-        if ./scripts/format-code.sh; then
-            # Stage any auto-fixed files
-            git add -u
-            echo -e "${GREEN}✅ Code formatting completed${NC}"
+        # Use --ci-mode to verify code quality without formatting or compilation
+        if ./scripts/format-code.sh --ci-mode; then
+            echo -e "${GREEN}✅ Code quality checks passed${NC}"
             echo ""
         else
-            echo -e "${RED}❌ Code formatting failed${NC}"
+            echo -e "${RED}❌ Code quality checks failed${NC}"
             echo -e "${YELLOW}💡 You can bypass this hook with: git push --no-verify${NC}"
             exit 1
         fi
     else
         echo -e "${YELLOW}⚠️  format-code.sh not found: scripts/format-code.sh${NC}"
-        echo -e "${YELLOW}   Skipping code formatting${NC}"
+        echo -e "${YELLOW}   Skipping code quality checks${NC}"
     fi
     
-    # Step 2: Run validation checks
+    # Step 2: Run comprehensive validation checks
     if [ -f "scripts/validate-pre-commit.sh" ]; then
-        echo -e "${BLUE}🔍 Running validation checks...${NC}"
+        echo -e "${BLUE}🔍 Running comprehensive validation checks...${NC}"
         chmod +x scripts/validate-pre-commit.sh
         if ./scripts/validate-pre-commit.sh; then
             echo -e "${GREEN}✅ Validation checks passed${NC}"
