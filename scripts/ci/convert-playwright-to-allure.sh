@@ -198,6 +198,34 @@ for full_name, attempts in test_attempts.items():
             retry_info = f"Retried {len(attempts)} times. First: {first_status}, Best: {best_status}"
             test_results[full_name] = (best_test_case, best_status, is_flaky, retry_info)
         
+        # Extract test execution start time from JUnit XML
+        # JUnit XML has timestamp in testsuite element
+        test_start_time = None
+        for suite in test_suites:
+            suite_timestamp = suite.get('timestamp')
+            if suite_timestamp:
+                try:
+                    # JUnit timestamps are typically ISO format or Unix timestamp
+                    if suite_timestamp.isdigit():
+                        # Unix timestamp (seconds)
+                        test_start_time = int(float(suite_timestamp) * 1000)
+                    else:
+                        # ISO format
+                        dt = datetime.fromisoformat(suite_timestamp.replace('Z', '+00:00'))
+                        test_start_time = int(dt.timestamp() * 1000)
+                    break
+                except:
+                    continue
+        
+        # Fallback to current time if no timestamp found
+        if not test_start_time:
+            test_start_time = int(datetime.now().timestamp() * 1000)
+        
+        print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
+        
+        # Track test index for relative timestamps
+        test_index = 0
+        
         # Now convert the processed test results
         for full_name, (test_case, final_status, is_flaky, retry_info) in test_results.items():
             test_name = test_case.get('name', 'Unknown Test')
@@ -236,7 +264,9 @@ for full_name, attempts in test_attempts.items():
             
             # Create unique test result
             test_uuid = uuid.uuid4().hex[:32]
-            timestamp = int(datetime.now().timestamp() * 1000)
+            # Use test execution start time + offset for each test to maintain relative timing
+            timestamp = test_start_time + (test_index * 100)  # Small offset per test
+            test_index += 1
             history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
             
             labels = [

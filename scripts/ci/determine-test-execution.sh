@@ -11,8 +11,10 @@ PERF_TYPE_INPUT=$4
 PERF_ENV_INPUT=$5
 
 # Determine default test type based on event
-# Pull Requests: default to 'all' (FE + BE) in 'dev'
-# Push to main/develop: default to 'fe-only' across 'all' envs
+# Pull Requests: default to 'all' (FE + BE + FS) in 'dev'
+# Push to feature branch: default to 'all' (FE + BE + FS) in 'dev' (same as PRs)
+# Push to main: default to 'all' (FE + BE + FS) in 'dev' and 'test'
+# Push to develop: default to 'fe-only' across 'all' envs
 # Manual Runs: default to 'fe-only' (user can override)
 
 IS_MAIN_PUSH=false
@@ -23,9 +25,13 @@ if [ "$EVENT_NAME" == "pull_request" ]; then
 elif [ "$EVENT_NAME" == "push" ]; then
   if [ "$REF" == "refs/heads/main" ]; then
     IS_MAIN_PUSH=true
-    echo "🚀 Push to main detected - defaulting to ALL tests (FE + BE smoke) across ALL envs"
+    echo "🚀 Push to main detected - defaulting to ALL tests (FE + BE smoke) in DEV and TEST"
+  elif [ "$REF" == "refs/heads/develop" ]; then
+    echo "📦 Push to develop detected - defaulting to fe-only across ALL environments"
   else
-    echo "📦 Develop push detected - defaulting to fe-only across ALL environments"
+    # Push to feature branch - run BE/FS tests in dev
+    IS_BRANCH_PUSH=true
+    echo "🌿 Push to feature branch detected - defaulting to ALL tests (FE + BE) in DEV"
   fi
 else
   echo "📦 Manual trigger or other event - defaulting to fe-only"
@@ -76,17 +82,23 @@ if [ "$PERF_ENV" == "prod" ]; then
   PERF_ENV="dev"
 fi
 
-if [ "$TEST_TYPE" == "fe-only" ]; then
+if [ "$TEST_TYPE" == "fe-only" ] || [ -z "$TEST_TYPE" ]; then
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=false" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=false" >> $GITHUB_OUTPUT
   echo "be_env_dev=false" >> $GITHUB_OUTPUT
   echo "be_env_test=false" >> $GITHUB_OUTPUT
-  echo "✅ Will run FE tests only"
+  if [ -z "$TEST_TYPE" ]; then
+    echo "✅ Will run FE tests only (no test_type input provided)"
+  else
+    echo "✅ Will run FE tests only"
+  fi
 elif [ "$TEST_TYPE" == "be-only" ]; then
   echo "run_ui_tests=false" >> $GITHUB_OUTPUT
   echo "run_be_tests=true" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=true" >> $GITHUB_OUTPUT
   echo "be_test_mode=$PERF_TYPE" >> $GITHUB_OUTPUT
-  # Determine BE test environments
+  # Determine BE test environments (FS tests use same environments)
   if [ "$PERF_ENV" == "dev" ]; then
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=false" >> $GITHUB_OUTPUT
@@ -101,37 +113,39 @@ elif [ "$TEST_TYPE" == "be-only" ]; then
     echo "be_env_test=false" >> $GITHUB_OUTPUT
     echo "⚠️  Unknown be_environment, defaulting to dev"
   fi
-  echo "✅ Will run BE tests only ($PERF_TYPE) in $PERF_ENV"
+  echo "✅ Will run BE and FS tests only"
 elif [ "$TEST_TYPE" == "all" ]; then
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=true" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=true" >> $GITHUB_OUTPUT
   echo "be_test_mode=$PERF_TYPE" >> $GITHUB_OUTPUT
-  # Determine BE test environments
+  # Determine BE test environments (FS tests use same environments)
   if [ "$PERF_ENV" == "dev" ]; then
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=false" >> $GITHUB_OUTPUT
-    echo "✅ BE tests will run in DEV environment"
+    echo "✅ BE and FS tests will run in DEV environment"
   elif [ "$PERF_ENV" == "test" ]; then
     echo "be_env_dev=false" >> $GITHUB_OUTPUT
     echo "be_env_test=true" >> $GITHUB_OUTPUT
-    echo "✅ BE tests will run in TEST environment"
+    echo "✅ BE and FS tests will run in TEST environment"
   elif [ "$PERF_ENV" == "dev-test" ]; then
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=true" >> $GITHUB_OUTPUT
-    echo "✅ BE tests will run in DEV and TEST environments"
+    echo "✅ BE and FS tests will run in DEV and TEST environments"
   else
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=false" >> $GITHUB_OUTPUT
     echo "⚠️  Unknown be_environment '$PERF_ENV', defaulting to dev"
   fi
-  echo "✅ Will run BOTH FE and BE tests in parallel"
+  echo "✅ Will run BOTH FE and BE/FS tests in parallel"
   echo "   FE tests: all environments (default)"
-  echo "   BE tests: $PERF_ENV ($PERF_TYPE)"
-  echo "🔍 DEBUG: Set run_be_tests=true and be_env_dev=true for PERF_ENV=$PERF_ENV"
+  echo "   BE/FS tests: $PERF_ENV ($PERF_TYPE)"
+  echo "🔍 DEBUG: Set run_be_tests=true, run_fs_tests=true and be_env_dev=true for PERF_ENV=$PERF_ENV"
 else
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=false" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=false" >> $GITHUB_OUTPUT
   echo "be_env_dev=false" >> $GITHUB_OUTPUT
   echo "be_env_test=false" >> $GITHUB_OUTPUT
-  echo "⚠️  Unknown test_type, defaulting to fe-only"
+  echo "⚠️  Unknown test_type '$TEST_TYPE', defaulting to fe-only"
 fi

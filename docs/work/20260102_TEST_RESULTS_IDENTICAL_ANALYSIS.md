@@ -1,7 +1,7 @@
 # Test Results Appearing Identical Across Environments - Comprehensive Analysis
 
 **Date:** January 2, 2026  
-**Last Updated:** January 2, 2026  
+**Last Updated:** January 2, 2026 (Test execution control + nested path fixes)  
 **Issue:** Test results from **ALL frameworks** (FS, Cypress, Playwright, Robot, Vibium, Selenide, BE tests) appear identical across dev, test, and prod environments in the Allure report.
 
 **Important Note:** It's acceptable if tests produce identical results/data. The concern is **verifying that results are truly from different test runs in different environments**, not that the results themselves are different.
@@ -1018,4 +1018,129 @@ The fallback logic in `prepare-combined-allure-results.sh` is processing the sam
    - Base URLs are different per environment
    - Test Execution Times are different (or at least not identical)
    - Results truly represent different test runs
+
+---
+
+## ⚠️ TEMPORARY WORKFLOW CHANGE FOR TESTING
+
+**Date:** January 2, 2026  
+**Branch:** `fix/identical-results-fallback-logic`
+
+**Temporary Change Made:**
+To test the fallback logic fix without merging the branch, the workflow has been temporarily modified to run **all environments (dev, test, prod)** on any branch push, instead of the normal behavior where feature branch pushes only run the 'dev' environment.
+
+**File Modified:** `scripts/ci/determine-environments.sh`
+
+**Change Details:**
+- Modified push event handling to force `IS_BRANCH_PUSH=false` for all push events
+- This makes all branch pushes default to 'all' environments instead of 'dev' only
+- Added clear warning comments in the script indicating this is temporary
+
+**⚠️ CRITICAL: REVERT BEFORE MERGING PR**
+Before merging the PR, this temporary change MUST be reverted to restore the original behavior:
+- Feature branch pushes should only run 'dev' environment
+- Only pushes to main/develop should run 'all' environments
+
+**Revert Instructions:**
+1. In `scripts/ci/determine-environments.sh`, restore the original logic:
+   - Remove the temporary comment block
+   - Change `IS_BRANCH_PUSH=false` back to checking if branch is main/develop
+   - Remove the warning echo statements
+
+**Original Logic (to restore):**
+```bash
+elif [ "$EVENT_NAME" == "push" ]; then
+  echo "📦 Main/develop push detected - defaulting to ALL environments"
+  # Check if branch is main or develop to determine if all environments should run
+  # Feature branches should only run dev
+```
+
+**Testing Purpose:**
+This temporary change allows us to verify that:
+- All three environments (dev, test, prod) produce results
+- Base URLs are correctly different for each environment
+- Test Execution Times are different (proving different runs)
+- The fallback logic fix prevents duplicate processing
+
+---
+
+## Pipeline Fixes for Missing Results
+
+**Date:** January 2, 2026  
+**Branch:** `fix/identical-results-fallback-logic`  
+**Issue:** Artillery, Cypress, Playwright, and Vibium tests not showing up in Allure Report
+
+### Root Cause Identified
+
+**Problem:** Artifacts preserve the full upload path when downloaded with `merge-multiple: true`. The path detection logic was only checking for files directly in the artifact subdirectory, but not the nested paths that preserve the original upload structure.
+
+**Artifact Upload Paths:**
+- Cypress: `cypress/cypress/results/` → artifact `cypress-results-{env}` → downloaded to `cypress-results/cypress-results-{env}/cypress/cypress/results/`
+- Playwright: `playwright/test-results/` → artifact `playwright-results-{env}` → downloaded to `playwright-results/playwright-results-{env}/playwright/test-results/`
+- Robot: `target/robot-reports/` → artifact `robot-results-{env}` → downloaded to `robot-results/robot-results-{env}/target/robot-reports/`
+- Vibium: `vibium/test-results/` or `vibium/.vitest/` → artifact `vibium-results-{env}` → downloaded to `vibium-results/vibium-results-{env}/vibium/test-results/` or `vibium-results/vibium-results-{env}/vibium/.vitest/`
+
+### Fixes Applied
+
+**File:** `scripts/ci/prepare-combined-allure-results.sh`
+
+**Changes Made:**
+
+1. **Cypress Path Detection (Lines 132-157):**
+   - ✅ Added check for nested path: `cypress-results/cypress-results-{env}/cypress/cypress/results/`
+   - ✅ Maintains fallback to search for JSON files recursively
+   - ✅ Updated debug output to show nested path in checked locations
+
+2. **Playwright Path Detection (Lines 188-204):**
+   - ✅ Added check for nested path: `playwright-results/playwright-results-{env}/playwright/test-results/`
+   - ✅ Maintains fallback to check `playwright-results/playwright-results-{env}/test-results/`
+   - ✅ Updated debug output to show nested path in checked locations
+
+3. **Robot Path Detection (Lines 211-235):**
+   - ✅ Added check for nested path: `robot-results/robot-results-{env}/target/robot-reports/`
+   - ✅ Maintains fallback to search for `output.xml` recursively
+   - ✅ Updated debug output to show nested path in checked locations
+
+4. **Vibium Path Detection (Lines 289-323):**
+   - ✅ Added check for nested paths: `vibium-results/vibium-results-{env}/vibium/test-results/` and `vibium-results/vibium-results-{env}/vibium/.vitest/`
+   - ✅ Maintains fallback to check non-nested paths
+   - ✅ Updated debug output to show nested paths in checked locations
+
+**Reasoning:**
+When GitHub Actions downloads artifacts with `merge-multiple: true`, it preserves the full directory structure from the upload. Since artifacts are uploaded from paths like `cypress/cypress/results/`, the downloaded structure becomes `cypress-results/cypress-results-{env}/cypress/cypress/results/`. The previous logic only checked for files directly in `cypress-results-{env}/` or `cypress-results-{env}/results/`, missing the nested structure.
+
+**Expected Result:**
+- Cypress, Playwright, Robot, and Vibium results should now be found and converted
+- Debug output will show which paths are being checked
+- Conversion success/failure will be clearly reported
+
+**Status:** ✅ **FIXED** - Awaiting pipeline run to verify
+
+---
+
+## Additional Fix: FS Tests Nested Path Detection
+
+**Date:** January 2, 2026  
+**Issue:** FS (Artillery) tests still not showing up after initial nested path fix
+
+### Root Cause
+
+FS tests upload from `playwright/artillery-results/`, so when artifacts are downloaded with `merge-multiple: true`, the nested path structure is:
+- `fs-results/fs-results-{env}/playwright/artillery-results/*.json`
+
+The initial fix only checked:
+- `fs-results/fs-results-{env}/artillery-results/*.json` (missing the `playwright/` part)
+
+### Fix Applied
+
+**File:** `scripts/ci/prepare-combined-allure-results.sh` (Lines 422-448)
+
+**Changes Made:**
+1. ✅ Added check for nested path: `fs-results/fs-results-{env}/playwright/artillery-results/`
+2. ✅ Maintains fallback to check `fs-results/fs-results-{env}/artillery-results/`
+3. ✅ Final fallback to check files directly in `fs-results-{env}/`
+4. ✅ Enhanced error reporting with exit codes and success/failure messages
+5. ✅ Updated debug output to show nested path in checked locations
+
+**Status:** ✅ **FIXED** - All frameworks now have nested path detection
 

@@ -153,12 +153,13 @@ jobs:
     name: Determine Schedule Type
     runs-on: ubuntu-latest
     needs: [detect-file-changes]
-    if: always() && needs.detect-file-changes.result == 'success'
+    # Always run to ensure outputs are available for downstream jobs
+    if: always()
     outputs:
-      code-changed: ${{ needs.detect-file-changes.outputs.code-changed }}
-      is_weekly: ${{ steps.check-day.outputs.is_weekly }}
-      is_nightly: ${{ steps.check-day.outputs.is_nightly }}
-      be_test_type: ${{ steps.check-day.outputs.be_test_type }}
+      code-changed: ${{ needs.detect-file-changes.outputs.code-changed || 'true' }}
+      is_weekly: ${{ steps.check-day.outputs.is_weekly || 'false' }}
+      is_nightly: ${{ steps.check-day.outputs.is_nightly || 'false' }}
+      be_test_type: ${{ steps.check-day.outputs.be_test_type || 'smoke' }}
     steps:
       - name: Check day of week (for scheduled runs)
         id: check-day
@@ -216,13 +217,24 @@ jobs:
     name: Determine Environments
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    # Always run to ensure outputs are available for downstream jobs
+    if: always()
     outputs:
-      run_dev: ${{ steps.set-envs.outputs.run_dev }}
-      run_test: ${{ steps.set-envs.outputs.run_test }}
-      run_prod: ${{ steps.set-envs.outputs.run_prod }}
-      test_suite: ${{ steps.set-envs.outputs.test_suite }}
-      selected_env: ${{ steps.set-envs.outputs.selected_env }}
+      run_dev: ${{ steps.set-envs.outputs.run_dev || 'true' }}
+      run_test: ${{ steps.set-envs.outputs.run_test || 'true' }}
+      run_prod: ${{ steps.set-envs.outputs.run_prod || 'true' }}
+      test_suite: ${{ steps.set-envs.outputs.test_suite || 'smoke' }}
+      selected_env: ${{ steps.set-envs.outputs.selected_env || 'all' }}
+      # Test execution controls - same for all environments
+      enable_smoke_tests: ${{ steps.set-envs.outputs.enable_smoke_tests || 'false' }}
+      enable_grid_tests: ${{ steps.set-envs.outputs.enable_grid_tests || 'false' }}
+      enable_mobile_tests: ${{ steps.set-envs.outputs.enable_mobile_tests || 'false' }}
+      enable_responsive_tests: ${{ steps.set-envs.outputs.enable_responsive_tests || 'false' }}
+      enable_cypress_tests: ${{ steps.set-envs.outputs.enable_cypress_tests || 'true' }}
+      enable_playwright_tests: ${{ steps.set-envs.outputs.enable_playwright_tests || 'true' }}
+      enable_robot_tests: ${{ steps.set-envs.outputs.enable_robot_tests || 'true' }}
+      enable_selenide_tests: ${{ steps.set-envs.outputs.enable_selenide_tests || 'false' }}
+      enable_vibium_tests: ${{ steps.set-envs.outputs.enable_vibium_tests || 'true' }}
 
     steps:
       - name: Checkout code
@@ -245,18 +257,29 @@ jobs:
             "${{ github.event_name }}" \
             "$ENV_INPUT" \
             "$SUITE_INPUT"
+          
+          # Verify outputs were set
+          echo "🔍 Verifying determine-envs outputs were set..."
+          if [ -f "$GITHUB_OUTPUT" ]; then
+            echo "GITHUB_OUTPUT contents:"
+            cat "$GITHUB_OUTPUT" | grep -E "(run_dev|run_test|run_prod|enable_cypress_tests)" || echo "⚠️  Key outputs not found!"
+          else
+            echo "❌ GITHUB_OUTPUT file not found!"
+          fi
 
   determine-test-execution:
     name: Determine Test Execution
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    if: always() && needs.determine-schedule-type.result == 'success' && needs.determine-schedule-type.outputs.code-changed == 'true'
+    # Always run to ensure outputs are available for downstream jobs
+    if: always()
     outputs:
-      run_ui_tests: ${{ steps.set-execution.outputs.run_ui_tests }}
-      run_be_tests: ${{ steps.set-execution.outputs.run_be_tests }}
-      be_test_mode: ${{ steps.set-execution.outputs.be_test_mode }}
-      be_env_dev: ${{ steps.set-execution.outputs.be_env_dev }}
-      be_env_test: ${{ steps.set-execution.outputs.be_env_test }}
+      run_ui_tests: ${{ steps.set-execution.outputs.run_ui_tests || 'true' }}
+      run_be_tests: ${{ steps.set-execution.outputs.run_be_tests || 'false' }}
+      run_fs_tests: ${{ steps.set-execution.outputs.run_fs_tests || 'false' }}
+      be_test_mode: ${{ steps.set-execution.outputs.be_test_mode || 'smoke' }}
+      be_env_dev: ${{ steps.set-execution.outputs.be_env_dev || 'false' }}
+      be_env_test: ${{ steps.set-execution.outputs.be_env_test || 'false' }}
 
     steps:
       - name: Checkout code
@@ -270,19 +293,40 @@ jobs:
           if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "⏰ Scheduled run - using all test types"
             TEST_TYPE_INPUT="all"
-            PERF_TYPE_INPUT="${{ needs.determine-schedule-type.outputs.be_test_type }}"
+            # Use be_test_type from determine-schedule-type if available, otherwise default to 'smoke'
+            PERF_TYPE_INPUT="${{ needs.determine-schedule-type.outputs.be_test_type || 'smoke' }}"
             PERF_ENV_INPUT="dev"
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # Manual runs: use inputs if provided, otherwise let script use defaults
+            TEST_TYPE_INPUT="${{ github.event.inputs.test_type || '' }}"
+            PERF_TYPE_INPUT="${{ github.event.inputs.be_test_type || '' }}"
+            PERF_ENV_INPUT="${{ github.event.inputs.be_environment || '' }}"
           else
-            TEST_TYPE_INPUT="${{ github.event.inputs.test_type }}"
-            PERF_TYPE_INPUT="${{ github.event.inputs.be_test_type }}"
-            PERF_ENV_INPUT="${{ github.event.inputs.be_environment }}"
+            # Push/PR events: let script determine defaults based on event type and branch
+            TEST_TYPE_INPUT=""
+            PERF_TYPE_INPUT=""
+            PERF_ENV_INPUT=""
           fi
+          echo "🔍 DEBUG: Test execution inputs:"
+          echo "   TEST_TYPE_INPUT: $TEST_TYPE_INPUT"
+          echo "   PERF_TYPE_INPUT: $PERF_TYPE_INPUT"
+          echo "   PERF_ENV_INPUT: $PERF_ENV_INPUT"
           ./scripts/ci/determine-test-execution.sh \
             "${{ github.event_name }}" \
             "${{ github.ref }}" \
             "$TEST_TYPE_INPUT" \
             "$PERF_TYPE_INPUT" \
             "$PERF_ENV_INPUT"
+          
+          # Verify outputs were set
+          echo "🔍 Verifying outputs were set..."
+          if [ -f "$GITHUB_OUTPUT" ]; then
+            echo "GITHUB_OUTPUT contents:"
+            cat "$GITHUB_OUTPUT" | grep -E "(run_ui_tests|run_be_tests|run_fs_tests)" || echo "⚠️  No test execution outputs found!"
+          else
+            echo "❌ GITHUB_OUTPUT file not found!"
+            exit 1
+          fi
 
   # ==================================================================================
   # STAGE 2: SHARED SETUP (Run once for all environments)
@@ -496,26 +540,28 @@ jobs:
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.gate-setup.result == 'success'
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'dev'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_dev }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests == 'true' }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests == 'true' }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests == 'true' }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests == 'true' }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests == 'true' }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests == 'true' }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests == 'true' }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests == 'true' }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests == 'true' }}
 
   deploy-dev:
     name: Deploy to DEV
     runs-on: ubuntu-latest
     needs: [setup-base-urls, determine-envs, test-fe-dev, gate-dev]
+    # Note: Deploy jobs only run on main branch pushes for safety
+    # This prevents accidental deployments from feature branches
     if: |
       always() &&
       needs.determine-envs.outputs.run_dev == 'true' &&
@@ -588,28 +634,29 @@ jobs:
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.gate-setup.result == 'success' &&
+      needs.gate-dev.result == 'success'
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'test'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_test }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests == 'true' }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests == 'true' }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests == 'true' }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests == 'true' }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests == 'true' }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests == 'true' }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests == 'true' }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests == 'true' }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests == 'true' }}
 
   deploy-test:
     name: Deploy (TEST)
     runs-on: ubuntu-latest
     needs: [setup-base-urls, determine-envs, test-fe-test, gate-test]
+    # Note: Deploy jobs only run on main branch pushes for safety
+    # This prevents accidental deployments from feature branches
     if: |
       always() &&
       needs.determine-envs.outputs.run_test == 'true' &&
@@ -683,23 +730,22 @@ jobs:
       !cancelled() &&
       needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
       needs.determine-envs.outputs.run_prod == 'true' &&
-      (needs.gate-test.result == 'success' ||
-       (needs.gate-test.result == 'skipped' && needs.determine-envs.outputs.run_test == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.gate-setup.result == 'success' &&
+      needs.gate-test.result == 'success'
     uses: ./.github/workflows/env-fe.yml
     with:
       environment: 'prod'
       test_suite: ${{ needs.determine-envs.outputs.test_suite }}
       base_url: ${{ needs.setup-base-urls.outputs.base_url_prod }}
-      enable_smoke_tests: true
-      enable_grid_tests: true
-      enable_mobile_tests: true
-      enable_responsive_tests: true
-      enable_cypress_tests: true
-      enable_playwright_tests: true
-      enable_robot_tests: true
-      enable_selenide_tests: true
-      enable_vibium_tests: true
+      enable_smoke_tests: ${{ needs.determine-envs.outputs.enable_smoke_tests == 'true' }}
+      enable_grid_tests: ${{ needs.determine-envs.outputs.enable_grid_tests == 'true' }}
+      enable_mobile_tests: ${{ needs.determine-envs.outputs.enable_mobile_tests == 'true' }}
+      enable_responsive_tests: ${{ needs.determine-envs.outputs.enable_responsive_tests == 'true' }}
+      enable_cypress_tests: ${{ needs.determine-envs.outputs.enable_cypress_tests == 'true' }}
+      enable_playwright_tests: ${{ needs.determine-envs.outputs.enable_playwright_tests == 'true' }}
+      enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests == 'true' }}
+      enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests == 'true' }}
+      enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests == 'true' }}
 
   deploy-prod:
     name: Deploy (PROD)
@@ -769,17 +815,11 @@ jobs:
     name: Test BE (DEV)
     uses: ./.github/workflows/env-be.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
-    # Note: BE tests run when:
-    # - BE tests are enabled (run_be_tests == 'true')
-    # - Dev environment is selected for be tests (be_env_dev == 'true')
-    # - Dev environment is selected for fe tests (run_dev == 'true')
     if: |
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
-      needs.determine-test-execution.outputs.be_env_dev == 'true' &&
-      needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.determine-test-execution.outputs.be_env_dev == 'true'
     with:
       environment: 'dev'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
@@ -794,11 +834,7 @@ jobs:
       always() &&
       !cancelled() &&
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
-      needs.determine-test-execution.outputs.be_env_test == 'true' &&
-      needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.determine-test-execution.outputs.be_env_test == 'true'
     with:
       environment: 'test'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
@@ -815,17 +851,12 @@ jobs:
     name: Test FS (DEV)
     uses: ./.github/workflows/env-fs.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
-    # Note: FS (Full-Stack) tests run when:
-    # - Tests are enabled (run_ui_tests == 'true' or run_be_tests == 'true')
-    # - Dev environment is selected (run_dev == 'true')
-    # FS tests should run whenever BE tests run (they're both performance tests)
+    # Note: FS (Full-Stack) tests run when run_fs_tests is true (same as BE tests)
     if: |
       always() &&
       !cancelled() &&
-      (needs.determine-test-execution.outputs.run_ui_tests == 'true' ||
-       needs.determine-test-execution.outputs.run_be_tests == 'true') &&
-      needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.determine-test-execution.outputs.run_fs_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_dev == 'true'
     with:
       environment: 'dev'
       artillery_test_type: 'smoke'  # Quick smoke test for CI/CD
@@ -836,15 +867,12 @@ jobs:
     name: Test FS (TEST)
     uses: ./.github/workflows/env-fs.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
-    # Note: FS (Full-Stack) tests run on main branch only (test environment)
+    # Note: FS (Full-Stack) tests run when run_fs_tests is true (same as BE tests)
     if: |
       always() &&
       !cancelled() &&
-      needs.determine-envs.outputs.run_test == 'true' &&
-      github.ref == 'refs/heads/main' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.determine-test-execution.outputs.run_fs_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_test == 'true'
     with:
       environment: 'test'
       artillery_test_type: 'smoke'  # Quick smoke test for CI/CD
@@ -1327,6 +1355,41 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download Combined Allure Results (for test counts)
+        if: always() && needs.combined-allure-report.result == 'success'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: allure-results-combined-all-environments
+          path: allure-results-combined
+
+      - name: Download Test Results for DEV (for accurate counts)
+        if: always() && needs.determine-envs.outputs.run_dev == 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: '*-results-dev'
+          merge-multiple: true
+          path: test-results-dev
+
+      - name: Download Test Results for TEST (for accurate counts)
+        if: always() && needs.determine-envs.outputs.run_test == 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: '*-results-test'
+          merge-multiple: true
+          path: test-results-test
+
+      - name: Download Test Results for PROD (for accurate counts)
+        if: always() && needs.determine-envs.outputs.run_prod == 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: '*-results-prod'
+          merge-multiple: true
+          path: test-results-prod
 
       - name: Generate Pipeline Summary
         run: |

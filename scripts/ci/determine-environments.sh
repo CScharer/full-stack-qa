@@ -19,6 +19,12 @@ if [ "$EVENT_NAME" == "pull_request" ]; then
   echo "🌿 Pull request detected - defaulting to DEV environment only"
 elif [ "$EVENT_NAME" == "push" ]; then
   echo "📦 Main/develop push detected - defaulting to ALL environments"
+  # Original logic: check if branch is main/develop
+  if [ "$REF" == "refs/heads/main" ] || [ "$REF" == "refs/heads/develop" ]; then
+    IS_BRANCH_PUSH=false
+  else
+    IS_BRANCH_PUSH=true
+  fi
 else
   if [ "$EVENT_NAME" == "workflow_dispatch" ]; then
     echo "📦 Manual trigger - defaulting to ALL environments (inputs can override)"
@@ -51,6 +57,19 @@ echo "📊 Environment Selection: $ENV_SELECT"
 echo "📊 Test Suite Selection: $SUITE_SELECT"
 echo "selected_env=$ENV_SELECT" >> $GITHUB_OUTPUT
 echo "test_suite=$SUITE_SELECT" >> $GITHUB_OUTPUT
+
+# Set test execution controls (same for all environments)
+# All test frameworks are enabled by default
+echo "enable_smoke_tests=true" >> $GITHUB_OUTPUT
+echo "enable_grid_tests=true" >> $GITHUB_OUTPUT
+echo "enable_mobile_tests=true" >> $GITHUB_OUTPUT
+echo "enable_responsive_tests=true" >> $GITHUB_OUTPUT
+echo "enable_cypress_tests=true" >> $GITHUB_OUTPUT
+echo "enable_playwright_tests=true" >> $GITHUB_OUTPUT
+echo "enable_robot_tests=true" >> $GITHUB_OUTPUT
+echo "enable_selenide_tests=true" >> $GITHUB_OUTPUT
+echo "enable_vibium_tests=true" >> $GITHUB_OUTPUT
+echo "✅ Test execution controls set (same for all environments)"
 
 if [ "$ENV_SELECT" == "all" ]; then
   echo "run_dev=true" >> $GITHUB_OUTPUT

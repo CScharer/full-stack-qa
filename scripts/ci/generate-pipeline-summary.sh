@@ -77,27 +77,121 @@ if [ "$CODE_CHANGED" = "true" ]; then
 
     echo "### FE Tests - Environments Tested:" >> "$SUMMARY_FILE"
 
+    # Count tests per environment from original test result files (same method as environment summaries)
+    # This ensures consistency between environment summaries and pipeline summary
+    DEV_TEST_COUNT="?"
+    TEST_TEST_COUNT="?"
+    PROD_TEST_COUNT="?"
+    
+    # Function to count tests from test result files (same logic as generate-environment-test-summary.sh)
+    count_tests_from_results() {
+        local test_results_dir="$1"
+        local total=0
+        
+        if [ ! -d "$test_results_dir" ]; then
+            echo "0"
+            return
+        fi
+        
+        # Count from Maven Surefire XML
+        while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+                tests=$(grep -oP 'tests="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                total=$((total + ${tests:-0}))
+            fi
+        done < <(find "$test_results_dir" -type f -name "TEST-*.xml" 2>/dev/null || true)
+        
+        # Count from Playwright JUnit XML
+        while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+                tests=$(grep -oP '<testsuites[^>]*tests="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                if [ "$tests" = "0" ]; then
+                    tests=$(grep -oP '<testsuite[^>]*tests="\K[0-9]+' "$xml_file" | awk '{sum+=$1} END {print sum+0}' || echo "0")
+                fi
+                if [ -n "$tests" ] && [ "$tests" != "0" ]; then
+                    total=$((total + ${tests:-0}))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f -name "junit.xml" -o -name "*junit*.xml" 2>/dev/null | grep -v "target/surefire-reports" || true)
+        
+        # Count from Cypress JSON
+        while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+                tests=$(grep -oP '"tests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+                if [ -n "$tests" ] && [ "$tests" != "0" ]; then
+                    total=$((total + ${tests:-0}))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null || true)
+        
+        # Count from Robot Framework XML
+        while IFS= read -r xml_file; do
+            if [ -f "$xml_file" ]; then
+                pass=$(grep -oP '<total><stat[^>]*pass="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                fail=$(grep -oP '<total><stat[^>]*fail="\K[0-9]+' "$xml_file" | head -1 || echo "0")
+                if [ -n "$pass" ] || [ -n "$fail" ]; then
+                    total=$((total + pass + fail))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f -name "output.xml" 2>/dev/null || true)
+        
+        # Count from Vibium/Vitest JSON
+        while IFS= read -r json_file; do
+            if [ -f "$json_file" ]; then
+                total_val=$(grep -oP '"numTotalTests"\s*:\s*\K[0-9]+' "$json_file" | head -1 || echo "0")
+                if [ -n "$total_val" ] && [ "$total_val" != "0" ]; then
+                    total=$((total + ${total_val:-0}))
+                fi
+            fi
+        done < <(find "$test_results_dir" -type f -name "vitest-results.json" 2>/dev/null || true)
+        
+        echo "$total"
+    }
+    
+    # Count tests for each environment from downloaded artifacts
+    # Artifacts are downloaded with pattern: *-results-{env}
+    if [ "$RUN_DEV" = "true" ]; then
+        DEV_RESULTS_DIR="test-results-dev"
+        if [ -d "$DEV_RESULTS_DIR" ]; then
+            DEV_TEST_COUNT=$(count_tests_from_results "$DEV_RESULTS_DIR")
+        fi
+    fi
+    
+    if [ "$RUN_TEST" = "true" ]; then
+        TEST_RESULTS_DIR="test-results-test"
+        if [ -d "$TEST_RESULTS_DIR" ]; then
+            TEST_TEST_COUNT=$(count_tests_from_results "$TEST_RESULTS_DIR")
+        fi
+    fi
+    
+    if [ "$RUN_PROD" = "true" ]; then
+        PROD_RESULTS_DIR="test-results-prod"
+        if [ -d "$PROD_RESULTS_DIR" ]; then
+            PROD_TEST_COUNT=$(count_tests_from_results "$PROD_RESULTS_DIR")
+        fi
+    fi
+
     if [ "$RUN_DEV" = "true" ]; then
         if [ "$FE_DEV_RESULT" = "success" ]; then
-            echo "- ✅ **DEV**: Tests passed, Deployed" >> "$SUMMARY_FILE"
+            echo "- ✅ **DEV**: Tests passed ($DEV_TEST_COUNT test(s)), Deployed" >> "$SUMMARY_FILE"
         else
-            echo "- ❌ **DEV**: ${FE_DEV_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            echo "- ❌ **DEV**: ${FE_DEV_RESULT:-unknown} ($DEV_TEST_COUNT test(s))" >> "$SUMMARY_FILE"
         fi
     fi
 
     if [ "$RUN_TEST" = "true" ]; then
         if [ "$FE_TEST_RESULT" = "success" ]; then
-            echo "- ✅ **TEST**: Tests passed, Deployed" >> "$SUMMARY_FILE"
+            echo "- ✅ **TEST**: Tests passed ($TEST_TEST_COUNT test(s)), Deployed" >> "$SUMMARY_FILE"
         else
-            echo "- ❌ **TEST**: ${FE_TEST_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            echo "- ❌ **TEST**: ${FE_TEST_RESULT:-unknown} ($TEST_TEST_COUNT test(s))" >> "$SUMMARY_FILE"
         fi
     fi
 
     if [ "$RUN_PROD" = "true" ]; then
         if [ "$FE_PROD_RESULT" = "success" ]; then
-            echo "- ✅ **PROD**: Tests passed, Deployed" >> "$SUMMARY_FILE"
+            echo "- ✅ **PROD**: Tests passed ($PROD_TEST_COUNT test(s)), Deployed" >> "$SUMMARY_FILE"
         else
-            echo "- ❌ **PROD**: ${FE_PROD_RESULT:-unknown}" >> "$SUMMARY_FILE"
+            echo "- ❌ **PROD**: ${FE_PROD_RESULT:-unknown} ($PROD_TEST_COUNT test(s))" >> "$SUMMARY_FILE"
         fi
     fi
 

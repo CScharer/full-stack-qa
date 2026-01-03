@@ -112,8 +112,59 @@ except Exception as e:
     print(f"⚠️  Error parsing Vitest JSON: {e}")
     sys.exit(0)
 
+# Extract test execution start time from Vitest JSON
+# Vitest JSON may have startTime or we can use file modification time
+test_start_time = None
+if isinstance(data, dict):
+    # Try to get startTime from root level
+    if 'startTime' in data:
+        start_time = data.get('startTime')
+        if isinstance(start_time, (int, float)):
+            # Already a timestamp
+            if start_time < 10000000000:  # Likely seconds, convert to milliseconds
+                test_start_time = int(start_time * 1000)
+            else:
+                test_start_time = int(start_time)
+        elif isinstance(start_time, str):
+            try:
+                dt = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+                test_start_time = int(dt.timestamp() * 1000)
+            except:
+                pass
+    
+    # Try to get from first test suite
+    if not test_start_time and test_results:
+        first_suite = test_results[0]
+        if 'startTime' in first_suite:
+            start_time = first_suite.get('startTime')
+            if isinstance(start_time, (int, float)):
+                if start_time < 10000000000:
+                    test_start_time = int(start_time * 1000)
+                else:
+                    test_start_time = int(start_time)
+            elif isinstance(start_time, str):
+                try:
+                    dt = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+                    test_start_time = int(dt.timestamp() * 1000)
+                except:
+                    pass
+
+# Fallback to file modification time if no timestamp found
+if not test_start_time:
+    try:
+        file_mtime = os.path.getmtime(vitest_json)
+        test_start_time = int(file_mtime * 1000)
+    except:
+        # Final fallback to current time
+        test_start_time = int(datetime.now().timestamp() * 1000)
+
+print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
+
 # Create Allure results for each test suite/file
 if total_tests > 0 and test_results:
+    # Track test index for relative timestamps
+    test_index = 0
+    
     # Process each test file/suite from Vitest results
     for test_suite in test_results:
         suite_name = test_suite.get('name', 'Unknown Test Suite')
@@ -147,7 +198,9 @@ if total_tests > 0 and test_results:
                 status = "passed"  # Default to passed
             
             test_uuid = uuid.uuid4().hex[:32]
-            timestamp = int(datetime.now().timestamp() * 1000)
+            # Use test execution start time + offset for each test to maintain relative timing
+            timestamp = test_start_time + (test_index * 100)  # Small offset per test
+            test_index += 1
             test_name = suite_name.replace('.spec.ts', '').replace('tests/', '').replace('/', ' › ')
             full_name = f"Vibium.{test_name}"
             history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
@@ -228,7 +281,9 @@ if total_tests > 0 and test_results:
                     status = "passed"  # Default to passed
                 
                 test_uuid = uuid.uuid4().hex[:32]
-                timestamp = int(datetime.now().timestamp() * 1000)
+                # Use test execution start time + offset for each test to maintain relative timing
+                timestamp = test_start_time + (test_index * 100)  # Small offset per test
+                test_index += 1
                 full_name = f"Vibium.{suite_name}.{test_title}"
                 history_id = hashlib.md5(f"{full_name}:{env or ''}".encode()).hexdigest()
                 

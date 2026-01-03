@@ -56,14 +56,16 @@ STAGE 1 & 2: PARALLEL EXECUTION (After determine-schedule-type)
 GATE (SETUP) - Single point of failure for setup jobs
 ▼
 STAGE 3: DEV ENVIRONMENT (Parallel UI + Performance)
-│   ├── test-be-dev
+│   ├── test-be-dev (runs when run_be_tests == 'true' && be_env_dev == 'true')
+│   ├── test-fs-dev (runs when run_fs_tests == 'true' && be_env_dev == 'true')
 │   ├── test-fe-dev
 │   └── gate-dev (Waits for all Stage 3 + gate-setup)
 │       └── deploy-dev (if main & gate-dev success)
 ▼
 STAGE 4: TEST ENVIRONMENT (Parallel UI + Performance)
 │   │   (Waits for gate-dev)
-│   ├── test-be-test
+│   ├── test-be-test (runs when run_be_tests == 'true' && be_env_test == 'true')
+│   ├── test-fs-test (runs when run_fs_tests == 'true' && be_env_test == 'true')
 │   ├── test-fe-test
 │   └── gate-test (Waits for all Stage 4 + gate-dev)
 │       └── deploy-test (if main & gate-test success)
@@ -99,9 +101,13 @@ STAGE 7: PIPELINE SUMMARY
 2. Click **Run workflow**
 3. Select branch and configure inputs:
    - `environment`: `all`, `dev`, `test`, or `prod`
-   - `test_type`: `ui-only`, `performance-only`, or `all`
+   - `test_type`: `fe-only` (default), `be-only`, or `all`
+     - `fe-only`: Frontend tests only (UI tests)
+     - `be-only`: Backend and Full-Stack performance tests only
+     - `all`: Both frontend and performance tests (run in parallel)
    - `test_suite`: `smoke`, `ci`, `extended`, or `all`
-   - `performance_test_type`: `smoke` (default), `all`, or tool-specific
+   - `be_test_type`: `smoke` (default), `all`, or tool-specific (Gatling, JMeter, Locust)
+   - `be_environment`: `dev` (default), `test`, or `dev-test` (for performance tests)
 
 ---
 
@@ -147,15 +153,27 @@ STAGE 7: PIPELINE SUMMARY
   - `manual` → Use user input.
 
 #### **Job 5: determine-test-execution**
-- **Purpose**: Sets test type defaults.
+- **Purpose**: Determines which test types to run based on event type and user inputs.
 - **Dependencies**: `determine-schedule-type` (consolidated dependency)
 - **Execution**: Runs in parallel with Stage 2 jobs after `determine-schedule-type` completes
+- **Outputs**:
+  - `run_ui_tests`: `true` or `false` (controls frontend UI tests)
+  - `run_be_tests`: `true` or `false` (controls backend performance tests)
+  - `run_fs_tests`: `true` or `false` (controls full-stack browser load tests - mirrors `run_be_tests`)
+  - `be_test_mode`: `smoke`, `all`, or tool-specific (Gatling, JMeter, Locust)
+  - `be_env_dev`: `true` or `false` (whether BE/FS tests run in dev)
+  - `be_env_test`: `true` or `false` (whether BE/FS tests run in test)
 - **Logic**:
-  - `pull_request` → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev`.
-  - `push` (to `main`) → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev` and `test` environments (never prod).
-  - `push` (to `develop`) → `ui-only` across all environments.
-  - `schedule` → `all` tests (UI + Perf), uses schedule-specific performance_test_type (smoke for nightly, all for weekly).
-  - `manual` → `ui-only` across all environments (unless overridden by inputs).
+  - `test_type == "fe-only"` → `run_ui_tests=true`, `run_be_tests=false`, `run_fs_tests=false`
+  - `test_type == "be-only"` → `run_ui_tests=false`, `run_be_tests=true`, `run_fs_tests=true`
+  - `test_type == "all"` → `run_ui_tests=true`, `run_be_tests=true`, `run_fs_tests=true`
+  - Defaults based on event:
+    - `pull_request` → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev`.
+    - `push` (to `main`) → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev` and `test` environments (never prod).
+    - `push` (to feature branch) → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev` (same as PRs).
+    - `push` (to `develop`) → `fe-only` across all environments.
+    - `schedule` → `all` tests (UI + Perf), uses schedule-specific performance_test_type (smoke for nightly, all for weekly).
+    - `manual` → `fe-only` across all environments (unless overridden by inputs).
 
 ---
 
