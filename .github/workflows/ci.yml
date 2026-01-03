@@ -255,6 +255,7 @@ jobs:
           fi
           ./scripts/ci/determine-environments.sh \
             "${{ github.event_name }}" \
+            "${{ github.ref }}" \
             "$ENV_INPUT" \
             "$SUITE_INPUT"
           

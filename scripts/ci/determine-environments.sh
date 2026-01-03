@@ -5,8 +5,9 @@
 set -e
 
 EVENT_NAME=$1
-ENV_INPUT=$2
-SUITE_INPUT=$3
+REF=$2
+ENV_INPUT=$3
+SUITE_INPUT=$4
 
 # Determine default environment based on event
 # Pull Requests: default to 'dev' only (feature branch testing)
