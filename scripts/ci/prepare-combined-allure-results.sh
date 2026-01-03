@@ -708,6 +708,15 @@ echo "   🔍 Checking for FS test results in dev and test environments only..."
 
 if [ -d "$SOURCE_DIR/fs-results" ]; then
     echo "   ✅ Found fs-results directory"
+    echo "   🔍 Debug: Listing fs-results directory structure:"
+    find "$SOURCE_DIR/fs-results" -type d 2>/dev/null | head -10 | while read -r d; do
+        echo "      📁 $d"
+    done || echo "      (error listing directories)"
+    echo "   🔍 Debug: Listing JSON files in fs-results:"
+    find "$SOURCE_DIR/fs-results" -name "*.json" -type f 2>/dev/null | head -10 | while read -r f; do
+        echo "      📄 $f"
+    done || echo "      (no JSON files found)"
+    echo ""
     
     # Process each FS environment (dev and test only)
     # Note: We check for FS results directly rather than relying on ACTIVE_ENVIRONMENTS
@@ -836,8 +845,8 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
                     fi
                 fi
             fi
-            fi
-        fi
+            fi  # Close: if [ -d "$env_dir" ]
+        fi  # Close: if [ "$ENV_PROCESSED" -eq 0 ]
         
         # FIXED: Check flat structure as LAST RESORT (when merge-multiple: true creates flat structure)
         # WARNING: Flat structure cannot distinguish environments - only process once to avoid duplicate data
