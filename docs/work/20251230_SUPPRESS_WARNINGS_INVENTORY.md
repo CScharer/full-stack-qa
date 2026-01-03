@@ -337,4 +337,4 @@
 ---
 
 **Document Status**: Reference document - not actively maintained  
-**Note**: This document is the authoritative source for @SuppressWarnings information. The related section has been removed from `docs/work/20251225_REMAINING_WORK_SUMMARY.md` and consolidated here.
+**Note**: This document is the authoritative source for @SuppressWarnings information. The related section has been removed from `docs/work/20260103_REMAINING_WORK_SUMMARY.md` and consolidated here.
