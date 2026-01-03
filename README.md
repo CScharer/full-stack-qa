@@ -268,12 +268,15 @@ Git hooks are **automatically maintained** via a post-checkout hook that runs on
 **Why one-time setup?**
 Git hooks live in `.git/hooks/` which isn't tracked by Git (for security). The post-checkout hook maintains everything automatically after the initial install, but it needs to be created first.
 
-**⚠️ IMPORTANT**: The pre-commit hook will automatically format code before each commit, and the pre-push hook will compile and validate, ensuring:
-- Code is formatted (Prettier + Google Java Format) - on commit
-- Unused/duplicate imports are removed (Spotless) - on commit
-- Code compiles successfully - on push
-- Code quality is verified (Checkstyle, PMD) - on push
-- Auto-fixed files are staged automatically
+**⚠️ IMPORTANT**: The pre-commit hook automatically formats code before each commit, and the pre-push hook validates everything, ensuring:
+- **Pre-commit (formatting only)**:
+  - Code is formatted (Prettier + Google Java Format) - on commit
+  - Unused/duplicate imports are removed (Spotless) - on commit
+  - Auto-fixed files are staged automatically
+- **Pre-push (all validation)**:
+  - Code quality is verified (Checkstyle, PMD) - on push
+  - Code compiles successfully - on push
+  - Node.js, TypeScript, GitHub Actions, Shell scripts, and Security checks - on push
 
 **Manual Installation (if needed):**
 If hooks aren't auto-installed, you can manually run:
