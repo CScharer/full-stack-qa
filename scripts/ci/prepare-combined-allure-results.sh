@@ -639,18 +639,33 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
             fi
         fi
         
-        # FIXED: Skip flat merge fallback - if no environment-specific subdirectory exists,
-        # we cannot determine which environment the files belong to, so skip to prevent duplicates
-        # If files are in the root (flat merge), we cannot determine which environment they belong to
-        # Processing them for each environment would create duplicate results with different labels
-        # if [ "$ENV_PROCESSED" -eq 0 ]; then
-        #     # REMOVED: This was causing duplicate processing - same files converted for each environment
-        #     # json_files=$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)
-        #     # if [ -n "$json_files" ]; then
-        #     #     ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env" || true
-        #     #     ENV_PROCESSED=1
-        #     # fi
-        # fi
+        # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
+        if [ "$ENV_PROCESSED" -eq 0 ]; then
+            # Check if flat structure exists (fs-results/*.json or fs-results/playwright/artillery-results/*.json)
+            if [ -d "$SOURCE_DIR/fs-results" ] && [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 2 -name "*.json" -type f 2>/dev/null)" ]; then
+                # Only process for first environment to prevent duplicate processing
+                if [ "$env" == "${FS_ENVIRONMENTS[0]}" ]; then
+                    echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env only"
+                    echo "   📂 Found FS results in flat structure, processing for first environment: $env"
+                    chmod +x scripts/ci/convert-artillery-to-allure.sh
+                    # Check for nested path first
+                    if [ -d "$SOURCE_DIR/fs-results/playwright/artillery-results" ]; then
+                        if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results/playwright/artillery-results" "$env"; then
+                            ENV_PROCESSED=1
+                            echo "   ✅ FS conversion successful for $env (flat structure, nested path)"
+                        fi
+                    # Check for direct JSON files in fs-results root
+                    elif [ -n "$(find "$SOURCE_DIR/fs-results" -maxdepth 1 -name "*.json" -type f 2>/dev/null)" ]; then
+                        if ./scripts/ci/convert-artillery-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/fs-results" "$env"; then
+                            ENV_PROCESSED=1
+                            echo "   ✅ FS conversion successful for $env (flat structure)"
+                        fi
+                    fi
+                else
+                    echo "   ⏭️  Skipping $env (flat structure already processed for ${FS_ENVIRONMENTS[0]})"
+                fi
+            fi
+        fi
         
         # Verify results were created
         if [ "$ENV_PROCESSED" -eq 1 ]; then
