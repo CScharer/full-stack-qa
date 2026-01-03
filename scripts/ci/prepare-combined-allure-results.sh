@@ -835,6 +835,7 @@ if [ -d "$SOURCE_DIR/fs-results" ]; then
                     fi
                 fi
             fi
+            fi
         fi
         
         # FIXED: Check flat structure as LAST RESORT (when merge-multiple: true creates flat structure)

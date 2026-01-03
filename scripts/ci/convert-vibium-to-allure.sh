@@ -163,8 +163,10 @@ print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time 
 # Create Allure results for each test suite/file
 if total_tests > 0 and test_results:
     # Track test index for relative timestamps
-            # Process each test file/suite from Vitest results
-            for test_suite in test_results:
+    test_index = 0
+    
+    # Process each test file/suite from Vitest results
+    for test_suite in test_results:
         suite_name = test_suite.get('name', 'Unknown Test Suite')
         suite_duration = test_suite.get('duration', 0)
         
