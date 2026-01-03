@@ -65,14 +65,24 @@ The CI/CD pipeline uses three reusable workflows for environment-specific testin
 
 ## Test Job Groups
 
-### Group 1: Backend Tests
+### Group 1: Performance Tests (BE + FS)
 
-**Job**: `Test BE ({env}) / BE Tests ({env})`
+**Jobs**: 
+- `Test BE ({env}) / BE Tests ({env})`
+- `Test FS ({env}) / FS Tests ({env})`
 
+**BE Tests**:
 - **Workflow**: `env-be.yml` (reusable workflow)
 - **Framework**: Gatling, JMeter, Locust (Performance/Load testing)
-- **Execution**: Independent, runs in parallel with FE tests
+- **Execution**: Runs when `run_be_tests == 'true'` and environment is enabled
 - **Infrastructure**: Backend services only
+
+**FS Tests**:
+- **Workflow**: `env-fs.yml` (reusable workflow)
+- **Framework**: Artillery (Full-Stack browser load testing)
+- **Execution**: Runs when `run_fs_tests == 'true'` and environment is enabled (same conditions as BE tests)
+- **Infrastructure**: Frontend + Backend services (full stack)
+- **Note**: FS tests run in parallel with BE tests - they share the same execution conditions (`run_fs_tests` mirrors `run_be_tests`)
 
 ---
 

@@ -153,8 +153,7 @@ jobs:
     name: Determine Schedule Type
     runs-on: ubuntu-latest
     needs: [detect-file-changes]
-    # ⚠️ TEMPORARY: Always run to ensure outputs are available
-    # TODO: REVERT - Restore original condition before merging PR
+    # Always run to ensure outputs are available for downstream jobs
     if: always()
     outputs:
       code-changed: ${{ needs.detect-file-changes.outputs.code-changed || 'true' }}
@@ -218,8 +217,7 @@ jobs:
     name: Determine Environments
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    # ⚠️ TEMPORARY: Force job to ALWAYS run regardless of determine-schedule-type result
-    # TODO: REVERT - Restore original condition before merging PR
+    # Always run to ensure outputs are available for downstream jobs
     if: always()
     outputs:
       run_dev: ${{ steps.set-envs.outputs.run_dev || 'true' }}
@@ -251,19 +249,8 @@ jobs:
             echo "⏰ Scheduled run - using dev environment with all test suites"
             ENV_INPUT="dev"
             SUITE_INPUT="all"
-          # ⚠️ TEMPORARY: Force 'all' environments for push events to test fallback logic fix
-          # TODO: REVERT - Uncomment the else block below and remove this elif block before merging PR
-          elif [ "${{ github.event_name }}" == "push" ]; then
-            echo "📦 Push event detected - TEMPORARILY forcing 'all' environments for testing"
-            echo "⚠️  WARNING: This is a temporary change - revert before merging PR"
-            ENV_INPUT="all"
-            SUITE_INPUT="${{ github.event.inputs.test_suite }}"
           else
-            # ORIGINAL CODE (commented out for testing - uncomment before merge):
-            # ENV_INPUT="${{ github.event.inputs.environment }}"
-            # SUITE_INPUT="${{ github.event.inputs.test_suite }}"
-            # TEMPORARY: Use 'all' for any other event type during testing
-            ENV_INPUT="all"
+            ENV_INPUT="${{ github.event.inputs.environment }}"
             SUITE_INPUT="${{ github.event.inputs.test_suite }}"
           fi
           ./scripts/ci/determine-environments.sh \
@@ -271,8 +258,8 @@ jobs:
             "$ENV_INPUT" \
             "$SUITE_INPUT"
           
-          # ⚠️ TEMPORARY: Verify outputs were set
-          echo "🔍 DEBUG: Verifying determine-envs outputs were set..."
+          # Verify outputs were set
+          echo "🔍 Verifying determine-envs outputs were set..."
           if [ -f "$GITHUB_OUTPUT" ]; then
             echo "GITHUB_OUTPUT contents:"
             cat "$GITHUB_OUTPUT" | grep -E "(run_dev|run_test|run_prod|enable_cypress_tests)" || echo "⚠️  Key outputs not found!"
@@ -284,12 +271,12 @@ jobs:
     name: Determine Test Execution
     runs-on: ubuntu-latest
     needs: [determine-schedule-type]
-    # ⚠️ TEMPORARY: Force job to ALWAYS run regardless of determine-schedule-type result
-    # TODO: REVERT - Restore original condition before merging PR
+    # Always run to ensure outputs are available for downstream jobs
     if: always()
     outputs:
       run_ui_tests: ${{ steps.set-execution.outputs.run_ui_tests || 'true' }}
       run_be_tests: ${{ steps.set-execution.outputs.run_be_tests || 'false' }}
+      run_fs_tests: ${{ steps.set-execution.outputs.run_fs_tests || 'false' }}
       be_test_mode: ${{ steps.set-execution.outputs.be_test_mode || 'smoke' }}
       be_env_dev: ${{ steps.set-execution.outputs.be_env_dev || 'false' }}
       be_env_test: ${{ steps.set-execution.outputs.be_env_test || 'false' }}
@@ -325,25 +312,15 @@ jobs:
             "$PERF_TYPE_INPUT" \
             "$PERF_ENV_INPUT"
           
-          # ⚠️ TEMPORARY: Verify and force outputs
-          echo "🔍 DEBUG: Verifying outputs were set..."
+          # Verify outputs were set
+          echo "🔍 Verifying outputs were set..."
           if [ -f "$GITHUB_OUTPUT" ]; then
-            echo "GITHUB_OUTPUT contents (before verification):"
-            cat "$GITHUB_OUTPUT" | grep -E "(run_ui_tests|run_be_tests)" || echo "⚠️  No run_ui_tests or run_be_tests found!"
+            echo "GITHUB_OUTPUT contents:"
+            cat "$GITHUB_OUTPUT" | grep -E "(run_ui_tests|run_be_tests|run_fs_tests)" || echo "⚠️  No test execution outputs found!"
           else
-            echo "❌ GITHUB_OUTPUT file not found! Creating it..."
-            touch "$GITHUB_OUTPUT"
+            echo "❌ GITHUB_OUTPUT file not found!"
+            exit 1
           fi
-          
-          # ⚠️ TEMPORARY: ALWAYS force run_ui_tests=true at the end (overwrites any previous value)
-          echo "⚠️  TEMPORARY OVERRIDE: Forcing run_ui_tests=true (final override)"
-          # Remove any existing run_ui_tests line and add the forced value
-          grep -v "^run_ui_tests=" "$GITHUB_OUTPUT" > "$GITHUB_OUTPUT.tmp" 2>/dev/null || true
-          mv "$GITHUB_OUTPUT.tmp" "$GITHUB_OUTPUT" 2>/dev/null || true
-          echo "run_ui_tests=true" >> "$GITHUB_OUTPUT"
-          
-          echo "🔍 DEBUG: Final GITHUB_OUTPUT contents:"
-          cat "$GITHUB_OUTPUT" | grep -E "(run_ui_tests|run_be_tests)" || echo "⚠️  Still no run_ui_tests or run_be_tests found!"
 
   # ==================================================================================
   # STAGE 2: SHARED SETUP (Run once for all environments)
@@ -832,9 +809,11 @@ jobs:
     name: Test BE (DEV)
     uses: ./.github/workflows/env-be.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
-    # ⚠️ TEMPORARY: Force BE tests to always run
-    # TODO: REVERT - Restore original conditions before merging PR
-    if: always() && !cancelled()
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_be_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_dev == 'true'
     with:
       environment: 'dev'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
@@ -845,9 +824,11 @@ jobs:
     name: Test BE (TEST)
     uses: ./.github/workflows/env-be.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
-    # ⚠️ TEMPORARY: Force BE tests to always run
-    # TODO: REVERT - Restore original conditions before merging PR
-    if: always() && !cancelled()
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_be_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_test == 'true'
     with:
       environment: 'test'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
@@ -864,17 +845,12 @@ jobs:
     name: Test FS (DEV)
     uses: ./.github/workflows/env-fs.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup]
-    # Note: FS (Full-Stack) tests run when:
-    # - Tests are enabled (run_ui_tests == 'true' or run_be_tests == 'true')
-    # - Dev environment is selected (run_dev == 'true')
-    # FS tests should run whenever BE tests run (they're both performance tests)
+    # Note: FS (Full-Stack) tests run when run_fs_tests is true (same as BE tests)
     if: |
       always() &&
       !cancelled() &&
-      (needs.determine-test-execution.outputs.run_ui_tests == 'true' ||
-       needs.determine-test-execution.outputs.run_be_tests == 'true') &&
-      needs.determine-envs.outputs.run_dev == 'true' &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.determine-test-execution.outputs.run_fs_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_dev == 'true'
     with:
       environment: 'dev'
       artillery_test_type: 'smoke'  # Quick smoke test for CI/CD
@@ -885,17 +861,12 @@ jobs:
     name: Test FS (TEST)
     uses: ./.github/workflows/env-fs.yml
     needs: [determine-test-execution, determine-envs, setup-base-urls, gate-setup, gate-dev]
-    # ⚠️ TEMPORARY: Removed github.ref == 'refs/heads/main' condition for testing fallback logic fix
-    # TODO: REVERT - Add 'github.ref == 'refs/heads/main' &&' back to the if condition before merging PR
-    # Note: FS (Full-Stack) tests normally run on main branch only (test environment)
-    # ORIGINAL: github.ref == 'refs/heads/main' && (temporarily removed for testing)
+    # Note: FS (Full-Stack) tests run when run_fs_tests is true (same as BE tests)
     if: |
       always() &&
       !cancelled() &&
-      needs.determine-envs.outputs.run_test == 'true' &&
-      (needs.gate-dev.result == 'success' ||
-       (needs.gate-dev.result == 'skipped' && needs.determine-envs.outputs.run_dev == 'false')) &&
-      (needs.gate-setup.result == 'success' || needs.gate-setup.result == 'skipped')
+      needs.determine-test-execution.outputs.run_fs_tests == 'true' &&
+      needs.determine-test-execution.outputs.be_env_test == 'true'
     with:
       environment: 'test'
       artillery_test_type: 'smoke'  # Quick smoke test for CI/CD

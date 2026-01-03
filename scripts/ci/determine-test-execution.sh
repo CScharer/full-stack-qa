@@ -76,25 +76,23 @@ if [ "$PERF_ENV" == "prod" ]; then
   PERF_ENV="dev"
 fi
 
-# ⚠️ TEMPORARY: ALWAYS force UI tests to run regardless of test_type
-# TODO: REVERT - Remove this temporary override before merging PR
-# This ensures FE tests run in all environments during testing
 if [ "$TEST_TYPE" == "fe-only" ] || [ -z "$TEST_TYPE" ]; then
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=false" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=false" >> $GITHUB_OUTPUT
   echo "be_env_dev=false" >> $GITHUB_OUTPUT
   echo "be_env_test=false" >> $GITHUB_OUTPUT
   if [ -z "$TEST_TYPE" ]; then
-    echo "✅ TEMPORARY: Will run FE tests only (no test_type input provided - forcing UI tests)"
+    echo "✅ Will run FE tests only (no test_type input provided)"
   else
     echo "✅ Will run FE tests only"
   fi
 elif [ "$TEST_TYPE" == "be-only" ]; then
-  # ⚠️ TEMPORARY: Force UI tests even for be-only
-  echo "run_ui_tests=true" >> $GITHUB_OUTPUT
+  echo "run_ui_tests=false" >> $GITHUB_OUTPUT
   echo "run_be_tests=true" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=true" >> $GITHUB_OUTPUT
   echo "be_test_mode=$PERF_TYPE" >> $GITHUB_OUTPUT
-  # Determine BE test environments
+  # Determine BE test environments (FS tests use same environments)
   if [ "$PERF_ENV" == "dev" ]; then
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=false" >> $GITHUB_OUTPUT
@@ -109,49 +107,39 @@ elif [ "$TEST_TYPE" == "be-only" ]; then
     echo "be_env_test=false" >> $GITHUB_OUTPUT
     echo "⚠️  Unknown be_environment, defaulting to dev"
   fi
-  echo "✅ TEMPORARY: Will run BOTH FE and BE tests (be-only overridden to include FE)"
+  echo "✅ Will run BE and FS tests only"
 elif [ "$TEST_TYPE" == "all" ]; then
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=true" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=true" >> $GITHUB_OUTPUT
   echo "be_test_mode=$PERF_TYPE" >> $GITHUB_OUTPUT
-  # Determine BE test environments
+  # Determine BE test environments (FS tests use same environments)
   if [ "$PERF_ENV" == "dev" ]; then
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=false" >> $GITHUB_OUTPUT
-    echo "✅ BE tests will run in DEV environment"
+    echo "✅ BE and FS tests will run in DEV environment"
   elif [ "$PERF_ENV" == "test" ]; then
     echo "be_env_dev=false" >> $GITHUB_OUTPUT
     echo "be_env_test=true" >> $GITHUB_OUTPUT
-    echo "✅ BE tests will run in TEST environment"
+    echo "✅ BE and FS tests will run in TEST environment"
   elif [ "$PERF_ENV" == "dev-test" ]; then
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=true" >> $GITHUB_OUTPUT
-    echo "✅ BE tests will run in DEV and TEST environments"
+    echo "✅ BE and FS tests will run in DEV and TEST environments"
   else
     echo "be_env_dev=true" >> $GITHUB_OUTPUT
     echo "be_env_test=false" >> $GITHUB_OUTPUT
     echo "⚠️  Unknown be_environment '$PERF_ENV', defaulting to dev"
   fi
-  echo "✅ Will run BOTH FE and BE tests in parallel"
+  echo "✅ Will run BOTH FE and BE/FS tests in parallel"
   echo "   FE tests: all environments (default)"
-  echo "   BE tests: $PERF_ENV ($PERF_TYPE)"
-  echo "🔍 DEBUG: Set run_be_tests=true and be_env_dev=true for PERF_ENV=$PERF_ENV"
+  echo "   BE/FS tests: $PERF_ENV ($PERF_TYPE)"
+  echo "🔍 DEBUG: Set run_be_tests=true, run_fs_tests=true and be_env_dev=true for PERF_ENV=$PERF_ENV"
 else
-  # ⚠️ TEMPORARY: Force UI tests to run even for unknown test_type
-  # TODO: REVERT - Remove this temporary override before merging PR
   echo "run_ui_tests=true" >> $GITHUB_OUTPUT
   echo "run_be_tests=false" >> $GITHUB_OUTPUT
+  echo "run_fs_tests=false" >> $GITHUB_OUTPUT
   echo "be_env_dev=false" >> $GITHUB_OUTPUT
   echo "be_env_test=false" >> $GITHUB_OUTPUT
-  echo "⚠️  Unknown test_type '$TEST_TYPE', defaulting to fe-only (TEMPORARY: forcing UI tests)"
+  echo "⚠️  Unknown test_type '$TEST_TYPE', defaulting to fe-only"
 fi
-
-# ⚠️ TEMPORARY: Final override - ALWAYS ensure UI tests are enabled
-# TODO: REVERT - Remove this final override before merging PR
-echo "run_ui_tests=true" >> $GITHUB_OUTPUT
-echo "⚠️  TEMPORARY OVERRIDE: Forced run_ui_tests=true (will be reverted before merge)"
-echo ""
-echo "🔍 FINAL VERIFICATION:"
-echo "   run_ui_tests=$(grep '^run_ui_tests=' $GITHUB_OUTPUT | tail -1 | cut -d'=' -f2)"
-echo "   run_be_tests=$(grep '^run_be_tests=' $GITHUB_OUTPUT | tail -1 | cut -d'=' -f2)"
-echo "   ✅ FE tests WILL run (run_ui_tests=true forced)"

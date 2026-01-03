@@ -308,8 +308,10 @@ playwright/
    - ✅ Integrated with gate jobs for result checking
 
 3. ✅ **Environment Configuration**
-   - ✅ **Branches/PRs**: Run `test-fs-dev` only (dev environment)
-   - ✅ **Main branch**: Run both `test-fs-dev` and `test-fs-test`
+   - ✅ **FS tests run when BE tests run** - Controlled by `run_fs_tests` output (mirrors `run_be_tests`)
+   - ✅ **Test Type `all` or `be-only`**: Both BE and FS tests run in parallel
+   - ✅ **Test Type `fe-only`**: Neither BE nor FS tests run
+   - ✅ **Environments**: FS tests run in same environments as BE tests (dev, test - never prod)
    - ✅ **Never run on prod** (same as performance tests)
 
 4. ✅ **Test Types** (Similar to BE test types)

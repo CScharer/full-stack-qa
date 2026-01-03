@@ -13,22 +13,18 @@ SUITE_INPUT=$3
 # Push to main/develop: default to 'all' (merge testing)
 # Manual Runs: default to 'all' (user can override)
 
-# ⚠️ TEMPORARY CHANGE FOR TESTING FALLBACK LOGIC FIX ⚠️
-# This temporarily makes all branch pushes run all environments (dev, test, prod)
-# to test the fix for identical results across environments.
-# TODO: REVERT THIS BEFORE MERGING THE PR - uncomment original logic below
 IS_BRANCH_PUSH=false
 if [ "$EVENT_NAME" == "pull_request" ]; then
   IS_BRANCH_PUSH=true
   echo "🌿 Pull request detected - defaulting to DEV environment only"
 elif [ "$EVENT_NAME" == "push" ]; then
-  # TEMPORARY: Run all environments on any push to test fallback logic fix
-  echo "📦 Push detected - TEMPORARILY running ALL environments for fallback logic testing"
-  echo "⚠️  WARNING: This is a temporary change - revert before merging PR"
-  IS_BRANCH_PUSH=false  # Force 'all' environments
-  # ORIGINAL CODE (commented out for testing - uncomment before merge):
-  # echo "📦 Main/develop push detected - defaulting to ALL environments"
-  # # Original logic would check if branch is main/develop here
+  echo "📦 Main/develop push detected - defaulting to ALL environments"
+  # Original logic: check if branch is main/develop
+  if [ "$REF" == "refs/heads/main" ] || [ "$REF" == "refs/heads/develop" ]; then
+    IS_BRANCH_PUSH=false
+  else
+    IS_BRANCH_PUSH=true
+  fi
 else
   if [ "$EVENT_NAME" == "workflow_dispatch" ]; then
     echo "📦 Manual trigger - defaulting to ALL environments (inputs can override)"
@@ -63,21 +59,17 @@ echo "selected_env=$ENV_SELECT" >> $GITHUB_OUTPUT
 echo "test_suite=$SUITE_SELECT" >> $GITHUB_OUTPUT
 
 # Set test execution controls (same for all environments)
-# ⚠️ TEMPORARY: Selenide tests disabled for testing
-# - smoke/grid/mobile/responsive/selenide: false (disabled temporarily)
-# - cypress/playwright/robot/vibium: true (enabled)
-# TODO: REVERT - Re-enable selenide tests before merging PR
-echo "enable_smoke_tests=false" >> $GITHUB_OUTPUT
-echo "enable_grid_tests=false" >> $GITHUB_OUTPUT
-echo "enable_mobile_tests=false" >> $GITHUB_OUTPUT
-echo "enable_responsive_tests=false" >> $GITHUB_OUTPUT
+# All test frameworks are enabled by default
+echo "enable_smoke_tests=true" >> $GITHUB_OUTPUT
+echo "enable_grid_tests=true" >> $GITHUB_OUTPUT
+echo "enable_mobile_tests=true" >> $GITHUB_OUTPUT
+echo "enable_responsive_tests=true" >> $GITHUB_OUTPUT
 echo "enable_cypress_tests=true" >> $GITHUB_OUTPUT
 echo "enable_playwright_tests=true" >> $GITHUB_OUTPUT
 echo "enable_robot_tests=true" >> $GITHUB_OUTPUT
-echo "enable_selenide_tests=false" >> $GITHUB_OUTPUT
+echo "enable_selenide_tests=true" >> $GITHUB_OUTPUT
 echo "enable_vibium_tests=true" >> $GITHUB_OUTPUT
 echo "✅ Test execution controls set (same for all environments)"
-echo "⚠️  TEMPORARY: Selenide tests disabled for testing"
 
 if [ "$ENV_SELECT" == "all" ]; then
   echo "run_dev=true" >> $GITHUB_OUTPUT
