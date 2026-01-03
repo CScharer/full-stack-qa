@@ -260,6 +260,52 @@ else
     print_info "No workflow files to validate"
 fi
 
+# Phase 2.5: Shell Script Validation
+print_section "Phase 2.5: Shell Script Validation"
+
+# Check for shell scripts in scripts/ directory
+STAGED_SHELL_SCRIPTS=$(git diff --cached --name-only 2>/dev/null | grep -E "^scripts/.*\.sh$" || echo "")
+# Check all scripts including temp scripts
+ALL_SHELL_SCRIPTS=$(find scripts -name "*.sh" -type f 2>/dev/null || echo "")
+
+if [ -n "$STAGED_SHELL_SCRIPTS" ] || [ "$SHOULD_CHECK_WORKFLOWS" = true ]; then
+    SHELL_SCRIPTS_TO_CHECK="$STAGED_SHELL_SCRIPTS"
+    if [ -z "$SHELL_SCRIPTS_TO_CHECK" ] && [ "$SHOULD_CHECK_WORKFLOWS" = true ]; then
+        # If no specific scripts staged but we're checking workflows, check all scripts including temp
+        SHELL_SCRIPTS_TO_CHECK="$ALL_SHELL_SCRIPTS"
+    fi
+    
+    if [ -n "$SHELL_SCRIPTS_TO_CHECK" ]; then
+        SHELL_SCRIPT_ERRORS=0
+        for script_file in $SHELL_SCRIPTS_TO_CHECK; do
+            if [ -f "$script_file" ]; then
+                # Check syntax using bash -n (no execution, just syntax check)
+                if bash -n "$script_file" >/tmp/bash-syntax-check.log 2>&1; then
+                    print_success "$script_file: Syntax valid"
+                else
+                    print_error "$script_file: Syntax error"
+                    cat /tmp/bash-syntax-check.log | head -10
+                    if [ $(wc -l < /tmp/bash-syntax-check.log 2>/dev/null | tr -d ' ') -gt 10 ]; then
+                        print_info "  ... and more errors (see full output above)"
+                    fi
+                    SHELL_SCRIPT_ERRORS=$((SHELL_SCRIPT_ERRORS + 1))
+                fi
+            fi
+        done
+        
+        if [ $SHELL_SCRIPT_ERRORS -eq 0 ]; then
+            print_success "All shell scripts have valid syntax"
+        else
+            print_error "Found $SHELL_SCRIPT_ERRORS shell script(s) with syntax errors"
+            print_info "Fix syntax errors before committing"
+        fi
+    else
+        print_info "No shell scripts to validate"
+    fi
+else
+    print_info "No shell scripts to validate"
+fi
+
 # Phase 3: Security Checks
 print_section "Phase 3: Security & Secrets Verification"
 
