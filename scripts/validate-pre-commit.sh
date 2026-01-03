@@ -265,14 +265,14 @@ print_section "Phase 2.5: Shell Script Validation"
 
 # Check for shell scripts in scripts/ directory
 STAGED_SHELL_SCRIPTS=$(git diff --cached --name-only 2>/dev/null | grep -E "^scripts/.*\.sh$" || echo "")
-# Only check CI scripts and root scripts (exclude temp scripts)
-CI_SHELL_SCRIPTS=$(find scripts/ci scripts -maxdepth 1 -name "*.sh" -type f 2>/dev/null | grep -v "/temp/" || echo "")
+# Check all scripts including temp scripts
+ALL_SHELL_SCRIPTS=$(find scripts -name "*.sh" -type f 2>/dev/null || echo "")
 
 if [ -n "$STAGED_SHELL_SCRIPTS" ] || [ "$SHOULD_CHECK_WORKFLOWS" = true ]; then
     SHELL_SCRIPTS_TO_CHECK="$STAGED_SHELL_SCRIPTS"
     if [ -z "$SHELL_SCRIPTS_TO_CHECK" ] && [ "$SHOULD_CHECK_WORKFLOWS" = true ]; then
-        # If no specific scripts staged but we're checking workflows, check CI scripts
-        SHELL_SCRIPTS_TO_CHECK="$CI_SHELL_SCRIPTS"
+        # If no specific scripts staged but we're checking workflows, check all scripts including temp
+        SHELL_SCRIPTS_TO_CHECK="$ALL_SHELL_SCRIPTS"
     fi
     
     if [ -n "$SHELL_SCRIPTS_TO_CHECK" ]; then
