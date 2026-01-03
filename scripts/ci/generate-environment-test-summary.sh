@@ -88,6 +88,11 @@ while IFS= read -r xml_file; do
         TOTAL_TESTS=$((TOTAL_TESTS + ${tests:-0}))
         TOTAL_FAILURES=$((TOTAL_FAILURES + ${failures:-0}))
         TOTAL_ERRORS=$((TOTAL_ERRORS + ${errors:-0}))
+        # Calculate passed tests: total - failures - errors
+        passed=$((tests - failures - errors))
+        if [ "$passed" -gt 0 ]; then
+            TOTAL_PASSED=$((TOTAL_PASSED + passed))
+        fi
     fi
 done < <(find "$TEST_RESULTS_DIR" -type f -name "TEST-*.xml" 2>/dev/null || true)
 
@@ -137,6 +142,11 @@ while IFS= read -r xml_file; do
             TOTAL_TESTS=$((TOTAL_TESTS + ${tests:-0}))
             TOTAL_FAILURES=$((TOTAL_FAILURES + ${failures:-0}))
             TOTAL_ERRORS=$((TOTAL_ERRORS + ${errors:-0}))
+            # Calculate passed tests: total - failures - errors
+            passed=$((tests - failures - errors))
+            if [ "$passed" -gt 0 ]; then
+                TOTAL_PASSED=$((TOTAL_PASSED + passed))
+            fi
         fi
     fi
 done < <(find "$TEST_RESULTS_DIR" -type f -name "junit.xml" -o -name "*junit*.xml" 2>/dev/null | grep -v "target/surefire-reports" || true)
@@ -152,6 +162,11 @@ while IFS= read -r json_file; do
         if [ -n "$tests" ] && [ "$tests" != "0" ]; then
             TOTAL_TESTS=$((TOTAL_TESTS + ${tests:-0}))
             TOTAL_FAILURES=$((TOTAL_FAILURES + ${failures:-0}))
+            # Calculate passed tests: total - failures
+            passed=$((tests - failures))
+            if [ "$passed" -gt 0 ]; then
+                TOTAL_PASSED=$((TOTAL_PASSED + passed))
+            fi
         fi
     fi
 done < <(find "$TEST_RESULTS_DIR" -type f \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null || true)
@@ -193,9 +208,12 @@ while IFS= read -r json_file; do
     fi
 done < <(find "$TEST_RESULTS_DIR" -type f -name "vitest-results.json" 2>/dev/null || true)
 
-# Calculate passed tests if not already calculated
-if [ "$TOTAL_PASSED" -eq 0 ] && [ "$TOTAL_TESTS" -gt 0 ]; then
-    TOTAL_PASSED=$((TOTAL_TESTS - TOTAL_FAILURES - TOTAL_ERRORS))
+# Final validation: ensure passed tests are calculated correctly
+# This is a safety check in case any format was missed
+calculated_passed=$((TOTAL_TESTS - TOTAL_FAILURES - TOTAL_ERRORS))
+if [ "$calculated_passed" -ne "$TOTAL_PASSED" ] && [ "$TOTAL_TESTS" -gt 0 ]; then
+    echo "⚠️  Warning: Passed count mismatch. Recalculating: $TOTAL_PASSED -> $calculated_passed"
+    TOTAL_PASSED=$calculated_passed
 fi
 
 # Write results to summary
