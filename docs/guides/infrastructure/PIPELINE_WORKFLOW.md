@@ -170,6 +170,7 @@ STAGE 7: PIPELINE SUMMARY
   - Defaults based on event:
     - `pull_request` → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev`.
     - `push` (to `main`) → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev` and `test` environments (never prod).
+    - `push` (to feature branch) → `all` tests (UI + Perf), defaults Perf to `smoke` in `dev` (same as PRs).
     - `push` (to `develop`) → `fe-only` across all environments.
     - `schedule` → `all` tests (UI + Perf), uses schedule-specific performance_test_type (smoke for nightly, all for weekly).
     - `manual` → `fe-only` across all environments (unless overridden by inputs).

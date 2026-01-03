@@ -11,8 +11,10 @@ PERF_TYPE_INPUT=$4
 PERF_ENV_INPUT=$5
 
 # Determine default test type based on event
-# Pull Requests: default to 'all' (FE + BE) in 'dev'
-# Push to main/develop: default to 'fe-only' across 'all' envs
+# Pull Requests: default to 'all' (FE + BE + FS) in 'dev'
+# Push to feature branch: default to 'all' (FE + BE + FS) in 'dev' (same as PRs)
+# Push to main: default to 'all' (FE + BE + FS) in 'dev' and 'test'
+# Push to develop: default to 'fe-only' across 'all' envs
 # Manual Runs: default to 'fe-only' (user can override)
 
 IS_MAIN_PUSH=false
@@ -23,9 +25,13 @@ if [ "$EVENT_NAME" == "pull_request" ]; then
 elif [ "$EVENT_NAME" == "push" ]; then
   if [ "$REF" == "refs/heads/main" ]; then
     IS_MAIN_PUSH=true
-    echo "🚀 Push to main detected - defaulting to ALL tests (FE + BE smoke) across ALL envs"
+    echo "🚀 Push to main detected - defaulting to ALL tests (FE + BE smoke) in DEV and TEST"
+  elif [ "$REF" == "refs/heads/develop" ]; then
+    echo "📦 Push to develop detected - defaulting to fe-only across ALL environments"
   else
-    echo "📦 Develop push detected - defaulting to fe-only across ALL environments"
+    # Push to feature branch - run BE/FS tests in dev
+    IS_BRANCH_PUSH=true
+    echo "🌿 Push to feature branch detected - defaulting to ALL tests (FE + BE) in DEV"
   fi
 else
   echo "📦 Manual trigger or other event - defaulting to fe-only"
