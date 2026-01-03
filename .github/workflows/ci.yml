@@ -296,10 +296,16 @@ jobs:
             # Use be_test_type from determine-schedule-type if available, otherwise default to 'smoke'
             PERF_TYPE_INPUT="${{ needs.determine-schedule-type.outputs.be_test_type || 'smoke' }}"
             PERF_ENV_INPUT="dev"
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # Manual runs: use inputs if provided, otherwise let script use defaults
+            TEST_TYPE_INPUT="${{ github.event.inputs.test_type || '' }}"
+            PERF_TYPE_INPUT="${{ github.event.inputs.be_test_type || '' }}"
+            PERF_ENV_INPUT="${{ github.event.inputs.be_environment || '' }}"
           else
-            TEST_TYPE_INPUT="${{ github.event.inputs.test_type || 'fe-only' }}"
-            PERF_TYPE_INPUT="${{ github.event.inputs.be_test_type || 'smoke' }}"
-            PERF_ENV_INPUT="${{ github.event.inputs.be_environment || 'dev' }}"
+            # Push/PR events: let script determine defaults based on event type and branch
+            TEST_TYPE_INPUT=""
+            PERF_TYPE_INPUT=""
+            PERF_ENV_INPUT=""
           fi
           echo "🔍 DEBUG: Test execution inputs:"
           echo "   TEST_TYPE_INPUT: $TEST_TYPE_INPUT"
