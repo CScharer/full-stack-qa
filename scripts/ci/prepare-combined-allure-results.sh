@@ -690,7 +690,7 @@ done
 
 # Convert FS (Full-Stack) test results for each environment
 # IMPORTANT: FS tests only run in dev and test (never prod)
-# Only process environments where FS tests actually ran
+# Process both dev and test environments - check for results directly
 FS_ENVIRONMENTS=("dev" "test")
 FS_PROCESSED_ENVS=()
 
@@ -700,19 +700,20 @@ echo "   🔍 Checking for FS test results in dev and test environments only..."
 # Process FS test results for each environment
 # Artifacts: uploaded as "fs-results-{env}" from "playwright/artillery-results/"
 # Downloaded to: "all-test-results/fs-results" with merge-multiple: true
-# When merged, structure is: fs-results/fs-results-{env}/artillery-results/*.json
+# When merged, structure can be:
+#   - fs-results/fs-results-{env}/playwright/artillery-results/*.json (nested path - preserves full upload path)
+#   - fs-results/fs-results-{env}/artillery-results/*.json (non-nested path)
+#   - results-{env}/fs-results-{env}/playwright/artillery-results/*.json (environment-specific directory)
 # (The artifact name becomes a directory, and the uploaded path is preserved inside it)
 
 if [ -d "$SOURCE_DIR/fs-results" ]; then
     echo "   ✅ Found fs-results directory"
     
-    # Process each active environment
+    # Process each FS environment (dev and test only)
+    # Note: We check for FS results directly rather than relying on ACTIVE_ENVIRONMENTS
+    # because FS tests might have run even if other tests didn't, and we want to ensure
+    # both dev and test FS results are processed if they exist
     for env in "${FS_ENVIRONMENTS[@]}"; do
-        # Skip if this environment wasn't active
-        if [[ ! " ${ACTIVE_ENVIRONMENTS[@]} " =~ " ${env} " ]]; then
-            echo "   ⏭️  Skipping FS test conversion for $env (environment not active)"
-            continue
-        fi
         
         ENV_PROCESSED=0
         
