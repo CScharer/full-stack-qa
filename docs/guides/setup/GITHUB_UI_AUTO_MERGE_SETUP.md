@@ -202,7 +202,7 @@ After completing these steps, your repository will have:
 ## Related Documentation
 
 - **Dependabot Configuration**: `.github/dependabot.yml`
-- **Implementation Plan**: `docs/work/20251231_DEPENDENCY_MANAGEMENT_STATUS.md`
+- **Implementation Plan**: See dependency management documentation in `docs/guides/infrastructure/` (implementation completed 2025-12-31)
 - **GitHub Documentation**: [Enabling auto-merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request)
 
 ---
