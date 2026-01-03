@@ -20,17 +20,23 @@ This document outlines the 12 open CodeQL code scanning alerts and provides step
 **Rule**: `py/sql-injection`  
 **Location**: `backend/app/database/queries.py`, lines 194-206  
 **Function**: `list_applications()`  
-**Issue**: SQL query uses f-string with `where_clause` and `validated_sort` inserted directly. While `validated_sort` is validated, `where_clause` is built from user input via `_build_where_clause()`.
+**Issue**: SQL query uses f-string with `where_clause` and `validated_sort` inserted directly. While `validated_sort` is validated, `where_clause` is built from user input via `_build_where_clause()`. CodeQL flags the column names in the WHERE clause as potentially user-controlled.
 
 ### Resolution Steps:
 1. ✅ **Review the function** `list_applications()` at lines 147-220
 2. ✅ **Replace f-strings with string concatenation** for WHERE clause insertion
-3. ✅ **Keep parameterized values** (already safe)
-4. ✅ **For ORDER BY**: Column name is validated via `validate_sort_field()` - use string concatenation instead of f-string
-5. ⏳ **Test the fix** thoroughly (pending approval)
+3. ✅ **Add column name validation** - Created `validate_filter_field()` function similar to `validate_sort_field()`
+4. ✅ **Update `_build_where_clause()`** - Now validates all filter field names against a whitelist
+5. ✅ **Update `list_applications()`** - Validates filter field names before building WHERE clause
+6. ✅ **Keep parameterized values** (already safe)
+7. ✅ **For ORDER BY**: Column name is validated via `validate_sort_field()` - use string concatenation instead of f-string
+8. ⏳ **Test the fix** thoroughly (pending approval)
 
 ### Status: ✅ FIXED
 - Replaced f-strings with string concatenation for WHERE clause
+- Added `validate_filter_field()` function with whitelist of allowed filter fields per entity
+- Updated `_build_where_clause()` to validate all column names against whitelist
+- Updated `list_applications()` to validate filter field names (including aliased fields like "a.status")
 - Replaced f-string for ORDER BY with string concatenation (column name is validated)
 - Parameterized values remain unchanged (already safe)
 
@@ -55,8 +61,12 @@ conn.execute(query, where_values + [limit, offset])
 The issue is that CodeQL flags f-strings containing variables that come from user input, even if those variables are built safely. The solution is to:
 1. Avoid f-strings for WHERE clause insertion
 2. Build the query using string concatenation or `.format()` 
-3. OR refactor to use SQLAlchemy's `text()` with proper parameter binding
-4. Ensure column names in filters are validated (whitelist approach)
+3. Validate all column names against a whitelist (similar to `validate_sort_field()`)
+4. Ensure column names in filters are validated (whitelist approach) - **IMPLEMENTED**
+5. OR refactor to use SQLAlchemy's `text()` with proper parameter binding
+
+### Additional Security Enhancement:
+Added `validate_filter_field()` function in `backend/app/database/validators.py` that validates filter field names against a whitelist (`ALLOWED_FILTER_FIELDS`), similar to how `validate_sort_field()` validates sort fields. This provides defense-in-depth by ensuring only allowed column names can be used in WHERE clauses, even if they come from dictionary keys.
 
 ---
 

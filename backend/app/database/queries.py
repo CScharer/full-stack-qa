@@ -5,7 +5,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 import sqlite3
 from app.database.connection import get_db_connection
-from app.database.validators import validate_sort_field
+from app.database.validators import validate_sort_field, validate_filter_field
 from app.utils.errors import NotFoundError, ValidationError, ConflictError
 
 
@@ -14,8 +14,18 @@ def _row_to_dict(row: sqlite3.Row) -> Dict[str, Any]:
     return dict(row)
 
 
-def _build_where_clause(filters: Dict[str, Any], include_deleted: bool = False) -> tuple[str, List[Any]]:
-    """Build WHERE clause from filters."""
+def _build_where_clause(filters: Dict[str, Any], entity: str, include_deleted: bool = False) -> tuple[str, List[Any]]:
+    """
+    Build WHERE clause from filters.
+    
+    Args:
+        filters: Dictionary of filter field names to values
+        entity: Entity name for validation (e.g., "application", "company")
+        include_deleted: Whether to include deleted records
+        
+    Returns:
+        Tuple of (where_clause, values) for parameterized query
+    """
     conditions = []
     values = []
     
@@ -24,7 +34,9 @@ def _build_where_clause(filters: Dict[str, Any], include_deleted: bool = False) 
     
     for key, value in filters.items():
         if value is not None:
-            conditions.append(f"{key} = ?")
+            # Validate filter field name to prevent SQL injection
+            validated_key = validate_filter_field(entity, key)
+            conditions.append(validated_key + " = ?")
             values.append(value)
     
     where_clause = " AND ".join(conditions) if conditions else "1=1"
@@ -164,6 +176,7 @@ def list_applications(
         filters["a.client_id"] = client_id
     
     # Build WHERE clause with table alias
+    # Validate filter field names to prevent SQL injection
     conditions = []
     values = []
     
@@ -172,7 +185,9 @@ def list_applications(
     
     for key, value in filters.items():
         if value is not None:
-            conditions.append(f"{key} = ?")
+            # Validate filter field name to prevent SQL injection
+            validated_key = validate_filter_field("application", key)
+            conditions.append(validated_key + " = ?")
             values.append(value)
     
     where_clause = " AND ".join(conditions) if conditions else "1=1"
@@ -325,7 +340,7 @@ def list_companies(
     if job_type:
         filters["job_type"] = job_type
     
-    where_clause, where_values = _build_where_clause(filters, include_deleted)
+    where_clause, where_values = _build_where_clause(filters, "company", include_deleted)
     
     with get_db_connection() as conn:
         # Avoid f-string for WHERE clause to prevent CodeQL SQL injection warnings
@@ -448,7 +463,7 @@ def list_clients(
     include_deleted: bool = False
 ) -> Dict[str, Any]:
     """List clients with pagination."""
-    where_clause, where_values = _build_where_clause({}, include_deleted)
+    where_clause, where_values = _build_where_clause({}, "client", include_deleted)
     
     with get_db_connection() as conn:
         # Avoid f-string for WHERE clause to prevent CodeQL SQL injection warnings
@@ -651,7 +666,7 @@ def list_contacts(
     if contact_type:
         filters["contact_type"] = contact_type
     
-    where_clause, where_values = _build_where_clause(filters, include_deleted)
+    where_clause, where_values = _build_where_clause(filters, "contact", include_deleted)
     
     with get_db_connection() as conn:
         # Avoid f-string for WHERE clause to prevent CodeQL SQL injection warnings
@@ -783,7 +798,7 @@ def list_notes(
     if application_id:
         filters["application_id"] = application_id
     
-    where_clause, where_values = _build_where_clause(filters, include_deleted)
+    where_clause, where_values = _build_where_clause(filters, "note", include_deleted)
     
     with get_db_connection() as conn:
         # Avoid f-string for WHERE clause to prevent CodeQL SQL injection warnings
@@ -933,7 +948,7 @@ def list_job_search_sites(
     include_deleted: bool = False
 ) -> Dict[str, Any]:
     """List job search sites with pagination."""
-    where_clause, where_values = _build_where_clause({}, include_deleted)
+    where_clause, where_values = _build_where_clause({}, "job_search_site", include_deleted)
     
     with get_db_connection() as conn:
         # Avoid f-string for WHERE clause to prevent CodeQL SQL injection warnings
