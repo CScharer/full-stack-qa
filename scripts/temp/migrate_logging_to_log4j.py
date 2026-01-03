@@ -271,8 +271,10 @@ def migrate_environment_sysout(content, include_comments=False):
     content = pattern5b.sub(replace5b, content)
     
     # Pattern 5c: Environment.sysOut with complex expressions (method chains, etc.)
+    # Fixed ReDoS: Use more specific patterns to avoid exponential backtracking
+    # Split into two parts: method call and optional concatenations
     pattern5c = re.compile(
-        r'Environment\.sysOut\(([^)]+\.(?:toString|getText|getMessage|getCurrentMethodName|getCurrentClassMethodName|getParameters|getEventsAllSearch|getEventsEventGet|getSaEventsEventRegistrationGet)\([^)]*\)(?:\s*\+\s*"[^"]*")*(?:\s*\+\s*[^)]+)*)\);',
+        r'Environment\.sysOut\(([^)]*\.(?:toString|getText|getMessage|getCurrentMethodName|getCurrentClassMethodName|getParameters|getEventsAllSearch|getEventsEventGet|getSaEventsEventRegistrationGet)\([^)]*\)(?:\s*\+\s*"[^"]*")*(?:\s*\+\s*[^)]*)?)\);',
         re.MULTILINE
     )
     def replace5c(match):

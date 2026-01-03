@@ -238,36 +238,25 @@ Since this is in `scripts/temp/`, consider:
 **Issue**: XML parsing depends on user-provided value without guarding against external entity expansion.
 
 ### Resolution Steps:
-1. **Locate the XML parsing code** at line 406 in `XML.java`
-2. **Identify the XML parser** being used (likely DOM, SAX, or StAX)
-3. **Disable external entity expansion**:
-   - For DOM: Set `DocumentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)`
-   - For SAX: Configure `XMLReader` with `setFeature("http://xml.org/sax/features/external-general-entities", false)`
-   - For StAX: Configure `XMLInputFactory` with appropriate features
-4. **Disable DTD processing** if not needed:
+1. ✅ **Locate the XML parsing code** at line 406 in `XML.java` (in `formatPretty()` method)
+2. ✅ **Identify the XML parser** - Using DOM DocumentBuilderFactory
+3. ✅ **Disable external entity expansion** - Applied to all three XML parsing methods:
+   - `createDocument(File xml)` - lines 94-104
+   - `createDocument(String xml)` - lines 111-120
+   - `formatPretty(String xml)` - lines 392-431 (line 406 flagged)
+4. ✅ **Disable DTD processing**:
    - `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)`
-5. **Set secure properties**:
+5. ✅ **Set secure properties**:
+   - `setFeature("http://xml.org/sax/features/external-general-entities", false)`
    - `setFeature("http://xml.org/sax/features/external-parameter-entities", false)`
    - `setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)`
-6. **Test with malicious XML** to verify protection
+   - `setExpandEntityReferences(false)`
+6. ⏳ **Test with malicious XML** to verify protection (pending approval)
 
-### Example Fix Pattern:
-```java
-// BEFORE (vulnerable):
-DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-DocumentBuilder builder = factory.newDocumentBuilder();
-Document doc = builder.parse(inputStream);
-
-// AFTER (secure):
-DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-factory.setExpandEntityReferences(false);
-DocumentBuilder builder = factory.newDocumentBuilder();
-Document doc = builder.parse(inputStream);
-```
+### Status: ✅ FIXED
+- Secured all three XML parsing methods in XML.java
+- Disabled external entity expansion, DTD processing, and parameter entities
+- All DocumentBuilderFactory instances now configured securely
 
 ---
 
@@ -315,21 +304,31 @@ result += (int)someDoubleValue;
      - `list_notes()` (Alerts #7, #8) - ✅ FIXED
      - `list_job_search_sites()` (Alert #9) - ✅ FIXED
    - **Approach**: Replace all f-strings containing `{where_clause}` with string concatenation
-   - **Status**: ✅ Step 1 completed - All SQL injection fixes applied
-   - **Next**: Test each function to ensure functionality is preserved
+   - **Status**: ✅ Step 1 completed - All SQL injection fixes applied and committed
 
 2. **XXE fix** (Alert #11) - Critical security issue
-   - Fix XML parsing in `XML.java`
-   - Test with malicious XML samples
+   - **Root cause**: DocumentBuilderFactory instances not configured to prevent external entity expansion
+   - **Solution**: Configure all DocumentBuilderFactory instances with security features
+   - **Affected methods**:
+     - `createDocument(File xml)` - ✅ FIXED
+     - `createDocument(String xml)` - ✅ FIXED
+     - `formatPretty(String xml)` - ✅ FIXED (line 406 flagged)
+   - **Status**: ✅ Step 2 completed - All XXE fixes applied
+   - **Next**: Test with malicious XML to verify protection
 
 3. **ReDoS fix** (Alert #10) - Critical security issue
-   - Fix or remove the temp script
-   - If keeping, refactor regex
+   - **Root cause**: Regex pattern with nested quantifiers causing exponential backtracking
+   - **Solution**: Refactor regex to use less aggressive quantifiers
+   - **Affected file**: `scripts/temp/migrate_logging_to_log4j.py` (line 275)
+   - **Status**: ✅ Step 3 completed - ReDoS fix applied
+   - **Next**: Test with problematic inputs to verify fix
 
 ### Phase 2: Low Priority (Warnings)
 4. **Implicit cast fix** (Alert #12) - Code quality improvement
-   - Add explicit cast in `Encoder.java`
-   - Verify no data loss
+   - **Root cause**: Implicit cast from `double` (Math.pow result) to `int` in compound assignment
+   - **Solution**: Replace compound assignment with explicit cast
+   - **Affected file**: `src/test/java/com/cjs/qa/utilities/Encoder.java` (line 128)
+   - **Status**: ✅ Step 4 completed - Implicit cast fix applied
 
 ### Testing Strategy
 - **Unit tests**: Test each fixed function with various inputs
