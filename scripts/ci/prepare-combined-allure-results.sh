@@ -120,6 +120,19 @@ echo "   Robot: $([ -d "$SOURCE_DIR/robot-results" ] && echo "✅ exists" || ech
 echo "   Vibium: $([ -d "$SOURCE_DIR/vibium-results" ] && echo "✅ exists" || echo "❌ not found")"
 echo "   FS: $([ -d "$SOURCE_DIR/fs-results" ] && echo "✅ exists" || echo "❌ not found")"
 echo ""
+echo "🔍 Debug: Checking for environment-specific directories (results-dev, results-test, results-prod)..."
+for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
+    if [ -d "$SOURCE_DIR/results-$env" ]; then
+        echo "   ✅ results-$env exists"
+        echo "      Contents:"
+        find "$SOURCE_DIR/results-$env" -maxdepth 2 -type d 2>/dev/null | head -10 | while read d; do
+            echo "        - $d"
+        done
+    else
+        echo "   ❌ results-$env not found"
+    fi
+done
+echo ""
 if [ -d "$SOURCE_DIR/cypress-results" ]; then
     echo "   📂 Cypress results structure:"
     find "$SOURCE_DIR/cypress-results" -maxdepth 3 -type d 2>/dev/null | head -15 | while read d; do
@@ -173,29 +186,61 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     ENV_PROCESSED=0
     
     # Check environment-specific directory first (results-dev/cypress-results-dev/)
-    if [ -d "$SOURCE_DIR/results-$env/cypress-results-$env" ]; then
-        echo "   Converting Cypress results ($env) from results-$env/cypress-results-$env..."
-        chmod +x scripts/ci/convert-cypress-to-allure.sh
-        json_file=$(find "$SOURCE_DIR/results-$env/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
-        if [ -n "$json_file" ] && [ -f "$json_file" ]; then
-            json_dir=$(dirname "$json_file")
-            echo "   📄 Found Cypress JSON file: $json_file"
-            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
+    # This is the PRIMARY source - ensures we use environment-specific data
+    if [ -d "$SOURCE_DIR/results-$env" ]; then
+        # Try multiple possible structures in results-$env
+        # Structure 1: results-$env/cypress-results-$env/
+        if [ -d "$SOURCE_DIR/results-$env/cypress-results-$env" ]; then
+            echo "   ✅ Found environment-specific directory: results-$env/cypress-results-$env"
+            echo "   Converting Cypress results ($env) from results-$env/cypress-results-$env..."
+            chmod +x scripts/ci/convert-cypress-to-allure.sh
+            json_file=$(find "$SOURCE_DIR/results-$env/cypress-results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" \) 2>/dev/null | head -1)
+            if [ -n "$json_file" ] && [ -f "$json_file" ]; then
+                json_dir=$(dirname "$json_file")
+                echo "   📄 Found Cypress JSON file: $json_file"
+                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Cypress conversion successful for $env (environment-specific data)"
+                else
+                    echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+                fi
+            elif [ -d "$SOURCE_DIR/results-$env/cypress-results-$env/results" ]; then
+                echo "   📂 Found Cypress results directory: $SOURCE_DIR/results-$env/cypress-results-$env/results"
+                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/cypress-results-$env/results" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Cypress conversion successful for $env (environment-specific data)"
+                else
+                    echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+                fi
+            else
+                echo "   ⚠️  No Cypress JSON files found in $SOURCE_DIR/results-$env/cypress-results-$env"
+            fi
+        # Structure 2: results-$env/cypress/cypress/results/ (if artifact preserves full path)
+        elif [ -d "$SOURCE_DIR/results-$env/cypress/cypress/results" ]; then
+            echo "   ✅ Found environment-specific directory: results-$env/cypress/cypress/results"
+            echo "   Converting Cypress results ($env) from results-$env/cypress/cypress/results..."
+            chmod +x scripts/ci/convert-cypress-to-allure.sh
+            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/cypress/cypress/results" "$env"; then
                 ENV_PROCESSED=1
-                echo "   ✅ Cypress conversion successful for $env"
+                echo "   ✅ Cypress conversion successful for $env (environment-specific data)"
             else
                 echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
             fi
-        elif [ -d "$SOURCE_DIR/results-$env/cypress-results-$env/results" ]; then
-            echo "   📂 Found Cypress results directory: $SOURCE_DIR/results-$env/cypress-results-$env/results"
-            if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/cypress-results-$env/results" "$env"; then
-                ENV_PROCESSED=1
-                echo "   ✅ Cypress conversion successful for $env"
-            else
-                echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
-            fi
+        # Structure 3: Search recursively in results-$env for Cypress JSON files
         else
-            echo "   ⚠️  No Cypress JSON files found in $SOURCE_DIR/results-$env/cypress-results-$env"
+            json_file=$(find "$SOURCE_DIR/results-$env" \( -name "mochawesome.json" -o -name "cypress-results.json" -o -path "*/cypress/results/*.json" \) 2>/dev/null | head -1)
+            if [ -n "$json_file" ] && [ -f "$json_file" ]; then
+                json_dir=$(dirname "$json_file")
+                echo "   ✅ Found Cypress JSON file in results-$env: $json_file"
+                echo "   Converting Cypress results ($env) from $json_dir..."
+                chmod +x scripts/ci/convert-cypress-to-allure.sh
+                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$json_dir" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Cypress conversion successful for $env (environment-specific data)"
+                else
+                    echo "   ⚠️  Cypress conversion failed for $env (exit code: $?)"
+                fi
+            fi
         fi
     fi
     
@@ -239,34 +284,43 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         fi
     fi
     
-    # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
-    # Process for each environment - the converter will label results with the correct environment
+    # FIXED: Check flat structure as LAST RESORT (when merge-multiple: true creates flat structure)
+    # WARNING: Flat structure cannot distinguish environments - only process once to avoid duplicate data
     if [ "$ENV_PROCESSED" -eq 0 ]; then
         # Check if flat structure exists (cypress-results/results/ or cypress-results/cypress/cypress/results/)
         if [ -d "$SOURCE_DIR/cypress-results/results" ] || [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
-            echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env"
-            echo "   📂 Found Cypress results in flat structure, processing for environment: $env"
-            chmod +x scripts/ci/convert-cypress-to-allure.sh
-            if [ -d "$SOURCE_DIR/cypress-results/results" ]; then
-                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/results" "$env"; then
-                    ENV_PROCESSED=1
-                    echo "   ✅ Cypress conversion successful for $env (flat structure)"
+            # Only process for first environment to avoid processing same files multiple times
+            # Flat structure means we can't distinguish which environment the files belong to
+            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
+                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure"
+                echo "   ⚠️  WARNING: Flat structure cannot distinguish environments - processing for ${ACTIVE_ENVIRONMENTS[0]} only"
+                echo "   ⚠️  WARNING: Other environments will not have Cypress results if flat structure is used"
+                echo "   📂 Found Cypress results in flat structure, processing for environment: $env"
+                chmod +x scripts/ci/convert-cypress-to-allure.sh
+                if [ -d "$SOURCE_DIR/cypress-results/results" ]; then
+                    if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Cypress conversion successful for $env (flat structure - WARNING: same data for all environments)"
+                    fi
+                elif [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
+                    if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/cypress/results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Cypress conversion successful for $env (flat structure, nested path - WARNING: same data for all environments)"
+                    fi
                 fi
-            elif [ -d "$SOURCE_DIR/cypress-results/cypress/cypress/results" ]; then
-                if ./scripts/ci/convert-cypress-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/cypress-results/cypress/cypress/results" "$env"; then
-                    ENV_PROCESSED=1
-                    echo "   ✅ Cypress conversion successful for $env (flat structure, nested path)"
-                fi
+            else
+                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]} - cannot distinguish environments in flat structure)"
             fi
         else
             # Debug: Report if Cypress results were not found for this environment
             echo "   ⚠️  No Cypress results found for $env environment"
             echo "      Checked locations:"
             echo "        - $SOURCE_DIR/results-$env/cypress-results-$env"
+            echo "        - $SOURCE_DIR/results-$env/cypress/cypress/results"
             echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env"
             echo "        - $SOURCE_DIR/cypress-results/cypress-results-$env/cypress/cypress/results (nested path)"
-            echo "        - $SOURCE_DIR/cypress-results/results (flat structure)"
-            echo "        - $SOURCE_DIR/cypress-results/cypress/cypress/results (flat structure, nested path)"
+            echo "        - $SOURCE_DIR/cypress-results/results (flat structure - only processed for first environment)"
+            echo "        - $SOURCE_DIR/cypress-results/cypress/cypress/results (flat structure, nested path - only processed for first environment)"
         fi
     fi
 done
@@ -277,14 +331,46 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
     ENV_PROCESSED=0
     
     # Check environment-specific directory first (results-dev/playwright-results-dev/)
-    if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" ]; then
-        echo "   Converting Playwright results ($env) from results-$env/playwright-results-$env..."
-        chmod +x scripts/ci/convert-playwright-to-allure.sh
-        if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" "$env"; then
-            ENV_PROCESSED=1
-            echo "   ✅ Playwright conversion successful for $env"
+    # This is the PRIMARY source - ensures we use environment-specific data
+    if [ -d "$SOURCE_DIR/results-$env" ]; then
+        # Try multiple possible structures in results-$env
+        # Structure 1: results-$env/playwright-results-$env/test-results/
+        if [ -d "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" ]; then
+            echo "   ✅ Found environment-specific directory: results-$env/playwright-results-$env/test-results"
+            echo "   Converting Playwright results ($env) from results-$env/playwright-results-$env..."
+            chmod +x scripts/ci/convert-playwright-to-allure.sh
+            if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/playwright-results-$env/test-results" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Playwright conversion successful for $env (environment-specific data)"
+            else
+                echo "   ⚠️  Playwright conversion failed for $env (exit code: $?)"
+            fi
+        # Structure 2: results-$env/playwright/test-results/ (if artifact preserves full path)
+        elif [ -d "$SOURCE_DIR/results-$env/playwright/test-results" ]; then
+            echo "   ✅ Found environment-specific directory: results-$env/playwright/test-results"
+            echo "   Converting Playwright results ($env) from results-$env/playwright/test-results..."
+            chmod +x scripts/ci/convert-playwright-to-allure.sh
+            if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/results-$env/playwright/test-results" "$env"; then
+                ENV_PROCESSED=1
+                echo "   ✅ Playwright conversion successful for $env (environment-specific data)"
+            else
+                echo "   ⚠️  Playwright conversion failed for $env (exit code: $?)"
+            fi
+        # Structure 3: Search recursively in results-$env for Playwright XML files
         else
-            echo "   ⚠️  Playwright conversion failed for $env (exit code: $?)"
+            xml_file=$(find "$SOURCE_DIR/results-$env" \( -name "junit.xml" -o -path "*/test-results/*.xml" \) 2>/dev/null | head -1)
+            if [ -n "$xml_file" ] && [ -f "$xml_file" ]; then
+                xml_dir=$(dirname "$xml_file")
+                echo "   ✅ Found Playwright XML file in results-$env: $xml_file"
+                echo "   Converting Playwright results ($env) from $xml_dir..."
+                chmod +x scripts/ci/convert-playwright-to-allure.sh
+                if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$xml_dir" "$env"; then
+                    ENV_PROCESSED=1
+                    echo "   ✅ Playwright conversion successful for $env (environment-specific data)"
+                else
+                    echo "   ⚠️  Playwright conversion failed for $env (exit code: $?)"
+                fi
+            fi
         fi
     fi
     
@@ -315,24 +401,32 @@ for env in "${ACTIVE_ENVIRONMENTS[@]}"; do
         fi
     fi
     
-    # FIXED: Check flat structure as fallback (when merge-multiple: true creates flat structure)
-    # Process for each environment - the converter will label results with the correct environment
+    # FIXED: Check flat structure as LAST RESORT (when merge-multiple: true creates flat structure)
+    # WARNING: Flat structure cannot distinguish environments - only process once to avoid duplicate data
     if [ "$ENV_PROCESSED" -eq 0 ]; then
         # Check if flat structure exists (playwright-results/test-results/ or playwright-results/playwright/test-results/)
         if [ -d "$SOURCE_DIR/playwright-results/test-results" ] || [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
-            echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure for $env"
-            echo "   📂 Found Playwright results in flat structure, processing for environment: $env"
-            chmod +x scripts/ci/convert-playwright-to-allure.sh
-            if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
-                if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$env"; then
-                    ENV_PROCESSED=1
-                    echo "   ✅ Playwright conversion successful for $env (flat structure)"
+            # Only process for first environment to avoid processing same files multiple times
+            # Flat structure means we can't distinguish which environment the files belong to
+            if [ "$env" == "${ACTIVE_ENVIRONMENTS[0]}" ]; then
+                echo "   ⚠️  WARNING: No environment-specific subdirectories found, processing flat structure"
+                echo "   ⚠️  WARNING: Flat structure cannot distinguish environments - processing for ${ACTIVE_ENVIRONMENTS[0]} only"
+                echo "   ⚠️  WARNING: Other environments will not have Playwright results if flat structure is used"
+                echo "   📂 Found Playwright results in flat structure, processing for environment: $env"
+                chmod +x scripts/ci/convert-playwright-to-allure.sh
+                if [ -d "$SOURCE_DIR/playwright-results/test-results" ]; then
+                    if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/test-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Playwright conversion successful for $env (flat structure - WARNING: same data for all environments)"
+                    fi
+                elif [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
+                    if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright/test-results" "$env"; then
+                        ENV_PROCESSED=1
+                        echo "   ✅ Playwright conversion successful for $env (flat structure, nested path - WARNING: same data for all environments)"
+                    fi
                 fi
-            elif [ -d "$SOURCE_DIR/playwright-results/playwright/test-results" ]; then
-                if ./scripts/ci/convert-playwright-to-allure.sh "$TARGET_DIR" "$SOURCE_DIR/playwright-results/playwright/test-results" "$env"; then
-                    ENV_PROCESSED=1
-                    echo "   ✅ Playwright conversion successful for $env (flat structure, nested path)"
-                fi
+            else
+                echo "   ⏭️  Skipping $env (flat structure already processed for ${ACTIVE_ENVIRONMENTS[0]} - cannot distinguish environments in flat structure)"
             fi
         else
             # Debug: Report if Playwright results were not found for this environment
