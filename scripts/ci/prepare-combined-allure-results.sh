@@ -1011,7 +1011,6 @@ for env in "${FS_ENVIRONMENTS[@]}"; do
             fi
         fi
     done
-fi
 
 # Also check for merged fs-results directory (fallback for old structure)
 if [ -d "$SOURCE_DIR/fs-results" ]; then
