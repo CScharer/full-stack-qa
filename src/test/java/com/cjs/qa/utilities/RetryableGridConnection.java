@@ -125,9 +125,7 @@ public final class RetryableGridConnection {
           Thread.sleep(backoffDelay);
         } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
-          QAException interruptedException = new QAException("Retry interrupted");
-          interruptedException.initCause(ie);
-          throw interruptedException;
+          throw new QAException("Retry interrupted", ie);
         }
       }
     }
