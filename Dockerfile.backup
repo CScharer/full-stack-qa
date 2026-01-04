@@ -32,17 +32,13 @@ COPY XML ./XML
 COPY checkstyle-custom.xml checkstyle-suppressions.xml ./
 
 # Build the project (skip tests in build stage)
-# Optimized: Added cleanup of Maven cache after build to reduce image size
 # Clear cached failures and force update to ensure fresh downloads
 # Use 'mvn' directly since the base image already has Maven 3.9.9 installed
-RUN rm -rf ~/.m2/repository/org/apache/maven/plugins/maven-compiler-plugin || true \
-    && mvn -ntp -U clean package -DskipTests \
-    && rm -rf ~/.m2/repository/*/SNAPSHOT \
-    && rm -rf ~/.m2/repository/.cache
+RUN rm -rf ~/.m2/repository/org/apache/maven/plugins/maven-compiler-plugin || true
+RUN mvn -ntp -U clean package -DskipTests
 
 # Stage 2: Runtime stage
-# Optimized: Using JRE instead of JDK (saves ~100-150MB, tests are pre-compiled)
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jdk
 
 LABEL maintainer="CJS Consulting, L.L.C"
 
@@ -106,35 +102,28 @@ COPY cypress ./cypress
 COPY playwright ./playwright
 
 # Install Cypress dependencies (if package.json exists)
-# Optimized: Added cleanup to reduce layer size
 WORKDIR /app/cypress
 RUN if [ -f "package.json" ]; then \
         npm ci || echo "Cypress dependencies installation failed, will retry at runtime"; \
-        rm -rf /root/.npm /tmp/* || true; \
     else \
         echo "Cypress directory not found, skipping dependency installation"; \
     fi
 
 # Install Playwright dependencies and browsers (if package.json exists)
-# Optimized: Added cleanup to reduce layer size
 WORKDIR /app/playwright
 RUN if [ -f "package.json" ]; then \
         npm ci || echo "Playwright dependencies installation failed, will retry at runtime"; \
         npx playwright install --with-deps chromium || echo "Playwright browser installation failed, will retry at runtime"; \
-        rm -rf /root/.npm /root/.cache /tmp/* || true; \
     else \
         echo "Playwright directory not found, skipping dependency installation"; \
     fi
 
 # Install Robot Framework dependencies
-# Optimized: Added cleanup to same layer
 # Use --break-system-packages for Debian/Ubuntu systems with PEP 668 (externally-managed-environment)
 RUN pip3 install --no-cache-dir --break-system-packages \
     robotframework \
     robotframework-seleniumlibrary \
-    robotframework-requests 2>&1 || echo "Robot Framework dependencies installation failed, will retry at runtime" \
-    && rm -rf /root/.cache/pip \
-    && rm -rf /tmp/*
+    robotframework-requests 2>&1 || echo "Robot Framework dependencies installation failed, will retry at runtime"
 
 # Return to app directory
 WORKDIR /app

@@ -364,6 +364,17 @@ jobs:
           chmod +x scripts/ci/verify-docker-image.sh
           ./scripts/ci/verify-docker-image.sh "full-stack-qa-tests:latest"
 
+      - name: Check Docker image size and layers
+        if: success()
+        run: |
+          echo "📊 Docker Image Metrics:"
+          echo "════════════════════════════════════════"
+          docker images full-stack-qa-tests:latest --format "Image: {{.Repository}}:{{.Tag}} | Size: {{.Size}}"
+          echo ""
+          echo "Layer count:"
+          docker history full-stack-qa-tests:latest --format "{{.CreatedBy}}" | wc -l
+          echo "════════════════════════════════════════"
+
       - name: Extract compiled classes from Docker image
         continue-on-error: true
         run: |
