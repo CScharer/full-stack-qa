@@ -293,23 +293,31 @@ Before merging, verify in PR pipeline:
 
 After merging to main, verify:
 
-### Merge 1: First Run (Initial Merge)
+### Merge 1: First Run (Initial Merge) ✅
 
 **Update**: `scripts/temp/test-trending-merge-tracker.sh` - Set `MERGE_NUMBER=1`
 
 **Purpose**: Create initial history
-- [ ] History download steps run (no history found - expected)
-- [ ] Report generation succeeds
-- [ ] History created in report (`allure-report-combined/history/`)
-- [ ] History uploaded as artifact (`allure-history`)
-- [ ] GitHub Pages deployment succeeds
-- [ ] History included in GitHub Pages deployment
 
-### Merge 2: Second Run (History Download & Update)
+**Status**: ✅ **COMPLETED** - Pipeline #388 verified
+
+**Results**:
+- [x] History download steps run (no history found - expected) ✅
+- [x] Report generation succeeds ✅
+- [x] History created in report (`allure-report-combined/history/`) ✅
+- [x] History uploaded as artifact (`allure-history`) ✅
+- [x] GitHub Pages deployment succeeds ✅
+- [x] History included in GitHub Pages deployment ✅
+
+### Merge 2: Second Run (History Download & Update) 🔄
 
 **Update**: `scripts/temp/test-trending-merge-tracker.sh` - Set `MERGE_NUMBER=2`
 
 **Purpose**: Download and update history
+
+**Status**: 🔄 **IN PROGRESS** - PR #68 merged, pipeline running
+
+**Validation Goals**:
 - [ ] History downloaded from GitHub Pages (or artifact)
 - [ ] History merged with new results
 - [ ] Report shows updated history
