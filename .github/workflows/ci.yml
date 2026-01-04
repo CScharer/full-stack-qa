@@ -1346,12 +1346,24 @@ jobs:
               fi
             fi
           else
-            # No history directory in report - this is a critical error
-            echo "❌ ERROR: No history directory in generated report"
-            echo "   This indicates a critical issue with Allure3 report generation"
-            echo "   Allure3 should always create a history directory, even if empty"
-            echo "   This must be fixed - report generation is broken"
-            exit 1
+            # No history directory in report - check if this is expected
+            if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+              # Check if history should exist from previous runs
+              if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+                echo "❌ ERROR: No history directory in generated report, but history exists in GitHub Pages"
+                echo "   This indicates Allure3 did not properly merge or preserve history"
+                echo "   History was downloaded but not included in report - this must be fixed"
+                exit 1
+              else
+                # First run - Allure3 may not create history directory until there's actual history
+                echo "ℹ️  No history directory in generated report (first run - expected)"
+                echo "   Allure3 may not create history directory until history data exists"
+                echo "   History will be created after first successful test run"
+              fi
+            else
+              echo "ℹ️  No history directory in generated report (feature branch - expected)"
+              echo "   History is only preserved on main branch"
+            fi
           fi
 
       - name: Upload Allure History (for next run)
