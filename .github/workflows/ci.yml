@@ -1233,6 +1233,7 @@ jobs:
         if: always() && github.ref == 'refs/heads/main'
         uses: actions/download-artifact@v4
         continue-on-error: true
+        id: download-history-artifact
         with:
           name: allure-history
           path: allure-results-combined/history/
@@ -1243,13 +1244,18 @@ jobs:
         if: always() && github.ref == 'refs/heads/main'
         run: |
           chmod +x scripts/ci/download-allure-history.sh
-          ./scripts/ci/download-allure-history.sh "allure-results-combined" "pages"
+          if ! ./scripts/ci/download-allure-history.sh "allure-results-combined" "pages"; then
+            echo "❌ ERROR: History download from GitHub Pages failed"
+            exit 1
+          fi
 
       - name: Verify History Download
         if: always() && github.ref == 'refs/heads/main'
         run: |
+          set -e
           echo "🔍 Verifying history download..."
           echo ""
+          
           if [ -d "allure-results-combined/history" ]; then
             echo "✅ History directory exists"
             FILE_COUNT=$(find allure-results-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')
@@ -1260,12 +1266,35 @@ jobs:
               find allure-results-combined/history -type f -name "*.json" 2>/dev/null | head -5 | while read -r f; do
                 echo "     - $(basename "$f")"
               done
+              echo ""
+              echo "✅ History download verified successfully"
             else
-              echo "   ℹ️  Directory is empty (expected for first run)"
+              # Empty history directory - this is only acceptable for the very first run
+              # After that, history should exist from previous runs
+              echo "   ⚠️  Directory is empty"
+              echo ""
+              echo "   Checking if this is the first run..."
+              # Try to determine if history should exist by checking GitHub Pages
+              if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+                echo "   ❌ ERROR: History directory exists in GitHub Pages but download failed or is empty"
+                echo "   This indicates a problem with history download that must be fixed"
+                exit 1
+              else
+                echo "   ℹ️  No history in GitHub Pages (expected for first run)"
+                echo "   History will be created during report generation"
+              fi
             fi
           else
-            echo "ℹ️  No history directory (expected for first run)"
-            echo "   History will be created during report generation"
+            echo "ℹ️  No history directory found"
+            # Check if history should exist
+            if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+              echo "   ❌ ERROR: History exists in GitHub Pages but directory was not created"
+              echo "   This indicates a problem with history download that must be fixed"
+              exit 1
+            else
+              echo "   ℹ️  No history in GitHub Pages (expected for first run)"
+              echo "   History will be created during report generation"
+            fi
           fi
 
       - name: Install Allure3 CLI
@@ -1283,10 +1312,12 @@ jobs:
       - name: Verify History in Report
         if: always()
         run: |
+          set -e
           echo "🔍 Verifying history in generated report..."
           echo ""
+          
           if [ -d "allure-report-combined/history" ]; then
-            echo "✅ History included in report"
+            echo "✅ History directory exists in report"
             FILE_COUNT=$(find allure-report-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')
             echo "   Files: $FILE_COUNT file(s)"
             if [ "$FILE_COUNT" -gt 0 ]; then
@@ -1298,22 +1329,89 @@ jobs:
               echo ""
               echo "✅ History will be preserved in GitHub Pages deployment"
             else
-              echo "   ℹ️  History directory exists but is empty (first run)"
-              echo "   History will be populated after this deployment"
+              # Check if history should exist (not first run)
+              if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+                # Check if history existed before this run
+                if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+                  echo "   ❌ ERROR: History directory exists but is empty, and history should exist from previous runs"
+                  echo "   This indicates Allure3 did not properly merge or preserve history"
+                  echo "   This must be fixed - history preservation is broken"
+                  exit 1
+                else
+                  echo "   ℹ️  History directory exists but is empty (first run)"
+                  echo "   History will be populated after this deployment"
+                fi
+              else
+                echo "   ℹ️  History directory exists but is empty (feature branch - expected)"
+              fi
             fi
           else
-            echo "⚠️  Warning: No history directory in generated report"
-            echo "   This may indicate an issue with history preservation"
+            # No history directory in report - check if this is expected
+            if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+              # Check if history should exist from previous runs
+              if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+                echo "❌ ERROR: No history directory in generated report, but history exists in GitHub Pages"
+                echo "   This indicates Allure3 did not properly merge or preserve history"
+                echo "   History was downloaded but not included in report - this must be fixed"
+                exit 1
+              else
+                # First run - Allure3 may not create history directory until there's actual history
+                echo "ℹ️  No history directory in generated report (first run - expected)"
+                echo "   Allure3 may not create history directory until history data exists"
+                echo "   History will be created after first successful test run"
+              fi
+            else
+              echo "ℹ️  No history directory in generated report (feature branch - expected)"
+              echo "   History is only preserved on main branch"
+            fi
           fi
 
       - name: Upload Allure History (for next run)
-        uses: actions/upload-artifact@v4
+        id: upload-history-check
         if: always() && github.ref == 'refs/heads/main'
+        run: |
+          set -e
+          echo "📤 Uploading Allure history for next run..."
+          echo ""
+          
+          if [ ! -d "allure-report-combined/history" ]; then
+            # Check if this is the first run (no history expected)
+            if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+              echo "❌ ERROR: History directory does not exist in report, but history exists in GitHub Pages"
+              echo "   This indicates Allure3 did not properly preserve history - this must be fixed"
+              exit 1
+            else
+              echo "ℹ️  No history directory in report (first run - expected)"
+              echo "   Allure3 may not create history directory until there's actual history data"
+              echo "   Skipping history upload for first run"
+              exit 0
+            fi
+          fi
+          
+          FILE_COUNT=$(find allure-report-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')
+          if [ "$FILE_COUNT" -eq 0 ]; then
+            # Check if history should exist
+            if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+              echo "❌ ERROR: History directory exists but is empty, and history should exist from previous runs"
+              echo "   This indicates Allure3 did not properly merge history - this must be fixed"
+              exit 1
+            else
+              echo "⚠️  WARNING: History directory exists but is empty (first run)"
+              echo "   Uploading empty history directory (will be ignored by artifact upload)"
+            fi
+          else
+            echo "✅ History directory contains $FILE_COUNT file(s)"
+            echo "   Uploading history for next run..."
+          fi
+          
+      - name: Upload Allure History Artifact
+        uses: actions/upload-artifact@v4
+        if: always() && github.ref == 'refs/heads/main' && steps.upload-history-check.outcome == 'success'
         with:
           name: allure-history
           path: allure-report-combined/history/
           retention-days: 90
-          if-no-files-found: ignore
+          if-no-files-found: warn
 
       - name: Upload Combined Allure Report
         uses: actions/upload-artifact@v4
