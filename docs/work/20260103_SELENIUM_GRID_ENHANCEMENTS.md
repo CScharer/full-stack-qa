@@ -11,7 +11,7 @@
 - ✅ Phase 3: Enhance SeleniumGridConfig - COMPLETE
 - ✅ Phase 4: Update SeleniumWebDriver - COMPLETE
 - ✅ Phase 5: Enhance Wait Scripts - COMPLETE
-- ⏳ Phase 6: Pre-Push Version Validation - PENDING
+- ✅ Phase 6: Pre-Push Version Validation - COMPLETE
 - ⏳ Phase 7: Update CI/CD Workflows - PENDING
 - ⏳ Phase 8: Create Test Utilities - PENDING
 - ⏳ Phase 9: Documentation - PENDING
@@ -309,18 +309,20 @@ SKIP_VERSION_CHECK=true ./scripts/ci/wait-for-grid.sh
 
 ---
 
-### Phase 6: Add Pre-Push Version Validation
+### Phase 6: Add Pre-Push Version Validation ✅ COMPLETE
 
-#### Step 6.1: Integrate Version Validation into Pre-Push Hook
+#### Step 6.1: Integrate Version Validation into Pre-Push Hook ✅
 **Location**: `.git/hooks/pre-push`
+
+**Status**: ✅ **COMPLETE** - Version validation integrated into pre-push hook
 
 **Purpose**: Catch version mismatches before code is pushed to remote
 
 **Changes**:
-- Add call to `validate-dependency-versions.sh` in pre-push hook
-- Only run for code changes (skip for documentation-only changes)
-- Fail push if version mismatches detected
-- Provide clear error messages
+- ✅ Add call to `validate-dependency-versions.sh` in pre-push hook
+- ✅ Only run for code changes (skip for documentation-only changes)
+- ✅ Fail push if version mismatches detected
+- ✅ Provide clear error messages
 
 **Implementation**:
 ```bash
@@ -340,37 +342,37 @@ fi
 ```
 
 **Benefits**:
-- Catches version mismatches before push
-- Prevents broken code from reaching remote
-- Fast validation (< 5 seconds)
-- Clear error messages
+- ✅ Catches version mismatches before push
+- ✅ Prevents broken code from reaching remote
+- ✅ Fast validation (< 5 seconds)
+- ✅ Clear error messages
 
-#### Step 6.2: Enhance Version Validation Script
+#### Step 6.2: Enhance Version Validation Script ✅
 **Location**: `scripts/validate-dependency-versions.sh`
 
+**Status**: ✅ **COMPLETE** - Docker Compose validation added
+
 **Enhancements**:
-- Add Docker Compose version validation
-- Check `docker-compose.yml` for Selenium Grid image versions
-- Compare Docker image versions with `pom.xml` version
-- Add validation for all Docker Compose files (dev, prod, base)
+- ✅ Add Docker Compose version validation (Phase 4)
+- ✅ Check `docker-compose.yml`, `docker-compose.dev.yml`, `docker-compose.prod.yml` for Selenium Grid image versions
+- ✅ Compare Docker image versions with `pom.xml` version
+- ✅ Support both `selenium/*` and `seleniarm/*` image variants
+- ✅ Warn if using `:latest` tag (recommends versioned tags)
 
 **New Checks**:
-- Validate `selenium/hub` image version in `docker-compose.yml`
-- Validate `selenium/node-chrome` image version
-- Validate `selenium/node-firefox` image version
-- Validate `selenium/node-edge` image version (if present)
-- Compare all Docker image versions with `pom.xml` version
+- ✅ Validate `selenium/hub` or `seleniarm/hub` image version in Docker Compose files
+- ✅ Validate `selenium/node-chrome` or `seleniarm/node-chromium` image version
+- ✅ Validate `selenium/node-firefox` image version (if present)
+- ✅ Validate `selenium/node-edge` image version (if present)
+- ✅ Compare all Docker image versions with `pom.xml` version
+- ✅ Warn if using `:latest` tag instead of versioned tag
 
-**Implementation**:
-```bash
-# Extract Selenium version from docker-compose.yml
-SELENIUM_VERSION_DOCKER=$(grep 'image:.*selenium.*hub' docker-compose.yml | sed 's/.*:\([0-9.]*\).*/\1/' | head -1)
-
-# Compare with pom.xml version
-if [ "$SELENIUM_VERSION_POM" != "$SELENIUM_VERSION_DOCKER" ]; then
-    print_error "Docker Compose version mismatch: pom.xml=$SELENIUM_VERSION_POM, docker-compose.yml=$SELENIUM_VERSION_DOCKER"
-fi
-```
+**Implementation Details**:
+- ✅ Scans all Docker Compose files for Selenium-related images
+- ✅ Extracts image name and tag from each image line
+- ✅ Compares extracted tags with `pom.xml` Selenium version
+- ✅ Provides clear error messages for mismatches
+- ✅ Warns about `:latest` tags (not an error, but recommendation)
 
 ### Phase 7: Update CI/CD Workflows
 

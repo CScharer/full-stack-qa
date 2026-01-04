@@ -278,7 +278,70 @@ if [ -f "backend/requirements.txt" ]; then
     fi
 fi
 
-# Phase 4: Summary
+# Phase 4: Docker Compose Version Validation
+print_section "Phase 4: Docker Compose Version Validation"
+
+DOCKER_COMPOSE_FILES=("docker-compose.yml" "docker-compose.dev.yml" "docker-compose.prod.yml")
+DOCKER_VERSION_MISMATCHES=0
+
+for compose_file in "${DOCKER_COMPOSE_FILES[@]}"; do
+    if [ ! -f "$compose_file" ]; then
+        print_warning "Docker Compose file not found: $compose_file"
+        continue
+    fi
+    
+    print_info "Checking $compose_file..."
+    
+    # Extract Selenium image versions from Docker Compose file
+    # Look for selenium/hub, selenium/node-chrome, selenium/node-firefox, selenium/node-edge
+    # Also check for seleniarm variants (seleniarm/hub, seleniarm/node-chromium, etc.)
+    SELENIUM_IMAGES=$(grep -E "image:.*selenium|image:.*seleniarm" "$compose_file" | sed 's/.*image:[[:space:]]*\(.*\)/\1/' | sed 's/[[:space:]]*#.*$//' || true)
+    
+    if [ -z "$SELENIUM_IMAGES" ]; then
+        print_warning "  No Selenium images found in $compose_file"
+        continue
+    fi
+    
+    # Check each image
+    while IFS= read -r image_line; do
+        if [ -z "$image_line" ]; then
+            continue
+        fi
+        
+        # Extract image name and tag
+        # Format: seleniarm/hub:latest or selenium/hub:4.39.0
+        IMAGE_NAME=$(echo "$image_line" | sed 's/:.*$//')
+        IMAGE_TAG=$(echo "$image_line" | sed 's/.*://' | sed 's/[[:space:]]*$//')
+        
+        if [ -z "$IMAGE_TAG" ]; then
+            IMAGE_TAG="latest"
+        fi
+        
+        print_info "  Found image: $IMAGE_NAME:$IMAGE_TAG"
+        
+        # Check if using :latest tag (warning, not error)
+        if [ "$IMAGE_TAG" = "latest" ]; then
+            print_warning "  ⚠️  Using 'latest' tag for $IMAGE_NAME (recommended: use versioned tag like $SELENIUM_VERSION_POM)"
+        else
+            # Compare with pom.xml version if available
+            if [ -n "$SELENIUM_VERSION_POM" ] && [ "$IMAGE_TAG" != "$SELENIUM_VERSION_POM" ]; then
+                print_error "  Version mismatch: $IMAGE_NAME has tag $IMAGE_TAG, but pom.xml specifies $SELENIUM_VERSION_POM"
+                DOCKER_VERSION_MISMATCHES=$((DOCKER_VERSION_MISMATCHES + 1))
+                FAILED=$((FAILED + 1))
+            elif [ -n "$SELENIUM_VERSION_POM" ] && [ "$IMAGE_TAG" = "$SELENIUM_VERSION_POM" ]; then
+                print_success "  ✅ Version matches pom.xml: $IMAGE_TAG"
+            fi
+        fi
+    done <<< "$SELENIUM_IMAGES"
+done
+
+if [ $DOCKER_VERSION_MISMATCHES -eq 0 ]; then
+    print_success "Docker Compose version validation passed"
+else
+    print_error "Docker Compose version validation found $DOCKER_VERSION_MISMATCHES mismatch(es)"
+fi
+
+# Phase 5: Summary
 print_section "Validation Summary"
 
 REPORT_ERRORS=$FAILED
