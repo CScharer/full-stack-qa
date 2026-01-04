@@ -309,19 +309,19 @@ After merging to main, verify:
 - [x] GitHub Pages deployment succeeds ✅
 - [x] History included in GitHub Pages deployment ✅
 
-### Merge 2: Second Run (History Download & Update) 🔄
+### Merge 2: Second Run (History Download & Update) ✅
 
 **Update**: `scripts/temp/test-trending-merge-tracker.sh` - Set `MERGE_NUMBER=2`
 
 **Purpose**: Download and update history
 
-**Status**: 🔄 **IN PROGRESS** - PR #68 merged, pipeline running
+**Status**: ✅ **COMPLETED** - Pipeline #393 verified
 
-**Validation Goals**:
-- [ ] History downloaded from GitHub Pages (or artifact)
-- [ ] History merged with new results
-- [ ] Report shows updated history
-- [ ] History uploaded and deployed
+**Results**:
+- [x] History downloaded from GitHub Pages (or artifact) ✅
+- [x] History merged with new results ✅
+- [x] Report shows updated history ✅
+- [x] History uploaded and deployed ✅
 
 ### Merge 3: Third Run (Trends Visible)
 
