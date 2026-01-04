@@ -141,7 +141,11 @@ public final class RetryableGridConnection {
             totalTime,
             lastException != null ? lastException.getMessage() : "Unknown error");
     LOG.error(errorMessage);
-    throw new QAException(errorMessage, lastException);
+    QAException finalException = new QAException(errorMessage);
+    if (lastException != null) {
+      finalException.initCause(lastException);
+    }
+    throw finalException;
   }
 
   /**
@@ -227,7 +231,7 @@ public final class RetryableGridConnection {
 
     // Add jitter (±10%)
     long jitter = (long) (delay * JITTER_FACTOR);
-    long jitterAmount = (random.nextLong() % (2 * jitter + 1)) - jitter;
+    long jitterAmount = (RANDOM.nextLong() % (2 * jitter + 1)) - jitter;
 
     delay = delay + jitterAmount;
 
