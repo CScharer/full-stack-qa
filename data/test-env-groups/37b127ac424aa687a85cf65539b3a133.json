@@ -1,1 +1,1 @@
-{"id":"37b127ac424aa687a85cf65539b3a133","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testOrientationChanges","name":"testOrientationChanges [PROD]","status":"passed","testResultsByEnv":{"default":"81c584b141771be31dd003a195a97b72"}}
+{"id":"37b127ac424aa687a85cf65539b3a133","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testOrientationChanges","name":"testOrientationChanges [DEV]","status":"passed","testResultsByEnv":{"default":"3f60ed70755c91ad0bf45e2d90490bed"}}

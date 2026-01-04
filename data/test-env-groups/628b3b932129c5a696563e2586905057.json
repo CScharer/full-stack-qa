@@ -1,1 +1,1 @@
-{"id":"628b3b932129c5a696563e2586905057","fullName":"com.cjs.qa.junit.tests.api.APIContractTests.testYourMembershipAPIResponseSchema","name":"testYourMembershipAPIResponseSchema [DEV]","status":"passed","testResultsByEnv":{"default":"3abbee6da28cd53989d2eea9b3d5c74e"}}
+{"id":"628b3b932129c5a696563e2586905057","fullName":"com.cjs.qa.junit.tests.api.APIContractTests.testYourMembershipAPIResponseSchema","name":"testYourMembershipAPIResponseSchema [TEST]","status":"passed","testResultsByEnv":{"default":"d766ad0dd4c27b578c4cfa7ceec39c43"}}
