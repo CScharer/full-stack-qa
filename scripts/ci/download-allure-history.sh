@@ -68,7 +68,7 @@ if [ "$METHOD" = "pages" ]; then
         BRANCH="gh-pages"
         
         # Try to get history directory contents via GitHub API
-        API_URL="https://api.github.com/repos/$REPO_OWNER/$REO_NAME/contents/history?ref=$BRANCH"
+        API_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/history?ref=$BRANCH"
         
         if command -v jq >/dev/null 2>&1; then
             # Use GitHub API to get file listing
