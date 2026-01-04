@@ -107,20 +107,38 @@ else
     echo "   📊 Found frameworks: ${found_frameworks:-none}"
 fi
 
+# Ensure history directory exists in results (needed for Allure3 to merge history)
+# History should have been downloaded earlier, but ensure it exists
+if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+    echo ""
+    echo "📊 History found in results directory:"
+    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f 2>/dev/null | wc -l | tr -d ' ')
+    echo "   Files: $HISTORY_FILE_COUNT file(s)"
+    echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+    echo "   ✅ History will be merged with new results during report generation"
+else
+    echo ""
+    echo "ℹ️  No history found in results directory (expected for first run)"
+    echo "   History will be created during this report generation"
+fi
+
 # Generate report
 # Note: Allure3 CLI doesn't support --clean flag, so we remove the directory first
+# Allure3 automatically merges history from RESULTS_DIR/history/ if it exists
 echo ""
 echo "🔄 Generating Allure report..."
 rm -rf "$REPORT_DIR"
 allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
 # Preserve history for next run (copy from report back to results)
+# This ensures history is available for the next pipeline run
 if [ -d "$REPORT_DIR/history" ]; then
     echo ""
     echo "📊 Preserving history for next run..."
     mkdir -p "$RESULTS_DIR/history"
     cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
-    echo "✅ History preserved for next report generation"
+    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f 2>/dev/null | wc -l | tr -d ' ')
+    echo "✅ History preserved: $HISTORY_FILE_COUNT file(s) ready for next report generation"
 fi
 
 # Verify report was generated
