@@ -52,6 +52,8 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.utilities.JavaHelpers;
 import com.cjs.qa.utilities.Processes;
+import com.cjs.qa.utilities.RetryableGridConnection;
+import com.cjs.qa.utilities.SeleniumGridConfig;
 import com.google.gson.JsonObject;
 
 import io.cucumber.java.Scenario;
@@ -442,7 +444,6 @@ public class SeleniumWebDriver {
   }
 
   public void initializeWebDriver() throws Throwable {
-    final int maxInstanciationAttempts = 100;
     final DesiredCapabilities desiredCapabilities =
         setDesiredCapabilities(getOperatingSystem(), getBrowser());
     final EDriverProperties eDriverProperties =
@@ -454,31 +455,67 @@ public class SeleniumWebDriver {
       if (isRemote()) {
         // setProxy(getBrowser(), isRemote(), desiredCapabilities);
         if (getVendorURL() == null) {
-          int attempt = 0;
-          boolean driverInstanciated = false;
-          do {
-            attempt++;
-            try {
-              setWebDriver(
-                  new RemoteWebDriver(URI.create(getGridHub()).toURL(), desiredCapabilities));
-              if (getWebDriver() != null) {
-                driverInstanciated = true;
-                LOG.info("Remote Web Driver instantiated on attempt [{}]", attempt);
-              }
-            } catch (final Exception e) {
-              if (attempt % 10 == 0) {
-                // e.printStackTrace()
-                LOG.warn("Remote Web Driver could not be instantiated on attempt [{}]", attempt);
-              } else {
-                System.out.print(".");
-              }
-            }
-          } while (!driverInstanciated && attempt < maxInstanciationAttempts);
-          if (!driverInstanciated) {
-            throw new QAException("Remote Web Driver could not be instanciated");
+          // Use enhanced Grid connection with version validation and retry logic
+          String gridUrl = getGridHub();
+
+          // Step 1: Check if Grid is ready (health check)
+          if (LOG.isInfoEnabled()) {
+            LOG.info("Checking Grid readiness at: {}", gridUrl);
           }
-          LOG.info("Grid Hub: [{}]", getGridHub());
+          boolean gridReady = SeleniumGridConfig.isGridReady(gridUrl);
+          if (!gridReady) {
+            LOG.warn(
+                "Grid may not be ready, but proceeding with connection attempt (retry logic will handle)");
+          } else {
+            LOG.info("✅ Grid is ready");
+          }
+
+          // Step 2: Validate Grid version (optional - can be skipped via environment variable)
+          String skipVersionCheck = System.getenv("SKIP_VERSION_CHECK");
+          if (skipVersionCheck == null || !"true".equalsIgnoreCase(skipVersionCheck)) {
+            try {
+              if (LOG.isInfoEnabled()) {
+                LOG.info("Validating Grid version compatibility...");
+              }
+              SeleniumGridConfig.validateGridVersion(gridUrl);
+            } catch (QAException e) {
+              // Version mismatch - fail fast
+              LOG.error("Version validation failed: {}", e.getMessage());
+              throw new QAException(
+                  String.format(
+                      "Selenium Grid version validation failed at %s: %s", gridUrl, e.getMessage()),
+                  e);
+            }
+          } else {
+            LOG.info("Version validation skipped (SKIP_VERSION_CHECK=true)");
+          }
+
+          // Step 3: Attempt connection with retry logic
+          if (LOG.isInfoEnabled()) {
+            LOG.info("Connecting to Grid at: {} with retry logic", gridUrl);
+          }
+          try {
+            RemoteWebDriver driver =
+                RetryableGridConnection.connectWithRetry(gridUrl, desiredCapabilities);
+            setWebDriver(driver);
+            if (getWebDriver() != null) {
+              LOG.info("✅ Remote Web Driver successfully instantiated");
+            }
+          } catch (QAException e) {
+            LOG.error("Failed to connect to Grid after retries: {}", e.getMessage());
+            throw new QAException(
+                String.format(
+                    "Remote Web Driver could not be instantiated at %s: %s",
+                    gridUrl, e.getMessage()),
+                e);
+          }
+
+          LOG.info("Grid Hub: [{}]", gridUrl);
         } else {
+          // Vendor URL (not Grid) - use direct connection without validation
+          if (LOG.isInfoEnabled()) {
+            LOG.info("Connecting to vendor URL: {}", getVendorURL());
+          }
           setWebDriver(
               new RemoteWebDriver(URI.create(getVendorURL()).toURL(), desiredCapabilities));
         }

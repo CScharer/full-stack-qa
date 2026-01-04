@@ -9,7 +9,7 @@
 - ✅ Phase 1: Version Validation Utility - COMPLETE
 - ✅ Phase 2: Retry Logic Utility - COMPLETE
 - ✅ Phase 3: Enhance SeleniumGridConfig - COMPLETE
-- ⏳ Phase 4: Update SeleniumWebDriver - PENDING
+- ✅ Phase 4: Update SeleniumWebDriver - COMPLETE
 - ⏳ Phase 5: Enhance Wait Scripts - PENDING
 - ⏳ Phase 6: Pre-Push Version Validation - PENDING
 - ⏳ Phase 7: Update CI/CD Workflows - PENDING
@@ -231,30 +231,38 @@ public static long getRetryTimeout() ✅
 
 ---
 
-### Phase 4: Update SeleniumWebDriver
+### Phase 4: Update SeleniumWebDriver ✅ COMPLETE
 
-#### Step 4.1: Refactor `initializeWebDriver()` Method
+#### Step 4.1: Refactor `initializeWebDriver()` Method ✅
 **Location**: `src/test/java/com/cjs/qa/selenium/SeleniumWebDriver.java`
 
+**Status**: ✅ **COMPLETE** - Refactored to use new retry logic and version validation
+
 **Changes**:
-- Replace existing retry loop with `RetryableGridConnection.connectWithRetry()`
-- Add version validation before attempting connection
-- Add health check before attempting connection
-- Improve error messages
-- Add structured logging
+- ✅ Replace existing retry loop with `RetryableGridConnection.connectWithRetry()`
+- ✅ Add version validation before attempting connection (can be skipped via `SKIP_VERSION_CHECK=true`)
+- ✅ Add health check before attempting connection (warns if not ready, but proceeds)
+- ✅ Improve error messages with detailed context
+- ✅ Add structured logging at each step
+- ✅ Remove unused `maxInstanciationAttempts` variable
 
 **Implementation Flow**:
-1. Resolve Grid URL (existing logic)
-2. Check if Grid is ready (health check)
-3. Validate Grid version (new)
-4. Attempt connection with retry logic (new)
-5. Log success/failure with details
+1. ✅ Resolve Grid URL (existing logic)
+2. ✅ Check if Grid is ready (health check via `SeleniumGridConfig.isGridReady()`)
+3. ✅ Validate Grid version (via `SeleniumGridConfig.validateGridVersion()`) - optional
+4. ✅ Attempt connection with retry logic (via `RetryableGridConnection.connectWithRetry()`)
+5. ✅ Log success/failure with details
 
 **Error Handling**:
-- Version mismatch → Fail fast with clear error message
-- Grid not ready → Retry with exponential backoff
-- Connection failures → Retry with exponential backoff
-- Other errors → Fail fast with error details
+- ✅ Version mismatch → Fail fast with clear error message
+- ✅ Grid not ready → Logs warning but proceeds (retry logic will handle)
+- ✅ Connection failures → Retry with exponential backoff (via RetryableGridConnection)
+- ✅ Other errors → Fail fast with error details
+
+**Backward Compatibility**:
+- ✅ Vendor URL connections (non-Grid) remain unchanged
+- ✅ Version validation can be skipped via `SKIP_VERSION_CHECK=true` environment variable
+- ✅ All existing functionality preserved
 
 ---
 
