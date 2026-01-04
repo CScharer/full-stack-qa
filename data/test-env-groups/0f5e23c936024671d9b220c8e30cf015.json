@@ -1,1 +1,1 @@
-{"id":"0f5e23c936024671d9b220c8e30cf015","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testGoogleHomepage","name":"Verify Google homepage loads correctly [DEV]","status":"passed","testResultsByEnv":{"default":"cb66b9b723bb4a3db64f7cc0bda0498c"}}
+{"id":"0f5e23c936024671d9b220c8e30cf015","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testGoogleHomepage","name":"Verify Google homepage loads correctly [TEST]","status":"passed","testResultsByEnv":{"default":"c28819dc29a32d2bb93b2d76a59b2694"}}
