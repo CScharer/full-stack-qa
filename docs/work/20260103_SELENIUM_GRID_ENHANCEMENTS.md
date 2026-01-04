@@ -7,7 +7,7 @@
 
 **Implementation Progress**:
 - ✅ Phase 1: Version Validation Utility - COMPLETE
-- ⏳ Phase 2: Retry Logic Utility - PENDING
+- ✅ Phase 2: Retry Logic Utility - COMPLETE
 - ⏳ Phase 3: Enhance SeleniumGridConfig - PENDING
 - ⏳ Phase 4: Update SeleniumWebDriver - PENDING
 - ⏳ Phase 5: Enhance Wait Scripts - PENDING
@@ -146,49 +146,57 @@ public class SeleniumGridVersionValidator {
 
 ---
 
-### Phase 2: Create Retry Logic Utility
+### Phase 2: Create Retry Logic Utility ✅ COMPLETE
 
-#### Step 2.1: Create `RetryableGridConnection.java`
+#### Step 2.1: Create `RetryableGridConnection.java` ✅
 **Location**: `src/test/java/com/cjs/qa/utilities/RetryableGridConnection.java`
+
+**Status**: ✅ **COMPLETE** - Implemented and ready for testing
 
 **Purpose**: Utility class for retrying Grid connections with exponential backoff
 
 **Features**:
-- Exponential backoff with configurable base delay and max delay
-- Jitter to prevent thundering herd
-- Error categorization (transient vs. permanent)
-- Configurable retry attempts and timeouts
-- Detailed logging of retry attempts
+- ✅ Exponential backoff with configurable base delay and max delay
+- ✅ Jitter to prevent thundering herd (10% jitter factor)
+- ✅ Error categorization (transient vs. permanent)
+- ✅ Configurable retry attempts and timeouts
+- ✅ Detailed logging of retry attempts
+- ✅ Timeout checking across all retry attempts
+- ✅ Comprehensive error handling
 
 **Implementation Details**:
 ```java
 public class RetryableGridConnection {
   // Methods:
-  // - connectWithRetry(String gridUrl, DesiredCapabilities capabilities) throws QAException
-  // - shouldRetry(Exception e) returns boolean
-  // - calculateBackoff(int attempt) returns long (milliseconds)
-  // - isTransientError(Exception e) returns boolean
+  // - connectWithRetry(String gridUrl, Capabilities capabilities) throws QAException ✅
+  // - isTransientError(Exception e) returns boolean ✅
+  // - calculateBackoff(int attempt) returns long (milliseconds) ✅
+  // - getMaxRetries() returns int ✅
+  // - getRetryBaseDelay() returns long ✅
+  // - getRetryMaxDelay() returns long ✅
+  // - getRetryTimeout() returns long ✅
 }
 ```
 
 **Configuration Options**:
-- `SELENIUM_GRID_MAX_RETRIES` (default: 5)
-- `SELENIUM_GRID_RETRY_BASE_DELAY_MS` (default: 1000)
-- `SELENIUM_GRID_RETRY_MAX_DELAY_MS` (default: 10000)
-- `SELENIUM_GRID_RETRY_TIMEOUT_MS` (default: 30000)
+- ✅ `SELENIUM_GRID_MAX_RETRIES` (default: 5) - via env var or system property
+- ✅ `SELENIUM_GRID_RETRY_BASE_DELAY_MS` (default: 1000) - via env var or system property
+- ✅ `SELENIUM_GRID_RETRY_MAX_DELAY_MS` (default: 10000) - via env var or system property
+- ✅ `SELENIUM_GRID_RETRY_TIMEOUT_MS` (default: 30000) - via env var or system property
 
 **Error Categories**:
-- **Transient** (should retry):
-  - Connection refused
-  - Timeout exceptions
-  - Socket exceptions
-  - Grid not ready (HTTP 503)
+- **Transient** (should retry) ✅:
+  - Connection refused ✅
+  - Timeout exceptions ✅
+  - Socket exceptions ✅
+  - Grid not ready (HTTP 503, 502, 504) ✅
   
-- **Permanent** (don't retry):
-  - Version mismatch
-  - Authentication failures
-  - Invalid capabilities
-  - Malformed URL
+- **Permanent** (don't retry) ✅:
+  - Version mismatch ✅
+  - Authentication failures ✅
+  - Invalid capabilities ✅
+  - Malformed URL ✅
+  - Unknown host ✅
 
 ---
 
@@ -587,8 +595,8 @@ fi
 - [x] Version validation utility class created (Phase 1)
 - [ ] Version validation works correctly for matching versions (needs testing)
 - [ ] Version validation fails fast for mismatched versions (needs testing)
-- [ ] Retry logic uses exponential backoff with jitter (Phase 2)
-- [ ] Retry logic only retries on transient errors (Phase 2)
+- [x] Retry logic uses exponential backoff with jitter (Phase 2)
+- [x] Retry logic only retries on transient errors (Phase 2)
 - [ ] Configuration options are respected (Phase 1 complete)
 - [x] Error messages are clear and actionable (Phase 1)
 - [x] Logging provides useful diagnostics (Phase 1)
