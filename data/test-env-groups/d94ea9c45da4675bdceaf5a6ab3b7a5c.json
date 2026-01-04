@@ -1,1 +1,1 @@
-{"id":"d94ea9c45da4675bdceaf5a6ab3b7a5c","fullName":"com.cjs.qa.junit.tests.SimpleGridTest.testNavigateToGoogle","name":"testNavigateToGoogle [PROD]","status":"passed","testResultsByEnv":{"default":"e3fafd3f3ff2c81d59676e0a5bd66d84"}}
+{"id":"d94ea9c45da4675bdceaf5a6ab3b7a5c","fullName":"com.cjs.qa.junit.tests.SimpleGridTest.testNavigateToGoogle","name":"testNavigateToGoogle [DEV]","status":"passed","testResultsByEnv":{"default":"bc985850baa4e5163de545bc1f54d95c"}}
