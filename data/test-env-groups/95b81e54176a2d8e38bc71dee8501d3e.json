@@ -1,1 +1,1 @@
-{"id":"95b81e54176a2d8e38bc71dee8501d3e","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testBrowserCapabilities","name":"Test browser capabilities [DEV]","status":"passed","testResultsByEnv":{"default":"a4202927919a7c7595b262f58e20a1c8"}}
+{"id":"95b81e54176a2d8e38bc71dee8501d3e","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testBrowserCapabilities","name":"Test browser capabilities [PROD]","status":"passed","testResultsByEnv":{"default":"e1fce4735e21647abbc29a8b7f9a1dc5"}}
