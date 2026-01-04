@@ -42,5 +42,6 @@ case ${MERGE_NUMBER} in
     ;;
 esac
 echo ""
+echo "📊 Merge ${MERGE_NUMBER} validation in progress..."
 echo "═══════════════════════════════════════════════════════════════"
 
