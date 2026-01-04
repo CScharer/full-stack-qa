@@ -7,7 +7,7 @@
 
 > **💡 Automation**: Version validation is now automated via `scripts/validate-dependency-versions.sh` and CI/CD job `validate-versions`. This helps prevent version drift and ensures versions are aligned across the project.
 > 
-> **✅ Pre-Push Validation**: Pre-push version validation is now implemented! The pre-push hook automatically validates Selenium versions before code is pushed. See [Selenium Grid Enhancements](../work/20260103_SELENIUM_GRID_ENHANCEMENTS.md) for details.
+> **✅ Pre-Push Validation**: Pre-push version validation is now implemented! The pre-push hook automatically validates Selenium versions before code is pushed. See [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md) for details.
 
 ### 🔑 Status Legend
 - `[✅]` = Completed / Verified / Current
@@ -368,7 +368,7 @@ The `overrides` section forces all instances of the package (including transitiv
 
 - **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at 4.39.0.
   - **Validation**: Currently validated via scheduled workflow and manual script execution
-  - **✅ Implemented**: Pre-push hook validation catches mismatches before code is pushed (see [Selenium Grid Enhancements](../work/20260103_SELENIUM_GRID_ENHANCEMENTS.md))
+  - **✅ Implemented**: Pre-push hook validation catches mismatches before code is pushed (see [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md))
 - **TypeScript Updates**: Consider updating all projects together for consistency.
 - **Python Major Versions**: numpy 2.x has breaking changes - review carefully before updating.
 - **Security Patches**: Apply immediately when available.
