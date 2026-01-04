@@ -1,7 +1,7 @@
 # @SuppressWarnings Inventory
 
 **Document Type**: Reference Document (Non-Living)  
-**Last Updated**: 2025-12-29  
+**Last Updated**: 2026-01-04  
 **Total Annotations**: 31 across 23 files
 
 ---
@@ -105,7 +105,7 @@
 
 | # | File | Line | Type | Context | Notes |
 |---|------|------|------|---------|-------|
-| 1 | `src/test/java/com/cjs/qa/ym/xml/objects/DataSet.java` | 13 | `PMD.UnnecessaryImport` | Class-level | Wildcard import used for many classes from dataset package |
+| 1 | `src/test/java/com/cjs/qa/ym/xml/objects/DataSet.java` | 12 | `PMD.UnnecessaryImport` | Class-level | Wildcard import used for many classes from dataset package |
 | 2 | `src/test/java/com/cjs/qa/utilities/GuardedLogger.java` | 23 | `PMD.GuardLogStatement` | Class-level | Intentional - wrapper class handles guards internally |
 | 3 | `src/test/java/com/cjs/qa/core/QAException.java` | 10 | `PMD.DoNotExtendJavaLangThrowable` | Class-level | Custom exception design - extends Throwable |
 | 4 | `src/test/java/com/cjs/qa/utilities/QALogger.java` | 5 | `PMD.DoNotExtendJavaLangThrowable` | Class-level | Custom logging exception design - extends Throwable |

@@ -283,17 +283,19 @@ if [ "$SKIP_QUALITY_CHECKS" = false ]; then
         if [ "$VIOLATION_COUNT" = "0" ] || [ -z "$VIOLATION_COUNT" ]; then
             echo -e "${GREEN}✅ PMD: No violations found${NC}"
         else
-            echo -e "${YELLOW}⚠️  PMD: ${VIOLATION_COUNT} violation(s) found${NC}"
+            echo -e "${RED}❌ PMD: ${VIOLATION_COUNT} violation(s) found${NC}"
             echo ""
             echo "Violation summary:"
             grep -E "PMD Failure" /tmp/pmd-output.log | head -10 || true
             echo ""
             if [ "$CI_MODE" = true ]; then
-                echo -e "${YELLOW}Note: PMD violations are warnings in CI mode${NC}"
+                echo -e "${RED}Error: PMD violations must be fixed before pushing${NC}"
+                echo -e "${YELLOW}💡 Fix violations or bypass with: git push --no-verify${NC}"
+                exit 4
             else
-                echo -e "${YELLOW}Note: PMD violations are warnings, not blocking${NC}"
+                echo -e "${YELLOW}⚠️  PMD violations found (not blocking in non-CI mode)${NC}"
+                echo -e "${YELLOW}💡 Consider fixing violations before committing${NC}"
             fi
-            # Don't exit with error - violations are warnings, not blocking
         fi
     else
         echo -e "${RED}❌ PMD check failed${NC}"

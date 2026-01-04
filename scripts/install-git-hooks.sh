@@ -201,6 +201,23 @@ if [ -n "$CODE_FILES" ]; then
     else
         echo -e "${YELLOW}⚠️  validate-pre-commit.sh not found, skipping validation${NC}"
     fi
+    
+    # Step 3: Run dependency version validation
+    if [ -f "scripts/validate-dependency-versions.sh" ]; then
+        echo -e "${BLUE}🔍 Validating dependency versions...${NC}"
+        chmod +x scripts/validate-dependency-versions.sh
+        if ./scripts/validate-dependency-versions.sh; then
+            echo -e "${GREEN}✅ Version validation passed${NC}"
+            echo ""
+        else
+            echo -e "${RED}❌ Version validation failed${NC}"
+            echo -e "${YELLOW}💡 Fix version mismatches before pushing${NC}"
+            echo -e "${YELLOW}💡 You can bypass this hook with: git push --no-verify${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${YELLOW}⚠️  validate-dependency-versions.sh not found, skipping version validation${NC}"
+    fi
 fi
 
 echo -e "${GREEN}✅ Pre-push verification passed${NC}"

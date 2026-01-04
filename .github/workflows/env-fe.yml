@@ -384,16 +384,21 @@ jobs:
           cache: 'maven'
 
       - name: Wait for Selenium Grid
+        env:
+          SELENIUM_VERSION: ${{ inputs.selenium_version || '4.39.0' }}
         run: |
           echo "⏳ Waiting for Grid..."
-          timeout ${{ inputs.grid_wait_timeout_seconds || 5 }} bash -c 'until curl -sf http://localhost:${{ inputs.se_hub_port }}/wd/hub/status; do sleep 1; done'
-          # No sleep needed - curl success confirms Grid is ready
-          echo "✅ Grid ready!"
+          ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" ${{ inputs.grid_wait_timeout_seconds || 5 }}
 
       - name: Run Grid Tests
         timeout-minutes: ${{ inputs.grid_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+          SELENIUM_VERSION: ${{ inputs.selenium_version || '4.39.0' }}
+          SELENIUM_GRID_MAX_RETRIES: '5'
+          SELENIUM_GRID_RETRY_BASE_DELAY_MS: '1000'
+          SELENIUM_GRID_RETRY_MAX_DELAY_MS: '10000'
+          SELENIUM_GRID_RETRY_TIMEOUT_MS: '30000'
           BROWSER: ${{ matrix.browser }}
           TEST_ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}

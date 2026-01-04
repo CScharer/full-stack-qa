@@ -92,7 +92,6 @@ public class XML {
    * @throws Exception
    */
   public static Document createDocument(File xml) throws Exception {
-    Document document = null;
     final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     // Disable external entity expansion to prevent XXE attacks
     documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -104,7 +103,7 @@ public class XML {
         "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
     documentBuilderFactory.setExpandEntityReferences(false);
     final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-    document = documentBuilder.parse(xml);
+    Document document = documentBuilder.parse(xml);
     // read this -
     // http://stackoverflow" + IExtension.COM +
     // "/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
