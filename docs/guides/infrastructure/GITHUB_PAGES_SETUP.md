@@ -221,13 +221,39 @@ permissions:
 
 ## 📈 Historical Trends
 
+**Status**: ✅ **Active** - Automatic history preservation  
+**Last Updated**: 2026-01-04
+
 After multiple CI runs, you'll see:
 - **Trend graphs** showing test stability over time
 - **Flaky test detection** - tests that sometimes fail
 - **Duration trends** - performance regressions
 - **History** - Previous report data preserved
 
-The `keep_files: false` setting ensures each deployment is fresh, but Allure's built-in history mechanism preserves trend data in the report itself.
+### How History is Preserved
+
+The `keep_files: false` setting ensures each deployment is fresh, but Allure's built-in history mechanism preserves trend data through a two-step process:
+
+1. **Before Report Generation**:
+   - History is downloaded from the previous GitHub Pages deployment
+   - History is also downloaded from GitHub Actions artifact (fallback)
+   - History is placed in the results directory before report generation
+
+2. **During Report Generation**:
+   - Allure merges the downloaded history with new test results
+   - Updated history is included in the generated report
+
+3. **After Report Generation**:
+   - History is uploaded as artifact (90-day retention) for reliability
+   - History is deployed to GitHub Pages with the report
+
+**Result**: Historical trends are preserved across deployments, even with `keep_files: false`.
+
+**Implementation Details**:
+- **Script**: `scripts/ci/download-allure-history.sh` - Downloads history from GitHub Pages or artifact
+- **Workflow**: History download step runs before report generation
+- **Artifact**: History is preserved as `allure-history` artifact (90-day retention)
+- **Verification**: Verification steps confirm history is downloaded and included in report
 
 ---
 

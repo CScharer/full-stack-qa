@@ -1229,6 +1229,45 @@ jobs:
           chmod +x scripts/ci/prepare-combined-allure-results.sh
           ./scripts/ci/prepare-combined-allure-results.sh "all-test-results" "allure-results-combined"
 
+      - name: Download Previous Allure History (Artifact Fallback)
+        if: always() && github.ref == 'refs/heads/main'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: allure-history
+          path: allure-results-combined/history/
+          pattern: allure-history
+          merge-multiple: false
+
+      - name: Download Previous Allure History (GitHub Pages)
+        if: always() && github.ref == 'refs/heads/main'
+        run: |
+          chmod +x scripts/ci/download-allure-history.sh
+          ./scripts/ci/download-allure-history.sh "allure-results-combined" "pages"
+
+      - name: Verify History Download
+        if: always() && github.ref == 'refs/heads/main'
+        run: |
+          echo "🔍 Verifying history download..."
+          echo ""
+          if [ -d "allure-results-combined/history" ]; then
+            echo "✅ History directory exists"
+            FILE_COUNT=$(find allure-results-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')
+            if [ "$FILE_COUNT" -gt 0 ]; then
+              echo "   Files: $FILE_COUNT file(s)"
+              echo "   Size: $(du -sh allure-results-combined/history 2>/dev/null | cut -f1 || echo 'unknown')"
+              echo "   Sample files:"
+              find allure-results-combined/history -type f -name "*.json" 2>/dev/null | head -5 | while read -r f; do
+                echo "     - $(basename "$f")"
+              done
+            else
+              echo "   ℹ️  Directory is empty (expected for first run)"
+            fi
+          else
+            echo "ℹ️  No history directory (expected for first run)"
+            echo "   History will be created during report generation"
+          fi
+
       - name: Install Allure3 CLI
         if: always()
         run: |
@@ -1240,6 +1279,41 @@ jobs:
         run: |
           chmod +x scripts/ci/generate-combined-allure-report.sh
           ./scripts/ci/generate-combined-allure-report.sh "allure-results-combined" "allure-report-combined"
+
+      - name: Verify History in Report
+        if: always()
+        run: |
+          echo "🔍 Verifying history in generated report..."
+          echo ""
+          if [ -d "allure-report-combined/history" ]; then
+            echo "✅ History included in report"
+            FILE_COUNT=$(find allure-report-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')
+            echo "   Files: $FILE_COUNT file(s)"
+            if [ "$FILE_COUNT" -gt 0 ]; then
+              echo "   Size: $(du -sh allure-report-combined/history 2>/dev/null | cut -f1 || echo 'unknown')"
+              echo "   Sample files:"
+              find allure-report-combined/history -type f -name "*.json" 2>/dev/null | head -5 | while read -r f; do
+                echo "     - $(basename "$f")"
+              done
+              echo ""
+              echo "✅ History will be preserved in GitHub Pages deployment"
+            else
+              echo "   ℹ️  History directory exists but is empty (first run)"
+              echo "   History will be populated after this deployment"
+            fi
+          else
+            echo "⚠️  Warning: No history directory in generated report"
+            echo "   This may indicate an issue with history preservation"
+          fi
+
+      - name: Upload Allure History (for next run)
+        uses: actions/upload-artifact@v4
+        if: always() && github.ref == 'refs/heads/main'
+        with:
+          name: allure-history
+          path: allure-report-combined/history/
+          retention-days: 90
+          if-no-files-found: ignore
 
       - name: Upload Combined Allure Report
         uses: actions/upload-artifact@v4

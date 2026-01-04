@@ -401,13 +401,38 @@ The report will automatically open in your default browser!
 ## 🌟 Advanced Features
 
 ### Historical Trends
-Keep `allure-results/history` folder to track trends over time:
+
+**Status**: ✅ **Active** - Automatic history preservation in CI/CD pipeline  
+**Last Updated**: 2026-01-04
+
+Allure reports automatically track test execution trends over time, showing:
+- **Test pass/fail rates** over multiple runs
+- **Duration trends** - Performance regressions and improvements
+- **Flaky test detection** - Tests that sometimes fail
+- **Historical test execution data** - Complete execution history
+
+#### How It Works
+
+**In CI/CD Pipeline** (Automatic):
+1. Before generating a new report, the pipeline downloads history from the previous deployment
+2. History is merged with new test results during report generation
+3. Updated history is included in the new report
+4. History is preserved for the next run (both in GitHub Pages and as artifact)
+
+**History Preservation Methods**:
+- **Primary**: Downloads from GitHub Pages (previous deployment)
+- **Fallback**: Downloads from GitHub Actions artifact (if GitHub Pages unavailable)
+- **Upload**: History is uploaded as artifact (90-day retention) for reliability
+
+**Manual Local Usage**:
 ```bash
 # After generating report, save history
 cp -r target/allure-report/history target/allure-results/
 
 # Next run will show trends!
 ```
+
+**Note**: In CI/CD, this is handled automatically - no manual steps required.
 
 ### Environment Information
 Create `target/allure-results/environment.properties`:
