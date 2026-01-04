@@ -78,7 +78,7 @@ This document describes the automated version monitoring and alerting system imp
 - Automatically validates code if code files are being pushed
 - Skips all checks for documentation-only changes
 - **All validation**: Runs `scripts/format-code.sh --ci-mode` (Checkstyle & PMD) and `scripts/validate-pre-commit.sh` (compilation, Node.js, TypeScript, GitHub Actions, Shell scripts, security)
-- **Version validation**: Runs `scripts/validate-dependency-versions.sh` to check Selenium version alignment (✅ implemented - see [Selenium Grid Enhancements](../work/20260103_SELENIUM_GRID_ENHANCEMENTS.md))
+- **Version validation**: Runs `scripts/validate-dependency-versions.sh` to check Selenium version alignment (✅ implemented - see [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md))
 - **No formatting**: Code is already formatted in pre-commit hook
 - Validates GitHub Actions workflow files using `actionlint`
 - Ensures code quality before reaching main branch (15-30 seconds, faster than before)
@@ -147,7 +147,7 @@ Or run locally:
    - Validates Selenium versions across config files
    - Fast validation (< 5 seconds)
    - Clear error messages showing which versions mismatch
-   - See [Selenium Grid Enhancements](../work/20260103_SELENIUM_GRID_ENHANCEMENTS.md) for implementation details
+   - See [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md) for details
 
 ### Future Enhancements (Optional)
 
