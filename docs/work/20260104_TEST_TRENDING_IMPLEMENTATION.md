@@ -403,6 +403,45 @@ done
 
 **Key Point**: History must be in the **results directory** BEFORE `allure generate` is called.
 
+### Branch-Specific History Collection
+
+**Current Implementation**: History is **only collected for `main` branch**.
+
+**Workflow Conditions**:
+- **History Download**: `if: always() && github.ref == 'refs/heads/main'`
+- **History Upload**: `if: always() && github.ref == 'refs/heads/main'`
+- **GitHub Pages Deployment**: `if: always() && github.ref == 'refs/heads/main'`
+
+**What This Means**:
+
+| Branch Type | History Downloaded? | History Uploaded? | Report Deployed? | Trends Available? |
+|-------------|---------------------|------------------|------------------|-------------------|
+| **main** | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes (after 2+ runs) |
+| **Feature branches** | ❌ No | ❌ No | ❌ No | ❌ No (reports are artifacts only) |
+
+**Rationale**:
+- ✅ **Centralized History**: All history is stored on `main` branch (single source of truth)
+- ✅ **GitHub Pages**: Only `main` branch deploys to GitHub Pages (where history is stored)
+- ✅ **Feature Branches**: Reports are available as artifacts, but don't affect main history
+- ✅ **Consistency**: History reflects production/main branch test results
+
+**Feature Branch Behavior**:
+- Reports are generated (without history)
+- Reports are uploaded as artifacts (for review)
+- Reports are NOT deployed to GitHub Pages
+- History is NOT downloaded or uploaded
+- Trends are NOT available (no historical data)
+
+**If You Want Feature Branches to Use History**:
+You could modify the workflow to:
+1. Download history on feature branches (from `main`'s history)
+2. Generate reports with history (for preview)
+3. Still only upload history on `main` (to preserve single source of truth)
+
+**Note**: This would allow feature branches to preview trends, but wouldn't collect separate history per branch.
+
+---
+
 ### How History Handles Partial Runs and Test Changes
 
 **Important**: Allure history is based on `historyId`, which uniquely identifies each test across runs.
