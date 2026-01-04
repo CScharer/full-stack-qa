@@ -1,1 +1,1 @@
-{"id":"d26dcd138ef0898c468195f9441e0ddc","fullName":"Selenide.com.cjs.qa.junit.tests.HomePageTests.testHomePageLoads","name":"testHomePageLoads [PROD]","status":"passed","testResultsByEnv":{"default":"d51a098e45b1b554886d9f4cc2d552e6"}}
+{"id":"d26dcd138ef0898c468195f9441e0ddc","fullName":"Selenide.com.cjs.qa.junit.tests.HomePageTests.testHomePageLoads","name":"testHomePageLoads [DEV]","status":"passed","testResultsByEnv":{"default":"51808499ab6e39403a22953960364db9"}}

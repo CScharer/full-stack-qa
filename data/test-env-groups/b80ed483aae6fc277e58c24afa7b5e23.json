@@ -1,1 +1,1 @@
-{"id":"b80ed483aae6fc277e58c24afa7b5e23","fullName":"com.cjs.qa.junit.tests.NegativeTests.testStaleElementHandling","name":"testStaleElementHandling [TEST]","status":"passed","testResultsByEnv":{"default":"e96027facb78b3bcedb36b05f7cd9284"}}
+{"id":"b80ed483aae6fc277e58c24afa7b5e23","fullName":"com.cjs.qa.junit.tests.NegativeTests.testStaleElementHandling","name":"testStaleElementHandling [DEV]","status":"passed","testResultsByEnv":{"default":"39b70c2735a37279d32d34a221bcff6d"}}
