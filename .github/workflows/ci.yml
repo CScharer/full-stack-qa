@@ -1367,6 +1367,7 @@ jobs:
           fi
 
       - name: Upload Allure History (for next run)
+        id: upload-history-check
         if: always() && github.ref == 'refs/heads/main'
         run: |
           set -e
@@ -1374,28 +1375,38 @@ jobs:
           echo ""
           
           if [ ! -d "allure-report-combined/history" ]; then
-            echo "❌ ERROR: History directory does not exist in report"
-            echo "   Cannot upload history - this must be fixed"
-            exit 1
+            # Check if this is the first run (no history expected)
+            if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+              echo "❌ ERROR: History directory does not exist in report, but history exists in GitHub Pages"
+              echo "   This indicates Allure3 did not properly preserve history - this must be fixed"
+              exit 1
+            else
+              echo "ℹ️  No history directory in report (first run - expected)"
+              echo "   Allure3 may not create history directory until there's actual history data"
+              echo "   Skipping history upload for first run"
+              exit 0
+            fi
           fi
           
           FILE_COUNT=$(find allure-report-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')
           if [ "$FILE_COUNT" -eq 0 ]; then
-            echo "⚠️  WARNING: History directory exists but is empty"
-            echo "   This may be acceptable for first run, but will cause issues if it persists"
-            echo "   Uploading empty history directory (will be ignored by artifact upload)"
+            # Check if history should exist
+            if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
+              echo "❌ ERROR: History directory exists but is empty, and history should exist from previous runs"
+              echo "   This indicates Allure3 did not properly merge history - this must be fixed"
+              exit 1
+            else
+              echo "⚠️  WARNING: History directory exists but is empty (first run)"
+              echo "   Uploading empty history directory (will be ignored by artifact upload)"
+            fi
           else
             echo "✅ History directory contains $FILE_COUNT file(s)"
             echo "   Uploading history for next run..."
           fi
           
-          # Use artifact upload action
-          # Note: We check for files above, but allow empty for first run
-          # The artifact action will handle empty directories gracefully
-          
       - name: Upload Allure History Artifact
         uses: actions/upload-artifact@v4
-        if: always() && github.ref == 'refs/heads/main'
+        if: always() && github.ref == 'refs/heads/main' && steps.upload-history-check.outcome == 'success'
         with:
           name: allure-history
           path: allure-report-combined/history/
