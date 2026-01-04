@@ -1,1 +1,1 @@
-{"id":"d88b98cc7fd19f419ef6b78a553e0586","fullName":"com.cjs.qa.junit.tests.HtmlUnitUpgradeVerificationTest.testPackageNames","name":"testPackageNames [PROD]","status":"passed","testResultsByEnv":{"default":"dde9038cb8ffc8f12bbdd7b8f4cb07e7"}}
+{"id":"d88b98cc7fd19f419ef6b78a553e0586","fullName":"com.cjs.qa.junit.tests.HtmlUnitUpgradeVerificationTest.testPackageNames","name":"testPackageNames [TEST]","status":"passed","testResultsByEnv":{"default":"a28a61bd7d29fd8beb6e2355f4d38e07"}}

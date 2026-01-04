@@ -1,1 +1,1 @@
-{"id":"45381a17cbe8f83053b5af261e9e52ec","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileTouchInteractions","name":"testMobileTouchInteractions [PROD]","status":"passed","testResultsByEnv":{"default":"1707dcf2067d6087320941e9b668d765"}}
+{"id":"45381a17cbe8f83053b5af261e9e52ec","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileTouchInteractions","name":"testMobileTouchInteractions [TEST]","status":"passed","testResultsByEnv":{"default":"6f8c5f6d37e70e481f3ff54a08d27e33"}}
