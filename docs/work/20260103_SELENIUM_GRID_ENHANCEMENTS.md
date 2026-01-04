@@ -10,7 +10,7 @@
 - ✅ Phase 2: Retry Logic Utility - COMPLETE
 - ✅ Phase 3: Enhance SeleniumGridConfig - COMPLETE
 - ✅ Phase 4: Update SeleniumWebDriver - COMPLETE
-- ⏳ Phase 5: Enhance Wait Scripts - PENDING
+- ✅ Phase 5: Enhance Wait Scripts - COMPLETE
 - ⏳ Phase 6: Pre-Push Version Validation - PENDING
 - ⏳ Phase 7: Update CI/CD Workflows - PENDING
 - ⏳ Phase 8: Create Test Utilities - PENDING
@@ -266,25 +266,28 @@ public static long getRetryTimeout() ✅
 
 ---
 
-### Phase 5: Enhance Wait Scripts
+### Phase 5: Enhance Wait Scripts ✅ COMPLETE
 
-#### Step 5.1: Update `wait-for-grid.sh`
+#### Step 5.1: Update `wait-for-grid.sh` ✅
 **Location**: `scripts/ci/wait-for-grid.sh`
 
+**Status**: ✅ **COMPLETE** - Enhanced with optional version validation
+
 **Changes**:
-- Add version validation check (optional, can be skipped for faster startup)
-- Add retry logic with exponential backoff
-- Improve error messages
-- Add option to skip version validation (`SKIP_VERSION_CHECK=true`)
+- ✅ Add version validation check (optional, can be skipped for faster startup)
+- ✅ Improve error messages with colored output
+- ✅ Add option to skip version validation (`SKIP_VERSION_CHECK=true`)
+- ✅ Support both jq and grep/sed for version extraction
 
 **New Features**:
-- Check Grid version if `SELENIUM_VERSION` environment variable is set
-- Configurable timeout and retry attempts
-- Better error reporting
+- ✅ Check Grid version if `SELENIUM_VERSION` environment variable is set
+- ✅ Better error reporting with colored output
+- ✅ Graceful fallback if version cannot be determined
+- ✅ Clear error messages for version mismatches
 
 **Usage**:
 ```bash
-# Basic usage (existing)
+# Basic usage (existing - no version check)
 ./scripts/ci/wait-for-grid.sh
 
 # With version validation
@@ -292,7 +295,17 @@ SELENIUM_VERSION=4.39.0 ./scripts/ci/wait-for-grid.sh
 
 # Skip version check (faster)
 SKIP_VERSION_CHECK=true ./scripts/ci/wait-for-grid.sh
+
+# Custom Grid URL and timeout
+./scripts/ci/wait-for-grid.sh "http://localhost:4444/wd/hub/status" 10
 ```
+
+**Implementation Details**:
+- ✅ Uses existing `wait-for-service.sh` utility for connectivity check
+- ✅ Extracts version from Grid status endpoint JSON response
+- ✅ Supports both `jq` (preferred) and `grep/sed` (fallback) for JSON parsing
+- ✅ Validates version only if `SELENIUM_VERSION` is set and `SKIP_VERSION_CHECK` is not true
+- ✅ Fails with clear error message if versions don't match
 
 ---
 
