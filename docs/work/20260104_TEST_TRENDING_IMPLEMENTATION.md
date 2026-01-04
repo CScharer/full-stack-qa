@@ -403,6 +403,109 @@ done
 
 **Key Point**: History must be in the **results directory** BEFORE `allure generate` is called.
 
+### How History Handles Partial Runs and Test Changes
+
+**Important**: Allure history is based on `historyId`, which uniquely identifies each test across runs.
+
+#### HistoryId Structure
+
+Each test has a unique `historyId` based on:
+- **Test identifier**: `fullName` (e.g., `com.example.TestClass.testMethod`)
+- **Environment**: Included in historyId to separate same test across environments
+- **Formula**: `md5(fullName:environment)`
+
+**Example**:
+- `TestLogin.testValidLogin` in DEV → `historyId = md5("TestLogin.testValidLogin:dev")`
+- `TestLogin.testValidLogin` in TEST → `historyId = md5("TestLogin.testValidLogin:test")`
+- `TestLogin.testValidLogin` in PROD → `historyId = md5("TestLogin.testValidLogin:prod")`
+
+These are **three separate history entries** because they're different environments.
+
+#### Scenario 1: Not All Environments Run
+
+**Example**: Only DEV environment runs, TEST and PROD are skipped.
+
+**What Happens**:
+1. History is downloaded (contains all previous runs: DEV, TEST, PROD)
+2. Only DEV tests are executed and converted to Allure results
+3. Allure merges:
+   - **DEV tests**: History updated with new execution data
+   - **TEST tests**: History remains unchanged (no new execution)
+   - **PROD tests**: History remains unchanged (no new execution)
+4. Generated report shows:
+   - **DEV**: Current run + historical trends
+   - **TEST**: Only historical trends (no current run)
+   - **PROD**: Only historical trends (no current run)
+
+**Result**: ✅ History is preserved for all environments, but only executed environments show new data.
+
+#### Scenario 2: Different Tests Included/Excluded
+
+**Example**: Run 1 includes Test A, B, C. Run 2 includes Test A, C, D (B removed, D added).
+
+**What Happens**:
+1. History is downloaded (contains Test A, B, C from Run 1)
+2. Run 2 executes Test A, C, D
+3. Allure merges:
+   - **Test A**: History updated with new execution (Run 2)
+   - **Test B**: History remains unchanged (not executed in Run 2)
+   - **Test C**: History updated with new execution (Run 2)
+   - **Test D**: New history entry created (first time executed)
+4. Generated report shows:
+   - **Test A**: Trends from Run 1 + Run 2
+   - **Test B**: Trends from Run 1 only (no Run 2 data)
+   - **Test C**: Trends from Run 1 + Run 2
+   - **Test D**: Trends from Run 2 only (new test)
+
+**Result**: ✅ History is preserved for all tests, but only executed tests show new data.
+
+#### Scenario 3: Test Renamed or Moved
+
+**Example**: `TestLogin.testValidLogin` is renamed to `TestLogin.testSuccessfulLogin`.
+
+**What Happens**:
+1. History contains `TestLogin.testValidLogin` (old name)
+2. New execution creates `TestLogin.testSuccessfulLogin` (new name)
+3. These have **different historyIds** (different `fullName`)
+4. Allure treats them as **different tests**:
+   - Old test: History remains but won't be updated
+   - New test: New history entry created
+
+**Result**: ⚠️ **History is NOT preserved** - renamed tests appear as new tests.
+
+**Workaround**: If you need to preserve history for renamed tests, you would need to manually update the history files to map old historyId to new historyId (not currently implemented).
+
+#### Scenario 4: Test Parameters Change
+
+**Example**: Test runs with different parameters (e.g., different data sets).
+
+**What Happens**:
+1. If `fullName` includes parameters → Different historyId → Separate history
+2. If `fullName` doesn't include parameters → Same historyId → History merged
+
+**Current Implementation**: Parameters are stored in `parameters` field, not in `fullName`, so:
+- Same test with different parameters → **Same historyId** → **History merged**
+- Allure will show trends across all parameter variations
+
+**Result**: ✅ History is merged across parameter variations (trends show all executions).
+
+#### Summary: How History Behaves
+
+| Scenario | History Preserved? | New Data Added? | Notes |
+|----------|-------------------|-----------------|-------|
+| **Partial environment run** | ✅ Yes | Only executed envs | Other envs show historical data only |
+| **Tests added** | ✅ Yes | New tests get new history | Old tests keep existing history |
+| **Tests removed** | ✅ Yes | No new data | Removed tests show historical data only |
+| **Tests renamed** | ❌ No | New test, new history | Old test history remains but separate |
+| **Test parameters change** | ✅ Yes | Merged into same history | All parameter variations tracked together |
+| **Tests skipped** | ✅ Yes | Skipped tests may/may not appear | Depends on framework reporting |
+
+**Key Takeaway**: Allure history is **additive and per-test**. Each test's history is independent, and only executed tests get new history entries. This means:
+- ✅ Partial runs work fine (only executed tests update)
+- ✅ Test additions work fine (new tests start fresh)
+- ✅ Test removals work fine (old history preserved)
+- ⚠️ Test renames break history continuity (treated as new test)
+
 ### GitHub Pages Deployment
 
 **Current Configuration**:
