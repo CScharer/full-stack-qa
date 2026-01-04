@@ -53,3 +53,14 @@ docker-compose*.yml
 # Other
 node_modules/
 .npm/
+
+# Additional test artifacts
+coverage/
+.vitest/
+test-results/
+*.result.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
