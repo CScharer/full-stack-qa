@@ -41,7 +41,7 @@ public final class RetryableGridConnection {
   private static final long DEFAULT_TIMEOUT_MS = 30000L;
   private static final double JITTER_FACTOR = 0.1; // 10% jitter
 
-  private static final Random random = new Random();
+  private static final Random RANDOM = new Random();
 
   private RetryableGridConnection() {
     // Utility class - do not instantiate
