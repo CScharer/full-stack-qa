@@ -5,6 +5,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Locale;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -124,7 +125,9 @@ public final class RetryableGridConnection {
           Thread.sleep(backoffDelay);
         } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
-          throw new QAException("Retry interrupted", ie);
+          QAException interruptedException = new QAException("Retry interrupted");
+          interruptedException.initCause(ie);
+          throw interruptedException;
         }
       }
     }
@@ -167,7 +170,7 @@ public final class RetryableGridConnection {
     // Check exception message for transient error patterns
     String message = e.getMessage();
     if (message != null) {
-      String lowerMessage = message.toLowerCase();
+      String lowerMessage = message.toLowerCase(Locale.ROOT);
       if (lowerMessage.contains("connection refused")
           || lowerMessage.contains("connection reset")
           || lowerMessage.contains("timeout")
@@ -190,7 +193,7 @@ public final class RetryableGridConnection {
 
     // Check message for permanent error patterns
     if (message != null) {
-      String lowerMessage = message.toLowerCase();
+      String lowerMessage = message.toLowerCase(Locale.ROOT);
       if (lowerMessage.contains("version mismatch")
           || lowerMessage.contains("authentication")
           || lowerMessage.contains("unauthorized")

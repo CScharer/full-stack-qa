@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
@@ -258,11 +259,8 @@ public final class SeleniumGridVersionValidator {
 
       if (tolerance == VersionTolerance.PATCH) {
         // Minor versions must match for patch tolerance
-        if (serverMinor != clientMinor) {
-          return false;
-        }
         // Patch versions can differ
-        return true;
+        return serverMinor == clientMinor;
       }
     } catch (NumberFormatException e) {
       LOG.warn("Invalid version format: server={}, client={}", serverVersion, clientVersion);
@@ -288,7 +286,7 @@ public final class SeleniumGridVersionValidator {
     }
 
     try {
-      return VersionTolerance.valueOf(toleranceStr.toUpperCase());
+      return VersionTolerance.valueOf(toleranceStr.toUpperCase(Locale.ROOT));
     } catch (IllegalArgumentException e) {
       LOG.warn("Invalid version tolerance value: {}. Using default: EXACT", toleranceStr);
       return VersionTolerance.EXACT;
