@@ -6,6 +6,8 @@
 **Update Frequency**: Monthly review recommended
 
 > **💡 Automation**: Version validation is now automated via `scripts/validate-dependency-versions.sh` and CI/CD job `validate-versions`. This helps prevent version drift and ensures versions are aligned across the project.
+> 
+> **🚀 Planned Enhancement**: Pre-push version validation will be added to catch version mismatches before code is pushed. See [Selenium Grid Enhancements](../work/20260103_SELENIUM_GRID_ENHANCEMENTS.md) for details.
 
 ### 🔑 Status Legend
 - `[✅]` = Completed / Verified / Current
@@ -365,10 +367,13 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📝 Notes
 
 - **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at 4.39.0.
+  - **Validation**: Currently validated via scheduled workflow and manual script execution
+  - **Planned**: Pre-push hook validation will catch mismatches before code is pushed (see [Selenium Grid Enhancements](../work/20260103_SELENIUM_GRID_ENHANCEMENTS.md))
 - **TypeScript Updates**: Consider updating all projects together for consistency.
 - **Python Major Versions**: numpy 2.x has breaking changes - review carefully before updating.
 - **Security Patches**: Apply immediately when available.
 - **Breaking Changes**: Always review changelogs and migration guides before major version updates.
+- **Docker Compose Versions**: Selenium Grid Docker image versions should match `pom.xml` version. Pre-push validation will check this automatically.
 
 ---
 
