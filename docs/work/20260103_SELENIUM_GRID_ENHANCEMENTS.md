@@ -12,7 +12,7 @@
 - ✅ Phase 4: Update SeleniumWebDriver - COMPLETE
 - ✅ Phase 5: Enhance Wait Scripts - COMPLETE
 - ✅ Phase 6: Pre-Push Version Validation - COMPLETE
-- ⏳ Phase 7: Update CI/CD Workflows - PENDING
+- ✅ Phase 7: Update CI/CD Workflows - COMPLETE
 - ⏳ Phase 8: Create Test Utilities - PENDING
 - ⏳ Phase 9: Documentation - PENDING
 
@@ -374,22 +374,36 @@ fi
 - ✅ Provides clear error messages for mismatches
 - ✅ Warns about `:latest` tags (not an error, but recommendation)
 
-### Phase 7: Update CI/CD Workflows
+### Phase 7: Update CI/CD Workflows ✅ COMPLETE
 
-#### Step 7.1: Add Version Validation to Workflows
-**Location**: `.github/workflows/env-fe.yml` and other relevant workflows
+#### Step 7.1: Add Version Validation to Workflows ✅
+**Location**: `.github/workflows/env-fe.yml`
+
+**Status**: ✅ **COMPLETE** - Enhanced workflow with version validation and retry configuration
 
 **Changes**:
-- Set `SELENIUM_VERSION` environment variable from workflow input
-- Add version validation step before tests
-- Add retry configuration via environment variables
-- Update Grid startup to include version validation
+- ✅ Set `SELENIUM_VERSION` environment variable from workflow input (`inputs.selenium_version`)
+- ✅ Updated "Wait for Selenium Grid" step to use enhanced `wait-for-grid.sh` script with version validation
+- ✅ Added retry configuration via environment variables in "Run Grid Tests" step
+- ✅ Version validation now runs automatically as part of wait script
 
 **Workflow Steps**:
-1. Start Selenium Grid
-2. Wait for Grid to be ready (existing)
-3. Validate Grid version (new)
-4. Run tests
+1. ✅ Start Selenium Grid (existing)
+2. ✅ Wait for Grid to be ready with version validation (enhanced - uses `wait-for-grid.sh`)
+3. ✅ Run tests with retry configuration environment variables (enhanced)
+
+**Environment Variables Added**:
+- `SELENIUM_VERSION` - Set from workflow input (defaults to '4.39.0')
+- `SELENIUM_GRID_MAX_RETRIES` - Configurable retry attempts (default: 5)
+- `SELENIUM_GRID_RETRY_BASE_DELAY_MS` - Base delay for exponential backoff (default: 1000ms)
+- `SELENIUM_GRID_RETRY_MAX_DELAY_MS` - Maximum delay for exponential backoff (default: 10000ms)
+- `SELENIUM_GRID_RETRY_TIMEOUT_MS` - Total timeout for retry attempts (default: 30000ms)
+
+**Implementation Details**:
+- ✅ "Wait for Selenium Grid" step now uses `./scripts/ci/wait-for-grid.sh` which includes version validation
+- ✅ Version validation runs automatically if `SELENIUM_VERSION` is set
+- ✅ Retry configuration is available to all Grid tests via environment variables
+- ✅ All configuration uses workflow inputs with sensible defaults
 
 ---
 
