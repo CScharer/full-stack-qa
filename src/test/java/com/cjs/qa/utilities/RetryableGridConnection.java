@@ -125,7 +125,9 @@ public final class RetryableGridConnection {
           Thread.sleep(backoffDelay);
         } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
-          throw new QAException("Retry interrupted", ie);
+          QAException interruptedException = new QAException("Retry interrupted", ie);
+          interruptedException.addSuppressed(e);
+          throw interruptedException;
         }
       }
     }
@@ -139,11 +141,10 @@ public final class RetryableGridConnection {
             totalTime,
             lastException != null ? lastException.getMessage() : "Unknown error");
     LOG.error(errorMessage);
-    QAException finalException = new QAException(errorMessage);
     if (lastException != null) {
-      finalException.initCause(lastException);
+      throw new QAException(errorMessage, lastException);
     }
-    throw finalException;
+    throw new QAException(errorMessage);
   }
 
   /**
