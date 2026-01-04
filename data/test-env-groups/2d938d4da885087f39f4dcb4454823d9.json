@@ -1,1 +1,1 @@
-{"id":"2d938d4da885087f39f4dcb4454823d9","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testResponsiveBreakpoints","name":"testResponsiveBreakpoints [PROD]","status":"passed","testResultsByEnv":{"default":"a9ba29885e3abf133564689d0ac99ea4"}}
+{"id":"2d938d4da885087f39f4dcb4454823d9","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testResponsiveBreakpoints","name":"testResponsiveBreakpoints [DEV]","status":"passed","testResultsByEnv":{"default":"0fd0cf609e3079e36e09b60b2163442f"}}
