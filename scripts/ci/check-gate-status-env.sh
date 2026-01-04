@@ -77,7 +77,9 @@ case "$ENVIRONMENT" in
     if [ "${JOB_RESULTS[test-fe-dev]:-}" == "failure" ] || [ "${JOB_RESULTS[test-fe-dev]:-}" == "timed_out" ]; then
       FAILED_JOBS="${FAILED_JOBS} test-fe-dev"
     elif [ "${JOB_RESULTS[test-fe-dev]:-}" == "skipped" ]; then
-      if [ "${JOB_OUTPUTS[determine-envs.run_dev]:-}" == "true" ] && \
+      # Only expect test to run if code-changed is true (documentation-only changes skip tests)
+      if [ "${JOB_OUTPUTS[determine-schedule-type.code-changed]:-}" == "true" ] && \
+         [ "${JOB_OUTPUTS[determine-envs.run_dev]:-}" == "true" ] && \
          [ "${JOB_OUTPUTS[determine-test-execution.run_ui_tests]:-}" == "true" ] && \
          [ "${JOB_RESULTS[gate-setup]:-}" == "success" ]; then
         echo "❌ ERROR: test-fe-dev was skipped but was expected to run"
@@ -89,7 +91,9 @@ case "$ENVIRONMENT" in
     if [ "${JOB_RESULTS[test-be-dev]:-}" == "failure" ] || [ "${JOB_RESULTS[test-be-dev]:-}" == "timed_out" ]; then
       FAILED_JOBS="${FAILED_JOBS} test-be-dev"
     elif [ "${JOB_RESULTS[test-be-dev]:-}" == "skipped" ]; then
-      if [ "${JOB_OUTPUTS[determine-envs.run_dev]:-}" == "true" ] && \
+      # Only expect test to run if code-changed is true (documentation-only changes skip tests)
+      if [ "${JOB_OUTPUTS[determine-schedule-type.code-changed]:-}" == "true" ] && \
+         [ "${JOB_OUTPUTS[determine-envs.run_dev]:-}" == "true" ] && \
          [ "${JOB_OUTPUTS[determine-test-execution.run_be_tests]:-}" == "true" ] && \
          [ "${JOB_OUTPUTS[determine-test-execution.be_env_dev]:-}" == "true" ] && \
          [ "${JOB_RESULTS[gate-setup]:-}" == "success" ]; then
@@ -105,7 +109,9 @@ case "$ENVIRONMENT" in
     if [ "${JOB_RESULTS[test-fe-test]:-}" == "failure" ] || [ "${JOB_RESULTS[test-fe-test]:-}" == "timed_out" ]; then
       FAILED_JOBS="${FAILED_JOBS} test-fe-test"
     elif [ "${JOB_RESULTS[test-fe-test]:-}" == "skipped" ]; then
-      if [ "${JOB_OUTPUTS[determine-envs.run_test]:-}" == "true" ] && \
+      # Only expect test to run if code-changed is true (documentation-only changes skip tests)
+      if [ "${JOB_OUTPUTS[determine-schedule-type.code-changed]:-}" == "true" ] && \
+         [ "${JOB_OUTPUTS[determine-envs.run_test]:-}" == "true" ] && \
          [ "${JOB_OUTPUTS[determine-test-execution.run_ui_tests]:-}" == "true" ] && \
          [ "${JOB_RESULTS[gate-dev]:-}" == "success" ]; then
         echo "❌ ERROR: test-fe-test was skipped but was expected to run"
@@ -117,7 +123,9 @@ case "$ENVIRONMENT" in
     if [ "${JOB_RESULTS[test-be-test]:-}" == "failure" ] || [ "${JOB_RESULTS[test-be-test]:-}" == "timed_out" ]; then
       FAILED_JOBS="${FAILED_JOBS} test-be-test"
     elif [ "${JOB_RESULTS[test-be-test]:-}" == "skipped" ]; then
-      if [ "${JOB_OUTPUTS[determine-envs.run_test]:-}" == "true" ] && \
+      # Only expect test to run if code-changed is true (documentation-only changes skip tests)
+      if [ "${JOB_OUTPUTS[determine-schedule-type.code-changed]:-}" == "true" ] && \
+         [ "${JOB_OUTPUTS[determine-envs.run_test]:-}" == "true" ] && \
          [ "${JOB_OUTPUTS[determine-test-execution.run_be_tests]:-}" == "true" ] && \
          [ "${JOB_OUTPUTS[determine-test-execution.be_env_test]:-}" == "true" ] && \
          [ "${JOB_RESULTS[gate-dev]:-}" == "success" ]; then
@@ -133,7 +141,9 @@ case "$ENVIRONMENT" in
     if [ "${JOB_RESULTS[test-fe-prod]:-}" == "failure" ] || [ "${JOB_RESULTS[test-fe-prod]:-}" == "timed_out" ]; then
       FAILED_JOBS="${FAILED_JOBS} test-fe-prod"
     elif [ "${JOB_RESULTS[test-fe-prod]:-}" == "skipped" ]; then
-      if [ "${JOB_OUTPUTS[determine-envs.run_prod]:-}" == "true" ] && \
+      # Only expect test to run if code-changed is true (documentation-only changes skip tests)
+      if [ "${JOB_OUTPUTS[determine-schedule-type.code-changed]:-}" == "true" ] && \
+         [ "${JOB_OUTPUTS[determine-envs.run_prod]:-}" == "true" ] && \
          [ "${JOB_RESULTS[gate-test]:-}" == "success" ]; then
         echo "❌ ERROR: test-fe-prod was skipped but was expected to run"
         FAILED_JOBS="${FAILED_JOBS} test-fe-prod(unexpected-skip)"
