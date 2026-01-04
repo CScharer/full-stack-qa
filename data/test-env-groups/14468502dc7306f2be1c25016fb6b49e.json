@@ -1,1 +1,1 @@
-{"id":"14468502dc7306f2be1c25016fb6b49e","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testResponsiveDesign","name":"Verify responsive design detection [PROD]","status":"passed","testResultsByEnv":{"default":"55bfec3928a619e5eb20e268bb595f06"}}
+{"id":"14468502dc7306f2be1c25016fb6b49e","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testResponsiveDesign","name":"Verify responsive design detection [TEST]","status":"passed","testResultsByEnv":{"default":"b267f8772b3c1589d6550c224de56de1"}}
