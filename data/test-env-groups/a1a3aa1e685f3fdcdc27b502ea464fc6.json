@@ -1,1 +1,1 @@
-{"id":"a1a3aa1e685f3fdcdc27b502ea464fc6","fullName":"com.cjs.qa.utilities.PageObjectGeneratorBrowserTest.testBasicGeneration","name":"testBasicGeneration [PROD]","status":"passed","testResultsByEnv":{"default":"bb5905db3cce1e62ca4f932e9376d6d3"}}
+{"id":"a1a3aa1e685f3fdcdc27b502ea464fc6","fullName":"com.cjs.qa.utilities.PageObjectGeneratorBrowserTest.testBasicGeneration","name":"testBasicGeneration [TEST]","status":"passed","testResultsByEnv":{"default":"49c595796fb791c5b15ccaf7e9e5c55e"}}
