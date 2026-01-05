@@ -108,8 +108,9 @@ else
 fi
 
 # Ensure history directory exists in results (needed for Allure3 to merge history)
-# History should have been downloaded earlier, but ensure it exists
+# History should have been downloaded earlier from GitHub Pages or artifact
 # CRITICAL: History MUST be in RESULTS_DIR BEFORE 'allure generate' for Allure3 to merge it
+# IMPORTANT: Do NOT create history manually - let Allure3 create it naturally after multiple runs
 if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
     echo ""
     echo "📊 History found in results directory:"
@@ -117,58 +118,16 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
     echo "   Files: $HISTORY_FILE_COUNT file(s)"
     echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
     echo "   ✅ History will be merged with new results during report generation"
+    echo "   Allure3 will create updated history in the generated report"
 else
-    # CRITICAL FIX: Allure3 needs history in RESULTS_DIR BEFORE generation
-    # If no history exists, create valid empty history JSON files BEFORE 'allure generate'
-    # This allows Allure3 to merge empty history with new results and create populated history
+    # No history exists - this is expected for the first few runs
+    # Allure3 will create history naturally after 2-3 runs when it has enough data
+    # We do NOT create history manually as Allure3 doesn't recognize empty structures
     echo ""
-    echo "📊 Creating valid empty history structure in results directory..."
-    echo "   (Allure3 needs history in results BEFORE generation to merge with new results)"
-    mkdir -p "$RESULTS_DIR/history"
-    
-    # Create minimal valid history JSON files that Allure3 can recognize and merge with
-    # Allure3 requires history entries with structure, not just empty arrays
-    # We create minimal entries with buildOrder from executor.json if available
-    BUILD_ORDER="1"
-    if [ -f "$RESULTS_DIR/executor.json" ]; then
-      BUILD_ORDER=$(grep -o '"buildOrder"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESULTS_DIR/executor.json" 2>/dev/null | sed 's/.*"buildOrder"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "1")
-    fi
-    
-    # Create minimal valid history entry structure
-    # Allure3 expects arrays of objects with buildOrder and data fields
-    cat > "$RESULTS_DIR/history/history-trend.json" << EOF
-[
-  {
-    "buildOrder": ${BUILD_ORDER},
-    "reportUrl": "",
-    "reportName": "Allure Report",
-    "data": []
-  }
-]
-EOF
-    
-    cat > "$RESULTS_DIR/history/duration-trend.json" << EOF
-[
-  {
-    "buildOrder": ${BUILD_ORDER},
-    "data": []
-  }
-]
-EOF
-    
-    cat > "$RESULTS_DIR/history/retry-trend.json" << EOF
-[
-  {
-    "buildOrder": ${BUILD_ORDER},
-    "data": []
-  }
-]
-EOF
-    
-    echo "✅ Valid empty history structure created in results directory"
-    echo "   Files created: history-trend.json, duration-trend.json, retry-trend.json"
-    echo "   Allure3 will merge these empty structures with new results during generation"
-    echo "   History will be populated in the generated report"
+    echo "ℹ️  No history found in results directory (expected for first few runs)"
+    echo "   History will be created naturally by Allure3 after multiple runs"
+    echo "   Allure3 needs actual test execution data to create meaningful history"
+    echo "   This is normal behavior - history will appear after 2-3 pipeline runs"
 fi
 
 # Generate report
