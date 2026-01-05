@@ -1,1 +1,1 @@
-{"id":"91a0d410b7d9414ff39133fd512df45b","fullName":"com.cjs.qa.junit.tests.DataDrivenTests.testSearchWithMultipleQueries","name":"testSearchWithMultipleQueries [PROD]","status":"passed","testResultsByEnv":{"default":"33bb2cec988b7e248dbddb708e3f802b"}}
+{"id":"91a0d410b7d9414ff39133fd512df45b","fullName":"com.cjs.qa.junit.tests.DataDrivenTests.testSearchWithMultipleQueries","name":"testSearchWithMultipleQueries [TEST]","status":"passed","testResultsByEnv":{"default":"ac6fe74cf35422907eb6e25481b1cd05"}}
