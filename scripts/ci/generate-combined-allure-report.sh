@@ -109,60 +109,63 @@ fi
 
 # Ensure history directory exists in results (needed for Allure3 to merge history)
 # History should have been downloaded earlier, but ensure it exists
-if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+# CRITICAL: History MUST be in RESULTS_DIR BEFORE 'allure generate' for Allure3 to merge it
+if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
     echo ""
     echo "📊 History found in results directory:"
-    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f 2>/dev/null | wc -l | tr -d ' ')
+    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     echo "   Files: $HISTORY_FILE_COUNT file(s)"
     echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
     echo "   ✅ History will be merged with new results during report generation"
 else
+    # CRITICAL FIX: Allure3 needs history in RESULTS_DIR BEFORE generation
+    # If no history exists, create valid empty history JSON files BEFORE 'allure generate'
+    # This allows Allure3 to merge empty history with new results and create populated history
     echo ""
-    echo "ℹ️  No history found in results directory (expected for first run)"
-    echo "   History will be created during this report generation"
+    echo "📊 Creating valid empty history structure in results directory..."
+    echo "   (Allure3 needs history in results BEFORE generation to merge with new results)"
+    mkdir -p "$RESULTS_DIR/history"
+    
+    # Create valid empty history JSON files that Allure3 can recognize and merge with
+    # These are valid JSON structures (empty arrays) that Allure3 will merge with new results
+    echo "[]" > "$RESULTS_DIR/history/history-trend.json"
+    echo "[]" > "$RESULTS_DIR/history/duration-trend.json"
+    echo "[]" > "$RESULTS_DIR/history/retry-trend.json"
+    
+    echo "✅ Valid empty history structure created in results directory"
+    echo "   Files created: history-trend.json, duration-trend.json, retry-trend.json"
+    echo "   Allure3 will merge these empty structures with new results during generation"
+    echo "   History will be populated in the generated report"
 fi
 
 # Generate report
 # Note: Allure3 CLI doesn't support --clean flag, so we remove the directory first
 # Allure3 automatically merges history from RESULTS_DIR/history/ if it exists
+# CRITICAL: History must be in RESULTS_DIR BEFORE this command for Allure3 to merge it
 echo ""
 echo "🔄 Generating Allure report..."
+echo "   (Allure3 will merge history from $RESULTS_DIR/history/ with new results)"
 rm -rf "$REPORT_DIR"
 allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
 # Preserve history for next run (copy from report back to results)
-# This ensures history is available for the next pipeline run
+# Allure3 creates history in REPORT_DIR/history/ after generation
+# We copy it back to RESULTS_DIR so it's available for the next pipeline run
 if [ -d "$REPORT_DIR/history" ]; then
     echo ""
     echo "📊 Preserving history for next run..."
     mkdir -p "$RESULTS_DIR/history"
     cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
-    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f 2>/dev/null | wc -l | tr -d ' ')
+    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     echo "✅ History preserved: $HISTORY_FILE_COUNT file(s) ready for next report generation"
+    echo "   History will be merged with new results in the next pipeline run"
 else
-    # CRITICAL FIX: Allure3 doesn't create history directory until there's actual history data
-    # But Allure3 also doesn't recognize empty directories as valid history
-    # Solution: Create valid empty history JSON files that Allure3 can merge with
+    # This should not happen if history was in RESULTS_DIR before generation
+    # Allure3 should have created history in REPORT_DIR after merging
     echo ""
-    echo "📊 Creating history directory structure with valid empty history files..."
-    mkdir -p "$REPORT_DIR/history"
-    
-    # Create valid empty history JSON files that Allure3 can recognize and merge with
-    # These are valid JSON structures (empty arrays) that Allure3 will merge with new results
-    echo "[]" > "$REPORT_DIR/history/history-trend.json"
-    echo "[]" > "$REPORT_DIR/history/duration-trend.json"
-    echo "[]" > "$REPORT_DIR/history/retry-trend.json"
-    
-    echo "✅ History directory created with valid empty structure"
-    echo "   Files created: history-trend.json, duration-trend.json, retry-trend.json"
-    echo "   Allure3 will merge these empty structures with new results"
-    echo "   History will be populated in subsequent runs"
-    
-    # Also create in results directory for consistency
-    mkdir -p "$RESULTS_DIR/history"
-    echo "[]" > "$RESULTS_DIR/history/history-trend.json"
-    echo "[]" > "$RESULTS_DIR/history/duration-trend.json"
-    echo "[]" > "$RESULTS_DIR/history/retry-trend.json"
+    echo "⚠️  WARNING: No history directory in generated report"
+    echo "   This may indicate Allure3 did not create history during generation"
+    echo "   History may not be available for the next run"
 fi
 
 # Verify report was generated
