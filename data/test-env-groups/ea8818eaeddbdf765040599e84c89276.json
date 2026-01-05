@@ -1,1 +1,1 @@
-{"id":"ea8818eaeddbdf765040599e84c89276","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testWindowManagement","name":"testWindowManagement [DEV]","status":"passed","testResultsByEnv":{"default":"8e215622f080bcc9b4bcf816d25b2bae"}}
+{"id":"ea8818eaeddbdf765040599e84c89276","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testWindowManagement","name":"testWindowManagement [PROD]","status":"passed","testResultsByEnv":{"default":"78047959d0a423403a101ded1fbab08c"}}
