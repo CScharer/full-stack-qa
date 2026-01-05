@@ -167,20 +167,52 @@ allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 # Allure3 creates history in REPORT_DIR/history/ after generation
 # We copy it back to RESULTS_DIR so it's available for the next pipeline run
 if [ -d "$REPORT_DIR/history" ]; then
-    echo ""
-    echo "📊 Preserving history for next run..."
-    mkdir -p "$RESULTS_DIR/history"
-    cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
-    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-    echo "✅ History preserved: $HISTORY_FILE_COUNT file(s) ready for next report generation"
-    echo "   History will be merged with new results in the next pipeline run"
+    # Check if history directory has actual files (not just empty arrays)
+    HISTORY_FILE_COUNT=$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+    
+    if [ "$HISTORY_FILE_COUNT" -gt 0 ]; then
+        # Check if all files are empty (just [] or {})
+        EMPTY_COUNT=0
+        for json_file in "$REPORT_DIR/history"/*.json; do
+            if [ -f "$json_file" ]; then
+                CONTENT=$(cat "$json_file" 2>/dev/null | tr -d '[:space:]' || echo "")
+                if [ "$CONTENT" = "[]" ] || [ "$CONTENT" = "{}" ] || [ -z "$CONTENT" ]; then
+                    EMPTY_COUNT=$((EMPTY_COUNT + 1))
+                fi
+            fi
+        done
+        
+        if [ "$EMPTY_COUNT" -eq "$HISTORY_FILE_COUNT" ] && [ "$HISTORY_FILE_COUNT" -gt 0 ]; then
+            # All history files are empty - remove them to prevent deployment
+            echo ""
+            echo "⚠️  All history files in report are empty (just [] or {})"
+            echo "   Removing empty history directory to prevent deployment of empty files"
+            rm -rf "$REPORT_DIR/history"
+            echo "   ✅ Empty history directory removed from report"
+            echo "   Allure3 will create history naturally in future runs"
+        else
+            # History has actual data - preserve it
+            echo ""
+            echo "📊 Preserving history for next run..."
+            mkdir -p "$RESULTS_DIR/history"
+            cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
+            ACTUAL_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+            echo "✅ History preserved: $ACTUAL_FILE_COUNT file(s) ready for next report generation"
+            echo "   History will be merged with new results in the next pipeline run"
+        fi
+    else
+        # History directory exists but is empty - remove it
+        echo ""
+        echo "⚠️  History directory exists but is empty"
+        echo "   Removing empty history directory to prevent deployment of empty files"
+        rm -rf "$REPORT_DIR/history"
+        echo "   ✅ Empty history directory removed from report"
+    fi
 else
-    # This should not happen if history was in RESULTS_DIR before generation
-    # Allure3 should have created history in REPORT_DIR after merging
+    # This is expected for the first few runs when Allure3 hasn't created history yet
     echo ""
-    echo "⚠️  WARNING: No history directory in generated report"
-    echo "   This may indicate Allure3 did not create history during generation"
-    echo "   History may not be available for the next run"
+    echo "ℹ️  No history directory in generated report (expected for first few runs)"
+    echo "   Allure3 will create history naturally after 2-3 more runs"
 fi
 
 # Verify report was generated
