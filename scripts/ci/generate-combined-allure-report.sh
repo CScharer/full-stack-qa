@@ -110,19 +110,42 @@ fi
 # Ensure history directory exists in results (needed for Allure3 to merge history)
 # History should have been downloaded earlier from GitHub Pages or artifact
 # CRITICAL: History MUST be in RESULTS_DIR BEFORE 'allure generate' for Allure3 to merge it
-# IMPORTANT: Do NOT create history manually - let Allure3 create it naturally after multiple runs
+# IMPORTANT: Allure3 requires actual history entries, not empty arrays
 if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
     echo ""
     echo "📊 History found in results directory:"
     HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-    echo "   Files: $HISTORY_FILE_COUNT file(s)"
-    echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
-    echo "   ✅ History will be merged with new results during report generation"
-    echo "   Allure3 will create updated history in the generated report"
+    
+    # Check if history files are empty (just [] or empty objects)
+    EMPTY_COUNT=0
+    for json_file in "$RESULTS_DIR/history"/*.json; do
+        if [ -f "$json_file" ]; then
+            # Check if file is empty or just contains [] or {}
+            CONTENT=$(cat "$json_file" 2>/dev/null | tr -d '[:space:]' || echo "")
+            if [ "$CONTENT" = "[]" ] || [ "$CONTENT" = "{}" ] || [ -z "$CONTENT" ]; then
+                EMPTY_COUNT=$((EMPTY_COUNT + 1))
+            fi
+        fi
+    done
+    
+    if [ "$EMPTY_COUNT" -eq "$HISTORY_FILE_COUNT" ] && [ "$HISTORY_FILE_COUNT" -gt 0 ]; then
+        # All history files are empty - Allure3 doesn't recognize empty arrays as valid history
+        echo "   ⚠️  All history files are empty (just [] or {})"
+        echo "   Allure3 doesn't recognize empty arrays as valid history to merge"
+        echo "   Removing empty history files to let Allure3 start fresh..."
+        rm -f "$RESULTS_DIR/history"/*.json
+        echo "   ✅ Empty history files removed"
+        echo "   Allure3 will create history naturally from test results"
+    else
+        # History has actual data
+        echo "   Files: $HISTORY_FILE_COUNT file(s)"
+        echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+        echo "   ✅ History will be merged with new results during report generation"
+        echo "   Allure3 will create updated history in the generated report"
+    fi
 else
     # No history exists - this is expected for the first few runs
     # Allure3 will create history naturally after 2-3 runs when it has enough data
-    # We do NOT create history manually as Allure3 doesn't recognize empty structures
     echo ""
     echo "ℹ️  No history found in results directory (expected for first few runs)"
     echo "   History will be created naturally by Allure3 after multiple runs"
