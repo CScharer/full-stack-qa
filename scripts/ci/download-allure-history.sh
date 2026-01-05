@@ -102,7 +102,14 @@ if [ "$METHOD" = "pages" ]; then
                             exit 1
                         fi
                     else
-                        echo "   ℹ️  History directory exists but is empty (expected for first run)"
+                        # Check if directory exists with .gitkeep (from previous fix attempt)
+                        if [ -f "$TARGET_DIR/history/.gitkeep" ]; then
+                            echo "   ℹ️  History directory exists but only contains .gitkeep"
+                            echo "   This indicates empty history structure from previous run"
+                            echo "   Valid history JSON files should be created in next run"
+                        else
+                            echo "   ℹ️  History directory exists but is empty (expected for first run)"
+                        fi
                     fi
                 elif echo "$API_RESPONSE" | jq -e '.message' >/dev/null 2>&1; then
                     # API returned an error (likely 404 - directory doesn't exist)

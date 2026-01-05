@@ -141,19 +141,28 @@ if [ -d "$REPORT_DIR/history" ]; then
     echo "✅ History preserved: $HISTORY_FILE_COUNT file(s) ready for next report generation"
 else
     # CRITICAL FIX: Allure3 doesn't create history directory until there's actual history data
-    # This creates a chicken-and-egg problem: no history → no history directory → no history to download
-    # Solution: Force-create empty history directory so it gets deployed and can be downloaded next run
+    # But Allure3 also doesn't recognize empty directories as valid history
+    # Solution: Create valid empty history JSON files that Allure3 can merge with
     echo ""
-    echo "📊 Creating history directory structure (Allure3 may not create it on first run)..."
+    echo "📊 Creating history directory structure with valid empty history files..."
     mkdir -p "$REPORT_DIR/history"
-    # Create a .gitkeep file to ensure the directory is tracked and deployed
-    touch "$REPORT_DIR/history/.gitkeep"
-    echo "✅ History directory created (empty - will be populated by Allure3 in subsequent runs)"
-    echo "   This ensures history directory structure exists for next pipeline run"
+    
+    # Create valid empty history JSON files that Allure3 can recognize and merge with
+    # These are valid JSON structures (empty arrays) that Allure3 will merge with new results
+    echo "[]" > "$REPORT_DIR/history/history-trend.json"
+    echo "[]" > "$REPORT_DIR/history/duration-trend.json"
+    echo "[]" > "$REPORT_DIR/history/retry-trend.json"
+    
+    echo "✅ History directory created with valid empty structure"
+    echo "   Files created: history-trend.json, duration-trend.json, retry-trend.json"
+    echo "   Allure3 will merge these empty structures with new results"
+    echo "   History will be populated in subsequent runs"
     
     # Also create in results directory for consistency
     mkdir -p "$RESULTS_DIR/history"
-    touch "$RESULTS_DIR/history/.gitkeep"
+    echo "[]" > "$RESULTS_DIR/history/history-trend.json"
+    echo "[]" > "$RESULTS_DIR/history/duration-trend.json"
+    echo "[]" > "$RESULTS_DIR/history/retry-trend.json"
 fi
 
 # Verify report was generated
