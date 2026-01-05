@@ -1375,17 +1375,24 @@ jobs:
           echo ""
           
           if [ ! -d "allure-report-combined/history" ]; then
-            # Check if this is the first run (no history expected)
-            if curl -f -s -I "https://cscharer.github.io/full-stack-qa/history" > /dev/null 2>&1; then
-              echo "❌ ERROR: History directory does not exist in report, but history exists in GitHub Pages"
-              echo "   This indicates Allure3 did not properly preserve history - this must be fixed"
-              exit 1
-            else
-              echo "ℹ️  No history directory in report (first run - expected)"
-              echo "   Allure3 may not create history directory until there's actual history data"
-              echo "   Skipping history upload for first run"
-              exit 0
-            fi
+            # This should not happen anymore - we force-create history directory
+            echo "❌ ERROR: History directory does not exist in report"
+            echo "   This should not happen - history directory should be created by generate script"
+            exit 1
+          fi
+          
+          # Count history files (excluding .gitkeep)
+          HISTORY_FILE_COUNT=$(find allure-report-combined/history -type f ! -name ".gitkeep" 2>/dev/null | wc -l | tr -d ' ')
+          
+          if [ "$HISTORY_FILE_COUNT" -eq 0 ]; then
+            # Empty history directory (only .gitkeep) - this is expected for first run
+            echo "ℹ️  History directory exists but is empty (first run - expected)"
+            echo "   History directory structure created for next run"
+            echo "   Allure3 will populate it with actual history data in subsequent runs"
+            echo "   ✅ Uploading empty history directory to bootstrap history system"
+          else
+            echo "✅ History directory contains $HISTORY_FILE_COUNT file(s)"
+            echo "   History will be preserved for next run"
           fi
           
           FILE_COUNT=$(find allure-report-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')

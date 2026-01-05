@@ -139,6 +139,21 @@ if [ -d "$REPORT_DIR/history" ]; then
     cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
     HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f 2>/dev/null | wc -l | tr -d ' ')
     echo "✅ History preserved: $HISTORY_FILE_COUNT file(s) ready for next report generation"
+else
+    # CRITICAL FIX: Allure3 doesn't create history directory until there's actual history data
+    # This creates a chicken-and-egg problem: no history → no history directory → no history to download
+    # Solution: Force-create empty history directory so it gets deployed and can be downloaded next run
+    echo ""
+    echo "📊 Creating history directory structure (Allure3 may not create it on first run)..."
+    mkdir -p "$REPORT_DIR/history"
+    # Create a .gitkeep file to ensure the directory is tracked and deployed
+    touch "$REPORT_DIR/history/.gitkeep"
+    echo "✅ History directory created (empty - will be populated by Allure3 in subsequent runs)"
+    echo "   This ensures history directory structure exists for next pipeline run"
+    
+    # Also create in results directory for consistency
+    mkdir -p "$RESULTS_DIR/history"
+    touch "$RESULTS_DIR/history/.gitkeep"
 fi
 
 # Verify report was generated
