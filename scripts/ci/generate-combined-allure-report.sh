@@ -126,11 +126,44 @@ else
     echo "   (Allure3 needs history in results BEFORE generation to merge with new results)"
     mkdir -p "$RESULTS_DIR/history"
     
-    # Create valid empty history JSON files that Allure3 can recognize and merge with
-    # These are valid JSON structures (empty arrays) that Allure3 will merge with new results
-    echo "[]" > "$RESULTS_DIR/history/history-trend.json"
-    echo "[]" > "$RESULTS_DIR/history/duration-trend.json"
-    echo "[]" > "$RESULTS_DIR/history/retry-trend.json"
+    # Create minimal valid history JSON files that Allure3 can recognize and merge with
+    # Allure3 requires history entries with structure, not just empty arrays
+    # We create minimal entries with buildOrder from executor.json if available
+    BUILD_ORDER="1"
+    if [ -f "$RESULTS_DIR/executor.json" ]; then
+      BUILD_ORDER=$(grep -o '"buildOrder"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESULTS_DIR/executor.json" 2>/dev/null | sed 's/.*"buildOrder"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "1")
+    fi
+    
+    # Create minimal valid history entry structure
+    # Allure3 expects arrays of objects with buildOrder and data fields
+    cat > "$RESULTS_DIR/history/history-trend.json" << EOF
+[
+  {
+    "buildOrder": ${BUILD_ORDER},
+    "reportUrl": "",
+    "reportName": "Allure Report",
+    "data": []
+  }
+]
+EOF
+    
+    cat > "$RESULTS_DIR/history/duration-trend.json" << EOF
+[
+  {
+    "buildOrder": ${BUILD_ORDER},
+    "data": []
+  }
+]
+EOF
+    
+    cat > "$RESULTS_DIR/history/retry-trend.json" << EOF
+[
+  {
+    "buildOrder": ${BUILD_ORDER},
+    "data": []
+  }
+]
+EOF
     
     echo "✅ Valid empty history structure created in results directory"
     echo "   Files created: history-trend.json, duration-trend.json, retry-trend.json"
