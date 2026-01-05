@@ -1231,14 +1231,45 @@ jobs:
 
       - name: Download Previous Allure History (Artifact Fallback)
         if: always() && github.ref == 'refs/heads/main'
-        uses: actions/download-artifact@v4
         continue-on-error: true
         id: download-history-artifact
-        with:
-          name: allure-history
-          path: allure-results-combined/history/
-          pattern: allure-history
-          merge-multiple: false
+        run: |
+          set -e
+          echo "📥 Downloading Allure history from previous successful run..."
+          echo ""
+          
+          # Find the previous successful run on main (excluding current run)
+          PREVIOUS_RUN_ID=$(gh run list --workflow "Selenium Grid CI/CD Pipeline" --branch main --status success --limit 2 --json databaseId --jq '.[] | select(.databaseId != ${{ github.run_id }}) | .databaseId' | head -1)
+          
+          if [ -z "$PREVIOUS_RUN_ID" ]; then
+            echo "ℹ️  No previous successful run found (this is expected for first run)"
+            echo "   History will be created during report generation"
+            exit 0
+          fi
+          
+          echo "   Previous run ID: $PREVIOUS_RUN_ID"
+          echo ""
+          
+          # Create history directory
+          mkdir -p allure-results-combined/history
+          
+          # Download artifact from previous run
+          if gh run download "$PREVIOUS_RUN_ID" --name allure-history --dir allure-results-combined/history/ 2>/dev/null; then
+            FILE_COUNT=$(find allure-results-combined/history -type f 2>/dev/null | wc -l | tr -d ' ')
+            if [ "$FILE_COUNT" -gt 0 ]; then
+              echo "✅ Successfully downloaded history from previous run: $FILE_COUNT file(s)"
+              echo "   History will be merged with new results during report generation"
+            else
+              echo "⚠️  Artifact downloaded but directory is empty"
+              echo "   This may indicate no history was uploaded in previous run"
+            fi
+          else
+            echo "ℹ️  No history artifact found in previous run (expected for first few runs)"
+            echo "   History will be created during report generation"
+            exit 0
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Download Previous Allure History (GitHub Pages)
         if: always() && github.ref == 'refs/heads/main'
