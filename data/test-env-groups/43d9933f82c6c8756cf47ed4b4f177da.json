@@ -1,1 +1,1 @@
-{"id":"43d9933f82c6c8756cf47ed4b4f177da","fullName":"com.cjs.qa.utilities.PageObjectGeneratorBrowserTest.testEmptyPageHandling","name":"testEmptyPageHandling [TEST]","status":"passed","testResultsByEnv":{"default":"5b02add3941375c867529bf85e263294"}}
+{"id":"43d9933f82c6c8756cf47ed4b4f177da","fullName":"com.cjs.qa.utilities.PageObjectGeneratorBrowserTest.testEmptyPageHandling","name":"testEmptyPageHandling [PROD]","status":"passed","testResultsByEnv":{"default":"b83e3c82c73adbcc448aa0f327aa1dfc"}}
