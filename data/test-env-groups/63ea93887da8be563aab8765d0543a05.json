@@ -1,1 +1,1 @@
-{"id":"63ea93887da8be563aab8765d0543a05","fullName":"com.cjs.qa.utilities.DataProviderTest.testJSONDataProviderReadsFile","name":"testJSONDataProviderReadsFile [TEST]","status":"passed","testResultsByEnv":{"default":"4374626a52cf27e2fb6705b20aabaa29"}}
+{"id":"63ea93887da8be563aab8765d0543a05","fullName":"com.cjs.qa.utilities.DataProviderTest.testJSONDataProviderReadsFile","name":"testJSONDataProviderReadsFile [PROD]","status":"passed","testResultsByEnv":{"default":"4374626a52cf27e2fb6705b20aabaa29"}}
