@@ -209,10 +209,107 @@ if [ -d "$REPORT_DIR/history" ]; then
         echo "   ✅ Empty history directory removed from report"
     fi
 else
-    # This is expected for the first few runs when Allure3 hasn't created history yet
+    # Allure3 didn't create history - this happens on first run when no history exists
+    # We need to bootstrap history from the current run's test results
     echo ""
-    echo "ℹ️  No history directory in generated report (expected for first few runs)"
-    echo "   Allure3 will create history naturally after 2-3 more runs"
+    echo "ℹ️  No history directory in generated report"
+    echo "   Allure3 requires existing history to merge with - it doesn't bootstrap on first run"
+    echo "   Bootstrapping history from current run's test results..."
+    
+    # Get buildOrder from executor.json
+    BUILD_ORDER="1"
+    if [ -f "$RESULTS_DIR/executor.json" ]; then
+        BUILD_ORDER=$(grep -o '"buildOrder"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESULTS_DIR/executor.json" 2>/dev/null | sed 's/.*"buildOrder"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "1")
+    fi
+    
+    # Create history directory
+    mkdir -p "$REPORT_DIR/history"
+    
+    # Extract test data from result files and create bootstrap history
+    BOOTSTRAP_COUNT=0
+    
+    # Process result files to extract test execution data
+    if [ "$RESULT_COUNT" -gt 0 ]; then
+        echo "   Extracting test data from $RESULT_COUNT result file(s)..."
+        
+        # Use jq if available to extract test data
+        if command -v jq &> /dev/null; then
+            # Create temporary file to collect history entries
+            TEMP_HISTORY=$(mktemp)
+            
+            # Extract test data from result files using jq
+            find "$RESULTS_DIR" -name "*-result.json" -type f 2>/dev/null | head -100 | while read -r result_file; do
+                if [ -f "$result_file" ]; then
+                    # Extract fields and create history entry
+                    jq -c --arg build_order "$BUILD_ORDER" '
+                        select(.uuid != null and .start != null and .stop != null) |
+                        {
+                            uid: .uuid,
+                            status: .status,
+                            time: {
+                                start: .start,
+                                stop: .stop,
+                                duration: (.stop - .start)
+                            }
+                        }
+                    ' "$result_file" 2>/dev/null >> "$TEMP_HISTORY" || true
+                fi
+            done
+            
+            # Count entries and create history structure
+            if [ -f "$TEMP_HISTORY" ] && [ -s "$TEMP_HISTORY" ]; then
+                BOOTSTRAP_COUNT=$(wc -l < "$TEMP_HISTORY" | tr -d ' ')
+                
+                # Create history-trend.json with build entry
+                jq -s --argjson build_order "$BUILD_ORDER" \
+                    '[{buildOrder: $build_order, reportUrl: "", reportName: "Allure Report", data: .}]' \
+                    "$TEMP_HISTORY" > "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
+                
+                # Create duration-trend.json
+                jq -s --argjson build_order "$BUILD_ORDER" \
+                    '[{buildOrder: $build_order, data: [.[] | {uid: .uid, time: .time}]}]' \
+                    "$TEMP_HISTORY" > "$REPORT_DIR/history/duration-trend.json" 2>/dev/null || true
+                
+                # Create retry-trend.json (empty for now, will be populated by Allure3 in future runs)
+                echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" | jq '.' > "$REPORT_DIR/history/retry-trend.json" 2>/dev/null || true
+                
+                rm -f "$TEMP_HISTORY"
+            else
+                # No valid entries extracted - create minimal structure
+                echo "[{\"buildOrder\":$BUILD_ORDER,\"reportUrl\":\"\",\"reportName\":\"Allure Report\",\"data\":[]}]" | jq '.' > "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "[{\"buildOrder\":$BUILD_ORDER,\"reportUrl\":\"\",\"reportName\":\"Allure Report\",\"data\":[]}]" > "$REPORT_DIR/history/history-trend.json"
+                echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" | jq '.' > "$REPORT_DIR/history/duration-trend.json" 2>/dev/null || echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" > "$REPORT_DIR/history/duration-trend.json"
+                echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" | jq '.' > "$REPORT_DIR/history/retry-trend.json" 2>/dev/null || echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" > "$REPORT_DIR/history/retry-trend.json"
+                rm -f "$TEMP_HISTORY"
+            fi
+        else
+            # Fallback: Create minimal valid structure without jq
+            echo "   ⚠️  jq not available - creating minimal bootstrap history structure"
+            echo "[{\"buildOrder\":$BUILD_ORDER,\"reportUrl\":\"\",\"reportName\":\"Allure Report\",\"data\":[]}]" > "$REPORT_DIR/history/history-trend.json"
+            echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" > "$REPORT_DIR/history/duration-trend.json"
+            echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" > "$REPORT_DIR/history/retry-trend.json"
+        fi
+        
+        if [ "$BOOTSTRAP_COUNT" -gt 0 ]; then
+            echo "   ✅ Bootstrap history created with $BOOTSTRAP_COUNT test entry/entries"
+            echo "   History will be preserved for next run, allowing Allure3 to merge and create trends"
+        else
+            echo "   ⚠️  Created minimal bootstrap history structure (no test data extracted)"
+            echo "   History structure is valid and will allow Allure3 to start creating trends in next run"
+        fi
+    else
+        echo "   ⚠️  No result files found - creating minimal bootstrap history structure"
+        echo "[{\"buildOrder\":$BUILD_ORDER,\"reportUrl\":\"\",\"reportName\":\"Allure Report\",\"data\":[]}]" > "$REPORT_DIR/history/history-trend.json"
+        echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" > "$REPORT_DIR/history/duration-trend.json"
+        echo "[{\"buildOrder\":$BUILD_ORDER,\"data\":[]}]" > "$REPORT_DIR/history/retry-trend.json"
+    fi
+    
+    # Verify bootstrap history was created
+    if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+        echo "   ✅ Bootstrap history directory created successfully"
+        echo "   Files: $(find "$REPORT_DIR/history" -name "*.json" 2>/dev/null | wc -l | tr -d ' ') file(s)"
+    else
+        echo "   ⚠️  Warning: Bootstrap history creation may have failed"
+    fi
 fi
 
 # Verify report was generated
