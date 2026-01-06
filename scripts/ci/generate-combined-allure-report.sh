@@ -181,23 +181,57 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                 CURRENT_DATA_COUNT=$(wc -l < "$TEMP_CURRENT_DATA" | tr -d ' ')
                 
                 # Merge history-trend.json
+                # Convert newline-delimited JSON to array first
+                TEMP_CURRENT_ARRAY=$(mktemp)
+                jq -s '.' "$TEMP_CURRENT_DATA" > "$TEMP_CURRENT_ARRAY" 2>/dev/null || echo '[]' > "$TEMP_CURRENT_ARRAY"
+                
                 if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
                     # Read existing history and add current run's data
-                    jq -s --argjson build_order "$CURRENT_BUILD_ORDER" \
-                        --slurpfile current_data "$TEMP_CURRENT_DATA" \
-                        '. + [{buildOrder: $build_order, reportUrl: "", reportName: "Allure Report", data: $current_data[0]}]' \
+                    jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+                        --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
+                        '. + [{
+                          buildOrder: $build_order,
+                          reportUrl: "",
+                          reportName: "Allure Report",
+                          data: $current_data[0]
+                        }]' \
                         "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history-trend.json.tmp" 2>/dev/null && \
                         mv "$RESULTS_DIR/history/history-trend.json.tmp" "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || true
+                else
+                    # Create new history file with current run's data
+                    jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+                        --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
+                        '[{
+                          buildOrder: $build_order,
+                          reportUrl: "",
+                          reportName: "Allure Report",
+                          data: $current_data[0]
+                        }]' \
+                        "$TEMP_CURRENT_ARRAY" > "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || true
                 fi
                 
                 # Merge duration-trend.json
                 if [ -f "$RESULTS_DIR/history/duration-trend.json" ]; then
-                    jq -s --argjson build_order "$CURRENT_BUILD_ORDER" \
-                        --slurpfile current_data "$TEMP_CURRENT_DATA" \
-                        '. + [{buildOrder: $build_order, data: [$current_data[0][] | {uid: .uid, time: .time}]}]' \
+                    jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+                        --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
+                        '. + [{
+                          buildOrder: $build_order,
+                          data: ($current_data[0] | map({uid: .uid, time: .time}))
+                        }]' \
                         "$RESULTS_DIR/history/duration-trend.json" > "$RESULTS_DIR/history/duration-trend.json.tmp" 2>/dev/null && \
                         mv "$RESULTS_DIR/history/duration-trend.json.tmp" "$RESULTS_DIR/history/duration-trend.json" 2>/dev/null || true
+                else
+                    # Create new duration-trend file with current run's data
+                    jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+                        --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
+                        '[{
+                          buildOrder: $build_order,
+                          data: ($current_data[0] | map({uid: .uid, time: .time}))
+                        }]' \
+                        "$TEMP_CURRENT_ARRAY" > "$RESULTS_DIR/history/duration-trend.json" 2>/dev/null || true
                 fi
+                
+                rm -f "$TEMP_CURRENT_ARRAY"
                 
                 # retry-trend.json doesn't need merging (empty for now)
                 
