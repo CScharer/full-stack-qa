@@ -235,21 +235,31 @@ fi
 rm -rf "$REPORT_DIR"
 allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
-# Preserve history for next run (copy from report back to results)
-# Allure3 creates history in REPORT_DIR/history/ after generation
-# However, if Allure3 didn't create history but we manually merged it,
-# we should copy the merged history from RESULTS_DIR to REPORT_DIR
+# If Allure3 didn't create history but we have manually merged history,
+# we need to regenerate the report so Allure3 processes the history
 if [ ! -d "$REPORT_DIR/history" ] && [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
     # Allure3 didn't create history, but we have manually merged history
-    # Copy the merged history to the report so it gets deployed
+    # Regenerate the report so Allure3 processes the manually merged history
     echo ""
     echo "📊 Allure3 didn't create history, but we have manually merged history"
-    echo "   Copying merged history to report directory for deployment..."
-    mkdir -p "$REPORT_DIR/history"
-    cp -r "$RESULTS_DIR/history"/* "$REPORT_DIR/history/" 2>/dev/null || true
-    MERGED_FILE_COUNT=$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-    echo "   ✅ Copied merged history ($MERGED_FILE_COUNT file(s)) to report directory"
-    echo "   History will be deployed to GitHub Pages with multiple build orders"
+    echo "   Regenerating report so Allure3 processes the manually merged history..."
+    rm -rf "$REPORT_DIR"
+    allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
+    
+    # Check if Allure3 created history after regeneration
+    if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+        echo "   ✅ Allure3 processed history and created history directory"
+        echo "   History will be deployed to GitHub Pages with multiple build orders"
+    else
+        # Still no history - copy manually merged history for deployment
+        echo "   ⚠️  Allure3 still didn't create history after regeneration"
+        echo "   Copying manually merged history to report directory for deployment..."
+        mkdir -p "$REPORT_DIR/history"
+        cp -r "$RESULTS_DIR/history"/* "$REPORT_DIR/history/" 2>/dev/null || true
+        MERGED_FILE_COUNT=$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+        echo "   ✅ Copied merged history ($MERGED_FILE_COUNT file(s)) to report directory"
+        echo "   History will be deployed to GitHub Pages with multiple build orders"
+    fi
 fi
 
 # Preserve history for next run (copy from report back to results)
