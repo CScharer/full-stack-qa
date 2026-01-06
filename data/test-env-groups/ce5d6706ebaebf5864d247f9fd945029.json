@@ -1,1 +1,1 @@
-{"id":"ce5d6706ebaebf5864d247f9fd945029","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testPerformanceMetrics","name":"testPerformanceMetrics [PROD]","status":"passed","testResultsByEnv":{"default":"7c20df4d592ec9cab29cd9e11c5b81f0"}}
+{"id":"ce5d6706ebaebf5864d247f9fd945029","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testPerformanceMetrics","name":"testPerformanceMetrics [TEST]","status":"passed","testResultsByEnv":{"default":"ce05d65562058b852d13264f47169d28"}}
