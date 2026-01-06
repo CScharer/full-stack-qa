@@ -1,1 +1,1 @@
-{"id":"96f37bd92da95ba02e233c700323fd4c","fullName":"com.cjs.qa.utilities.PageObjectGeneratorBrowserTest.testDataTableMethods","name":"testDataTableMethods [DEV]","status":"passed","testResultsByEnv":{"default":"cf2d28e2316bda1def415d56fd3231c8"}}
+{"id":"96f37bd92da95ba02e233c700323fd4c","fullName":"com.cjs.qa.utilities.PageObjectGeneratorBrowserTest.testDataTableMethods","name":"testDataTableMethods [PROD]","status":"passed","testResultsByEnv":{"default":"bae5ed59918645e6a3dc0c2fe01005a0"}}
