@@ -1,1 +1,1 @@
-{"id":"dfcccb1104b42cec744113e485d90f11","fullName":"com.cjs.qa.junit.tests.NegativeTests.testErrorRecovery","name":"testErrorRecovery [PROD]","status":"passed","testResultsByEnv":{"default":"49defa8745a068c011026e74944b34ab"}}
+{"id":"dfcccb1104b42cec744113e485d90f11","fullName":"com.cjs.qa.junit.tests.NegativeTests.testErrorRecovery","name":"testErrorRecovery [TEST]","status":"passed","testResultsByEnv":{"default":"a524a829cf7706a031b280fdd590a67e"}}
