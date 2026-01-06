@@ -1,21 +1,7 @@
 #!/bin/bash
-# Generate Combined Allure Report - SIMPLIFIED VERSION (Approach 1)
+# Generate Combined Allure Report - SIMPLIFIED VERSION
 # This version lets Allure3 handle history creation naturally
-# Usage: ./scripts/ci/generate-combined-allure-report.sh [results-dir] [report-dir]
-#
-# Arguments:
-#   results-dir  - Directory containing Allure results (default: allure-results-combined)
-#   report-dir   - Directory where Allure report will be generated (default: allure-report-combined)
-#
-# This script:
-# 1. Verifies results directory exists and has files
-# 2. Checks if history exists (downloaded from previous runs)
-# 3. Generates Allure HTML report (Allure3 handles history merging automatically)
-# 4. Preserves history for next run (copies from report back to results)
-# 5. Verifies report was generated successfully
-#
-# KEY CHANGE: Removed all manual history merging logic
-# Allure3 will handle history creation and merging natively
+# Usage: ./scripts/ci/generate-combined-allure-report-simplified.sh [results-dir] [report-dir]
 
 set -e
 
@@ -41,28 +27,8 @@ if [ "$RESULT_COUNT" -eq 0 ]; then
     echo "⚠️  Warning: No result files found, but continuing..."
 fi
 
-# Verify categories.json exists
-if [ -f "$RESULTS_DIR/categories.json" ]; then
-    echo "✅ Categories file found: $RESULTS_DIR/categories.json"
-else
-    echo "⚠️  Warning: categories.json not found in results directory"
-fi
-
-# Verify executor.json exists
-if [ -f "$RESULTS_DIR/executor.json" ]; then
-    echo "✅ Executor file found: $RESULTS_DIR/executor.json"
-    # Extract buildOrder for logging
-    if command -v jq &> /dev/null; then
-        BUILD_ORDER=$(jq -r '.buildOrder // "unknown"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "unknown")
-        echo "   Build order: $BUILD_ORDER"
-    fi
-else
-    echo "⚠️  Warning: executor.json not found in results directory"
-fi
-
 # SIMPLIFIED APPROACH: Just ensure history exists in results directory
 # Allure3 will handle merging and creation automatically
-# History should have been downloaded earlier from GitHub Pages or artifact
 if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
     echo ""
     echo "📊 History found in results directory:"
@@ -79,11 +45,6 @@ else
 fi
 
 # Generate report - Allure3 will handle history automatically
-# CRITICAL: History must be in RESULTS_DIR BEFORE this command for Allure3 to merge it
-# Allure3 will:
-# 1. Read history from RESULTS_DIR/history/ if it exists
-# 2. Merge it with new test results (matching by historyId)
-# 3. Create updated history in REPORT_DIR/history/
 echo ""
 echo "🔄 Generating Allure report..."
 echo "   Allure3 will process history and create updated history in the report"
@@ -99,14 +60,12 @@ if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name
     echo "   Size: $(du -sh "$REPORT_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
     
     # Preserve history for next run
-    # Copy history from report back to results directory so it's available for next pipeline run
     echo ""
     echo "📊 Preserving history for next run..."
     mkdir -p "$RESULTS_DIR/history"
     cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
     PRESERVED_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     echo "✅ History preserved: $PRESERVED_COUNT file(s) ready for next report generation"
-    echo "   History will be uploaded as artifact and deployed to GitHub Pages"
 else
     echo ""
     echo "ℹ️  Allure3 did not create history (this is normal for first few runs)"
@@ -125,3 +84,5 @@ echo ""
 echo "✅ Allure report generated successfully"
 echo "   Report location: $REPORT_DIR"
 echo "   Report size: $(du -sh "$REPORT_DIR" 2>/dev/null | cut -f1 || echo 'unknown')"
+
+
