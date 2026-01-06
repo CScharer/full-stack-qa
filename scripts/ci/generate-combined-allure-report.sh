@@ -307,6 +307,33 @@ else
     if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
         echo "   ✅ Bootstrap history directory created successfully"
         echo "   Files: $(find "$REPORT_DIR/history" -name "*.json" 2>/dev/null | wc -l | tr -d ' ') file(s)"
+        
+        # Preserve bootstrap history for next run
+        # Check if history files have actual data (not just empty arrays)
+        EMPTY_COUNT=0
+        HISTORY_FILE_COUNT=$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+        
+        for json_file in "$REPORT_DIR/history"/*.json; do
+            if [ -f "$json_file" ]; then
+                CONTENT=$(cat "$json_file" 2>/dev/null | tr -d '[:space:]' || echo "")
+                if [ "$CONTENT" = "[]" ] || [ "$CONTENT" = "{}" ] || [ -z "$CONTENT" ]; then
+                    EMPTY_COUNT=$((EMPTY_COUNT + 1))
+                fi
+            fi
+        done
+        
+        if [ "$EMPTY_COUNT" -lt "$HISTORY_FILE_COUNT" ]; then
+            # Bootstrap history has actual data - preserve it for next run
+            echo ""
+            echo "📊 Preserving bootstrap history for next run..."
+            mkdir -p "$RESULTS_DIR/history"
+            cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
+            ACTUAL_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+            echo "✅ Bootstrap history preserved: $ACTUAL_FILE_COUNT file(s) ready for next report generation"
+            echo "   History will be merged with new results in the next pipeline run"
+        else
+            echo "   ⚠️  Bootstrap history files appear empty - will be replaced in next run"
+        fi
     else
         echo "   ⚠️  Warning: Bootstrap history creation may have failed"
     fi
