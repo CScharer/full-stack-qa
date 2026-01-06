@@ -188,15 +188,22 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                 if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
                     # Read existing history and add current run's data
                     # CRITICAL: Ensure existing history is a flat array, not nested
+                    # Also deduplicate by buildOrder - keep only the latest entry for each buildOrder
                     # Use flatten to handle any nested arrays that might exist
                     jq --argjson build_order "$CURRENT_BUILD_ORDER" \
                         --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
-                        'flatten | . + [{
-                          buildOrder: $build_order,
-                          reportUrl: "",
-                          reportName: "Allure Report",
-                          data: ($current_data[0] | flatten)
-                        }]' \
+                        'flatten | 
+                         # Remove any existing entry with the same buildOrder (deduplicate)
+                         map(select(.buildOrder != $build_order)) |
+                         # Add the new entry
+                         . + [{
+                           buildOrder: $build_order,
+                           reportUrl: "",
+                           reportName: "Allure Report",
+                           data: ($current_data[0] | flatten)
+                         }] |
+                         # Sort by buildOrder for consistency
+                         sort_by(.buildOrder)' \
                         "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history-trend.json.tmp" 2>/dev/null && \
                         mv "$RESULTS_DIR/history/history-trend.json.tmp" "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || true
                 else
@@ -215,12 +222,19 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                 # Merge duration-trend.json
                 if [ -f "$RESULTS_DIR/history/duration-trend.json" ]; then
                     # CRITICAL: Ensure existing history is a flat array, not nested
+                    # Also deduplicate by buildOrder - keep only the latest entry for each buildOrder
                     jq --argjson build_order "$CURRENT_BUILD_ORDER" \
                         --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
-                        'flatten | . + [{
-                          buildOrder: $build_order,
-                          data: (($current_data[0] | flatten) | map({uid: .uid, time: .time}))
-                        }]' \
+                        'flatten | 
+                         # Remove any existing entry with the same buildOrder (deduplicate)
+                         map(select(.buildOrder != $build_order)) |
+                         # Add the new entry
+                         . + [{
+                           buildOrder: $build_order,
+                           data: (($current_data[0] | flatten) | map({uid: .uid, time: .time}))
+                         }] |
+                         # Sort by buildOrder for consistency
+                         sort_by(.buildOrder)' \
                         "$RESULTS_DIR/history/duration-trend.json" > "$RESULTS_DIR/history/duration-trend.json.tmp" 2>/dev/null && \
                         mv "$RESULTS_DIR/history/duration-trend.json.tmp" "$RESULTS_DIR/history/duration-trend.json" 2>/dev/null || true
                 else
