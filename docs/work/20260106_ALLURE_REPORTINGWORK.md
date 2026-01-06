@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-06  
-**Current MERGE_NUMBER**: 36  
-**Latest Pipeline**: #20759545047 (2026-01-06)
+**Current MERGE_NUMBER**: 37  
+**Latest Pipeline**: #20760233379 (2026-01-06)
 
 ---
 
@@ -16,13 +16,13 @@ This document tracks all work related to implementing and fixing Allure3 history
 ### Key Metrics
 - **Total PRs**: 11+ (PRs #67-#105)
 - **Total Pipeline Runs**: 35+ (Pipelines #388-#20758689530)
-- **Total Iterations**: 35 merges to main
+- **Total Iterations**: 37 merges to main
 - **Time Span**: ~3 days (2026-01-04 to 2026-01-06)
-- **Current MERGE_NUMBER**: 36 (as of 2026-01-06)
+- **Current MERGE_NUMBER**: 37 (as of 2026-01-06)
 
 ### Current Status (2026-01-06)
-- **MERGE_NUMBER**: 36
-- **Latest Pipeline**: #20759545047
+- **MERGE_NUMBER**: 37
+- **Latest Pipeline**: #20760233379
 - ✅ **History Download**: Working (via GitHub API and artifacts)
 - ✅ **History Structure**: Fixed (flat array, deduplicated)
 - ✅ **History Merge Logic**: Working (manual merge with deduplication)
@@ -35,15 +35,15 @@ This document tracks all work related to implementing and fixing Allure3 history
 
 ## 🔢 MERGE_NUMBER Tracking
 
-**Current MERGE_NUMBER**: 36  
+**Current MERGE_NUMBER**: 37  
 **Location**: `scripts/temp/test-trending-merge-tracker.sh`  
 **Purpose**: Tracks merge iterations for test trending validation  
 **Update Method**: Increment `MERGE_NUMBER` in the tracker script before each merge
 
 **MERGE_NUMBER History**:
 - Started at: 1 (PR #67)
-- Current: 36 (PR #106, Pipeline #20759545047)
-- Total iterations: 36 merges to main
+- Current: 37 (PR #107, Pipeline #20760233379)
+- Total iterations: 37 merges to main
 
 **How to Update**:
 1. Edit `scripts/temp/test-trending-merge-tracker.sh`
@@ -338,7 +338,7 @@ This document tracks all work related to implementing and fixing Allure3 history
 
 **`scripts/temp/test-trending-merge-tracker.sh`**:
 - **Purpose**: Tracks merge iterations for testing
-- **Current Value**: `MERGE_NUMBER=36`
+- **Current Value**: `MERGE_NUMBER=37`
 - **Usage**: Updated before each merge to trigger pipeline runs
 - **Location**: `scripts/temp/` (temporary tracking script)
 
@@ -430,6 +430,7 @@ This document tracks all work related to implementing and fixing Allure3 history
 | #20757281496 | #104 | ✅ Success | Deduplication applied | Clean history structure |
 | #20758689530 | #105 | ✅ Success | MERGE_NUMBER 35 | History preserved (212K→252K), Allure3 still not recognizing |
 | #20759545047 | #106 | ✅ Success | MERGE_NUMBER 36 | History preserved (252K→292K), Allure3 still not recognizing |
+| #20760233379 | #107 | ✅ Success | MERGE_NUMBER 37 | History preserved (292K→332K), Allure3 still not recognizing |
 
 ---
 
@@ -681,8 +682,8 @@ cat allure-results-combined/history/history-trend.json | jq '[.[] | .buildOrder]
    - **Location**: `scripts/temp/test-trending-merge-tracker.sh`
    - **Created**: PR #67
    - **Purpose**: Track merge iterations for testing
-   - **Current Value**: `MERGE_NUMBER=36`
-   - **Updated**: 36 times (PRs #68-#106)
+   - **Current Value**: `MERGE_NUMBER=37`
+   - **Updated**: 37 times (PRs #68-#107)
 
 ### Environment Variables
 
@@ -821,7 +822,90 @@ The Allure reporting implementation required extensive work to fix multiple issu
 
 ---
 
-## 📊 Latest Pipeline Results (Pipeline #20759545047 - MERGE_NUMBER 36)
+## 📊 Latest Pipeline Results (Pipeline #20760233379 - MERGE_NUMBER 37)
+
+**Date**: 2026-01-06  
+**Pipeline Run**: #20760233379  
+**Status**: ✅ Success  
+**Build Order**: 480  
+**MERGE_NUMBER**: 37
+
+### History Download Results ✅
+
+**Artifact Fallback**:
+- ✅ Successfully downloaded 3 files from previous run (20759545047)
+- ✅ History files found and downloaded
+
+**GitHub Pages Download**:
+- ✅ Successfully downloaded 5 files (292K total)
+- ✅ Files downloaded: `.gitkeep`, `duration-trend.json`, `duration-trend.json.tmp`, `history-trend.json`, `retry-trend.json`
+- ✅ GitHub API working correctly
+
+**History Verification**:
+- ✅ History directory exists: 5 files, 292K
+- ✅ Sample files: `duration-trend.json`, `history-trend.json`, `retry-trend.json`
+
+### Report Generation Results ⚠️
+
+**History Merge**:
+- ✅ History found in results directory: 3 files
+- ✅ Manually merged current run's data (100 entries) with existing history
+- ✅ Build order: 480 (incremented from 478)
+- ✅ Merge completed successfully
+
+**Allure3 Behavior**:
+- ❌ Allure3 did NOT create history directory after first generation
+- ❌ Allure3 did NOT create history after regeneration attempt
+- ✅ Manually merged history copied to report directory (3 files, 332K)
+- ✅ History size increased (292K → 332K), confirming merge worked and history is accumulating
+
+**Report Output**:
+- ✅ Report generated successfully: 286 result files processed
+- ✅ History directory exists in report: 3 files, 332K
+- ✅ History preserved for next run
+
+### History Upload Results ✅
+
+**Artifact Upload**:
+- ✅ History directory contains 3 file(s)
+- ✅ Size: 332K (increased from 292K in previous run)
+- ✅ History artifact ready for upload
+- ✅ Artifact uploaded successfully: 46,664 bytes
+- ✅ Artifact ID: 5041570290
+
+### Key Findings
+
+**What's Working** ✅:
+1. History download from both artifact and GitHub Pages
+2. History merge logic (100 entries merged successfully)
+3. History preservation (size growing: 292K → 332K, +40K increase)
+4. History upload as artifact
+5. History structure appears correct (3 files, valid JSON)
+6. Deduplication working (no duplicate errors)
+7. Build order incrementing correctly (478 → 480)
+
+**What's Still Not Working** ❌:
+1. Allure3 still not recognizing manually created history
+2. Allure3 consistently says "didn't create history" even after regeneration
+3. Trends not visible in Allure Reports (likely because Allure3 doesn't process manually created history)
+
+**Observations**:
+- History is being preserved and accumulating correctly (292K → 332K)
+- Manual merge is working (history size increased by 40K)
+- Build order is incrementing correctly (478 → 480)
+- Allure3 appears to have a hard requirement that history must be created by Allure3 itself
+- Even with correct structure, format, and data, Allure3 refuses to process manually created history
+- History growth pattern: 212K (run 35) → 252K (run 35) → 292K (run 36) → 332K (run 37) - consistent accumulation
+
+**Next Steps**:
+- Continue monitoring if Allure3 eventually recognizes the manually created history after more runs
+- Consider alternative approaches if Allure3 continues to reject manually created history
+- Verify if trends appear in the actual Allure report UI (may work even if Allure3 says it didn't create history)
+- History is accumulating correctly, which is positive progress
+
+---
+
+## 📊 Previous Pipeline Results (Pipeline #20759545047 - MERGE_NUMBER 36)
 
 **Date**: 2026-01-06  
 **Pipeline Run**: #20759545047  
@@ -985,6 +1069,6 @@ The Allure reporting implementation required extensive work to fix multiple issu
 **Last Updated**: 2026-01-06  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
 **Status**: Active investigation ongoing  
-**Current MERGE_NUMBER**: 36  
-**Latest Pipeline**: #20759545047 (2026-01-06)
+**Current MERGE_NUMBER**: 37  
+**Latest Pipeline**: #20760233379 (2026-01-06)
 
