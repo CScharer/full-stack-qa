@@ -157,9 +157,16 @@ fi
 # Note: Allure3 CLI doesn't support --clean flag, so we remove the directory first
 # Allure3 automatically merges history from RESULTS_DIR/history/ if it exists
 # CRITICAL: History must be in RESULTS_DIR BEFORE this command for Allure3 to merge it
+# IMPORTANT: Allure3 requires matching historyId in test results to merge history
+# If history exists but Allure3 doesn't merge it, we'll bootstrap from current run
 echo ""
 echo "🔄 Generating Allure report..."
-echo "   (Allure3 will merge history from $RESULTS_DIR/history/ with new results)"
+if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+    echo "   (Allure3 will attempt to merge history from $RESULTS_DIR/history/ with new results)"
+    echo "   Note: Allure3 requires matching historyId in test results to merge history"
+else
+    echo "   (No history found - Allure3 will create new history from test results)"
+fi
 rm -rf "$REPORT_DIR"
 allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
@@ -192,10 +199,10 @@ if [ -d "$REPORT_DIR/history" ]; then
             echo "   Allure3 will create history naturally in future runs"
         else
             # History has actual data - preserve it
-            echo ""
-            echo "📊 Preserving history for next run..."
-            mkdir -p "$RESULTS_DIR/history"
-            cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
+    echo ""
+    echo "📊 Preserving history for next run..."
+    mkdir -p "$RESULTS_DIR/history"
+    cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
             ACTUAL_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
             echo "✅ History preserved: $ACTUAL_FILE_COUNT file(s) ready for next report generation"
             echo "   History will be merged with new results in the next pipeline run"
