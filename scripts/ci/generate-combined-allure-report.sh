@@ -163,8 +163,9 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
             # Use process substitution to avoid subshell issues
             while IFS= read -r result_file; do
                 if [ -f "$result_file" ]; then
-                    jq -c 'select(.uuid != null and .start != null and .stop != null) | {
-                        uid: .uuid,
+                    # Extract historyId (not uuid) - Allure3 matches history by historyId
+                    jq -c 'select(.historyId != null and .start != null and .stop != null) | {
+                        uid: .historyId,
                         status: .status,
                         time: {
                             start: .start,
@@ -329,10 +330,11 @@ else
             find "$RESULTS_DIR" -name "*-result.json" -type f 2>/dev/null | head -100 | while read -r result_file; do
                 if [ -f "$result_file" ]; then
                     # Extract fields and create history entry
+                    # CRITICAL: Use historyId (not uuid) - Allure3 matches history by historyId
                     jq -c --arg build_order "$BUILD_ORDER" '
-                        select(.uuid != null and .start != null and .stop != null) |
+                        select(.historyId != null and .start != null and .stop != null) |
                         {
-                            uid: .uuid,
+                            uid: .historyId,
                             status: .status,
                             time: {
                                 start: .start,
