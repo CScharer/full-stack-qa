@@ -142,6 +142,70 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
         echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
         echo "   ✅ History will be merged with new results during report generation"
         echo "   Allure3 will create updated history in the generated report"
+        echo ""
+        echo "   ⚠️  Note: Allure3 requires matching historyId to merge history"
+        echo "   If Allure3 doesn't merge history, we'll manually merge it before generation"
+        
+        # Get current buildOrder from executor.json
+        CURRENT_BUILD_ORDER="1"
+        if [ -f "$RESULTS_DIR/executor.json" ]; then
+            CURRENT_BUILD_ORDER=$(grep -o '"buildOrder"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESULTS_DIR/executor.json" 2>/dev/null | sed 's/.*"buildOrder"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "1")
+        fi
+        
+        # Check if we need to manually merge history
+        # Allure3 might not merge history if test results don't have matching historyId
+        # So we'll prepare a merged history that includes current run's data
+        echo "   Preparing merged history with current run's data (buildOrder $CURRENT_BUILD_ORDER)..."
+        
+        # Extract test data from current run's result files
+        if command -v jq &> /dev/null && [ "$RESULT_COUNT" -gt 0 ]; then
+            TEMP_CURRENT_DATA=$(mktemp)
+            # Use process substitution to avoid subshell issues
+            while IFS= read -r result_file; do
+                if [ -f "$result_file" ]; then
+                    jq -c 'select(.uuid != null and .start != null and .stop != null) | {
+                        uid: .uuid,
+                        status: .status,
+                        time: {
+                            start: .start,
+                            stop: .stop,
+                            duration: (.stop - .start)
+                        }
+                    }' "$result_file" 2>/dev/null >> "$TEMP_CURRENT_DATA" || true
+                fi
+            done < <(find "$RESULTS_DIR" -name "*-result.json" -type f 2>/dev/null | head -100)
+            
+            # Merge current run's data with existing history
+            if [ -f "$TEMP_CURRENT_DATA" ] && [ -s "$TEMP_CURRENT_DATA" ]; then
+                CURRENT_DATA_COUNT=$(wc -l < "$TEMP_CURRENT_DATA" | tr -d ' ')
+                
+                # Merge history-trend.json
+                if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+                    # Read existing history and add current run's data
+                    jq -s --argjson build_order "$CURRENT_BUILD_ORDER" \
+                        --slurpfile current_data "$TEMP_CURRENT_DATA" \
+                        '. + [{buildOrder: $build_order, reportUrl: "", reportName: "Allure Report", data: $current_data[0]}]' \
+                        "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history-trend.json.tmp" 2>/dev/null && \
+                        mv "$RESULTS_DIR/history/history-trend.json.tmp" "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || true
+                fi
+                
+                # Merge duration-trend.json
+                if [ -f "$RESULTS_DIR/history/duration-trend.json" ]; then
+                    jq -s --argjson build_order "$CURRENT_BUILD_ORDER" \
+                        --slurpfile current_data "$TEMP_CURRENT_DATA" \
+                        '. + [{buildOrder: $build_order, data: [$current_data[0][] | {uid: .uid, time: .time}]}]' \
+                        "$RESULTS_DIR/history/duration-trend.json" > "$RESULTS_DIR/history/duration-trend.json.tmp" 2>/dev/null && \
+                        mv "$RESULTS_DIR/history/duration-trend.json.tmp" "$RESULTS_DIR/history/duration-trend.json" 2>/dev/null || true
+                fi
+                
+                # retry-trend.json doesn't need merging (empty for now)
+                
+                rm -f "$TEMP_CURRENT_DATA"
+                echo "   ✅ Merged current run's data ($CURRENT_DATA_COUNT entries) with existing history"
+            else
+                rm -f "$TEMP_CURRENT_DATA"
+            fi
+        fi
     fi
 else
     # No history exists - this is expected for the first few runs
