@@ -1,1 +1,1 @@
-{"id":"f025a30a0f34ad4c886661a2c78890c8","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testBrowserNavigation","name":"testBrowserNavigation [DEV]","status":"passed","testResultsByEnv":{"default":"5c9b0117b637fcdbb2e6ac01aad36bdd"}}
+{"id":"f025a30a0f34ad4c886661a2c78890c8","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testBrowserNavigation","name":"testBrowserNavigation [PROD]","status":"passed","testResultsByEnv":{"default":"44b0964bee05498f594f69ef4398430b"}}
