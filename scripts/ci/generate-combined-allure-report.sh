@@ -236,6 +236,23 @@ allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
 # Preserve history for next run (copy from report back to results)
 # Allure3 creates history in REPORT_DIR/history/ after generation
+# However, if Allure3 didn't create history but we manually merged it,
+# we should copy the merged history from RESULTS_DIR to REPORT_DIR
+if [ ! -d "$REPORT_DIR/history" ] && [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+    # Allure3 didn't create history, but we have manually merged history
+    # Copy the merged history to the report so it gets deployed
+    echo ""
+    echo "📊 Allure3 didn't create history, but we have manually merged history"
+    echo "   Copying merged history to report directory for deployment..."
+    mkdir -p "$REPORT_DIR/history"
+    cp -r "$RESULTS_DIR/history"/* "$REPORT_DIR/history/" 2>/dev/null || true
+    MERGED_FILE_COUNT=$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+    echo "   ✅ Copied merged history ($MERGED_FILE_COUNT file(s)) to report directory"
+    echo "   History will be deployed to GitHub Pages with multiple build orders"
+fi
+
+# Preserve history for next run (copy from report back to results)
+# Allure3 creates history in REPORT_DIR/history/ after generation
 # We copy it back to RESULTS_DIR so it's available for the next pipeline run
 if [ -d "$REPORT_DIR/history" ]; then
     # Check if history directory has actual files (not just empty arrays)
