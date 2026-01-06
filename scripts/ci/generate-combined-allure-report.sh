@@ -188,12 +188,15 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                 if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
                     # Read existing history and add current run's data
                     # CRITICAL: Ensure existing history is a flat array, not nested
-                    # Also deduplicate by buildOrder - keep only the latest entry for each buildOrder
+                    # Also deduplicate ALL buildOrders - keep only the latest entry for each buildOrder
                     # Use flatten to handle any nested arrays that might exist
                     jq --argjson build_order "$CURRENT_BUILD_ORDER" \
                         --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
                         'flatten | 
-                         # Remove any existing entry with the same buildOrder (deduplicate)
+                         # Deduplicate ALL buildOrders - keep only the latest entry for each buildOrder
+                         # Group by buildOrder, take the last entry for each group
+                         group_by(.buildOrder) | map(last) |
+                         # Remove any existing entry with the same buildOrder as current (if exists)
                          map(select(.buildOrder != $build_order)) |
                          # Add the new entry
                          . + [{
@@ -222,11 +225,14 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                 # Merge duration-trend.json
                 if [ -f "$RESULTS_DIR/history/duration-trend.json" ]; then
                     # CRITICAL: Ensure existing history is a flat array, not nested
-                    # Also deduplicate by buildOrder - keep only the latest entry for each buildOrder
+                    # Also deduplicate ALL buildOrders - keep only the latest entry for each buildOrder
                     jq --argjson build_order "$CURRENT_BUILD_ORDER" \
                         --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
                         'flatten | 
-                         # Remove any existing entry with the same buildOrder (deduplicate)
+                         # Deduplicate ALL buildOrders - keep only the latest entry for each buildOrder
+                         # Group by buildOrder, take the last entry for each group
+                         group_by(.buildOrder) | map(last) |
+                         # Remove any existing entry with the same buildOrder as current (if exists)
                          map(select(.buildOrder != $build_order)) |
                          # Add the new entry
                          . + [{
