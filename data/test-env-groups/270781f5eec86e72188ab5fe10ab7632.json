@@ -1,1 +1,1 @@
-{"id":"270781f5eec86e72188ab5fe10ab7632","fullName":"com.cjs.qa.junit.tests.api.APIContractTests.testGoToWebinarAuthResponseSchema","name":"testGoToWebinarAuthResponseSchema [PROD]","status":"passed","testResultsByEnv":{"default":"e569e7fd528d5ad853f84fa23535fdba"}}
+{"id":"270781f5eec86e72188ab5fe10ab7632","fullName":"com.cjs.qa.junit.tests.api.APIContractTests.testGoToWebinarAuthResponseSchema","name":"testGoToWebinarAuthResponseSchema [TEST]","status":"passed","testResultsByEnv":{"default":"b8e16dfdbf2d58eae6166cede9b52786"}}
