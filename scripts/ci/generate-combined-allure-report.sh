@@ -181,19 +181,21 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                 CURRENT_DATA_COUNT=$(wc -l < "$TEMP_CURRENT_DATA" | tr -d ' ')
                 
                 # Merge history-trend.json
-                # Convert newline-delimited JSON to array first
+                # Convert newline-delimited JSON to array first (flat array, not nested)
                 TEMP_CURRENT_ARRAY=$(mktemp)
                 jq -s '.' "$TEMP_CURRENT_DATA" > "$TEMP_CURRENT_ARRAY" 2>/dev/null || echo '[]' > "$TEMP_CURRENT_ARRAY"
                 
                 if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
                     # Read existing history and add current run's data
+                    # CRITICAL: Ensure existing history is a flat array, not nested
+                    # Use flatten to handle any nested arrays that might exist
                     jq --argjson build_order "$CURRENT_BUILD_ORDER" \
                         --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
-                        '. + [{
+                        'flatten | . + [{
                           buildOrder: $build_order,
                           reportUrl: "",
                           reportName: "Allure Report",
-                          data: $current_data[0]
+                          data: ($current_data[0] | flatten)
                         }]' \
                         "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history-trend.json.tmp" 2>/dev/null && \
                         mv "$RESULTS_DIR/history/history-trend.json.tmp" "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || true
@@ -205,18 +207,19 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                           buildOrder: $build_order,
                           reportUrl: "",
                           reportName: "Allure Report",
-                          data: $current_data[0]
+                          data: ($current_data[0] | flatten)
                         }]' \
                         "$TEMP_CURRENT_ARRAY" > "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || true
                 fi
                 
                 # Merge duration-trend.json
                 if [ -f "$RESULTS_DIR/history/duration-trend.json" ]; then
+                    # CRITICAL: Ensure existing history is a flat array, not nested
                     jq --argjson build_order "$CURRENT_BUILD_ORDER" \
                         --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
-                        '. + [{
+                        'flatten | . + [{
                           buildOrder: $build_order,
-                          data: ($current_data[0] | map({uid: .uid, time: .time}))
+                          data: (($current_data[0] | flatten) | map({uid: .uid, time: .time}))
                         }]' \
                         "$RESULTS_DIR/history/duration-trend.json" > "$RESULTS_DIR/history/duration-trend.json.tmp" 2>/dev/null && \
                         mv "$RESULTS_DIR/history/duration-trend.json.tmp" "$RESULTS_DIR/history/duration-trend.json" 2>/dev/null || true
@@ -226,7 +229,7 @@ if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -type f -na
                         --slurpfile current_data "$TEMP_CURRENT_ARRAY" \
                         '[{
                           buildOrder: $build_order,
-                          data: ($current_data[0] | map({uid: .uid, time: .time}))
+                          data: (($current_data[0] | flatten) | map({uid: .uid, time: .time}))
                         }]' \
                         "$TEMP_CURRENT_ARRAY" > "$RESULTS_DIR/history/duration-trend.json" 2>/dev/null || true
                 fi
