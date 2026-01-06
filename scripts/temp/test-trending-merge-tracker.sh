@@ -3,7 +3,7 @@
 # This script is used to track merge iterations for test trending validation
 # Update the MERGE_NUMBER value for each merge to ensure pipeline runs
 
-MERGE_NUMBER=33
+MERGE_NUMBER=34
 
 echo "═══════════════════════════════════════════════════════════════"
 echo "  Test Trending Merge ${MERGE_NUMBER}"
