@@ -1,1 +1,1 @@
-{"id":"d64a3af6413eabe53795aa862e49eb90","fullName":"com.cjs.qa.junit.tests.SimpleGridTest.testGridConnection","name":"testGridConnection [PROD]","status":"passed","testResultsByEnv":{"default":"37b5d7cc9c19b9435415a52cf84b91f5"}}
+{"id":"d64a3af6413eabe53795aa862e49eb90","fullName":"com.cjs.qa.junit.tests.SimpleGridTest.testGridConnection","name":"testGridConnection [TEST]","status":"passed","testResultsByEnv":{"default":"795781d0dca6c438e331846702e8cd49"}}
