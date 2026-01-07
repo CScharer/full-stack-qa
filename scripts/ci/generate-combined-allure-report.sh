@@ -1,6 +1,6 @@
 #!/bin/bash
-# Generate Combined Allure Report - APPROACH 4 (Individual Test History Files)
-# This version creates individual {md5-hash}.json files for each test
+# Generate Combined Allure Report - APPROACH 4 & 5 (Let Allure3 Create History + BuildOrder Continuity)
+# This version ensures Allure3 creates history first and verifies buildOrder continuity
 # Usage: ./scripts/ci/generate-combined-allure-report.sh [results-dir] [report-dir]
 #
 # Arguments:
@@ -9,21 +9,22 @@
 #
 # This script:
 # 1. Verifies results directory exists and has files
-# 2. Downloads history from previous runs (if exists)
-# 3. Creates individual test history files ({md5(historyId)}.json) from history-trend.json
-# 4. Generates Allure HTML report (Allure3 processes individual history files)
+# 2. Ensures buildOrder in executor.json is higher than latest history buildOrder (Step 5)
+# 3. Lets Allure3 create history first if it doesn't exist (Step 4)
+# 4. Generates Allure HTML report (Allure3 processes history)
 # 5. Preserves history for next run (copies from report back to results)
 # 6. Verifies report was generated successfully
 #
-# APPROACH 4: Create individual test history files
-# Allure3 might require individual {md5-hash}.json files for each test
+# APPROACH 4 & 5:
+# - Step 4: Let Allure3 create history first (bootstrap if needed)
+# - Step 5: Ensure buildOrder continuity (executor.json buildOrder > latest history buildOrder)
 
 set -e
 
 RESULTS_DIR="${1:-allure-results-combined}"
 REPORT_DIR="${2:-allure-report-combined}"
 
-echo "📊 Generating combined Allure report (Approach 4 - individual test history files)..."
+echo "📊 Generating combined Allure report (Approach 4 & 5 - Let Allure3 create history + buildOrder continuity)..."
 echo "   Results directory: $RESULTS_DIR"
 echo "   Report directory: $REPORT_DIR"
 echo ""
@@ -49,108 +50,117 @@ else
     echo "⚠️  Warning: categories.json not found in results directory"
 fi
 
-# Verify executor.json exists
+# STEP 5: Ensure buildOrder continuity
+# Verify executor.json exists and check buildOrder
 if [ -f "$RESULTS_DIR/executor.json" ]; then
     echo "✅ Executor file found: $RESULTS_DIR/executor.json"
-    # Extract buildOrder for logging
+    
     if command -v jq &> /dev/null; then
-        BUILD_ORDER=$(jq -r '.buildOrder // "unknown"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "unknown")
-        echo "   Build order: $BUILD_ORDER"
+        CURRENT_BUILD_ORDER=$(jq -r '.buildOrder // "1"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "1")
+        echo "   Current build order: $CURRENT_BUILD_ORDER"
+        
+        # Check if history exists and get latest buildOrder
+        if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+            LATEST_HISTORY_BUILD_ORDER=$(jq -r '[.[] | .buildOrder] | max // 0' "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || echo "0")
+            
+            if [ -n "$LATEST_HISTORY_BUILD_ORDER" ] && [ "$LATEST_HISTORY_BUILD_ORDER" != "null" ] && [ "$LATEST_HISTORY_BUILD_ORDER" -gt 0 ]; then
+                echo "   Latest history build order: $LATEST_HISTORY_BUILD_ORDER"
+                
+                # Ensure current buildOrder is higher than latest history buildOrder
+                if [ "$CURRENT_BUILD_ORDER" -le "$LATEST_HISTORY_BUILD_ORDER" ]; then
+                    echo "   ⚠️  WARNING: Current buildOrder ($CURRENT_BUILD_ORDER) <= latest history buildOrder ($LATEST_HISTORY_BUILD_ORDER)"
+                    echo "   🔧 Updating buildOrder to ensure continuity..."
+                    NEW_BUILD_ORDER=$((LATEST_HISTORY_BUILD_ORDER + 2))
+                    jq --arg build_order "$NEW_BUILD_ORDER" '.buildOrder = $build_order' "$RESULTS_DIR/executor.json" > "${RESULTS_DIR}/executor.json.tmp" 2>/dev/null && \
+                    mv "${RESULTS_DIR}/executor.json.tmp" "$RESULTS_DIR/executor.json" 2>/dev/null || true
+                    echo "   ✅ Updated buildOrder to $NEW_BUILD_ORDER (ensures continuity)"
+                else
+                    echo "   ✅ BuildOrder continuity verified ($CURRENT_BUILD_ORDER > $LATEST_HISTORY_BUILD_ORDER)"
+                fi
+            else
+                echo "   ℹ️  No history buildOrder found (first run or empty history)"
+            fi
+        else
+            echo "   ℹ️  No history file found (first run)"
+        fi
     fi
 else
     echo "⚠️  Warning: executor.json not found in results directory"
 fi
 
-# APPROACH 4: Create individual test history files from history-trend.json
-# Allure3 might require individual {md5(historyId)}.json files for each test
-if [ -d "$RESULTS_DIR/history" ] && [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
-    echo ""
-    echo "📊 Processing history for individual test history files (Approach 4)..."
+# STEP 4: Let Allure3 create history first
+# Check if history exists and if it was created by Allure3
+# Allure3-created history will have individual {md5-hash}.json files
+HISTORY_EXISTS=false
+ALLURE3_CREATED_HISTORY=false
+
+if [ -d "$RESULTS_DIR/history" ]; then
+    HISTORY_EXISTS=true
+    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     
-    # Check if history-trend.json has data
-    if command -v jq &> /dev/null; then
-        HISTORY_ENTRIES=$(jq 'length' "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || echo "0")
+    # Check if individual test history files exist (created by Allure3)
+    INDIVIDUAL_FILES=$(find "$RESULTS_DIR/history" -name "*.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" 2>/dev/null | wc -l | tr -d ' ')
+    
+    if [ "$INDIVIDUAL_FILES" -gt 0 ]; then
+        ALLURE3_CREATED_HISTORY=true
+        echo ""
+        echo "📊 History found (created by Allure3):"
+        echo "   Total files: $HISTORY_FILE_COUNT file(s)"
+        echo "   Individual test files: $INDIVIDUAL_FILES file(s)"
+        echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+        echo "   ✅ History was created by Allure3 - will be processed"
+    elif [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+        echo ""
+        echo "📊 History found (manually created):"
+        echo "   Files: $HISTORY_FILE_COUNT file(s)"
+        echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+        echo "   ⚠️  History appears to be manually created (no individual test files)"
+        echo "   🔄 Letting Allure3 create fresh history first (Step 4)..."
         
-        if [ "$HISTORY_ENTRIES" -gt 0 ]; then
-            echo "   Found $HISTORY_ENTRIES build order entries in history-trend.json"
-            echo "   Creating individual test history files..."
-            
-            # Create individual test history files
-            # For each entry in history-trend.json, extract data and group by uid
-            # Then create {md5(uid)}.json files
-            INDIVIDUAL_COUNT=0
-            
-            # Process each build order entry and create individual test history files
-            # Use jq to process all entries and create individual files
-            jq -r '.[] | 
-                .buildOrder as $build_order |
-                .data[]? | 
-                "\(.uid)|\($build_order)|\(.status)|\(.time.start)|\(.time.stop)|\(.time.duration)"' \
-                "$RESULTS_DIR/history/history-trend.json" 2>/dev/null | \
-            while IFS='|' read -r uid build_order status start stop duration; do
-                if [ -n "$uid" ] && [ "$uid" != "null" ] && [ -n "$build_order" ]; then
-                    # Generate MD5 hash of uid for filename
-                    hash=$(echo -n "$uid" | md5sum | cut -d' ' -f1)
-                    history_file="$RESULTS_DIR/history/${hash}.json"
-                    
-                    # Create history entry
-                    history_entry=$(jq -n \
-                        --argjson build_order "$build_order" \
-                        --arg status "$status" \
-                        --argjson start "$start" \
-                        --argjson stop "$stop" \
-                        --argjson duration "$duration" \
-                        '{buildOrder: $build_order, status: $status, time: {start: $start, stop: $stop, duration: $duration}}')
-                    
-                    # Create or update individual test history file
-                    if [ -f "$history_file" ]; then
-                        # Append to existing history
-                        jq --argjson entry "$history_entry" '.history += [$entry]' "$history_file" > "${history_file}.tmp" 2>/dev/null && \
-                        mv "${history_file}.tmp" "$history_file" 2>/dev/null || true
-                    else
-                        # Create new history file
-                        jq -n \
-                            --arg uid "$uid" \
-                            --argjson entry "$history_entry" \
-                            '{uid: $uid, history: [$entry]}' > "$history_file" 2>/dev/null || true
-                    fi
-                    
-                    INDIVIDUAL_COUNT=$((INDIVIDUAL_COUNT + 1))
-                fi
-            done
-            
-            # Count individual history files created
-            INDIVIDUAL_FILES=$(find "$RESULTS_DIR/history" -name "*.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" ! -name "*.tmp" 2>/dev/null | wc -l | tr -d ' ')
-            echo "   ✅ Created/updated $INDIVIDUAL_FILES individual test history file(s)"
-            echo "   Individual history files ready for Allure3 processing"
-        else
-            echo "   ℹ️  history-trend.json is empty or has no entries"
+        # Backup manually created history
+        if [ -d "$RESULTS_DIR/history" ]; then
+            BACKUP_DIR="${RESULTS_DIR}/history-backup-$(date +%s)"
+            cp -r "$RESULTS_DIR/history" "$BACKUP_DIR" 2>/dev/null || true
+            echo "   📦 Backed up existing history to: $BACKUP_DIR"
         fi
+        
+        # Remove manually created history to let Allure3 bootstrap
+        rm -rf "$RESULTS_DIR/history"
+        echo "   ✅ Removed manually created history - Allure3 will create fresh history"
+        ALLURE3_CREATED_HISTORY=false
     else
-        echo "   ⚠️  jq not available - cannot process history for individual files"
+        echo ""
+        echo "ℹ️  History directory exists but is empty"
+        ALLURE3_CREATED_HISTORY=false
     fi
 else
     echo ""
     echo "ℹ️  No history found in results directory (expected for first few runs)"
-    echo "   Individual test history files will be created by Allure3 after multiple runs"
+    echo "   Allure3 will create history naturally from test results"
+    ALLURE3_CREATED_HISTORY=false
 fi
 
-# Generate report - Allure3 will process individual history files
-# CRITICAL: Individual history files must be in RESULTS_DIR/history/ BEFORE this command
+# Generate report - Allure3 will create/process history
+# CRITICAL: If history was manually created, we removed it so Allure3 can bootstrap
 # Allure3 will:
-# 1. Read individual {md5-hash}.json files from RESULTS_DIR/history/
-# 2. Merge them with new test results (matching by historyId)
-# 3. Create updated history in REPORT_DIR/history/
+# 1. Create fresh history if none exists
+# 2. Process existing history if it was created by Allure3
+# 3. Merge with new test results (matching by historyId)
+# 4. Create updated history in REPORT_DIR/history/
 echo ""
 echo "🔄 Generating Allure report..."
-echo "   Allure3 will process individual test history files and create updated history"
+if [ "$ALLURE3_CREATED_HISTORY" = true ]; then
+    echo "   Allure3 will process existing Allure3-created history and merge with new results"
+else
+    echo "   Allure3 will create fresh history from test results (Step 4: bootstrap)"
+fi
 rm -rf "$REPORT_DIR"
 allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
 # Check if Allure3 created history
 if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
     echo ""
-    echo "✅ Allure3 created history in report"
+    echo "✅ Allure3 created/updated history in report"
     HISTORY_FILE_COUNT=$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     INDIVIDUAL_COUNT=$(find "$REPORT_DIR/history" -name "*.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" 2>/dev/null | wc -l | tr -d ' ')
     echo "   Total files: $HISTORY_FILE_COUNT file(s)"
@@ -166,11 +176,28 @@ if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name
     PRESERVED_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     echo "✅ History preserved: $PRESERVED_COUNT file(s) ready for next report generation"
     echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+    
+    # Clean up backup directory if it exists
+    if [ -d "${RESULTS_DIR}/history-backup-"* ] 2>/dev/null; then
+        rm -rf "${RESULTS_DIR}/history-backup-"* 2>/dev/null || true
+        echo "   🗑️  Cleaned up backup history directory"
+    fi
 else
     echo ""
     echo "ℹ️  Allure3 did not create history (this is normal for first few runs)"
     echo "   History will be created naturally after 2-3 more pipeline runs"
     echo "   Allure3 needs multiple runs with consistent test identifiers to build history"
+    
+    # Restore backup if Allure3 didn't create history
+    if [ -d "${RESULTS_DIR}/history-backup-"* ] 2>/dev/null; then
+        BACKUP_DIR=$(ls -td "${RESULTS_DIR}/history-backup-"* 2>/dev/null | head -1)
+        if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR" ]; then
+            echo "   🔄 Restoring backup history..."
+            cp -r "$BACKUP_DIR"/* "$RESULTS_DIR/history/" 2>/dev/null || true
+            rm -rf "$BACKUP_DIR" 2>/dev/null || true
+            echo "   ✅ Restored backup history"
+        fi
+    fi
 fi
 
 # Verify report was generated
