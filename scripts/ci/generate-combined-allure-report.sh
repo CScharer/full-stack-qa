@@ -155,17 +155,26 @@ else
     echo "   Allure3 will create fresh history from test results (Step 4: bootstrap)"
 fi
 rm -rf "$REPORT_DIR"
-# Generate Allure report (Allure3 CLI doesn't support --verbose flag)
-# Configuration file (allure.config.js) will be automatically detected if present
+# Generate Allure report with explicit --config flag
 echo "   Running: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\""
+CONFIG_FLAG=""
 if [ -f "allure.config.js" ]; then
-    echo "   ✅ Using allure.config.js for history configuration"
+    echo "   ✅ Found allure.config.js - using explicit --config flag"
+    CONFIG_FLAG="--config allure.config.js"
+    echo "   📄 Config file contents:"
+    cat allure.config.js | sed 's/^/      /'
+else
+    echo "   ⚠️  No allure.config.js found - Allure3 will use defaults"
 fi
-allure generate "$RESULTS_DIR" -o "$REPORT_DIR" 2>&1 | tee /tmp/allure-generate.log || {
+
+# Run allure generate with explicit config flag and capture all output
+echo ""
+echo "   🔍 Executing: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\" $CONFIG_FLAG"
+allure generate "$RESULTS_DIR" -o "$REPORT_DIR" $CONFIG_FLAG 2>&1 | tee /tmp/allure-generate.log || {
     echo "⚠️  Allure generate command had warnings/errors (checking log...)"
     if [ -f /tmp/allure-generate.log ]; then
-        echo "   Last 30 lines of Allure output:"
-        tail -30 /tmp/allure-generate.log | sed 's/^/   /'
+        echo "   Last 50 lines of Allure output:"
+        tail -50 /tmp/allure-generate.log | sed 's/^/   /'
     fi
     # Check if the command actually failed or just had warnings
     if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
@@ -175,6 +184,16 @@ allure generate "$RESULTS_DIR" -o "$REPORT_DIR" 2>&1 | tee /tmp/allure-generate.
         echo "⚠️  Allure generate had warnings but report was created successfully"
     fi
 }
+
+# Analyze log for history-related messages
+echo ""
+echo "   🔍 Analyzing Allure output for history processing..."
+if [ -f /tmp/allure-generate.log ]; then
+    echo "   History-related messages in log:"
+    grep -i -E "history|trend|merge|append|buildOrder" /tmp/allure-generate.log | sed 's/^/      /' || echo "      (No history-related messages found)"
+    echo ""
+    echo "   Full log saved to: /tmp/allure-generate.log"
+fi
 
 # Check if Allure3 created history
 if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
