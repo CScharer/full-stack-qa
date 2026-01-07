@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-07  
-**Current MERGE_NUMBER**: 46  
-**Latest Pipeline**: #20789188282 (2026-01-07)
+**Current MERGE_NUMBER**: 47  
+**Latest Pipeline**: #20791071421 (2026-01-07)
 
 ---
 
@@ -14,24 +14,26 @@
 This document tracks all work related to implementing and fixing Allure3 history/trending functionality. The implementation required **42+ Pull Requests** and **38+ merges to main** to achieve a working solution.
 
 ### Key Metrics
-- **Total PRs**: 50+ (PRs #67-#116)
-- **Total Pipeline Runs**: 46+ (Pipelines #388-#20789188282)
-- **Total Iterations**: 46 merges to main
+- **Total PRs**: 51+ (PRs #67-#117)
+- **Total Pipeline Runs**: 47+ (Pipelines #388-#20791071421)
+- **Total Iterations**: 47 merges to main
 - **Time Span**: ~3 days (2026-01-04 to 2026-01-07)
-- **Current MERGE_NUMBER**: 46 (as of 2026-01-07)
+- **Current MERGE_NUMBER**: 47 (as of 2026-01-07)
 
 ### Current Status (2026-01-07)
-- **MERGE_NUMBER**: 46
-- **Latest Pipeline**: #20789188282
-- **Approach**: Steps 4 & 5 + Allure3 Configuration File
+- **MERGE_NUMBER**: 47
+- **Latest Pipeline**: #20791071421
+- **Approach**: Steps 4 & 5 + Allure3 Configuration File with Explicit --config Flag
 - ✅ **History Download**: Working (via GitHub API and artifacts)
 - ✅ **History Structure**: Fixed (flat array, deduplicated)
 - ✅ **History Preservation**: Working (history files accessible in GitHub Pages with buildOrders 474-482)
 - ✅ **History Upload**: Working (history files uploaded as artifact)
 - ✅ **Report Generation**: Fixed (removed unsupported --verbose flag)
 - ✅ **Configuration File**: Created (allure.config.js with historyPath and appendHistory)
-- 🔄 **Allure3 Recognition**: Testing with explicit configuration file
-- ⚠️ **Trends Display**: Not yet visible (awaiting results from configuration file approach)
+- ✅ **Explicit Config Flag**: Added (--config flag explicitly passed to allure generate)
+- ✅ **Enhanced Logging**: Added (detailed logging for history processing and analysis)
+- 🔄 **Allure3 Recognition**: Testing with explicit --config flag
+- ⚠️ **Trends Display**: Not yet visible (awaiting results from explicit config flag approach)
 
 ---
 
@@ -44,8 +46,8 @@ This document tracks all work related to implementing and fixing Allure3 history
 
 **MERGE_NUMBER History**:
 - Started at: 1 (PR #67)
-- Current: 46 (PR #116, Pipeline #20789188282)
-- Total iterations: 46 merges to main
+- Current: 47 (PR #117, Pipeline #20791071421)
+- Total iterations: 47 merges to main
 
 **How to Update**:
 1. Edit `scripts/temp/test-trending-merge-tracker.sh`
@@ -2138,9 +2140,138 @@ allure generate "$RESULTS_DIR" -o "$REPORT_DIR"
 
 ---
 
+## 📊 Pipeline Results (Pipeline #20791071421 - MERGE_NUMBER 47)
+
+**Date**: 2026-01-07  
+**Pipeline Run**: #20791071421  
+**Status**: ✅ Success  
+**PR**: #117  
+**Approach**: Steps 4 & 5 + Allure3 Configuration File with Explicit --config Flag
+
+### Pipeline Execution
+
+**Combined Allure Report Job**:
+- ✅ Job completed successfully
+- ✅ Allure report generated successfully
+- ✅ Configuration file (allure.config.js) detected and used with explicit --config flag
+- ✅ History download steps executed (from GitHub Pages and artifacts)
+- ✅ Report generation step completed without errors
+- ✅ Enhanced logging executed (config file detection, log analysis)
+
+### History Status
+
+**GitHub Pages History**:
+- ✅ History files are accessible in GitHub Pages (directory listing returns 404, but files are accessible):
+  - `https://cscharer.github.io/full-stack-qa/history/history-trend.json`
+  - `https://cscharer.github.io/full-stack-qa/history/duration-trend.json`
+- ✅ `history-trend.json`: Contains 12 entries (unchanged from previous run)
+- ✅ `duration-trend.json`: Contains 9 entries (unchanged from previous run)
+- ⚠️ **Latest buildOrder**: 482 (same as previous run - no new entry added)
+- ⚠️ **History not growing**: Allure3 did not create new history entry for this run
+
+**History Build Orders**:
+- Latest buildOrders in history: 474, 476, 478, 480, 482
+- No new buildOrder added in this run (expected buildOrder would be 495+)
+
+### Key Implementation: Explicit --config Flag
+
+**What Was Changed**:
+- ✅ **Script Updated**: `scripts/ci/generate-combined-allure-report.sh` now uses explicit `--config allure.config.js` flag
+- ✅ **Config File Path Fixed**: Changed `historyPath` from `"./allure-results-combined/history"` to `"./history"` (relative to results directory)
+- ✅ **Enhanced Logging**: Added detailed logging to:
+  - Show when config file is detected
+  - Display config file contents
+  - Show the exact command being executed
+  - Analyze Allure3 output for history-related messages
+  - Search for keywords: `history`, `trend`, `merge`, `append`, `buildOrder`
+
+**Configuration File**:
+```javascript
+module.exports = {
+  // Path to the history directory (relative to results directory)
+  historyPath: "./history",
+  
+  // Append new history entries to existing history (true) or replace (false)
+  appendHistory: true
+};
+```
+
+**Command Execution**:
+- Previous: `allure generate "$RESULTS_DIR" -o "$REPORT_DIR"`
+- Updated: `allure generate "$RESULTS_DIR" -o "$REPORT_DIR" --config allure.config.js`
+
+### Steps 4 & 5 Status
+
+**What Was Implemented**:
+
+**Step 4: Let Allure3 Create History First**:
+- Script detects if history was created by Allure3 (has individual `{md5-hash}.json` files) vs manually created
+- If manually created: backs up and removes it to let Allure3 bootstrap fresh history
+- If Allure3-created: preserves it for processing
+- Restores backup if Allure3 doesn't create history
+
+**Step 5: BuildOrder Continuity**:
+- Verifies `executor.json` buildOrder is higher than latest history buildOrder
+- Current buildOrder: 495 (from executor.json)
+- Latest history buildOrder: 482
+- ✅ BuildOrder continuity verified (495 > 482)
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. Combined Allure Report job executed without errors
+3. Configuration file detected and explicitly passed to Allure3
+4. Enhanced logging executed (config detection, log analysis)
+5. History download mechanisms working (history exists in GitHub Pages)
+6. History structure remains valid (flat array, valid JSON)
+7. History preservation working (history still accessible)
+8. Steps 4 & 5 script logic executed (history detection and buildOrder verification)
+9. BuildOrder continuity verified (495 > 482)
+10. Report generation completed successfully
+11. Explicit --config flag passed to Allure3
+
+**What's Not Working** ❌:
+1. **Allure3 did not create new history entry** - History unchanged at buildOrder 482
+2. **Allure3 not processing history** - Even with explicit --config flag, Allure3 didn't create/update history
+3. **History not accumulating** - Same 12 entries as previous run
+4. **Trends still not visible** - No new data to display trends
+5. **No history-related messages in Allure3 output** - Log analysis found no mentions of history processing
+
+**Observations**:
+- Explicit --config flag approach (recommended next step) is not working as expected
+- Allure3 is not creating new history entries even with explicit `--config allure.config.js` flag
+- BuildOrder continuity was verified/updated (495 > 482), but Allure3 still didn't process history
+- Report generation works correctly, but history creation is still not happening
+- Log analysis found no history-related messages from Allure3 (suggests Allure3 may not be processing history at all)
+- This suggests Allure3 may have deeper requirements or limitations we haven't discovered yet
+- The configuration file may not be in the correct format, location, or Allure3 may not be reading it correctly even with explicit flag
+
+**Analysis**:
+- After 7 different approaches (Approach 1, Approach 4, Steps 4 & 5, error handling fixes, --verbose flag fix, configuration file, explicit --config flag), Allure3 has not created any new history entries
+- History remains at buildOrder 482 (from previous manual merge approach)
+- Allure3 appears to be ignoring or not processing history files during report generation
+- Even with explicit --config flag pointing to configuration file, Allure3 didn't create/update history
+- Log analysis found no history-related messages from Allure3, suggesting it may not be processing history at all
+- This indicates that Allure3 may require:
+  - Configuration file in a different format (TypeScript instead of JavaScript)
+  - Configuration file in a different location
+  - Different configuration structure or properties
+  - Some internal state or validation we're not aware of
+  - Or there may be a bug/limitation in Allure3 CLI
+
+**Next Steps**:
+- ✅ Review actual logs from successful report generation to see if Allure3 mentions history processing (DONE - no history-related messages found)
+- ✅ Try using `--config` flag explicitly to point to configuration file (DONE - still not working)
+- Try different configuration file format (TypeScript or different structure) - **RECOMMENDED NEXT STEP**
+- If still not working, consider Approach 3 (switch to Allure2) - Allure2 may be more lenient with history
+- Consider accepting that Allure3 may not support manual history creation and may require self-created history
+
+---
+
 **Last Updated**: 2026-01-07  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: Active investigation ongoing - Configuration file created, but Allure3 still not creating history  
-**Current MERGE_NUMBER**: 46  
-**Latest Pipeline**: #20789188282 (2026-01-07)
+**Status**: Active investigation ongoing - Explicit --config flag tested, but Allure3 still not creating history  
+**Current MERGE_NUMBER**: 47  
+**Latest Pipeline**: #20791071421 (2026-01-07)
 
