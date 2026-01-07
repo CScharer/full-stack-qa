@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-07  
-**Current MERGE_NUMBER**: 39  
-**Latest Pipeline**: #20761794584 (2026-01-06)
+**Current MERGE_NUMBER**: 40  
+**Latest Pipeline**: #20776620634 (2026-01-07)
 
 ---
 
@@ -14,36 +14,36 @@
 This document tracks all work related to implementing and fixing Allure3 history/trending functionality. The implementation required **42+ Pull Requests** and **38+ merges to main** to achieve a working solution.
 
 ### Key Metrics
-- **Total PRs**: 43+ (PRs #67-#109)
-- **Total Pipeline Runs**: 39+ (Pipelines #388-#20761794584)
-- **Total Iterations**: 39 merges to main
+- **Total PRs**: 44+ (PRs #67-#110)
+- **Total Pipeline Runs**: 40+ (Pipelines #388-#20776620634)
+- **Total Iterations**: 40 merges to main
 - **Time Span**: ~3 days (2026-01-04 to 2026-01-07)
-- **Current MERGE_NUMBER**: 39 (as of 2026-01-07)
+- **Current MERGE_NUMBER**: 40 (as of 2026-01-07)
 
 ### Current Status (2026-01-07)
-- **MERGE_NUMBER**: 39
-- **Latest Pipeline**: #20761794584
+- **MERGE_NUMBER**: 40
+- **Latest Pipeline**: #20776620634
 - **Approach**: Simplified (Approach 1) - Let Allure3 handle history naturally
 - ✅ **History Download**: Working (via GitHub API and artifacts)
 - ✅ **History Structure**: Fixed (flat array, deduplicated)
 - ✅ **History Preservation**: Working (history exists in GitHub Pages with buildOrders 459-482)
 - ✅ **History Upload**: Working (history files uploaded as artifact)
-- 🔄 **Allure3 Recognition**: Testing simplified approach (removed manual merge logic)
-- ⚠️ **Trends Display**: Not yet visible (awaiting Allure3 to create history naturally)
+- ⚠️ **Allure3 Recognition**: Still not creating new history entries (history unchanged at buildOrder 482)
+- ⚠️ **Trends Display**: Not yet visible (Allure3 not creating history naturally)
 
 ---
 
 ## 🔢 MERGE_NUMBER Tracking
 
-**Current MERGE_NUMBER**: 39  
+**Current MERGE_NUMBER**: 40  
 **Location**: `scripts/temp/test-trending-merge-tracker.sh`  
 **Purpose**: Tracks merge iterations for test trending validation  
 **Update Method**: Increment `MERGE_NUMBER` in the tracker script before each merge
 
 **MERGE_NUMBER History**:
 - Started at: 1 (PR #67)
-- Current: 39 (PR #109, Pipeline #20761794584)
-- Total iterations: 39 merges to main
+- Current: 40 (PR #110, Pipeline #20776620634)
+- Total iterations: 40 merges to main
 
 **How to Update**:
 1. Edit `scripts/temp/test-trending-merge-tracker.sh`
@@ -1226,9 +1226,75 @@ The Allure reporting implementation required extensive work to fix multiple issu
 
 ---
 
+## 📊 Pipeline Results (Pipeline #20776620634 - MERGE_NUMBER 40)
+
+**Date**: 2026-01-07  
+**Pipeline Run**: #20776620634  
+**Status**: ✅ Success  
+**PR**: #110  
+**Approach**: Simplified (Approach 1) - Let Allure3 handle history naturally
+
+### Pipeline Execution
+
+**Combined Allure Report Job**:
+- ✅ Job completed successfully
+- ✅ Allure report generated
+- ✅ History download steps executed (from GitHub Pages and artifacts)
+- ✅ Report generation step completed
+
+### History Status
+
+**GitHub Pages History**:
+- ✅ History exists in GitHub Pages: `https://cscharer.github.io/full-stack-qa/history/`
+- ✅ `history-trend.json`: Contains 12 entries (unchanged from previous run)
+- ✅ `duration-trend.json`: Contains 9 entries (unchanged from previous run)
+- ⚠️ **Latest buildOrder**: 482 (same as previous run - no new entry added)
+- ⚠️ **History not growing**: Allure3 did not create new history entry for this run
+
+**History Build Orders**:
+- Latest buildOrders in history: 474, 476, 478, 480, 482
+- No new buildOrder added in this run (expected buildOrder would be 484+)
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. Combined Allure Report job executed without errors
+3. History download mechanisms working (history exists in GitHub Pages)
+4. History structure remains valid (flat array, valid JSON)
+5. History preservation working (history still accessible)
+
+**What's Not Working** ❌:
+1. **Allure3 did not create new history entry** - History unchanged at buildOrder 482
+2. **Allure3 not processing history naturally** - No new entries added despite simplified approach
+3. **History not accumulating** - Same 12 entries as previous run
+4. **Trends still not visible** - No new data to display trends
+
+**Observations**:
+- Simplified approach (Approach 1) is not working as expected
+- Allure3 is not creating new history entries even with native handling
+- History exists but is not being updated by Allure3
+- This suggests Allure3 may require specific conditions or configuration to create history
+- The history file structure appears correct, but Allure3 is not processing it
+
+**Analysis**:
+- After 2 runs with the simplified approach (MERGE_NUMBER 39 and 40), Allure3 has not created any new history entries
+- History remains at buildOrder 482 (from previous manual merge approach)
+- Allure3 appears to be ignoring or not processing the existing history during report generation
+- This indicates that simply letting Allure3 handle history naturally may not be sufficient
+
+**Next Steps**:
+- Consider trying Approach 4 (individual test history files) - Allure3 might require per-test history files
+- Consider trying Approach 3 (switch to Allure2) - Allure2 may be more lenient with history
+- Investigate if there are Allure3 configuration options needed for history processing
+- Check if Allure3 requires a specific history file format or structure we're missing
+- Verify if executor.json buildOrder needs to match history buildOrders for Allure3 to process
+
+---
+
 **Last Updated**: 2026-01-07  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: Active investigation ongoing - Testing Approach 1 (Simplified)  
-**Current MERGE_NUMBER**: 39  
-**Latest Pipeline**: #20761794584 (2026-01-06)
+**Status**: Active investigation ongoing - Approach 1 (Simplified) not working as expected  
+**Current MERGE_NUMBER**: 40  
+**Latest Pipeline**: #20776620634 (2026-01-07)
 
