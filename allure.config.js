@@ -2,17 +2,19 @@
 // This configuration enables history tracking for Allure reports
 // See: https://allurereport.org/docs/v3/configure/
 //
-// Note: historyPath should be relative to the results directory passed to 'allure generate'
-// Since we pass 'allure-results-combined' as the results directory, historyPath should be './history'
+// Note: historyPath should point to the history.jsonl file (not directory)
+// Since we pass 'allure-results-combined' as the results directory, historyPath should be './history/history.jsonl'
 
-module.exports = {
-  // Path to the history directory (relative to results directory)
-  // History files will be read from and written to this location
+const { defineConfig } = require('allure');
+
+module.exports = defineConfig({
+  // Path to the history file (relative to results directory)
+  // History file will be read from and written to this location
   // This path is relative to the results directory (allure-results-combined)
-  historyPath: "./history",
+  historyPath: "./history/history.jsonl",
   
   // Append new history entries to existing history (true) or replace (false)
   // Setting to true ensures history accumulates across multiple runs
   appendHistory: true
-};
+});
 

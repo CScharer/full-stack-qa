@@ -60,8 +60,23 @@ if [ -f "$RESULTS_DIR/executor.json" ]; then
         echo "   Current build order: $CURRENT_BUILD_ORDER"
         
         # Check if history exists and get latest buildOrder
-        if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+        # Support both old format (history-trend.json) and new format (history.jsonl)
+        LATEST_HISTORY_BUILD_ORDER=0
+        if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
+            # New format: JSON Lines - read each line as JSON and extract buildOrder
+            LATEST_HISTORY_BUILD_ORDER=$(while IFS= read -r line; do
+                if [ -n "$line" ]; then
+                    echo "$line" | jq -r '.buildOrder // 0' 2>/dev/null || echo "0"
+                fi
+            done < "$RESULTS_DIR/history/history.jsonl" | sort -n | tail -1 || echo "0")
+        elif [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+            # Old format: JSON array - convert to JSON Lines format
             LATEST_HISTORY_BUILD_ORDER=$(jq -r '[.[] | .buildOrder] | max // 0' "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || echo "0")
+            # Convert old format to new format
+            echo "   🔄 Converting old history format to history.jsonl..."
+            mkdir -p "$RESULTS_DIR/history"
+            jq -c '.[]' "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history.jsonl" 2>/dev/null || true
+            echo "   ✅ Converted to history.jsonl format"
             
             if [ -n "$LATEST_HISTORY_BUILD_ORDER" ] && [ "$LATEST_HISTORY_BUILD_ORDER" != "null" ] && [ "$LATEST_HISTORY_BUILD_ORDER" -gt 0 ]; then
                 echo "   Latest history build order: $LATEST_HISTORY_BUILD_ORDER"
@@ -96,24 +111,41 @@ ALLURE3_CREATED_HISTORY=false
 
 if [ -d "$RESULTS_DIR/history" ]; then
     HISTORY_EXISTS=true
-    HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-    
-    # Check if individual test history files exist (created by Allure3)
-    INDIVIDUAL_FILES=$(find "$RESULTS_DIR/history" -name "*.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" 2>/dev/null | wc -l | tr -d ' ')
-    
-    if [ "$INDIVIDUAL_FILES" -gt 0 ]; then
+    # Check for new format (history.jsonl) first
+    if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
         ALLURE3_CREATED_HISTORY=true
+        HISTORY_LINES=$(wc -l < "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
         echo ""
-        echo "📊 History found (created by Allure3):"
-        echo "   Total files: $HISTORY_FILE_COUNT file(s)"
-        echo "   Individual test files: $INDIVIDUAL_FILES file(s)"
-        echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
-        echo "   ✅ History was created by Allure3 - will be processed"
-    elif [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+        echo "📊 History found (history.jsonl format):"
+        echo "   History file: history.jsonl"
+        echo "   History entries: $HISTORY_LINES line(s)"
+        echo "   Size: $(du -sh "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')"
+        echo "   ✅ History in correct format - will be processed"
+    else
+        HISTORY_FILE_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+        
+        # Check if individual test history files exist (created by Allure3)
+        INDIVIDUAL_FILES=$(find "$RESULTS_DIR/history" -name "*.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" 2>/dev/null | wc -l | tr -d ' ')
+        
+        if [ "$INDIVIDUAL_FILES" -gt 0 ]; then
+            ALLURE3_CREATED_HISTORY=true
+            echo ""
+            echo "📊 History found (created by Allure3 - legacy format):"
+            echo "   Total files: $HISTORY_FILE_COUNT file(s)"
+            echo "   Individual test files: $INDIVIDUAL_FILES file(s)"
+            echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+            echo "   ✅ History was created by Allure3 - will be processed"
+    elif [ -f "$RESULTS_DIR/history/history.jsonl" ] || [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
         echo ""
-        echo "📊 History found (manually created):"
+        echo "📊 History found (manually created or old format):"
         echo "   Files: $HISTORY_FILE_COUNT file(s)"
         echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+        # Convert old format to new format if needed
+        if [ -f "$RESULTS_DIR/history/history-trend.json" ] && [ ! -f "$RESULTS_DIR/history/history.jsonl" ]; then
+            echo "   🔄 Converting old format to history.jsonl..."
+            jq -c '.[]' "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history.jsonl" 2>/dev/null || true
+            echo "   ✅ Converted to history.jsonl format"
+        fi
         echo "   ⚠️  History appears to be manually created (no individual test files)"
         echo "   🔄 Letting Allure3 create fresh history first (Step 4)..."
         
@@ -205,23 +237,50 @@ if [ -f /tmp/allure-generate.log ]; then
 fi
 
 # Check if Allure3 created history
-if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+# Allure3 may create history.jsonl or multiple JSON files
+HISTORY_CREATED=false
+if [ -f "$REPORT_DIR/history/history.jsonl" ]; then
+    HISTORY_CREATED=true
     echo ""
-    echo "✅ Allure3 created/updated history in report"
+    echo "✅ Allure3 created/updated history in report (history.jsonl format)"
+    HISTORY_SIZE=$(du -sh "$REPORT_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')
+    HISTORY_LINES=$(wc -l < "$REPORT_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
+    echo "   History file: history.jsonl"
+    echo "   History entries: $HISTORY_LINES line(s)"
+    echo "   Size: $HISTORY_SIZE"
+    
+    # Preserve history for next run
+    echo ""
+    echo "📊 Preserving history for next run..."
+    mkdir -p "$RESULTS_DIR/history"
+    cp "$REPORT_DIR/history/history.jsonl" "$RESULTS_DIR/history/history.jsonl" 2>/dev/null || true
+    echo "✅ History preserved: history.jsonl ready for next report generation"
+    echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+elif [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+    HISTORY_CREATED=true
+    echo ""
+    echo "✅ Allure3 created/updated history in report (legacy JSON format)"
     HISTORY_FILE_COUNT=$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     INDIVIDUAL_COUNT=$(find "$REPORT_DIR/history" -name "*.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" 2>/dev/null | wc -l | tr -d ' ')
     echo "   Total files: $HISTORY_FILE_COUNT file(s)"
     echo "   Individual test files: $INDIVIDUAL_COUNT file(s)"
     echo "   Size: $(du -sh "$REPORT_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
     
-    # Preserve history for next run
-    # Copy history from report back to results directory so it's available for next pipeline run
-    echo ""
-    echo "📊 Preserving history for next run..."
-    mkdir -p "$RESULTS_DIR/history"
-    cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
-    PRESERVED_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-    echo "✅ History preserved: $PRESERVED_COUNT file(s) ready for next report generation"
+    # Convert legacy format to history.jsonl if history-trend.json exists
+    if [ -f "$REPORT_DIR/history/history-trend.json" ]; then
+        echo "   🔄 Converting legacy format to history.jsonl..."
+        mkdir -p "$RESULTS_DIR/history"
+        jq -c '.[]' "$REPORT_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history.jsonl" 2>/dev/null || true
+        echo "   ✅ Converted to history.jsonl format"
+    else
+        # Preserve history for next run (legacy format)
+        echo ""
+        echo "📊 Preserving history for next run..."
+        mkdir -p "$RESULTS_DIR/history"
+        cp -r "$REPORT_DIR/history"/* "$RESULTS_DIR/history/" 2>/dev/null || true
+        PRESERVED_COUNT=$(find "$RESULTS_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+        echo "✅ History preserved: $PRESERVED_COUNT file(s) ready for next report generation"
+    fi
     echo "   History will be uploaded as artifact and deployed to GitHub Pages"
     
     # Clean up backup directory if it exists
@@ -229,7 +288,9 @@ if [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name
         rm -rf "${RESULTS_DIR}/history-backup-"* 2>/dev/null || true
         echo "   🗑️  Cleaned up backup history directory"
     fi
-else
+fi
+
+if [ "$HISTORY_CREATED" = false ]; then
     echo ""
     echo "ℹ️  Allure3 did not create history (this is normal for first few runs)"
     echo "   History will be created naturally after 2-3 more pipeline runs"
