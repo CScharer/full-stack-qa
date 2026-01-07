@@ -1,0 +1,8 @@
+# CodeQL Configuration
+# Excludes generated files from security scanning
+
+paths-ignore:
+  # Exclude Allure generated reports (contains minified/generated JavaScript)
+  - 'allure-report/**'
+  - 'allure-report-combined/**'
+
