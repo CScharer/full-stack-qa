@@ -158,13 +158,22 @@ rm -rf "$REPORT_DIR"
 # Generate Allure report with explicit --config flag
 echo "   Running: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\""
 CONFIG_FLAG=""
-if [ -f "allure.config.js" ]; then
+CONFIG_FILE=""
+# Try TypeScript config first, then JavaScript
+if [ -f "allure.config.ts" ]; then
+    echo "   ✅ Found allure.config.ts - using explicit --config flag"
+    CONFIG_FILE="allure.config.ts"
+    CONFIG_FLAG="--config allure.config.ts"
+    echo "   📄 Config file contents:"
+    cat allure.config.ts | sed 's/^/      /'
+elif [ -f "allure.config.js" ]; then
     echo "   ✅ Found allure.config.js - using explicit --config flag"
+    CONFIG_FILE="allure.config.js"
     CONFIG_FLAG="--config allure.config.js"
     echo "   📄 Config file contents:"
     cat allure.config.js | sed 's/^/      /'
 else
-    echo "   ⚠️  No allure.config.js found - Allure3 will use defaults"
+    echo "   ⚠️  No allure.config.ts or allure.config.js found - Allure3 will use defaults"
 fi
 
 # Run allure generate with explicit config flag and capture all output
