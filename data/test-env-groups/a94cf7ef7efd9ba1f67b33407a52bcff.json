@@ -1,1 +1,1 @@
-{"id":"a94cf7ef7efd9ba1f67b33407a52bcff","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testResponsiveDesignMultipleDevices","name":"testResponsiveDesignMultipleDevices [PROD]","status":"passed","testResultsByEnv":{"default":"d553db9480acff59be1a2a50c8b9ec32"}}
+{"id":"a94cf7ef7efd9ba1f67b33407a52bcff","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testResponsiveDesignMultipleDevices","name":"testResponsiveDesignMultipleDevices [DEV]","status":"passed","testResultsByEnv":{"default":"9b25c5193620c25fb7bbce2e1e577665"}}
