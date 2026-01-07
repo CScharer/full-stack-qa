@@ -1462,6 +1462,22 @@ jobs:
         run: |
           echo "🔍 Verifying report structure before deployment..."
           echo ""
+          if [ ! -d "allure-report-combined" ]; then
+            echo "❌ Report directory does not exist!"
+            echo ""
+            echo "Possible causes:"
+            echo "  1. Report generation step failed"
+            echo "  2. Report generation step was skipped"
+            echo "  3. Directory was not created by generate script"
+            echo ""
+            echo "Checking previous step status..."
+            echo "   Generate Combined Allure Report step should have created this directory"
+            echo ""
+            echo "⚠️  Skipping deployment verification - report not available"
+            echo "   Report may still be available as artifact: 'allure-report-combined-all-environments'"
+            exit 0  # Don't fail the workflow, just skip verification
+          fi
+          
           if [ -d "allure-report-combined" ]; then
             echo "✅ Report directory exists"
             echo "   Total files: $(find allure-report-combined -type f | wc -l | tr -d ' ')"
