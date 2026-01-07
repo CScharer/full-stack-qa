@@ -135,35 +135,36 @@ if [ -d "$RESULTS_DIR/history" ]; then
             echo "   Individual test files: $INDIVIDUAL_FILES file(s)"
             echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
             echo "   ✅ History was created by Allure3 - will be processed"
-    elif [ -f "$RESULTS_DIR/history/history.jsonl" ] || [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
-        echo ""
-        echo "📊 History found (manually created or old format):"
-        echo "   Files: $HISTORY_FILE_COUNT file(s)"
-        echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
-        # Convert old format to new format if needed
-        if [ -f "$RESULTS_DIR/history/history-trend.json" ] && [ ! -f "$RESULTS_DIR/history/history.jsonl" ]; then
-            echo "   🔄 Converting old format to history.jsonl..."
-            jq -c '.[]' "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history.jsonl" 2>/dev/null || true
-            echo "   ✅ Converted to history.jsonl format"
+        elif [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+            echo ""
+            echo "📊 History found (manually created or old format):"
+            echo "   Files: $HISTORY_FILE_COUNT file(s)"
+            echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+            # Convert old format to new format if needed
+            if [ -f "$RESULTS_DIR/history/history-trend.json" ] && [ ! -f "$RESULTS_DIR/history/history.jsonl" ]; then
+                echo "   🔄 Converting old format to history.jsonl..."
+                jq -c '.[]' "$RESULTS_DIR/history/history-trend.json" > "$RESULTS_DIR/history/history.jsonl" 2>/dev/null || true
+                echo "   ✅ Converted to history.jsonl format"
+            fi
+            echo "   ⚠️  History appears to be manually created (no individual test files)"
+            echo "   🔄 Letting Allure3 create fresh history first (Step 4)..."
+            
+            # Backup manually created history
+            if [ -d "$RESULTS_DIR/history" ]; then
+                BACKUP_DIR="${RESULTS_DIR}/history-backup-$(date +%s)"
+                cp -r "$RESULTS_DIR/history" "$BACKUP_DIR" 2>/dev/null || true
+                echo "   📦 Backed up existing history to: $BACKUP_DIR"
+            fi
+            
+            # Remove manually created history to let Allure3 bootstrap
+            rm -rf "$RESULTS_DIR/history"
+            echo "   ✅ Removed manually created history - Allure3 will create fresh history"
+            ALLURE3_CREATED_HISTORY=false
+        else
+            echo ""
+            echo "ℹ️  History directory exists but is empty"
+            ALLURE3_CREATED_HISTORY=false
         fi
-        echo "   ⚠️  History appears to be manually created (no individual test files)"
-        echo "   🔄 Letting Allure3 create fresh history first (Step 4)..."
-        
-        # Backup manually created history
-        if [ -d "$RESULTS_DIR/history" ]; then
-            BACKUP_DIR="${RESULTS_DIR}/history-backup-$(date +%s)"
-            cp -r "$RESULTS_DIR/history" "$BACKUP_DIR" 2>/dev/null || true
-            echo "   📦 Backed up existing history to: $BACKUP_DIR"
-        fi
-        
-        # Remove manually created history to let Allure3 bootstrap
-        rm -rf "$RESULTS_DIR/history"
-        echo "   ✅ Removed manually created history - Allure3 will create fresh history"
-        ALLURE3_CREATED_HISTORY=false
-    else
-        echo ""
-        echo "ℹ️  History directory exists but is empty"
-        ALLURE3_CREATED_HISTORY=false
     fi
 else
     echo ""

@@ -264,7 +264,14 @@ fi
 print_section "Phase 2.5: Shell Script Validation"
 
 # Check for shell scripts in scripts/ directory
-STAGED_SHELL_SCRIPTS=$(git diff --cached --name-only 2>/dev/null | grep -E "^scripts/.*\.sh$" || echo "")
+# Support checking specific files (from pre-push hook) or staged files (from pre-commit hook)
+if [ -n "$VALIDATE_FILES" ]; then
+    # Pre-push hook passes files to check via VALIDATE_FILES environment variable
+    STAGED_SHELL_SCRIPTS=$(echo "$VALIDATE_FILES" | grep -E "^scripts/.*\.sh$" || echo "")
+else
+    # Pre-commit hook: check staged files
+    STAGED_SHELL_SCRIPTS=$(git diff --cached --name-only 2>/dev/null | grep -E "^scripts/.*\.sh$" || echo "")
+fi
 # Check all scripts including temp scripts
 ALL_SHELL_SCRIPTS=$(find scripts -name "*.sh" -type f 2>/dev/null || echo "")
 
