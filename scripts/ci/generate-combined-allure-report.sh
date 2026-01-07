@@ -208,9 +208,27 @@ else
 fi
 
 # Verify report was generated
-if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
+if [ ! -d "$REPORT_DIR" ]; then
     echo ""
-    echo "❌ Error: Report generation failed - index.html not found"
+    echo "❌ Error: Report directory was not created: $REPORT_DIR"
+    echo "   This indicates the 'allure generate' command failed"
+    if [ -f /tmp/allure-generate.log ]; then
+        echo ""
+        echo "   Allure generate log (last 30 lines):"
+        tail -30 /tmp/allure-generate.log | sed 's/^/   /'
+    fi
+    exit 1
+fi
+
+if [ ! -f "$REPORT_DIR/index.html" ]; then
+    echo ""
+    echo "❌ Error: Report generation incomplete - index.html not found in $REPORT_DIR"
+    echo "   Directory exists but report is incomplete"
+    if [ -f /tmp/allure-generate.log ]; then
+        echo ""
+        echo "   Allure generate log (last 30 lines):"
+        tail -30 /tmp/allure-generate.log | sed 's/^/   /'
+    fi
     exit 1
 fi
 
