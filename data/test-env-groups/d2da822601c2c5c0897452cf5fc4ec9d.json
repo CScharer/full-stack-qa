@@ -1,1 +1,1 @@
-{"id":"d2da822601c2c5c0897452cf5fc4ec9d","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testMultipleViewportSizes","name":"testMultipleViewportSizes [TEST]","status":"passed","testResultsByEnv":{"default":"5722552b36a52a7b6ec395ca839f7aee"}}
+{"id":"d2da822601c2c5c0897452cf5fc4ec9d","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testMultipleViewportSizes","name":"testMultipleViewportSizes [PROD]","status":"passed","testResultsByEnv":{"default":"1eebeb8ecd4438bc867b24a68ca32959"}}
