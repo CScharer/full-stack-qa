@@ -155,12 +155,20 @@ else
     echo "   Allure3 will create fresh history from test results (Step 4: bootstrap)"
 fi
 rm -rf "$REPORT_DIR"
-# Use verbose mode to get debug output about history processing
-allure --verbose generate "$RESULTS_DIR" -o "$REPORT_DIR" 2>&1 | tee /tmp/allure-generate.log || {
+# Generate Allure report (Allure3 CLI doesn't support --verbose flag)
+echo "   Running: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\""
+allure generate "$RESULTS_DIR" -o "$REPORT_DIR" 2>&1 | tee /tmp/allure-generate.log || {
     echo "⚠️  Allure generate command had warnings/errors (checking log...)"
     if [ -f /tmp/allure-generate.log ]; then
-        echo "   Last 20 lines of Allure output:"
-        tail -20 /tmp/allure-generate.log | sed 's/^/   /'
+        echo "   Last 30 lines of Allure output:"
+        tail -30 /tmp/allure-generate.log | sed 's/^/   /'
+    fi
+    # Check if the command actually failed or just had warnings
+    if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
+        echo "❌ Allure generate command failed - report not created"
+        exit 1
+    else
+        echo "⚠️  Allure generate had warnings but report was created successfully"
     fi
 }
 
