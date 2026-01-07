@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-07  
-**Current MERGE_NUMBER**: 40  
-**Latest Pipeline**: #20776620634 (2026-01-07)
+**Current MERGE_NUMBER**: 41  
+**Latest Pipeline**: #20777918878 (2026-01-07)
 
 ---
 
@@ -14,36 +14,36 @@
 This document tracks all work related to implementing and fixing Allure3 history/trending functionality. The implementation required **42+ Pull Requests** and **38+ merges to main** to achieve a working solution.
 
 ### Key Metrics
-- **Total PRs**: 44+ (PRs #67-#110)
-- **Total Pipeline Runs**: 40+ (Pipelines #388-#20776620634)
-- **Total Iterations**: 40 merges to main
+- **Total PRs**: 45+ (PRs #67-#111)
+- **Total Pipeline Runs**: 41+ (Pipelines #388-#20777918878)
+- **Total Iterations**: 41 merges to main
 - **Time Span**: ~3 days (2026-01-04 to 2026-01-07)
-- **Current MERGE_NUMBER**: 40 (as of 2026-01-07)
+- **Current MERGE_NUMBER**: 41 (as of 2026-01-07)
 
 ### Current Status (2026-01-07)
-- **MERGE_NUMBER**: 40
-- **Latest Pipeline**: #20776620634
-- **Approach**: Simplified (Approach 1) - Let Allure3 handle history naturally
+- **MERGE_NUMBER**: 41
+- **Latest Pipeline**: #20777918878
+- **Approach**: Approach 4 - Individual test history files
 - ✅ **History Download**: Working (via GitHub API and artifacts)
 - ✅ **History Structure**: Fixed (flat array, deduplicated)
 - ✅ **History Preservation**: Working (history exists in GitHub Pages with buildOrders 459-482)
 - ✅ **History Upload**: Working (history files uploaded as artifact)
-- ⚠️ **Allure3 Recognition**: Still not creating new history entries (history unchanged at buildOrder 482)
-- ⚠️ **Trends Display**: Not yet visible (Allure3 not creating history naturally)
+- 🔄 **Allure3 Recognition**: Testing Approach 4 (individual test history files)
+- ⚠️ **Trends Display**: Not yet visible (awaiting results from Approach 4)
 
 ---
 
 ## 🔢 MERGE_NUMBER Tracking
 
-**Current MERGE_NUMBER**: 40  
+**Current MERGE_NUMBER**: 41  
 **Location**: `scripts/temp/test-trending-merge-tracker.sh`  
 **Purpose**: Tracks merge iterations for test trending validation  
 **Update Method**: Increment `MERGE_NUMBER` in the tracker script before each merge
 
 **MERGE_NUMBER History**:
 - Started at: 1 (PR #67)
-- Current: 40 (PR #110, Pipeline #20776620634)
-- Total iterations: 40 merges to main
+- Current: 41 (PR #111, Pipeline #20777918878)
+- Total iterations: 41 merges to main
 
 **How to Update**:
 1. Edit `scripts/temp/test-trending-merge-tracker.sh`
@@ -1292,9 +1292,90 @@ The Allure reporting implementation required extensive work to fix multiple issu
 
 ---
 
+## 📊 Pipeline Results (Pipeline #20777918878 - MERGE_NUMBER 41)
+
+**Date**: 2026-01-07  
+**Pipeline Run**: #20777918878  
+**Status**: ✅ Success  
+**PR**: #111  
+**Approach**: Approach 4 - Individual test history files
+
+### Pipeline Execution
+
+**Combined Allure Report Job**:
+- ✅ Job completed successfully
+- ✅ Allure report generated
+- ✅ History download steps executed (from GitHub Pages and artifacts)
+- ✅ Report generation step completed
+
+### History Status
+
+**GitHub Pages History**:
+- ✅ History exists in GitHub Pages: `https://cscharer.github.io/full-stack-qa/history/`
+- ✅ `history-trend.json`: Contains 12 entries (unchanged from previous run)
+- ✅ `duration-trend.json`: Contains 9 entries (unchanged from previous run)
+- ⚠️ **Latest buildOrder**: 482 (same as previous run - no new entry added)
+- ⚠️ **History not growing**: Allure3 did not create new history entry for this run
+
+**History Build Orders**:
+- Latest buildOrders in history: 474, 476, 478, 480, 482
+- No new buildOrder added in this run (expected buildOrder would be 484+)
+
+### Approach 4 Implementation
+
+**What Was Implemented**:
+- Script processes `history-trend.json` from downloaded history
+- Extracts test data grouped by `uid` (historyId)
+- Creates individual `{md5(uid)}.json` files in `RESULTS_DIR/history/`
+- Each file format: `{uid: "test-historyId", history: [{buildOrder, status, time}]}`
+
+**Expected Behavior**:
+- Individual test history files should be created from `history-trend.json`
+- Allure3 should process these individual files during report generation
+- Allure3 should merge individual files with new test results
+- Allure3 should create updated history in `REPORT_DIR/history/`
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. Combined Allure Report job executed without errors
+3. History download mechanisms working (history exists in GitHub Pages)
+4. History structure remains valid (flat array, valid JSON)
+5. History preservation working (history still accessible)
+6. Approach 4 script executed (individual file creation logic ran)
+
+**What's Not Working** ❌:
+1. **Allure3 did not create new history entry** - History unchanged at buildOrder 482
+2. **Allure3 not processing individual history files** - No new entries added despite Approach 4
+3. **History not accumulating** - Same 12 entries as previous run
+4. **Trends still not visible** - No new data to display trends
+
+**Observations**:
+- Approach 4 (Individual test history files) is not working as expected
+- Allure3 is not creating new history entries even with individual files
+- History exists but is not being updated by Allure3
+- This suggests Allure3 may require specific conditions or configuration to create history
+- The individual file creation logic executed, but Allure3 did not process the files
+
+**Analysis**:
+- After 3 different approaches (Approach 1, Approach 4), Allure3 has not created any new history entries
+- History remains at buildOrder 482 (from previous manual merge approach)
+- Allure3 appears to be ignoring or not processing history files during report generation
+- This indicates that file structure/format may not be the issue - Allure3 may require something else
+
+**Next Steps**:
+- Consider trying Approach 3 (switch to Allure2) - Allure2 may be more lenient with history
+- Investigate if there are Allure3 configuration options needed for history processing
+- Check if Allure3 requires executor.json buildOrder to match history buildOrders exactly
+- Verify if Allure3 needs history files to be created by Allure3 itself (not manually)
+- Consider if Allure3 history feature requires a specific plugin or configuration
+
+---
+
 **Last Updated**: 2026-01-07  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: Active investigation ongoing - Approach 1 (Simplified) not working as expected  
-**Current MERGE_NUMBER**: 40  
-**Latest Pipeline**: #20776620634 (2026-01-07)
+**Status**: Active investigation ongoing - Approach 4 (Individual test history files) not working  
+**Current MERGE_NUMBER**: 41  
+**Latest Pipeline**: #20777918878 (2026-01-07)
 
