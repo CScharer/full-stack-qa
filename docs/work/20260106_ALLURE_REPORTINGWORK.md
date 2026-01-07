@@ -3,9 +3,9 @@
 **Date Created**: 2026-01-06  
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
-**Timeline**: 2026-01-04 to 2026-01-06  
-**Current MERGE_NUMBER**: 38  
-**Latest Pipeline**: #20760975115 (2026-01-06)
+**Timeline**: 2026-01-04 to 2026-01-07  
+**Current MERGE_NUMBER**: 39  
+**Latest Pipeline**: #20761794584 (2026-01-06)
 
 ---
 
@@ -14,36 +14,36 @@
 This document tracks all work related to implementing and fixing Allure3 history/trending functionality. The implementation required **42+ Pull Requests** and **38+ merges to main** to achieve a working solution.
 
 ### Key Metrics
-- **Total PRs**: 42+ (PRs #67-#108)
-- **Total Pipeline Runs**: 38+ (Pipelines #388-#20760975115)
-- **Total Iterations**: 38 merges to main
-- **Time Span**: ~3 days (2026-01-04 to 2026-01-06)
-- **Current MERGE_NUMBER**: 38 (as of 2026-01-06)
+- **Total PRs**: 43+ (PRs #67-#109)
+- **Total Pipeline Runs**: 39+ (Pipelines #388-#20761794584)
+- **Total Iterations**: 39 merges to main
+- **Time Span**: ~3 days (2026-01-04 to 2026-01-07)
+- **Current MERGE_NUMBER**: 39 (as of 2026-01-07)
 
-### Current Status (2026-01-06)
-- **MERGE_NUMBER**: 38
-- **Latest Pipeline**: #20760975115
+### Current Status (2026-01-07)
+- **MERGE_NUMBER**: 39
+- **Latest Pipeline**: #20761794584
+- **Approach**: Simplified (Approach 1) - Let Allure3 handle history naturally
 - ✅ **History Download**: Working (via GitHub API and artifacts)
 - ✅ **History Structure**: Fixed (flat array, deduplicated)
-- ✅ **History Merge Logic**: Working (manual merge with deduplication)
-- ✅ **History Preservation**: Working (history growing: 212K → 252K)
-- ✅ **History Upload**: Working (3 files uploaded as artifact)
-- ⚠️ **Allure3 Recognition**: Still not processing manually created history
-- ⚠️ **Trends Display**: Not yet visible (Allure3 may require self-created history)
+- ✅ **History Preservation**: Working (history exists in GitHub Pages with buildOrders 459-482)
+- ✅ **History Upload**: Working (history files uploaded as artifact)
+- 🔄 **Allure3 Recognition**: Testing simplified approach (removed manual merge logic)
+- ⚠️ **Trends Display**: Not yet visible (awaiting Allure3 to create history naturally)
 
 ---
 
 ## 🔢 MERGE_NUMBER Tracking
 
-**Current MERGE_NUMBER**: 38  
+**Current MERGE_NUMBER**: 39  
 **Location**: `scripts/temp/test-trending-merge-tracker.sh`  
 **Purpose**: Tracks merge iterations for test trending validation  
 **Update Method**: Increment `MERGE_NUMBER` in the tracker script before each merge
 
 **MERGE_NUMBER History**:
 - Started at: 1 (PR #67)
-- Current: 38 (PR #108, Pipeline #20760975115)
-- Total iterations: 38 merges to main
+- Current: 39 (PR #109, Pipeline #20761794584)
+- Total iterations: 39 merges to main
 
 **How to Update**:
 1. Edit `scripts/temp/test-trending-merge-tracker.sh`
@@ -1150,9 +1150,85 @@ The Allure reporting implementation required extensive work to fix multiple issu
 
 ---
 
-**Last Updated**: 2026-01-06  
+## 📊 Pipeline Results (Pipeline #20761794584 - MERGE_NUMBER 39)
+
+**Date**: 2026-01-06  
+**Pipeline Run**: #20761794584  
+**Status**: ✅ Success  
+**PR**: #109  
+**Approach**: Simplified (Approach 1) - Let Allure3 handle history naturally
+
+### Key Changes in MERGE_NUMBER 39
+
+**Implementation of Approach 1**:
+- ✅ Removed all manual history merging logic from `generate-combined-allure-report.sh`
+- ✅ Simplified script to only copy history between runs
+- ✅ Let Allure3 handle history creation and merging natively
+- ✅ No manual `jq` manipulation of history files
+- ✅ No manual deduplication or flattening logic
+
+**Script Changes**:
+- Replaced complex manual merge logic (200+ lines) with simple copy operations
+- Removed all `jq` history manipulation
+- Removed manual history entry creation
+- Let Allure3 process history during `allure generate` command
+
+### History Status
+
+**GitHub Pages History**:
+- ✅ History exists in GitHub Pages: `https://cscharer.github.io/full-stack-qa/history/`
+- ✅ `history-trend.json`: Contains 12 entries with buildOrders 459-482
+- ✅ `duration-trend.json`: Contains 9 entries
+- ✅ History structure appears valid (flat array format)
+
+**History Build Orders**:
+- Latest buildOrders in history: 474, 476, 478, 480, 482 (from previous runs)
+- History file shows entries with buildOrders 459 and 461 (older entries)
+
+### Pipeline Results
+
+**Combined Allure Report Job**:
+- ✅ Job completed successfully
+- ✅ Allure report generated
+- ✅ History download steps executed (from GitHub Pages and artifacts)
+- ✅ Report generation step completed
+
+**Expected Behavior with Simplified Approach**:
+- Allure3 should read history from `RESULTS_DIR/history/` during `allure generate`
+- Allure3 should merge existing history with new test results (matching by historyId)
+- Allure3 should create updated history in `REPORT_DIR/history/`
+- History should be preserved for next run (copied from report back to results)
+
+### Key Findings
+
+**What Changed** ✅:
+1. Removed all manual history manipulation (no more `jq` merging)
+2. Simplified script to ~130 lines (down from 500+ lines)
+3. Let Allure3 handle all history operations natively
+4. History download and upload mechanisms still working
+
+**What to Monitor** 🔄:
+1. Whether Allure3 creates history in `REPORT_DIR/history/` after generation
+2. Whether Allure3 merges existing history with new test results
+3. Whether trends appear in the Allure report UI
+4. Whether history accumulates correctly over multiple runs
+
+**Next Steps**:
+- Monitor next 2-3 pipeline runs to see if Allure3 creates history naturally
+- Verify if trends appear in the Allure report UI
+- If Allure3 still doesn't create history, consider Approach 4 (individual test history files) or Approach 3 (switch to Allure2)
+
+**Observations**:
+- History exists in GitHub Pages and is accessible
+- History structure appears correct (flat array, valid JSON)
+- Simplified approach removes complexity and uses Allure3's native mechanisms
+- This approach aligns with Allure's intended workflow (copy history, let Allure3 handle the rest)
+
+---
+
+**Last Updated**: 2026-01-07  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: Active investigation ongoing  
-**Current MERGE_NUMBER**: 38  
-**Latest Pipeline**: #20760975115 (2026-01-06)
+**Status**: Active investigation ongoing - Testing Approach 1 (Simplified)  
+**Current MERGE_NUMBER**: 39  
+**Latest Pipeline**: #20761794584 (2026-01-06)
 
