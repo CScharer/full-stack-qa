@@ -156,7 +156,11 @@ else
 fi
 rm -rf "$REPORT_DIR"
 # Generate Allure report (Allure3 CLI doesn't support --verbose flag)
+# Configuration file (allure.config.js) will be automatically detected if present
 echo "   Running: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\""
+if [ -f "allure.config.js" ]; then
+    echo "   ✅ Using allure.config.js for history configuration"
+fi
 allure generate "$RESULTS_DIR" -o "$REPORT_DIR" 2>&1 | tee /tmp/allure-generate.log || {
     echo "⚠️  Allure generate command had warnings/errors (checking log...)"
     if [ -f /tmp/allure-generate.log ]; then
