@@ -190,6 +190,8 @@ if [ -n "$CODE_FILES" ]; then
     if [ -f "scripts/validate-pre-commit.sh" ]; then
         echo -e "${BLUE}🔍 Running comprehensive validation checks...${NC}"
         chmod +x scripts/validate-pre-commit.sh
+        # Pass changed files to validation script so it checks the files being pushed, not just staged files
+        export VALIDATE_FILES="$CHANGED_FILES"
         if ./scripts/validate-pre-commit.sh; then
             echo -e "${GREEN}✅ Validation checks passed${NC}"
             echo ""
@@ -198,6 +200,7 @@ if [ -n "$CODE_FILES" ]; then
             echo -e "${YELLOW}💡 You can bypass this hook with: git push --no-verify${NC}"
             exit 1
         fi
+        unset VALIDATE_FILES
     else
         echo -e "${YELLOW}⚠️  validate-pre-commit.sh not found, skipping validation${NC}"
     fi
