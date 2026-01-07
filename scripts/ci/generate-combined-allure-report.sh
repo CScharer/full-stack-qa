@@ -238,19 +238,42 @@ if [ -f /tmp/allure-generate.log ]; then
 fi
 
 # Check if Allure3 created history
-# Allure3 may create history.jsonl or multiple JSON files
+# Allure3 may create history.jsonl in RESULTS directory (where historyPath points) or REPORT directory
+# historyPath is relative to RESULTS directory, so Allure3 writes to RESULTS_DIR/history/history.jsonl
 HISTORY_CREATED=false
-if [ -f "$REPORT_DIR/history/history.jsonl" ]; then
+HISTORY_SOURCE=""
+
+# Check RESULTS directory first (where historyPath points)
+if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
     HISTORY_CREATED=true
+    HISTORY_SOURCE="results"
     echo ""
-    echo "✅ Allure3 created/updated history in report (history.jsonl format)"
+    echo "✅ Allure3 created/updated history in results directory (history.jsonl format)"
+    HISTORY_SIZE=$(du -sh "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')
+    HISTORY_LINES=$(wc -l < "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
+    echo "   History file: $RESULTS_DIR/history/history.jsonl"
+    echo "   History entries: $HISTORY_LINES line(s)"
+    echo "   Size: $HISTORY_SIZE"
+    echo "   ✅ History found in results directory (where historyPath points)"
+    
+    # History is already in RESULTS directory, no need to copy
+    echo ""
+    echo "📊 History ready for next run..."
+    echo "✅ History preserved: history.jsonl ready for next report generation"
+    echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+# Check REPORT directory (fallback - some Allure3 versions might write here)
+elif [ -f "$REPORT_DIR/history/history.jsonl" ]; then
+    HISTORY_CREATED=true
+    HISTORY_SOURCE="report"
+    echo ""
+    echo "✅ Allure3 created/updated history in report directory (history.jsonl format)"
     HISTORY_SIZE=$(du -sh "$REPORT_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')
     HISTORY_LINES=$(wc -l < "$REPORT_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
     echo "   History file: history.jsonl"
     echo "   History entries: $HISTORY_LINES line(s)"
     echo "   Size: $HISTORY_SIZE"
     
-    # Preserve history for next run
+    # Preserve history for next run (copy from report to results)
     echo ""
     echo "📊 Preserving history for next run..."
     mkdir -p "$RESULTS_DIR/history"

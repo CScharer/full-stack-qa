@@ -4,7 +4,7 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-07  
-**Current MERGE_NUMBER**: 48  
+**Current MERGE_NUMBER**: 49 (awaiting pipeline completion)  
 **Latest Pipeline**: #20791888049 (2026-01-07)
 
 ---
@@ -18,12 +18,12 @@ This document tracks all work related to implementing and fixing Allure3 history
 - **Total Pipeline Runs**: 48+ (Pipelines #388-#20791888049)
 - **Total Iterations**: 48 merges to main
 - **Time Span**: ~3 days (2026-01-04 to 2026-01-07)
-- **Current MERGE_NUMBER**: 48 (as of 2026-01-07)
+- **Current MERGE_NUMBER**: 49 (as of 2026-01-07, awaiting pipeline completion)
 
 ### Current Status (2026-01-07)
-- **MERGE_NUMBER**: 48
+- **MERGE_NUMBER**: 49 (awaiting pipeline completion)
 - **Latest Pipeline**: #20791888049
-- **Approach**: Steps 4 & 5 + Allure3 Configuration File (TypeScript Format)
+- **Approach**: MERGE_NUMBER 49 - History.jsonl format fixes (Fix 1, 2, 3 from investigation)
 - ✅ **History Download**: Working (via GitHub API and artifacts)
 - ✅ **History Structure**: Fixed (flat array, deduplicated)
 - ✅ **History Preservation**: Working (history files accessible in GitHub Pages with buildOrders 474-482)
@@ -40,15 +40,15 @@ This document tracks all work related to implementing and fixing Allure3 history
 
 ## 🔢 MERGE_NUMBER Tracking
 
-**Current MERGE_NUMBER**: 48  
+**Current MERGE_NUMBER**: 49  
 **Location**: `scripts/temp/test-trending-merge-tracker.sh`  
 **Purpose**: Tracks merge iterations for test trending validation  
 **Update Method**: Increment `MERGE_NUMBER` in the tracker script before each merge
 
 **MERGE_NUMBER History**:
 - Started at: 1 (PR #67)
-- Current: 48 (PR #118, Pipeline #20791888049)
-- Total iterations: 48 merges to main
+- Current: 49 (PR #119, awaiting pipeline completion)
+- Total iterations: 49 merges to main
 
 **How to Update**:
 1. Edit `scripts/temp/test-trending-merge-tracker.sh`
@@ -2450,10 +2450,160 @@ module.exports = {
 
 ---
 
+## 🔒 CodeQL Security Scanning Exclusions (2026-01-07)
+
+**Issue**: CodeQL security scanning flagged 3 security alerts in generated Allure report files:
+- Alert #24: Prototype pollution in `allure-report/app.js`
+- Alert #23: Incomplete sanitization in `allure-report/app.js`
+- Alert #22: Incomplete sanitization in `allure-report/app.js`
+
+**Root Cause**: These alerts are in generated/minified JavaScript files created by Allure3, not in source code. Generated files should not be scanned for security vulnerabilities.
+
+**Solution Implemented**:
+- ✅ Created `.github/codeql-config.yml` to exclude generated Allure report directories from CodeQL scanning
+- ✅ Updated `.github/workflows/codeql-analysis.yml` to reference the CodeQL config file
+- ✅ Excluded `allure-report/**` and `allure-report-combined/**` from security scanning
+
+**Configuration Files**:
+- **`.github/codeql-config.yml`**: Defines `paths-ignore` to exclude generated report directories
+- **`.github/workflows/codeql-analysis.yml`**: Updated to use `config-file: ./.github/codeql-config.yml`
+
+**Impact**:
+- Prevents false positive security alerts in generated files
+- Reduces noise in security scanning results
+- Allows focus on actual source code security issues
+- Existing alerts can be dismissed as they're in generated code that will no longer be scanned
+
+**Status**: Changes prepared locally, will be included with MERGE_NUMBER 49 pipeline review results
+
+---
+
+## 📊 Pipeline Results (Pipeline #20795975706 - MERGE_NUMBER 49)
+
+**Date**: 2026-01-07  
+**Pipeline Run**: #20795975706  
+**Status**: ✅ Success  
+**PR**: #121 (fix: Add node_modules/ and package-lock.json to .gitignore)  
+**Approach**: MERGE_NUMBER 49 - History.jsonl format fixes (Fix 1, 2, 3 from investigation)
+
+### Key Changes in MERGE_NUMBER 49
+
+**Implementation of Investigation Fixes**:
+- ✅ **Fix 1**: Convert history to `history.jsonl` format (JSON Lines - single file)
+  - Script now converts old format (`history-trend.json`) to new format (`history.jsonl`)
+  - Script checks for `history.jsonl` first, then falls back to legacy format
+  - Conversion logic: `jq -c '.[]' history-trend.json > history.jsonl`
+- ✅ **Fix 2**: Update `historyPath` to file path: `"./history/history.jsonl"`
+  - Updated `allure.config.js` to use file path instead of directory path
+  - Updated `allure.config.ts` to use file path instead of directory path
+  - Changed from `"./history"` (directory) to `"./history/history.jsonl"` (file)
+- ✅ **Fix 3**: Update configuration to use `defineConfig()` helper
+  - Updated `allure.config.js` to use `defineConfig()` helper from 'allure'
+  - Updated `allure.config.ts` to use `defineConfig()` helper from 'allure'
+  - Uses official Allure3 configuration format
+
+### Pipeline Execution Details
+
+**History Download**:
+- ✅ History downloaded from GitHub Pages via GitHub API
+- ✅ Found 5 files in history directory (old format)
+- ✅ History size: 372K
+- ✅ Files: `.gitkeep`, `duration-trend.json`, `duration-trend.json.tmp`, `history-trend.json`, `retry-trend.json`
+
+**History Conversion**:
+- ✅ Old format (`history-trend.json`) converted to `history.jsonl` format
+- ✅ Conversion successful: 12 entries converted
+- ✅ History file: `history.jsonl` (116K)
+- ✅ History entries: 12 line(s)
+
+**BuildOrder Continuity**:
+- ✅ Current build order: 512 (from executor.json)
+- ✅ Latest history build order: 482 (from converted history.jsonl)
+- ✅ BuildOrder continuity verified (512 > 482)
+
+**Allure3 Report Generation**:
+- ✅ Allure3 CLI installed successfully
+- ✅ Configuration file detected: `allure.config.ts` (TypeScript format)
+- ✅ Explicit `--config` flag used: `--config allure.config.ts`
+- ✅ Configuration verified:
+  - `historyPath: "./history/history.jsonl"` (file path)
+  - `appendHistory: true`
+  - Uses `defineConfig()` helper
+- ✅ Report generated successfully
+- ✅ Report location: `allure-report-combined`
+- ✅ Report size: 4.0M
+
+**History Processing**:
+- ⚠️ **Allure3 did not create new history entry in report directory**
+- ⚠️ Script detected: "No history directory in report (expected for first few runs)"
+- ⚠️ Script message: "Allure3 did not create history (this is normal for first few runs)"
+- ⚠️ History preservation step found no history directory in report
+- ⚠️ No history artifact uploaded (empty history directory)
+
+**GitHub Pages History Status**:
+- ✅ `history.jsonl` exists in GitHub Pages: 89 lines
+- ⚠️ This is more than the 12 entries we started with, suggesting history may have been processed
+- ⚠️ However, script did not detect history in report directory after generation
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. History download from GitHub Pages working (5 files, 372K)
+3. History conversion from old format to `history.jsonl` working (12 entries converted)
+4. BuildOrder continuity verified (512 > 482)
+5. Allure3 configuration file detected and used (`allure.config.ts`)
+6. Configuration uses correct format:
+   - File path: `"./history/history.jsonl"`
+   - `defineConfig()` helper
+   - `appendHistory: true`
+7. Report generation completed successfully (4.0M report)
+8. All three fixes from investigation implemented correctly
+
+**What's Not Working** ❌:
+1. **Allure3 did not create new history entry in report directory**
+   - Script detected no history directory after report generation
+   - This is the same issue as previous runs
+2. **History not detected in report after generation**
+   - Script expected `allure-report-combined/history/history.jsonl` but it wasn't found
+   - History preservation step found no history to preserve
+3. **No history artifact uploaded**
+   - Empty history directory, so no artifact was uploaded
+4. **Trends still not visible**
+   - No new history entry created, so trends won't display
+
+**Observations**:
+- All three fixes from the investigation were implemented correctly
+- History was successfully converted to `history.jsonl` format
+- Configuration file uses correct format (file path, `defineConfig()` helper)
+- However, Allure3 still did not create new history entries
+- The fact that GitHub Pages has 89 lines in `history.jsonl` (vs 12 we started with) is interesting but unclear
+- Script logic may need adjustment to detect history in different locations or formats
+
+**Analysis**:
+- After implementing all three fixes from the investigation, Allure3 still did not create new history entries
+- The configuration format is now correct (file path, `defineConfig()` helper)
+- History format is now correct (`history.jsonl` instead of multiple JSON files)
+- However, Allure3's behavior remains unchanged - it's not creating new history entries
+- This suggests that the issue may be deeper than just configuration or format
+- Allure3 may require:
+  - History to be created by Allure3 itself in a previous run (not manually converted)
+  - A specific internal state or validation we're not aware of
+  - Or there may be a bug/limitation in Allure3 CLI that prevents it from processing manually created history
+
+**Next Steps**:
+- Review if Allure3 created history in a different location or format than expected
+- Check if the 89 lines in GitHub Pages `history.jsonl` indicate that history was actually processed
+- Consider if we need to adjust the script to look for history in different locations
+- Verify if trends are actually visible in the Allure report UI despite script not detecting history
+- Consider alternative approaches if Allure3 continues to not create history entries
+
+---
+
 **Last Updated**: 2026-01-07  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: Active investigation ongoing - Investigation complete, found potential issues with history file format  
-**Current MERGE_NUMBER**: 48  
-**Latest Pipeline**: #20791888049 (2026-01-07)  
+**Status**: Active investigation ongoing - MERGE_NUMBER 49 fixes implemented, awaiting verification  
+**Current MERGE_NUMBER**: 49  
+**Latest Pipeline**: #20795975706 (2026-01-07)  
 **Investigation Document**: `docs/work/20260107_ALLURE3_INVESTIGATION.md`
 
