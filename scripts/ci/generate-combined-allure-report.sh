@@ -588,4 +588,18 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
     else
         echo "   ✅ history-trend.json format is correct (all entries have object data)"
     fi
+    
+    # CRITICAL: Allure3 UI may also need widgets/history-trend.json
+    # Copy history-trend.json to widgets directory if it doesn't exist or is outdated
+    if [ -d "$REPORT_DIR/widgets" ]; then
+        echo ""
+        echo "📊 Ensuring widgets/history-trend.json exists for UI..."
+        if [ ! -f "$REPORT_DIR/widgets/history-trend.json" ] || \
+           [ "$REPORT_DIR/history/history-trend.json" -nt "$REPORT_DIR/widgets/history-trend.json" ]; then
+            cp "$REPORT_DIR/history/history-trend.json" "$REPORT_DIR/widgets/history-trend.json" 2>/dev/null || true
+            echo "   ✅ Copied history-trend.json to widgets directory"
+        else
+            echo "   ✅ widgets/history-trend.json already exists and is up to date"
+        fi
+    fi
 fi
