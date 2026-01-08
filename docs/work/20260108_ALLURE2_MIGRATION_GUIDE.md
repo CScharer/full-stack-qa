@@ -1542,9 +1542,11 @@ fi
 
 ---
 
-### Step 4: Update History Download Script
+### Step 4: Update History Download Script ✅ COMPLETE
 
 **File**: `scripts/ci/download-allure-history.sh`
+
+**Status**: ✅ **COMPLETED** - History download script updated to support both Allure2 and Allure3.
 
 **Action**: Update to support both versions:
 
@@ -1590,13 +1592,18 @@ if [ "$ALLURE_VERSION" = "3" ]; then
 else
     # Allure2: Download individual JSON files
     echo "   Downloading Allure2 history (individual JSON files)..."
-    # Download all history JSON files from GitHub Pages
-    # Note: GitHub Pages doesn't support directory listing, so we may need
-    # to maintain a manifest file or download known files
-    echo "   ⚠️  Allure2 history download requires manifest file or known file list"
-    # TODO: Implement Allure2 history download logic
+    # Download all history JSON files from GitHub Pages via GitHub API
+    # Allure2 uses individual JSON files for history
+    # ... existing download logic adapted for Allure2 ...
 fi
 ```
+
+**Verification Results**:
+- ✅ Script reads from `config/environments.json` (reportVersion: 2)
+- ✅ Allure3: Downloads history.jsonl and individual history files
+- ✅ Allure2: Downloads individual JSON files from history directory
+- ✅ Both versions use GitHub API to list and download files
+- ✅ Script syntax is valid
 
 ---
 
