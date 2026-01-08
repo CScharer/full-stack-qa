@@ -513,26 +513,253 @@ Create `target/allure-results/categories.json`:
 
 ## 📞 Troubleshooting
 
-### "allure: command not found"
-Install Allure CLI:
+### Common Installation Issues
+
+#### "allure: command not found"
+**Cause**: Allure CLI is not installed or not in PATH.
+
+**Solution**:
 ```bash
+# For Allure2 (default):
+./scripts/ci/install-allure-cli.sh
+
+# Or manually install:
+# macOS
 brew install allure
+
+# Linux (download from GitHub releases)
+wget https://github.com/allure-framework/allure2/releases/download/2.36.0/allure-2.36.0.tgz
+tar -xzf allure-2.36.0.tgz
+sudo mv allure-2.36.0 /opt/allure
+sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 ```
 
-### "No Allure results found"
-Make sure tests ran successfully:
+#### "jq: command not found"
+**Cause**: `jq` is required to read configuration from `config/environments.json`.
+
+**Solution**:
 ```bash
+# macOS
+brew install jq
+
+# Linux
+sudo apt-get install jq
+# or
+sudo yum install jq
+```
+
+#### "Java is not installed" (Allure2 only)
+**Cause**: Allure2 CLI requires Java runtime.
+
+**Solution**:
+```bash
+# macOS
+brew install openjdk
+
+# Linux
+sudo apt-get install default-jdk
+# or
+sudo yum install java-11-openjdk-devel
+```
+
+### Report Generation Issues
+
+#### "No Allure results found"
+**Cause**: Tests haven't run or results directory is empty.
+
+**Solution**:
+```bash
+# Run tests first
 docker-compose run --rm tests -Dtest=SimpleGridTest
+
+# Verify results exist
 ls -la target/allure-results/
+
+# Check for result files
+find target/allure-results -name "*.json" | head -5
 ```
 
-### Report doesn't open
-Generate manually:
+#### Report doesn't open
+**Cause**: Report generation failed or file path is incorrect.
+
+**Solution**:
 ```bash
+# Regenerate report
 rm -rf target/allure-report
 allure generate target/allure-results -o target/allure-report
+
+# Verify report was created
+ls -la target/allure-report/
+
+# Open manually
 open target/allure-report/index.html
+# or
+python3 -m http.server 8080 -d target/allure-report
 ```
+
+### History and Trending Issues
+
+#### History not appearing in reports
+**Cause**: History files not being preserved or downloaded correctly.
+
+**Verification Steps**:
+1. **Check Pipeline Logs**:
+   - Look for "Download Previous Allure History" steps
+   - Verify "History directory found with X file(s)" message
+   - Check "History included in report" verification step
+
+2. **Check GitHub Pages**:
+   ```bash
+   # View history files via GitHub API
+   curl -s -H "Accept: application/vnd.github.v3+json" \
+     "https://api.github.com/repos/CScharer/full-stack-qa/contents/history?ref=gh-pages" | \
+     jq '.[] | select(.type == "file") | {name: .name, size: .size}'
+   ```
+
+3. **Check Artifacts**:
+   - Go to Actions → Latest run → Artifacts
+   - Look for `allure-history` artifact
+   - Download and verify it contains history files
+
+4. **Check Report**:
+   - Open Allure report on GitHub Pages
+   - Navigate to "Trends" or "Graphs" section
+   - Verify historical data is displayed
+
+**Common Causes and Solutions**:
+
+**Issue**: "No history directory found"
+- **Cause**: First run or history download failed
+- **Solution**: Expected for first run. For subsequent runs, check download steps in logs
+
+**Issue**: "History directory exists but is empty"
+- **Cause**: History files are empty arrays `[]`
+- **Solution**: Script removes empty history. Wait for next run to populate
+
+**Issue**: "History not persisting across deployments"
+- **Cause**: `keep_files: false` was wiping history (fixed in PR #75)
+- **Solution**: Ensure `keep_files: true` in GitHub Pages deployment settings
+
+**Issue**: "Duplicate build orders in history"
+- **Cause**: History merge logic not deduplicating correctly
+- **Solution**: Fixed in PR #104, #105 using `group_by(.buildOrder) | map(last)`
+
+**Issue**: "Nested arrays in history"
+- **Cause**: History merge creating nested structure
+- **Solution**: Fixed in PR #102 using `flatten` in jq commands
+
+### Debugging Commands
+
+#### Check History in Results Directory
+```bash
+# Count history files
+find allure-results-combined/history -type f -name "*.json" | wc -l
+
+# View history-trend.json structure (Allure2)
+cat allure-results-combined/history/history-trend.json | jq '.'
+
+# View history.jsonl structure (Allure3)
+cat allure-results-combined/history/history.jsonl | head -5 | jq '.'
+
+# Check for duplicates
+cat allure-results-combined/history/history-trend.json | jq '[.[] | .buildOrder] | group_by(.) | map(select(length > 1))'
+
+# Check if nested
+cat allure-results-combined/history/history-trend.json | jq 'type'  # Should be "array", not "object"
+```
+
+#### Check History in Report Directory
+```bash
+# Count history files
+find allure-report-combined/history -type f -name "*.json" | wc -l
+
+# View history structure
+cat allure-report-combined/history/history-trend.json | jq '.'
+```
+
+#### Check GitHub Pages History
+```bash
+# Download via curl
+curl -s "https://cscharer.github.io/full-stack-qa/history/history-trend.json" | jq '.'
+
+# Check via GitHub API
+curl -s -H "Accept: application/vnd.github.v3+json" \
+  "https://api.github.com/repos/CScharer/full-stack-qa/contents/history?ref=gh-pages" | \
+  jq '.[] | select(.type == "file") | {name: .name, size: .size}'
+```
+
+#### Check Build Order
+```bash
+# From executor.json
+cat allure-results-combined/executor.json | jq '.buildOrder'
+
+# From history files
+cat allure-results-combined/history/history-trend.json | jq '[.[] | .buildOrder] | sort | unique'
+```
+
+#### Verify Configuration
+```bash
+# Check Allure version from config
+jq '.allure.reportVersion' config/environments.json
+
+# Check CLI versions
+jq '.allure.cliVersion' config/environments.json
+
+# Verify script can read config
+ALLURE_VERSION=$(jq -r '.allure.reportVersion // 2' config/environments.json)
+echo "Allure version: $ALLURE_VERSION"
+```
+
+### Verification Checklist
+
+**After Each Pipeline Run**:
+- [ ] History download steps completed successfully
+- [ ] History files exist in `allure-results-combined/history/`
+- [ ] History files are not empty (size > 3 bytes)
+- [ ] No duplicate build orders in history files
+- [ ] History structure is flat array (not nested)
+- [ ] History exists in `allure-report-combined/history/` after generation
+- [ ] History uploaded as artifact (if on main branch)
+- [ ] History deployed to GitHub Pages (if on main branch)
+- [ ] History visible in Allure report (if trends section exists)
+
+**For First Run**:
+- [ ] History download steps show "No history found (expected for first run)"
+- [ ] Report generation completes successfully
+- [ ] History directory may or may not exist (both are acceptable)
+- [ ] History upload step may be skipped (expected)
+
+**For Subsequent Runs**:
+- [ ] History downloaded from GitHub Pages or artifact
+- [ ] History merged with current run's data
+- [ ] History includes multiple build orders
+- [ ] History deployed to GitHub Pages
+- [ ] Trends visible in Allure report
+
+### Key Learnings
+
+#### 1. GitHub Pages `keep_files` Behavior
+- `keep_files: false` wipes entire branch on each deployment
+- `keep_files: true` preserves existing files
+- **This was the most critical fix** (PR #75)
+
+#### 2. Allure History Requirements
+- Allure2: Requires individual JSON files in `history/` directory
+- Allure3: Requires `history.jsonl` file in `history/` directory
+- History must be in `RESULTS_DIR/history/` before `allure generate`
+- History files must be valid JSON with actual data (not empty arrays)
+
+#### 3. History File Format
+- Must be flat array (not nested)
+- Must have one entry per buildOrder (deduplicated)
+- Must contain actual test execution data
+- Structure must match Allure's expected format
+
+#### 4. Configuration Best Practices
+- Use `config/environments.json` for centralized configuration
+- Scripts automatically read from config file
+- No manual script changes needed when switching versions
+- Default to Allure2 for production use
 
 ---
 
@@ -1051,46 +1278,81 @@ This section documents the historical context and key fixes that were implemente
 
 ---
 
-## 🔮 Allure3: Current Implementation
+## 🔧 Configurable Allure Version
 
 ### Overview
 
-**Allure3** (v3.0.0) is a complete rewrite of the Allure reporting framework, built from the ground up in TypeScript. It represents the next evolution of Allure Report with significant architectural improvements and new features. **Allure3 CLI is now actively used in this project** for report generation.
+**Allure CLI version is configurable** via `config/environments.json`. The project supports both Allure2 and Allure3 CLI, with **Allure2 CLI 2.36.0 set as the default**. This allows for easy switching between versions and testing both implementations.
 
-### Key Differences from Allure2
+**Current Configuration**:
+- **Default**: Allure2 CLI 2.36.0 (Java-based)
+- **Optional**: Allure3 CLI 3.0.0 (TypeScript-based)
+- **Java Libraries**: Allure2 2.32.0 (unchanged regardless of CLI version)
 
-#### 1. **Architecture & Technology**
-- **Allure2**: Java-based CLI tool
-- **Allure3**: TypeScript-based CLI tool (complete rewrite)
-- **Installation**: Allure3 is installed via npm (`npm install -g allure`), not downloaded as a binary
+### Configuration
 
-#### 2. **What Would Change**
+**File**: `config/environments.json`
 
-**CLI Installation & Usage**:
-```bash
-# Current (Allure2):
-./scripts/ci/install-allure-cli.sh "2.36.0"
-allure generate target/allure-results
-allure serve target/allure-results
-
-# With Allure3:
-npm install -g allure
-allure generate target/allure-results
-allure serve target/allure-results
+```json
+{
+  "allure": {
+    "reportVersion": 2,
+    "cliVersion": {
+      "2": "2.36.0",
+      "3": "3.0.0"
+    }
+  }
+}
 ```
 
-**Workflow Changes**:
-- GitHub Actions workflows would need to install Allure3 via npm instead of downloading binaries
-- CLI commands remain largely the same (backward compatible)
-- Report generation process stays the same
+**To Switch Versions**:
+- Set `"reportVersion": 2` for Allure2 CLI (default)
+- Set `"reportVersion": 3` for Allure3 CLI
 
-#### 3. **What Would Stay the Same**
+**Note**: All scripts and workflows automatically read from this configuration file. No manual script changes are required when switching versions.
+
+---
+
+## 🔄 Allure2 vs Allure3: Key Differences
+
+### Overview
+
+Both **Allure2** and **Allure3** are supported in this project. **Allure2** is the default and recommended version due to its maturity and proven history functionality.
+
+#### 1. **Architecture & Technology**
+
+| Aspect | Allure2 | Allure3 |
+|--------|---------|---------|
+| **Type** | Java-based | TypeScript-based |
+| **Installation** | Download binary from GitHub releases | Install via npm (`npm install -g allure`) |
+| **Version** | 2.36.0 (default) | 3.0.0 (optional) |
+| **Repository** | `allure-framework/allure2` | `allure-framework/allure3` |
+| **Dependencies** | Requires Java runtime | Requires Node.js/npm |
+
+#### 2. **Configuration**
+
+| Aspect | Allure2 | Allure3 |
+|--------|---------|---------|
+| **Config File** | No config file (command-line options) | `allure.config.ts` or `allure.config.js` |
+| **History Path** | Automatic (default behavior) | `historyPath: "./history/history.jsonl"` in config |
+| **Append History** | Automatic (default behavior) | `appendHistory: true` in config |
+
+#### 3. **History Format**
+
+| Aspect | Allure2 | Allure3 |
+|--------|---------|---------|
+| **Format** | Individual `{md5-hash}.json` files | `history.jsonl` (JSON Lines) |
+| **Location** | `history/{md5-hash}.json` | `history/history.jsonl` |
+| **Structure** | Multiple files, one per test | Single file with all history |
+| **Trend Files** | Generated automatically | `history-trend.json`, `duration-trend.json` |
+
+#### 4. **What Stays the Same**
 
 **Java Libraries** (No Changes Required):
 - ✅ **Maven dependencies remain unchanged**: `io.qameta.allure:allure-testng:2.32.0`
 - ✅ **Test annotations remain the same**: `@Epic`, `@Feature`, `@Story`, `@Severity`, etc.
 - ✅ **Test code requires no changes**: All existing Allure annotations work identically
-- ✅ **Result format is compatible**: Allure3 CLI can read Allure2 result files (`*-result.json`, `*-container.json`)
+- ✅ **Result format is compatible**: Both CLI versions read the same result files (`*-result.json`, `*-container.json`)
 
 **Test Execution**:
 - ✅ Tests run exactly the same way
@@ -1098,77 +1360,22 @@ allure serve target/allure-results
 - ✅ Result files generated in the same format
 - ✅ Screenshots and attachments work the same
 
-#### 4. **New Features in Allure3**
+#### 5. **Why Allure2 is Default**
 
-**Enhanced UI & Experience**:
-- 🎨 **Redesigned User Interface**: Modern, improved visual design
-- ⚡ **Real-time Reporting**: View live updates during test execution using `allure watch`
-- 🔌 **Plugin System**: Modular plugin architecture for extensibility
-- 📊 **Allure Awesome**: New lightweight report option with backward compatibility
+**Advantages of Allure2**:
+- ✅ **Mature and Stable**: Proven track record with extensive community support
+- ✅ **Better Documented**: Comprehensive documentation and examples
+- ✅ **Proven History Functionality**: History and trending work reliably
+- ✅ **Larger Community**: More resources, tutorials, and support
+- ✅ **Java-based**: Consistent with project's Java ecosystem
 
-**Improved Configuration**:
-- 📝 **Simplified Configuration**: Single configuration file for all report settings
-- 🔧 **Better Customization**: Enhanced plugin system allows for more customization
-- 📦 **Easier Management**: Improved handling of multiple reports
+**Allure3 Considerations**:
+- ⚠️ **Newer Technology**: TypeScript-based, still evolving
+- ⚠️ **History Issues**: Experienced issues with history/trending functionality
+- ⚠️ **Less Mature**: Fewer resources and community support
+- ⚠️ **Different History Format**: Requires JSONL format conversion
 
-**Performance & Stability**:
-- 🚀 **Better Performance**: TypeScript implementation offers improved speed
-- 🛡️ **Enhanced Stability**: Complete rewrite addresses known issues
-- 🔄 **Active Development**: Active maintenance and feature development
-
-#### 5. **Migration Considerations**
-
-**Advantages**:
-- ✅ **No Test Code Changes**: All existing Allure annotations work without modification
-- ✅ **Backward Compatible**: Allure3 CLI reads Allure2 result files seamlessly
-- ✅ **Improved Features**: Better UI, real-time reporting, plugin system
-- ✅ **Active Development**: More frequent updates and improvements
-
-**Considerations**:
-- ⚠️ **CLI Installation Change**: Requires npm instead of binary download
-- ⚠️ **Workflow Updates**: GitHub Actions workflows need to be updated
-- ⚠️ **Learning Curve**: New features and UI may require some familiarization
-- ⚠️ **Plugin Compatibility**: Custom plugins may need updates for Allure3
-
-**Current Status**:
-- ✅ **Allure3 v3.0.0**: Stable release available
-- ✅ **Compatible**: Works with existing Allure2 test results
-- ⏳ **Testing**: Planned for separate branch after Allure2 upgrade is validated
-
-#### 6. **Recommended Approach**
-
-**Phase 1: Allure2 Upgrade** ✅ **COMPLETED**
-- Upgraded Allure2 CLI from 2.25.0 to 2.36.0
-- Kept Allure2 Java libraries at 2.32.0 in Maven
-- Validated setup and resolved issues
-- Merged to main
-
-**Phase 2: Allure3 Adoption** ✅ **COMPLETED**
-- Created branch to test Allure3 CLI (`test-allure3-cli`)
-- Updated workflows to install Allure3 via npm
-- Successfully generating reports using Allure3 with existing Allure2 results
-- Verified UI improvements and performance
-- Allure3 CLI working correctly in pipeline
-- **Status**: Allure3 CLI is now the active reporting tool
-
-**Phase 3: Production Use** ✅ **ACTIVE**
-- Allure3 CLI integrated into CI/CD pipeline
-- Reports generated successfully with Allure3
-- GitHub Pages deployment working correctly
-- Allure2 Java libraries remain compatible (no changes needed)
-- Documentation updated to reflect Allure3 usage
-
-#### 7. **Important Notes**
-
-- **Java Libraries**: Allure3 does NOT replace Allure2 Java libraries. Your Maven dependencies (`io.qameta.allure:allure-testng`, `io.qameta.allure:allure-java-commons`) will continue to use Allure2 versions regardless of which CLI you use.
-
-- **Result Compatibility**: Allure3 CLI is designed to read Allure2 result files, so your existing test results work without any conversion.
-
-- **No Breaking Changes**: Since Allure3 CLI reads Allure2 results, there are no breaking changes to your test code or result format.
-
-- **Separate Projects**: Allure2 and Allure3 are separate GitHub repositories:
-  - Allure2: `allure-framework/allure2` (Java-based)
-  - Allure3: `allure-framework/allure3` (TypeScript-based)
+**Recommendation**: Use Allure2 CLI (default) for production. Allure3 CLI is available for testing and can be enabled by changing `allure.reportVersion` to `3` in `config/environments.json`.
 
 ---
 
