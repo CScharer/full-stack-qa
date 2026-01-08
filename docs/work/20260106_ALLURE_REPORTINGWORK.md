@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-08  
-**Current MERGE_NUMBER**: 57  
-**Latest Pipeline**: #20823726152 (2026-01-08)
+**Current MERGE_NUMBER**: 60  
+**Latest Pipeline**: #20828530829 (2026-01-08)
 
 ---
 
@@ -3693,10 +3693,147 @@ Error: <rect> attribute height: A negative value is not valid. ("-16")
 
 ---
 
+## 📊 Pipeline Results (Pipeline #20828530829 - MERGE_NUMBER 60)
+
+**Date**: 2026-01-08  
+**Pipeline Run**: #20828530829  
+**Status**: ✅ Success  
+**PR**: #133 (MERGE_NUMBER 60: Fix history-trend.json format - Use array format for SVG chart rendering)  
+**Approach**: MERGE_NUMBER 60 - Fix format verification to handle single test objects (wrap in array)
+
+### Key Changes in MERGE_NUMBER 60
+
+**Critical Fix**: Updated format verification to detect and fix single test objects (not just aggregated statistics).
+
+**Root Cause Identified**:
+- Deployed `widgets/history-trend.json` has **mixed formats**:
+  - ✅ 9 entries with **array format** (correct): `data: [{uid: "...", status: "...", time: {...}}]`
+  - ❌ 3 entries with **single object format** (incorrect): `data: {uid: "...", status: "...", time: {...}}`
+- Allure3 UI expects **ALL entries** to have array format
+- Single test objects cause SVG chart calculation to fail (negative dimensions)
+- Console errors persist: `<svg> attribute width: A negative value is not valid. ("-16")`
+
+**Investigation Findings**:
+- ✅ Checked deployed `widgets/history-trend.json` on GitHub Pages
+- ✅ **Format analysis**: 9 entries with array format, 3 entries with single object format
+- ✅ **Object entries identified**: buildOrders 461, 463, 465 have single test objects
+- ✅ **Root cause**: Some entries in `history.jsonl` have `data` as single object instead of array
+- ❌ **Format verification incomplete**: Previous check only caught aggregated statistics, not single objects
+
+**Solution Implemented**:
+1. **Updated format verification** to detect **ANY object data** (not just aggregated statistics)
+2. **Wrap single objects in arrays**: If `data` is a single test object `{uid, status, time}`, wrap it: `[{uid, status, time}]`
+3. **Rebuild from history.jsonl**: When object data detected, rebuild entire `history-trend.json` from `history.jsonl` (source of truth)
+4. **Initial conversion fix**: Added check in initial conversion to wrap single objects in arrays
+5. **Ensure consistency**: All entries must have array format before deployment
+
+**Code Changes**:
+- **File**: `scripts/ci/generate-combined-allure-report.sh`
+- **Location 1**: Initial conversion (lines 294-296) - Wrap single objects in arrays during conversion
+- **Location 2**: Format verification (lines 509-580) - Detect ANY object data and rebuild from history.jsonl
+- **Logic**: 
+  1. Check if `data` is an object (any object, not just aggregated stats)
+  2. If single test object (has `uid`), wrap in array: `[.data]`
+  3. Rebuild entire file from `history.jsonl` to ensure consistency
+  4. Ensure all entries have array format before deployment
+
+### Pipeline Execution Details
+
+**History Download**:
+- ✅ History artifact successfully downloaded from previous run
+- ✅ History downloaded from GitHub Pages via GitHub API
+- ✅ History found in history.jsonl format
+- ✅ **Both formats downloaded**: `history-trend.json` and `history.jsonl`
+
+**Allure3 Report Generation**:
+- ✅ Allure3 CLI installed successfully
+- ✅ Configuration file detected: `allure.config.ts` (TypeScript format)
+- ✅ Explicit `--config` flag used: `--config allure.config.ts`
+- ✅ Report generated successfully
+- ✅ Report location: `allure-report-combined`
+- ✅ Report size: 4.3M
+
+**History Processing**:
+- ✅ **Allure3 created/updated history in results directory (history.jsonl format)**
+- ✅ History file: `allure-results-combined/history/history.jsonl`
+- ✅ **History found in results directory (where historyPath points)**
+
+**Format Conversion**:
+- ✅ **Initial conversion executed**: Converting history.jsonl to history-trend.json
+- ✅ **Array format used**: Individual test data extracted as array
+- ✅ **Single object handling**: Added check to wrap single objects in arrays during conversion
+
+**Format Verification** ⭐ **ENHANCED FIX**:
+- ✅ **Format verification step executed**: "🔍 Verifying history-trend.json format..."
+- ⚠️ **Object data detected**: Found entries with object data (single test objects)
+- ✅ **Rebuild from history.jsonl**: Rebuilding entire file from source of truth
+- ✅ **All entries fixed**: All entries now have array format
+
+**Widgets Copy**:
+- ✅ **Widgets copy step executed**: "📊 Ensuring widgets/history-trend.json exists for UI..."
+- ✅ **Copy successful**: "✅ Copied history-trend.json to widgets directory"
+- ✅ **File deployed**: widgets/history-trend.json updated with fixed format
+
+**History Verification in Report**:
+- ✅ **History directory exists in report**
+- ✅ **Files verified**: history.jsonl and history-trend.json present
+- ✅ **History will be preserved in GitHub Pages deployment**
+
+**GitHub Pages Deployment**:
+- ✅ Deployment step executed successfully
+- ✅ **History files accessible on GitHub Pages**:
+  - `history.jsonl`: ✅ Accessible
+  - `history/history-trend.json`: ✅ Accessible
+  - `widgets/history-trend.json`: ✅ Accessible
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. ⭐ **Format verification enhanced** - Now detects single test objects (not just aggregated stats)
+3. ⭐ **Initial conversion fixed** - Wraps single objects in arrays during conversion
+4. ⭐ **Rebuild from source** - Rebuilds from history.jsonl when object data detected
+5. ⭐ **All entries should have array format** - Format fix applied to all entries
+6. History download from GitHub Pages working
+7. Allure3 configuration file detected and used (`allure.config.ts`)
+8. Report generation completed successfully (4.3M report)
+
+**What's Not Working** ❌:
+1. ⚠️ **Trends still not visible in Allure Report UI** despite:
+   - ✅ Format fix implemented (wrapping single objects in arrays)
+   - ✅ Files deployed and accessible on GitHub Pages
+   - ✅ All entries should have array format
+   - ❌ **Console errors persist**: SVG attribute errors still occurring
+
+**Analysis**:
+- ⭐ **Format fix implemented**: Single objects now wrapped in arrays
+- ⭐ **Rebuild logic added**: Rebuilds from history.jsonl when object data detected
+- ⚠️ **Console errors persist**: SVG errors still occurring after format fix
+- ⚠️ **Possible causes**:
+  1. Old entries still in deployed file (from previous runs)
+  2. Format fix not applied to all entries correctly
+  3. Allure3 UI may have additional requirements
+  4. Browser cache may be serving old file
+
+**Recommendations**:
+1. ✅ **Format fix implemented** - Single objects wrapped in arrays
+2. ⚠️ **Verify deployed file** - Check if all entries have array format after deployment
+3. ⚠️ **Clear browser cache** - Ensure browser loads latest file
+4. ⚠️ **Monitor next pipeline** - Verify format fix resolves console errors
+5. ⚠️ **Check Allure3 documentation** - Verify if additional requirements exist
+
+**Next Steps**:
+- ✅ **Format fix implemented** - Single objects wrapped in arrays, rebuild from history.jsonl
+- ⚠️ **Verify deployed file format** - Check if all entries have array format
+- ⚠️ **Monitor console errors** - Check if SVG errors are resolved
+- ⚠️ **Test in next pipeline run** - Verify trends appear after format fix
+
+---
+
 **Last Updated**: 2026-01-08  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: 🔧 Format Fix Implemented - Changed to Array Format with Individual Test Data - Awaiting Pipeline Test  
-**Current MERGE_NUMBER**: 59  
-**Latest Pipeline**: #20827183758 (2026-01-08)  
+**Status**: 🔧 Format Fix Enhanced - Single Objects Wrapped in Arrays - Awaiting Pipeline Verification  
+**Current MERGE_NUMBER**: 60  
+**Latest Pipeline**: #20828530829 (2026-01-08)  
 **Investigation Document**: `docs/work/20260107_ALLURE3_INVESTIGATION.md`
 
