@@ -17,6 +17,13 @@
     "webServer": 120000,
     "checkInterval": 2
   },
+  "allure": {
+    "reportVersion": 2,
+    "cliVersion": {
+      "2": "2.36.0",
+      "3": "3.0.0"
+    }
+  },
   "environments": {
     "dev": {
       "frontend": {
