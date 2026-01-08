@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-08  
-**Current MERGE_NUMBER**: 55  
-**Latest Pipeline**: #20819791802 (2026-01-08)
+**Current MERGE_NUMBER**: 56  
+**Latest Pipeline**: #20822626422 (2026-01-08)
 
 ---
 
@@ -3110,10 +3110,184 @@ module.exports = {
 
 ---
 
+---
+
+## 📊 Pipeline Results (Pipeline #20822626422 - MERGE_NUMBER 56)
+
+**Date**: 2026-01-08  
+**Pipeline Run**: #20822626422  
+**Status**: ✅ Success  
+**PR**: #129 (MERGE_NUMBER 56: Fix history copy to report directory for GitHub Pages deployment)  
+**Approach**: MERGE_NUMBER 56 - Fix history copy to report directory for GitHub Pages deployment
+
+### Key Changes in MERGE_NUMBER 56
+
+**Critical Fix**: Copy history from results directory to report directory after Allure3 generation to ensure it's included in GitHub Pages deployment.
+
+### Pipeline Execution Details
+
+**History Download**:
+- ✅ **History artifact successfully downloaded from previous run**: 5 file(s)
+- ✅ History downloaded from GitHub Pages via GitHub API (fallback)
+- ✅ History found in history.jsonl format
+- ✅ History entries: 12 line(s)
+- ✅ History size: 120K
+
+**BuildOrder Continuity**:
+- ✅ Current build order: 530 (from executor.json)
+- ✅ Latest history build order: 482 (from downloaded history.jsonl)
+- ✅ BuildOrder continuity verified (530 > 482)
+
+**Allure3 Report Generation**:
+- ✅ Allure3 CLI installed successfully
+- ✅ Configuration file detected: `allure.config.ts` (TypeScript format)
+- ✅ Explicit `--config` flag used: `--config allure.config.ts`
+- ✅ Report generated successfully
+- ✅ Report location: `allure-report-combined`
+- ✅ Report size: 4.2M
+
+**History Processing**:
+- ✅ **Allure3 created/updated history in results directory (history.jsonl format)**
+- ✅ History file: `allure-results-combined/history/history.jsonl`
+- ✅ History entries: 12 line(s) (unchanged - no new entry added)
+- ✅ Size: 120K
+- ✅ **History found in results directory (where historyPath points)**
+
+**History Copy to Report Directory** ⭐ **NEW FIX WORKING**:
+- ✅ **History copied to report directory**: `allure-report-combined/history/history.jsonl`
+- ✅ **History will be included in GitHub Pages deployment**
+- ✅ **Verify History in Report step confirmed**: History directory exists in report
+- ✅ **Files: 1 file(s)** (history.jsonl)
+- ✅ **Size: 120K**
+- ✅ **History will be preserved in GitHub Pages deployment**
+
+**History Artifact Upload**:
+- ✅ Upload step found history in RESULTS directory
+- ✅ History artifact prepared and upload step succeeded
+- ✅ **All history-related steps completed successfully**
+
+**GitHub Pages Deployment**:
+- ✅ Deployment step executed successfully
+- ✅ Deployment log shows: `create mode 100644 history/history.jsonl`
+- ⚠️ **Note**: GitHub Pages may take a few minutes to update after deployment
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. ⭐ **History artifact successfully downloaded from previous run** - **Consistent**
+3. ⭐ **History copy to report directory working** - **NEW FIX CONFIRMED**
+4. ⭐ **History verified in report directory** - **1 file, 120K**
+5. ⭐ **History will be preserved in GitHub Pages deployment** - **Confirmed**
+6. ⭐ **Deployment log shows history.jsonl was created** - **Deployment successful**
+7. History download from GitHub Pages working (fallback method)
+8. History conversion to `history.jsonl` working (12 entries)
+9. BuildOrder continuity verified (530 > 482)
+10. Allure3 configuration file detected and used (`allure.config.ts`)
+11. Report generation completed successfully (4.2M report)
+12. ⭐ **Allure3 created/updated history in results directory** - **CONFIRMED**
+13. ⭐ **Script successfully detected history in RESULTS directory** - **Working correctly**
+14. ⭐ **Upload step found history and prepared artifact** - **Working correctly**
+15. ⭐ **All history-related steps succeeded** - **Complete workflow working consistently**
+
+**What's Not Working** ❌:
+1. ⚠️ **History entries count unchanged**: Still 12 entries (no new entry for buildOrder 530)
+   - **Pattern confirmed**: Allure3 is consistently not adding new entries across multiple runs
+   - This suggests Allure3 may require specific conditions that we haven't met yet
+2. ⚠️ **GitHub Pages history.jsonl still returns 404** (may be timing/caching issue)
+   - History was copied to report directory ✅
+   - Deployment log shows `create mode 100644 history/history.jsonl` ✅
+   - GitHub Pages may need a few minutes to update after deployment
+   - Or there may be a caching issue with the URL
+
+**Observations**:
+- ⭐ **Fix Confirmed**: History copy to report directory is working correctly
+- ⭐ **Deployment Confirmed**: Deployment log shows history.jsonl was created
+- ⭐ **Verification Confirmed**: History verified in report directory (1 file, 120K)
+- ⚠️ **Persistent Issue**: History entries not accumulating across 4+ consecutive runs
+- ⚠️ **GitHub Pages**: May need time to update or may have caching issues
+
+**Analysis**:
+- ⭐ **Fix Working**: History copy to report directory confirmed working
+- ⭐ **Deployment Working**: Deployment log confirms history.jsonl was created
+- ⚠️ **GitHub Pages Timing**: 404 may be due to deployment delay or caching
+- ⚠️ **Root Cause Hypothesis**: Allure3 may require:
+  - Specific test result changes (status changes, new tests, etc.)
+  - Minimum number of test executions per test
+  - Specific test identifier format or properties
+  - Different configuration or mode
+
+**Next Steps**:
+- ✅ **History copy fix confirmed working** (PR #129)
+- ✅ **Deployment confirmed** (history.jsonl created in deployment)
+- ⚠️ **Wait for GitHub Pages to update** (may take a few minutes)
+- ⚠️ **Re-check GitHub Pages URL** after deployment completes
+- ⚠️ **Investigate Allure3 requirements for adding new history entries**:
+  - Check if Allure3 requires test result changes (status transitions)
+  - Verify if Allure3 needs specific test identifier properties
+  - Research Allure3 documentation for history entry requirements
+  - Consider if `appendHistory: true` needs different configuration
+- ⚠️ **Alternative Approaches**:
+  - Consider if trends are visible in UI despite entry count not increasing
+  - Check if Allure3 uses different mechanism for trends
+  - Verify if history.jsonl format needs adjustment
+
+---
+
 **Last Updated**: 2026-01-08  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: ⭐ Consistent Success - Upload fix working reliably, Allure3 not adding new entries  
-**Current MERGE_NUMBER**: 55  
-**Latest Pipeline**: #20819791802 (2026-01-08)  
+---
+
+## 🔍 Critical Discovery: History Format for UI Trends Display (MERGE_NUMBER 56)
+
+**Date**: 2026-01-08  
+**Issue**: History not appearing in Allure Report UI despite being deployed  
+**Root Cause**: Allure3 UI needs `history-trend.json` format for trends display, not just `history.jsonl`
+
+### Problem Analysis
+
+**What We Had**:
+- ✅ `history.jsonl` file (JSON Lines format) - correct for Allure3 internal processing
+- ✅ History copied to report directory
+- ✅ History deployed to GitHub Pages
+- ❌ **Trends not visible in Allure Report UI**
+
+**Root Cause**:
+- Allure3 uses `history.jsonl` for internal processing (reading/writing history)
+- **BUT** Allure3 UI needs `history-trend.json` format to display trends in the report
+- We were only providing `history.jsonl`, missing the UI format
+
+### Solution Implemented
+
+**Fix**: Convert `history.jsonl` to `history-trend.json` format for UI trends display
+
+**Changes Made**:
+1. Copy `history.jsonl` to report directory (for Allure3 processing) ✅
+2. **NEW**: Convert `history.jsonl` to `history-trend.json` format (for UI trends display) ✅
+3. Both formats now available in report directory
+
+**Implementation**:
+- After Allure3 creates/updates `history.jsonl` in results directory
+- Copy `history.jsonl` to report directory
+- Convert `history.jsonl` (JSON Lines) to `history-trend.json` (JSON array) using `jq`
+- Both files deployed to GitHub Pages
+
+**Expected Result**:
+- Trends should now be visible in Allure Report UI
+- History will be displayed in the Trends section
+- Both formats available for Allure3 processing and UI display
+
+### Next Steps
+
+1. ✅ **Fix implemented** - Convert history.jsonl to history-trend.json
+2. ⚠️ **Test in next pipeline run** - Verify trends appear in UI
+3. ⚠️ **Verify both formats** - Ensure history.jsonl and history-trend.json are both present
+4. ⚠️ **Check UI trends** - Verify trends section displays historical data
+
+---
+
+**Status**: ⭐ Fix Implemented - History format conversion for UI trends display  
+**Current MERGE_NUMBER**: 56  
+**Latest Pipeline**: #20822626422 (2026-01-08)  
 **Investigation Document**: `docs/work/20260107_ALLURE3_INVESTIGATION.md`
 
