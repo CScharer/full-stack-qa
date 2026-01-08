@@ -1,30 +1,43 @@
 #!/bin/bash
-# Generate Combined Allure Report - APPROACH 4 & 5 (Let Allure3 Create History + BuildOrder Continuity)
-# This version ensures Allure3 creates history first and verifies buildOrder continuity
+# Generate Combined Allure Report (supports Allure2 and Allure3)
 # Usage: ./scripts/ci/generate-combined-allure-report.sh [results-dir] [report-dir]
 #
 # Arguments:
 #   results-dir  - Directory containing Allure results (default: allure-results-combined)
 #   report-dir   - Directory where Allure report will be generated (default: allure-report-combined)
 #
+# Configuration:
+#   Reads from config/environments.json (allure.reportVersion)
+#   Can be overridden via ALLURE_REPORT_VERSION environment variable
+#
 # This script:
 # 1. Verifies results directory exists and has files
-# 2. Ensures buildOrder in executor.json is higher than latest history buildOrder (Step 5)
-# 3. Lets Allure3 create history first if it doesn't exist (Step 4)
-# 4. Generates Allure HTML report (Allure3 processes history)
-# 5. Preserves history for next run (copies from report back to results)
+# 2. Reads Allure version from config/environments.json
+# 3. Detects history format based on Allure version (Allure2: JSON files, Allure3: JSONL)
+# 4. Generates Allure HTML report (version-specific processing)
+# 5. Preserves history for next run
 # 6. Verifies report was generated successfully
-#
-# APPROACH 4 & 5:
-# - Step 4: Let Allure3 create history first (bootstrap if needed)
-# - Step 5: Ensure buildOrder continuity (executor.json buildOrder > latest history buildOrder)
 
 set -e
+
+# Read Allure version from config file, fallback to environment variable, then default
+if [ -f "config/environments.json" ]; then
+    ALLURE_VERSION="${ALLURE_REPORT_VERSION:-$(jq -r '.allure.reportVersion // 3' config/environments.json)}"
+else
+    # Fallback if config file doesn't exist
+    ALLURE_VERSION="${ALLURE_REPORT_VERSION:-3}"
+fi
+
+if [ "$ALLURE_VERSION" != "2" ] && [ "$ALLURE_VERSION" != "3" ]; then
+    echo "❌ Invalid ALLURE_REPORT_VERSION: $ALLURE_VERSION (must be 2 or 3)"
+    exit 1
+fi
 
 RESULTS_DIR="${1:-allure-results-combined}"
 REPORT_DIR="${2:-allure-report-combined}"
 
-echo "📊 Generating combined Allure report (Approach 4 & 5 - Let Allure3 create history + buildOrder continuity)..."
+echo "📊 Generating combined Allure report (Version: $ALLURE_VERSION)..."
+echo "   Configuration source: $([ -f "config/environments.json" ] && echo "config/environments.json" || echo "default/environment variable")"
 echo "   Results directory: $RESULTS_DIR"
 echo "   Report directory: $REPORT_DIR"
 echo ""
@@ -173,59 +186,78 @@ else
     ALLURE3_CREATED_HISTORY=false
 fi
 
-# Generate report - Allure3 will create/process history
-# CRITICAL: If history was manually created, we removed it so Allure3 can bootstrap
-# Allure3 will:
-# 1. Create fresh history if none exists
-# 2. Process existing history if it was created by Allure3
-# 3. Merge with new test results (matching by historyId)
-# 4. Create updated history in REPORT_DIR/history/
+# Generate report
 echo ""
-echo "🔄 Generating Allure report..."
-if [ "$ALLURE3_CREATED_HISTORY" = true ]; then
-    echo "   Allure3 will process existing Allure3-created history and merge with new results"
-else
-    echo "   Allure3 will create fresh history from test results (Step 4: bootstrap)"
-fi
+echo "🔄 Generating Allure report (Version: $ALLURE_VERSION)..."
 rm -rf "$REPORT_DIR"
-# Generate Allure report with explicit --config flag
-echo "   Running: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\""
-CONFIG_FLAG=""
-CONFIG_FILE=""
-# Try TypeScript config first, then JavaScript
-if [ -f "allure.config.ts" ]; then
-    echo "   ✅ Found allure.config.ts - using explicit --config flag"
-    CONFIG_FILE="allure.config.ts"
-    CONFIG_FLAG="--config allure.config.ts"
-    echo "   📄 Config file contents:"
-    cat allure.config.ts | sed 's/^/      /'
-elif [ -f "allure.config.js" ]; then
-    echo "   ✅ Found allure.config.js - using explicit --config flag"
-    CONFIG_FILE="allure.config.js"
-    CONFIG_FLAG="--config allure.config.js"
-    echo "   📄 Config file contents:"
-    cat allure.config.js | sed 's/^/      /'
-else
-    echo "   ⚠️  No allure.config.ts or allure.config.js found - Allure3 will use defaults"
-fi
 
-# Run allure generate with explicit config flag and capture all output
-echo ""
-echo "   🔍 Executing: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\" $CONFIG_FLAG"
-allure generate "$RESULTS_DIR" -o "$REPORT_DIR" $CONFIG_FLAG 2>&1 | tee /tmp/allure-generate.log || {
-    echo "⚠️  Allure generate command had warnings/errors (checking log...)"
-    if [ -f /tmp/allure-generate.log ]; then
-        echo "   Last 50 lines of Allure output:"
-        tail -50 /tmp/allure-generate.log | sed 's/^/   /'
-    fi
-    # Check if the command actually failed or just had warnings
-    if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
-        echo "❌ Allure generate command failed - report not created"
-        exit 1
+if [ "$ALLURE_VERSION" = "3" ]; then
+    # Allure3: Use config file if available
+    if [ "$ALLURE3_CREATED_HISTORY" = true ]; then
+        echo "   Allure3 will process existing Allure3-created history and merge with new results"
     else
-        echo "⚠️  Allure generate had warnings but report was created successfully"
+        echo "   Allure3 will create fresh history from test results (Step 4: bootstrap)"
     fi
-}
+    
+    CONFIG_FLAG=""
+    CONFIG_FILE=""
+    # Try TypeScript config first, then JavaScript
+    if [ -f "allure.config.ts" ]; then
+        echo "   ✅ Found allure.config.ts - using explicit --config flag"
+        CONFIG_FILE="allure.config.ts"
+        CONFIG_FLAG="--config allure.config.ts"
+        echo "   📄 Config file contents:"
+        cat allure.config.ts | sed 's/^/      /'
+    elif [ -f "allure.config.js" ]; then
+        echo "   ✅ Found allure.config.js - using explicit --config flag"
+        CONFIG_FILE="allure.config.js"
+        CONFIG_FLAG="--config allure.config.js"
+        echo "   📄 Config file contents:"
+        cat allure.config.js | sed 's/^/      /'
+    else
+        echo "   ⚠️  No allure.config.ts or allure.config.js found - Allure3 will use defaults"
+    fi
+    
+    # Run allure generate with explicit config flag and capture all output
+    echo ""
+    echo "   🔍 Executing: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\" $CONFIG_FLAG"
+    allure generate "$RESULTS_DIR" -o "$REPORT_DIR" $CONFIG_FLAG 2>&1 | tee /tmp/allure-generate.log || {
+        echo "⚠️  Allure3 generate command had warnings/errors (checking log...)"
+        if [ -f /tmp/allure-generate.log ]; then
+            echo "   Last 50 lines of Allure output:"
+            tail -50 /tmp/allure-generate.log | sed 's/^/   /'
+        fi
+        # Check if the command actually failed or just had warnings
+        if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
+            echo "❌ Allure3 generate command failed - report not created"
+            exit 1
+        else
+            echo "⚠️  Allure3 generate had warnings but report was created successfully"
+        fi
+    }
+else
+    # Allure2: No config file needed
+    echo "   Using Allure2 CLI (no config file needed)"
+    echo "   Allure2 will automatically process history if present"
+    
+    # Run allure generate and capture all output
+    echo ""
+    echo "   🔍 Executing: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\""
+    allure generate "$RESULTS_DIR" -o "$REPORT_DIR" 2>&1 | tee /tmp/allure-generate.log || {
+        echo "⚠️  Allure2 generate command had warnings/errors (checking log...)"
+        if [ -f /tmp/allure-generate.log ]; then
+            echo "   Last 50 lines of Allure output:"
+            tail -50 /tmp/allure-generate.log | sed 's/^/   /'
+        fi
+        # Check if the command actually failed or just had warnings
+        if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
+            echo "❌ Allure2 generate command failed - report not created"
+            exit 1
+        else
+            echo "⚠️  Allure2 generate had warnings but report was created successfully"
+        fi
+    }
+fi
 
 # Analyze log for history-related messages
 echo ""
@@ -244,24 +276,28 @@ HISTORY_CREATED=false
 HISTORY_SOURCE=""
 
 # Check RESULTS directory first (where historyPath points)
-if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
-    HISTORY_CREATED=true
-    HISTORY_SOURCE="results"
-    echo ""
-    echo "✅ Allure3 created/updated history in results directory (history.jsonl format)"
-    HISTORY_SIZE=$(du -sh "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')
-    HISTORY_LINES=$(wc -l < "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
-    echo "   History file: $RESULTS_DIR/history/history.jsonl"
-    echo "   History entries: $HISTORY_LINES line(s)"
-    echo "   Size: $HISTORY_SIZE"
-    echo "   ✅ History found in results directory (where historyPath points)"
+if [ "$ALLURE_VERSION" = "3" ]; then
+    # Allure3: Check for history.jsonl
+    if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
+        HISTORY_CREATED=true
+        HISTORY_SOURCE="results"
+        echo ""
+        echo "✅ Allure3 history found (history.jsonl format)"
+        HISTORY_SIZE=$(du -sh "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')
+        HISTORY_LINES=$(wc -l < "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
+        echo "   History file: $RESULTS_DIR/history/history.jsonl"
+        echo "   History entries: $HISTORY_LINES line(s)"
+        echo "   Size: $HISTORY_SIZE"
+        echo "   ✅ History found in results directory (where historyPath points)"
     
     # History is already in RESULTS directory, but we need to copy it to REPORT directory
     # for GitHub Pages deployment (deployment publishes REPORT directory, not RESULTS)
     # CRITICAL: Allure3 UI needs history-trend.json format for trends display, not just history.jsonl
-    echo ""
-    echo "📊 Converting history.jsonl to history-trend.json for UI trends display..."
-    mkdir -p "$REPORT_DIR/history"
+    # Note: Allure2 automatically generates trend files, so this conversion is only for Allure3
+    if [ "$ALLURE_VERSION" = "3" ]; then
+        echo ""
+        echo "📊 Converting history.jsonl to history-trend.json for UI trends display..."
+        mkdir -p "$REPORT_DIR/history"
     
     # Copy history.jsonl (for Allure3 internal processing)
     cp "$RESULTS_DIR/history/history.jsonl" "$REPORT_DIR/history/history.jsonl" 2>/dev/null || true
@@ -405,13 +441,41 @@ if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
         echo "⚠️  jq not available - skipping history-trend.json conversion"
     fi
     
-    echo "   History will be included in GitHub Pages deployment"
-    echo ""
-    echo "📊 History ready for next run..."
-    echo "✅ History preserved: history.jsonl ready for next report generation"
-    echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+        echo "   History will be included in GitHub Pages deployment"
+        echo ""
+        echo "📊 History ready for next run..."
+        echo "✅ History preserved: history.jsonl ready for next report generation"
+        echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+    fi
+else
+        # Allure2: History is automatically processed, just copy to report directory
+        echo ""
+        echo "📊 Copying Allure2 history to report directory..."
+        mkdir -p "$REPORT_DIR/history"
+        if [ -d "$RESULTS_DIR/history" ]; then
+            cp -r "$RESULTS_DIR/history"/* "$REPORT_DIR/history/" 2>/dev/null || true
+            HISTORY_FILES=$(find "$REPORT_DIR/history" -name "*.json" -type f | wc -l | tr -d ' ')
+            echo "✅ Allure2 history copied to report directory ($HISTORY_FILES file(s))"
+            echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+        fi
+    fi
+else
+    # Allure2: Check for individual JSON files
+    if [ -d "$RESULTS_DIR/history" ] && [ "$(find "$RESULTS_DIR/history" -name "*.json" -type f | wc -l | tr -d ' ')" -gt 0 ]; then
+        HISTORY_CREATED=true
+        HISTORY_SOURCE="results"
+        HISTORY_FILES=$(find "$RESULTS_DIR/history" -name "*.json" -type f | wc -l | tr -d ' ')
+        echo ""
+        echo "✅ Allure2 history found ($HISTORY_FILES file(s))"
+        echo "   History directory: $RESULTS_DIR/history"
+        echo "   History files: $HISTORY_FILES JSON file(s)"
+        echo "   Size: $(du -sh "$RESULTS_DIR/history" 2>/dev/null | cut -f1 || echo 'unknown')"
+        echo "   ✅ Allure2 history will be automatically processed by allure generate"
+    fi
+fi
+
 # Check REPORT directory (fallback - some Allure3 versions might write here)
-elif [ -f "$REPORT_DIR/history/history.jsonl" ]; then
+if [ "$ALLURE_VERSION" = "3" ] && [ -f "$REPORT_DIR/history/history.jsonl" ]; then
     HISTORY_CREATED=true
     HISTORY_SOURCE="report"
     echo ""
@@ -429,7 +493,7 @@ elif [ -f "$REPORT_DIR/history/history.jsonl" ]; then
     cp "$REPORT_DIR/history/history.jsonl" "$RESULTS_DIR/history/history.jsonl" 2>/dev/null || true
     echo "✅ History preserved: history.jsonl ready for next report generation"
     echo "   History will be uploaded as artifact and deployed to GitHub Pages"
-elif [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name "*.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
+elif [ "$ALLURE_VERSION" = "3" ] && [ -d "$REPORT_DIR/history" ] && [ "$(find "$REPORT_DIR/history" -type f -name "*.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ]; then
     HISTORY_CREATED=true
     echo ""
     echo "✅ Allure3 created/updated history in report (legacy JSON format)"

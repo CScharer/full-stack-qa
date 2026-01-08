@@ -1394,9 +1394,11 @@ chmod +x scripts/ci/install-allure-cli.sh
 
 ---
 
-### Step 3: Update Report Generation Script
+### Step 3: Update Report Generation Script ✅ COMPLETE
 
 **File**: `scripts/ci/generate-combined-allure-report.sh`
+
+**Status**: ✅ **COMPLETED** - Report generation script updated to support both Allure2 and Allure3.
 
 **Action 3.1**: Update the beginning of the script to read from config:
 
@@ -1468,7 +1470,7 @@ else
 fi
 ```
 
-**Action 3.3**: Update report generation command:
+**Action 3.3**: Update report generation command (✅ COMPLETE):
 
 **Find** (around line 191-215):
 ```bash
@@ -1529,6 +1531,14 @@ fi
 ```
 
 **Note**: Allure2 automatically generates trend files from history, so this conversion is not needed.
+
+**Verification Results**:
+- ✅ Script reads from `config/environments.json` (reportVersion: 2)
+- ✅ History detection supports both Allure2 (JSON files) and Allure3 (JSONL)
+- ✅ Report generation command supports both versions
+- ✅ History conversion (history-trend.json) only runs for Allure3
+- ✅ Allure2 history is automatically copied to report directory
+- ✅ Script syntax is valid
 
 ---
 
