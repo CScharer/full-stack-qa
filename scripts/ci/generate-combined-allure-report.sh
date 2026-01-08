@@ -293,6 +293,16 @@ if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
                 
                 # Extract data array directly (keep as array, don't aggregate)
                 data_array=$(echo "$line" | jq '.data // []' 2>/dev/null || echo "[]")
+                
+                # Ensure data is always an array (wrap single objects in array)
+                if [ "$data_array" != "[]" ] && [ "$data_array" != "null" ]; then
+                    data_type=$(echo "$data_array" | jq 'type' 2>/dev/null || echo "null")
+                    if [ "$data_type" = '"object"' ]; then
+                        # Single test object - wrap in array
+                        data_array=$(echo "$data_array" | jq '[.]' 2>/dev/null || echo "[]")
+                    fi
+                fi
+                
                 if [ "$data_array" != "[]" ] && [ "$data_array" != "null" ]; then
                     # Create history-trend.json entry with ARRAY data (individual test objects)
                     jq --argjson build_order "$build_order" \
@@ -507,18 +517,18 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
     echo "🔍 Verifying history-trend.json format..."
     
     # Check if any entries have object data (wrong format - should be array)
-    HAS_OBJECT_DATA=$(jq '[.[] | select(.data | type == "object" and (.data | has("failed")))] | length' "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "0")
+    # This includes both aggregated statistics objects AND single test objects
+    HAS_OBJECT_DATA=$(jq '[.[] | select(.data | type == "object")] | length' "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "0")
     
     if [ "$HAS_OBJECT_DATA" != "0" ] && [ "$HAS_OBJECT_DATA" != "null" ]; then
         echo "   ⚠️  Found $HAS_OBJECT_DATA entry/entries with object data (wrong format - should be array)"
-        echo "   🔧 Converting to array format with individual test data..."
+        echo "   🔧 Rebuilding from history.jsonl to ensure correct array format..."
         
-        # Convert all entries to have array data (individual test objects)
-        # This requires reading from history.jsonl to get the original test data
+        # Always rebuild from history.jsonl when we detect object data (source of truth)
+        # This ensures all entries have array format, not single objects or aggregated stats
         TEMP_FIX_FILE=$(mktemp)
         echo "[]" > "$TEMP_FIX_FILE"
         
-        # Read from history.jsonl to get original array data
         if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
             while IFS= read -r line; do
                 if [ -n "$line" ]; then
@@ -527,7 +537,15 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
                     report_url=$(echo "$line" | jq -r '.reportUrl // ""' 2>/dev/null || echo "")
                     data_array=$(echo "$line" | jq '.data // []' 2>/dev/null || echo "[]")
                     
+                    # Ensure data is always an array (wrap single objects in array)
                     if [ "$data_array" != "[]" ] && [ "$data_array" != "null" ]; then
+                        # Check if data is an object (single test object) - wrap in array
+                        data_type=$(echo "$data_array" | jq 'type' 2>/dev/null || echo "null")
+                        if [ "$data_type" = '"object"' ]; then
+                            # Single test object - wrap in array
+                            data_array=$(echo "$data_array" | jq '[.]' 2>/dev/null || echo "[]")
+                        fi
+                        
                         jq --argjson build_order "$build_order" \
                            --arg report_name "$report_name" \
                            --arg report_url "$report_url" \
@@ -542,13 +560,50 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
                     fi
                 fi
             done < "$RESULTS_DIR/history/history.jsonl"
+            
+            # Add current run data if not already in history.jsonl (extract from result files)
+            if [ -d "$RESULTS_DIR" ] && [ "$(find "$RESULTS_DIR" -name "*-result.json" -type f | wc -l | tr -d ' ')" -gt 0 ]; then
+                CURRENT_BUILD_ORDER=$(jq -r '.buildOrder // "1"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "1")
+                REPORT_NAME=$(jq -r '.reportName // "Allure Report"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "Allure Report")
+                
+                # Check if current buildOrder already exists in rebuilt file
+                BUILD_EXISTS=$(jq --argjson build_order "$CURRENT_BUILD_ORDER" '[.[] | select(.buildOrder == $build_order)] | length' "$TEMP_FIX_FILE" 2>/dev/null || echo "0")
+                
+                if [ "$BUILD_EXISTS" = "0" ] || [ "$BUILD_EXISTS" = "null" ]; then
+                    # Extract individual test data from current run's result files
+                    current_run_data=$(find "$RESULTS_DIR" -name "*-result.json" -type f | \
+                        head -1000 | \
+                        jq -s '[.[] | {
+                            uid: (.historyId // .uuid),
+                            status: .status,
+                            time: {
+                                start: .start,
+                                stop: .stop,
+                                duration: ((.stop // 0) - (.start // 0))
+                            }
+                        }]' 2>/dev/null || echo "[]")
+                    
+                    if [ "$current_run_data" != "[]" ] && [ "$current_run_data" != "null" ]; then
+                        jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+                           --arg report_name "$REPORT_NAME" \
+                           --argjson data_array "$current_run_data" \
+                           '. += [{
+                             "buildOrder": $build_order,
+                             "reportName": $report_name,
+                             "reportUrl": "",
+                             "data": $data_array
+                           }]' "$TEMP_FIX_FILE" > "${TEMP_FIX_FILE}.tmp" 2>/dev/null && \
+                        mv "${TEMP_FIX_FILE}.tmp" "$TEMP_FIX_FILE" 2>/dev/null || true
+                    fi
+                fi
+            fi
         fi
         
         if [ -f "$TEMP_FIX_FILE" ] && [ -s "$TEMP_FIX_FILE" ]; then
             mv "$TEMP_FIX_FILE" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
-            echo "   ✅ Fixed history-trend.json format - all entries now have array data (individual test objects)"
+            echo "   ✅ Rebuilt history-trend.json from history.jsonl - all entries now have array data"
         else
-            echo "   ⚠️  Failed to fix format, but continuing..."
+            echo "   ⚠️  Failed to rebuild format, but continuing..."
             rm -f "$TEMP_FIX_FILE" 2>/dev/null || true
         fi
     else
