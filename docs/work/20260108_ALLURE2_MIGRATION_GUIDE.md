@@ -1244,9 +1244,11 @@ jq '.allure' config/environments.json
 
 ---
 
-### Step 2: Create Unified Installation Script
+### Step 2: Create Unified Installation Script ✅ COMPLETE
 
-**File**: `scripts/ci/install-allure-cli.sh` (create new file)
+**File**: `scripts/ci/install-allure-cli.sh`
+
+**Status**: ✅ **COMPLETED** - Unified installation script created that supports both Allure2 and Allure3.
 
 **Action**: Create the unified installation script:
 
@@ -1380,6 +1382,15 @@ chmod +x scripts/ci/install-allure-cli.sh
 ./scripts/ci/install-allure-cli.sh
 # Should install Allure2 CLI version 2.36.0
 ```
+
+**Verification Results**:
+- ✅ Script created: `scripts/ci/install-allure-cli.sh`
+- ✅ Script is executable
+- ✅ Script syntax is valid
+- ✅ Reads from `config/environments.json` (reportVersion: 2)
+- ✅ Supports both Allure2 and Allure3 installation
+- ✅ Falls back to environment variable if config file not found
+- ✅ Allows command-line override
 
 ---
 
