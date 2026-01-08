@@ -169,10 +169,8 @@ on:
         description: 'Maven heap size (e.g., 2048m, 4096m)'
         type: string
         default: '4096m'
-      allure_version:
-        description: 'Allure3 CLI version (default: 3.0.0)'
-        type: string
-        default: '3.0.0'
+      # Note: Allure version is now read from config/environments.json (allure.reportVersion)
+      # The allure_version input has been removed as it's no longer needed
       docker_shm_size:
         description: 'Docker shared memory size for Selenium nodes (e.g., 2gb, 4gb)'
         type: string
@@ -1239,11 +1237,12 @@ jobs:
           chmod +x scripts/ci/prepare-environment-allure-results.sh
           ./scripts/ci/prepare-environment-allure-results.sh "${{ inputs.environment }}" "test-results" "allure-results"
 
-      - name: Install Allure3 CLI
+      - name: Install Allure CLI
         if: always()
         run: |
-          chmod +x scripts/ci/install-allure3-cli.sh
-          ./scripts/ci/install-allure3-cli.sh "${{ inputs.allure_version || '3.0.0' }}"
+          chmod +x scripts/ci/install-allure-cli.sh
+          # Reads from config/environments.json (reportVersion: 2)
+          ./scripts/ci/install-allure-cli.sh
 
       - name: Generate Allure Report
         if: always()

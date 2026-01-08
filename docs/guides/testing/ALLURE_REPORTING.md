@@ -1,11 +1,11 @@
 # Allure Test Reporting
 
-**Status**: ✅ Configured with Allure3 CLI
-**Version**: Allure3 CLI 3.0.0, Allure2 Java libraries 2.32.0
+**Status**: ✅ Configured with configurable Allure CLI (defaults to Allure2)
+**Version**: Allure2 CLI 2.36.0 (default), Allure3 CLI 3.0.0 (optional), Allure2 Java libraries 2.32.0
 **Framework**: TestNG
 **Date**: November 8, 2025
-**Last Updated**: December 30, 2025
-**Note**: Using Allure3 CLI for report generation (TypeScript-based, npm install) while keeping Allure2 Java libraries
+**Last Updated**: January 8, 2026
+**Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Can be switched to Allure3 CLI 3.0.0 by changing `allure.reportVersion` to `3`.
 
 ---
 
@@ -26,7 +26,7 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 ### Dependencies Added (pom.xml)
 - `allure-testng:2.32.0` - TestNG integration (latest in Maven Central)
 - `allure-java-commons:2.32.0` - Core Allure functionality (latest in Maven Central)
-- **Note**: Using Allure3 CLI 3.0.0 for report generation, while Java libraries remain at Allure2 2.32.0 (latest in Maven Central)
+- **Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Java libraries remain at Allure2 2.32.0 (latest in Maven Central) regardless of CLI version.
 - `aspectjweaver:1.9.22` - For Allure step tracking
 
 ### Maven Plugins
@@ -87,28 +87,56 @@ docker-compose down
 
 ## 📦 Installing Allure CLI
 
-### macOS (Homebrew)
+**Note**: In CI/CD, Allure CLI is automatically installed by `scripts/ci/install-allure-cli.sh`, which reads the version from `config/environments.json`. For local development, you can install manually:
+
+### Configuration
+
+Allure CLI version is configured in `config/environments.json`:
+
+```json
+"allure": {
+  "reportVersion": 2,
+  "cliVersion": {
+    "2": "2.36.0",
+    "3": "3.0.0"
+  }
+}
+```
+
+To switch versions, edit `config/environments.json` and change `reportVersion` to `2` (Allure2) or `3` (Allure3).
+
+### Manual Installation (Local Development)
+
+#### Allure2 CLI (Default)
+
+**macOS (Homebrew)**:
 ```bash
 brew install allure
 ```
 
-### Linux (Manual)
+**Linux (Manual)**:
 ```bash
-wget https://github.com/allure-framework/allure2/releases/download/2.31.0/allure-2.31.0.tgz
-tar -zxvf allure-2.31.0.tgz
-sudo mv allure-2.31.0 /opt/allure
-export PATH="/opt/allure/bin:$PATH"
+wget https://github.com/allure-framework/allure2/releases/download/2.36.0/allure-2.36.0.tgz
+tar -zxvf allure-2.36.0.tgz
+sudo mv allure-2.36.0 /opt/allure
+sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 ```
 
-### Windows (Scoop)
+**Windows (Scoop)**:
 ```bash
 scoop install allure
+```
+
+#### Allure3 CLI (Optional)
+
+```bash
+npm install -g allure@3.0.0
 ```
 
 ### Verify Installation
 ```bash
 allure --version
-# Should show: 2.31.0
+# Should show: 2.36.0 (if using Allure2) or 3.0.0 (if using Allure3)
 ```
 
 ---

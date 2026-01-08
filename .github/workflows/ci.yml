@@ -1328,11 +1328,12 @@ jobs:
             fi
           fi
 
-      - name: Install Allure3 CLI
+      - name: Install Allure CLI
         if: always()
         run: |
-          chmod +x scripts/ci/install-allure3-cli.sh
-          ./scripts/ci/install-allure3-cli.sh "3.0.0"
+          chmod +x scripts/ci/install-allure-cli.sh
+          # Reads from config/environments.json (reportVersion: 2)
+          ./scripts/ci/install-allure-cli.sh
 
       - name: Generate Combined Allure Report
         if: always()

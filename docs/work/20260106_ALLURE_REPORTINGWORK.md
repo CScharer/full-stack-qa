@@ -3830,10 +3830,86 @@ Error: <rect> attribute height: A negative value is not valid. ("-16")
 
 ---
 
+## 📊 Pipeline Results (Pipeline #20829339644 - MERGE_NUMBER 61)
+
+**Date**: 2026-01-08  
+**Pipeline Run**: #20829339644 (Pages deployment: #20829925477)  
+**Status**: ✅ Success  
+**PR**: #134 (MERGE_NUMBER 61: Fix format verification - Wrap single test objects in arrays)  
+**Approach**: MERGE_NUMBER 61 - Enhanced format verification to detect and fix single test objects
+
+### Key Changes in MERGE_NUMBER 61
+
+**Critical Fix**: Enhanced format verification to detect ANY object data (not just aggregated statistics) and wrap single test objects in arrays.
+
+**Root Cause Identified**:
+- Deployed `widgets/history-trend.json` had mixed formats (from MERGE_NUMBER 60):
+  - ✅ 9 entries with array format (correct)
+  - ❌ 3 entries with single object format (incorrect)
+- Single test objects cause SVG chart calculation to fail
+- Console errors: `<svg> attribute width: A negative value is not valid. ("-16")`
+
+**Solution Implemented**:
+1. **Initial conversion fix**: Wrap single objects in arrays during conversion (lines 294-303)
+2. **Format verification enhanced**: Detect ANY object data (line 511)
+3. **Rebuild from source**: Rebuild from history.jsonl when object data detected (lines 520-580)
+4. **Current run data**: Added after rebuild to ensure completeness (lines 562-585)
+
+### Pipeline Execution Details
+
+**Deployment**:
+- ✅ Pages build and deployment completed successfully
+- ✅ Deployment time: 2026-01-08T19:58:27Z
+- ✅ All files deployed to GitHub Pages
+
+**Format Verification**:
+- ✅ All entries now have array format
+- ✅ Single test objects wrapped in arrays
+- ✅ Format consistency ensured
+
+### Current Status
+
+**What's Working** ✅:
+1. ✅ **All entries have array format** - Verified in deployed file
+2. ✅ **Format fix deployed** - MERGE_NUMBER 61 changes are live
+3. ✅ **12 history entries** present with correct format
+4. ✅ **No object format entries** - All converted to arrays
+
+**What's Not Working** ❌:
+1. ⚠️ **Console errors persist** despite correct format:
+   - `Error: <svg> attribute width: A negative value is not valid. ("-16")`
+   - `Error: <svg> attribute height: A negative value is not valid. ("-16")`
+   - `Error: <rect> attribute width: A negative value is not valid. ("-16")`
+   - `Error: <rect> attribute height: A negative value is not valid. ("-16")`
+
+**Analysis**:
+- ✅ **Format is correct**: All entries have array format with individual test data
+- ✅ **Data structure is valid**: No missing fields, no invalid time values
+- ⚠️ **Possible causes**:
+  1. **Browser cache**: User might be seeing cached version (suggest hard refresh)
+  2. **Chart calculation issue**: Allure3 UI might have a bug when processing certain data patterns
+  3. **Single data point entries**: 3 entries have only 1 data point (buildOrders 461, 463, 465) - might affect chart scaling
+  4. **Allure3 UI bug**: The negative "-16" value suggests a specific calculation issue in the UI
+
+**Recommendations**:
+1. ✅ **Format fix deployed** - All entries have correct array format
+2. ⚠️ **Clear browser cache** - Hard refresh (Ctrl+Shift+R or Cmd+Shift+R) to load latest file
+3. ⚠️ **Monitor next pipeline run** - Verify if errors persist after more data accumulates
+4. ⚠️ **Investigate Allure3 UI** - The negative dimension calculation might be an Allure3 bug
+5. ⚠️ **Consider data filtering** - If single data point entries cause issues, might need to filter them
+
+**Next Steps**:
+- ✅ **Format fix deployed** - MERGE_NUMBER 61 changes are live
+- ⚠️ **User action required**: Clear browser cache and hard refresh
+- ⚠️ **Monitor console** - Check if errors persist after cache clear
+- ⚠️ **Investigate further** - If errors persist, might be Allure3 UI bug
+
+---
+
 **Last Updated**: 2026-01-08  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: 🔧 Format Fix Enhanced - Single Objects Wrapped in Arrays - Awaiting Pipeline Verification  
-**Current MERGE_NUMBER**: 60  
-**Latest Pipeline**: #20828530829 (2026-01-08)  
+**Status**: 🔧 Format Fix Deployed - Console Errors Persist - Browser Cache or Allure3 UI Issue Suspected  
+**Current MERGE_NUMBER**: 61  
+**Latest Pipeline**: #20829339644 (2026-01-08)  
 **Investigation Document**: `docs/work/20260107_ALLURE3_INVESTIGATION.md`
 
