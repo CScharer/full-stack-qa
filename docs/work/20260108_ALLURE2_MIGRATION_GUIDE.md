@@ -1607,13 +1607,15 @@ fi
 
 ---
 
-### Step 5: Update GitHub Actions Workflows
+### Step 5: Update GitHub Actions Workflows ✅ COMPLETE
+
+**Status**: ✅ **COMPLETED** - GitHub Actions workflows updated to use unified Allure CLI installation script.
 
 **Files**: 
-- `.github/workflows/env-fe.yml`
-- `.github/workflows/env-be.yml`
-- `.github/workflows/env-fs.yml`
-- `.github/workflows/ci.yml`
+- `.github/workflows/env-fe.yml` ✅
+- `.github/workflows/ci.yml` ✅
+
+**Note**: `.github/workflows/env-be.yml` and `.github/workflows/env-fs.yml` do not use Allure, so no changes needed.
 
 **Action**: Update Allure installation step:
 
@@ -1635,6 +1637,13 @@ fi
 ```
 
 **Note**: The script will automatically read `config/environments.json` and install Allure2.
+
+**Verification Results**:
+- ✅ `.github/workflows/env-fe.yml`: Updated to use `install-allure-cli.sh`
+- ✅ `.github/workflows/ci.yml`: Updated to use `install-allure-cli.sh`
+- ✅ Removed version parameter (now reads from config file)
+- ✅ Both workflows will install Allure2 by default (reportVersion: 2)
+- ✅ YAML syntax is valid
 
 ---
 
