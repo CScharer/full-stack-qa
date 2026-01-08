@@ -2706,10 +2706,112 @@ module.exports = {
 
 ---
 
+---
+
+## 📊 Pipeline Results (Pipeline #20797631622 - MERGE_NUMBER 51)
+
+**Date**: 2026-01-07  
+**Pipeline Run**: #20797631622  
+**Status**: ✅ Success  
+**PR**: #123 (MERGE_NUMBER 51: Test history accumulation)  
+**Approach**: MERGE_NUMBER 51 - Test if history accumulates
+
+### Key Changes in MERGE_NUMBER 51
+
+**No code changes** - This was a test run to verify if history accumulates after MERGE_NUMBER 50 fix.
+
+### Pipeline Execution Details
+
+**History Download**:
+- ✅ History downloaded from GitHub Pages via GitHub API
+- ✅ Found 5 files in history directory (old format)
+- ✅ History size: 372K
+- ✅ Files: `.gitkeep`, `duration-trend.json`, `duration-trend.json.tmp`, `history-trend.json`, `retry-trend.json`
+
+**History Conversion**:
+- ✅ Old format (`history-trend.json`) converted to `history.jsonl` format
+- ✅ Conversion successful: 12 entries converted
+- ✅ History file: `history.jsonl` (116K)
+- ✅ History entries: 12 line(s)
+
+**BuildOrder Continuity**:
+- ✅ Current build order: 516 (from executor.json)
+- ✅ Latest history build order: 482 (from converted history.jsonl)
+- ✅ BuildOrder continuity verified (516 > 482)
+
+**Allure3 Report Generation**:
+- ✅ Allure3 CLI installed successfully
+- ✅ Configuration file detected: `allure.config.ts` (TypeScript format)
+- ✅ Explicit `--config` flag used: `--config allure.config.ts`
+- ✅ Report generated successfully
+- ✅ Report location: `allure-report-combined`
+- ✅ Report size: 4.0M
+
+**History Processing**:
+- ✅ **Allure3 created/updated history in results directory (history.jsonl format)**
+- ✅ History file: `allure-results-combined/history/history.jsonl`
+- ✅ History entries: 12 line(s) (unchanged - no new entry added)
+- ✅ Size: 116K
+- ✅ **History found in results directory (where historyPath points)**
+- ✅ **History preserved: history.jsonl ready for next report generation**
+
+**History Artifact Upload** ⚠️ **ISSUE IDENTIFIED**:
+- ❌ **Upload step checked wrong location**: `allure-report-combined/history` (doesn't exist)
+- ❌ **History is actually in**: `allure-results-combined/history/history.jsonl`
+- ❌ **Result**: "No history directory in report" → no artifact uploaded
+- ❌ **Root Cause**: Upload step checks REPORT directory, but Allure3 writes to RESULTS directory
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. History download from GitHub Pages working (5 files, 372K)
+3. History conversion from old format to `history.jsonl` working (12 entries converted)
+4. BuildOrder continuity verified (516 > 482)
+5. Allure3 configuration file detected and used (`allure.config.ts`)
+6. Report generation completed successfully (4.0M report)
+7. ⭐ **Allure3 created/updated history in results directory** - **CONFIRMED**
+8. ⭐ **Script successfully detected history in RESULTS directory** - **Working correctly**
+9. ⭐ **History preserved for next run** - **History ready for upload**
+
+**What's Not Working** ❌:
+1. ⚠️ **History entries count unchanged**: Still 12 entries (no new entry for buildOrder 516)
+   - This suggests Allure3 may not be adding new entries, only processing existing history
+2. ⚠️ **History artifact upload failed**: Upload step checks wrong location
+   - Checks: `allure-report-combined/history` (doesn't exist)
+   - Should check: `allure-results-combined/history/history.jsonl` (where Allure3 writes it)
+   - **Root Cause**: Upload step in CI workflow checks REPORT directory instead of RESULTS directory
+3. ⚠️ **GitHub Pages history.jsonl still returns 404**
+   - History was preserved but not uploaded as artifact, so it wasn't deployed
+
+**Observations**:
+- ⭐ **Allure3 IS creating/updating history** - Confirmed in RESULTS directory
+- ⭐ **Script correctly detects history** - Working as expected
+- ⭐ **History preservation logic works** - History ready for next run
+- ⚠️ **Upload step has location mismatch** - Needs to check RESULTS directory
+- ⚠️ **History entries not accumulating** - Allure3 may need additional conditions to add new entries
+
+**Analysis**:
+- ⭐ **Progress**: Allure3 is creating/updating history in the correct location
+- ⭐ **Issue Identified**: Upload step checks wrong location (REPORT vs RESULTS)
+- ⭐ **Fix Required**: Update upload step to check `allure-results-combined/history/` instead of `allure-report-combined/history/`
+- History is being written correctly, but not being uploaded/deployed due to location mismatch
+- Once upload is fixed, history should be preserved and deployed correctly
+
+**Next Steps**:
+- ✅ **Fix upload step to check RESULTS directory** (MERGE_NUMBER 52)
+- ✅ Verify history artifact uploads correctly
+- ✅ Verify history was deployed to GitHub Pages
+- ✅ Check if next pipeline run downloads and processes the preserved history
+- ✅ Monitor if history entries accumulate over multiple runs
+- ✅ Verify if trends become visible in Allure report UI
+
+---
+
 **Last Updated**: 2026-01-07  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: ⭐ Major Progress - History detection fixed, Allure3 creating history confirmed  
-**Current MERGE_NUMBER**: 50  
-**Latest Pipeline**: #20796909623 (2026-01-07)  
+**Status**: ⭐ Progress - History detection working, upload step needs fix  
+**Current MERGE_NUMBER**: 52  
+**Latest Pipeline**: #20797631622 (2026-01-07)  
 **Investigation Document**: `docs/work/20260107_ALLURE3_INVESTIGATION.md`
 

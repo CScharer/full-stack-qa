@@ -1381,13 +1381,38 @@ jobs:
           echo "📤 Uploading Allure history for next run..."
           echo ""
           
-          if [ -d "allure-report-combined/history" ]; then
+          # Check RESULTS directory first (where Allure3 writes history based on historyPath)
+          # historyPath points to ./history/history.jsonl relative to RESULTS directory
+          if [ -f "allure-results-combined/history/history.jsonl" ] || [ -d "allure-results-combined/history" ]; then
+            # Count history files (excluding .gitkeep)
+            HISTORY_FILE_COUNT=$(find allure-results-combined/history -type f ! -name ".gitkeep" 2>/dev/null | wc -l | tr -d ' ')
+            
+            if [ "$HISTORY_FILE_COUNT" -gt 0 ]; then
+              # History has actual files
+              echo "✅ History found in results directory (where Allure3 writes it)"
+              echo "   Files: $HISTORY_FILE_COUNT file(s)"
+              echo "   Size: $(du -sh allure-results-combined/history 2>/dev/null | cut -f1 || echo 'unknown')"
+              echo "   History will be preserved for next run"
+              
+              # Prepare artifact directory
+              mkdir -p allure-history
+              cp -r allure-results-combined/history/* allure-history/ 2>/dev/null || true
+              echo "   ✅ History artifact ready for upload"
+            else
+              # Empty history directory - this is expected for first few runs
+              echo "ℹ️  History directory exists but is empty"
+              echo "   Allure3 will populate it in subsequent runs"
+              echo "   No artifact upload needed (empty history will be created naturally)"
+            fi
+          # Fallback: Check REPORT directory (for compatibility with older Allure3 versions)
+          elif [ -d "allure-report-combined/history" ]; then
             # Count history files (excluding .gitkeep)
             HISTORY_FILE_COUNT=$(find allure-report-combined/history -type f ! -name ".gitkeep" 2>/dev/null | wc -l | tr -d ' ')
             
             if [ "$HISTORY_FILE_COUNT" -gt 0 ]; then
               # History has actual files
-              echo "✅ History directory contains $HISTORY_FILE_COUNT file(s)"
+              echo "✅ History found in report directory (fallback location)"
+              echo "   Files: $HISTORY_FILE_COUNT file(s)"
               echo "   Size: $(du -sh allure-report-combined/history 2>/dev/null | cut -f1 || echo 'unknown')"
               echo "   History will be preserved for next run"
               
@@ -1404,7 +1429,7 @@ jobs:
           else
             # No history directory - this is expected for first few runs
             # Allure3 creates history naturally after 2-3 runs
-            echo "ℹ️  No history directory in report (expected for first few runs)"
+            echo "ℹ️  No history directory found (expected for first few runs)"
             echo "   Allure3 will create history naturally after 2-3 more runs"
             echo "   History will appear when Allure3 has enough test execution data"
             echo "   No artifact upload needed"
