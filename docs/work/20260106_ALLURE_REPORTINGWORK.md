@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-08  
-**Current MERGE_NUMBER**: 54  
-**Latest Pipeline**: #20811503566 (2026-01-08)
+**Current MERGE_NUMBER**: 55  
+**Latest Pipeline**: #20819791802 (2026-01-08)
 
 ---
 
@@ -2908,10 +2908,212 @@ module.exports = {
 
 ---
 
+---
+
+## 📊 Pipeline Results (Pipeline #20819791802 - MERGE_NUMBER 55)
+
+**Date**: 2026-01-08  
+**Pipeline Run**: #20819791802  
+**Status**: ✅ Success  
+**PR**: #128 (MERGE_NUMBER 55: Trigger pipeline run to test history accumulation)  
+**Approach**: MERGE_NUMBER 55 - Test if history accumulates after multiple consecutive runs
+
+### Key Changes in MERGE_NUMBER 55
+
+**No code changes** - This was a test run to verify if history accumulates after multiple consecutive runs with the upload fix in place.
+
+### Pipeline Execution Details
+
+**History Download**:
+- ✅ **History artifact successfully downloaded from previous run**: 5 file(s)
+- ✅ **Upload fix (PR #124) confirmed working consistently**
+- ✅ History downloaded from GitHub Pages via GitHub API (fallback)
+- ✅ History found in history.jsonl format
+- ✅ History entries: 12 line(s)
+- ✅ History size: 116K
+
+**BuildOrder Continuity**:
+- ✅ Current build order: 528 (from executor.json)
+- ✅ Latest history build order: 482 (from downloaded history.jsonl)
+- ✅ BuildOrder continuity verified (528 > 482)
+
+**Allure3 Report Generation**:
+- ✅ Allure3 CLI installed successfully
+- ✅ Configuration file detected: `allure.config.ts` (TypeScript format)
+- ✅ Explicit `--config` flag used: `--config allure.config.ts`
+- ✅ Report generated successfully
+- ✅ Report location: `allure-report-combined`
+- ✅ Report size: 3.0M
+
+**History Processing**:
+- ✅ **Allure3 created/updated history in results directory (history.jsonl format)**
+- ✅ History file: `allure-results-combined/history/history.jsonl`
+- ✅ History entries: 12 line(s) (unchanged - no new entry added)
+- ✅ Size: 116K
+- ✅ **History found in results directory (where historyPath points)**
+- ✅ **History preserved: history.jsonl ready for next report generation**
+
+**History Artifact Upload** ⭐ **CONSISTENT SUCCESS**:
+- ✅ **History artifact successfully downloaded from previous run** - **Consistent**
+- ✅ **Upload fix (PR #124) working reliably across multiple runs**
+- ✅ Upload step found history in RESULTS directory
+- ✅ History artifact prepared and upload step succeeded
+- ✅ **All history-related steps completed successfully**
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. ⭐ **History artifact successfully downloaded from previous run** - **Consistent across runs**
+3. ⭐ **Upload fix (PR #124) working reliably** - **End-to-end workflow confirmed**
+4. History download from GitHub Pages working (fallback method)
+5. History conversion to `history.jsonl` working (12 entries)
+6. BuildOrder continuity verified (528 > 482)
+7. Allure3 configuration file detected and used (`allure.config.ts`)
+8. Report generation completed successfully (3.0M report)
+9. ⭐ **Allure3 created/updated history in results directory** - **CONFIRMED**
+10. ⭐ **Script successfully detected history in RESULTS directory** - **Working correctly**
+11. ⭐ **Upload step found history and prepared artifact** - **Working correctly**
+12. ⭐ **All history-related steps succeeded** - **Complete workflow working consistently**
+
+**What's Not Working** ❌:
+1. ⚠️ **History entries count unchanged**: Still 12 entries (no new entry for buildOrder 528)
+   - **Pattern confirmed**: Allure3 is consistently not adding new entries across multiple runs
+   - This suggests Allure3 may require specific conditions that we haven't met yet
+2. ⚠️ **GitHub Pages history.jsonl still returns 404**
+   - History was uploaded as artifact, but may not have been deployed to GitHub Pages
+   - Or deployment may not include history.jsonl file
+
+**Observations**:
+- ⭐ **Consistent Success**: History artifact flow working reliably across multiple runs
+- ⭐ **Upload Fix Stable**: PR #124 fix working consistently
+- ⭐ **Allure3 Processing**: History is being created and processed correctly
+- ⚠️ **Persistent Issue**: History entries not accumulating across 3+ consecutive runs
+- ⚠️ **Pattern**: Allure3 processes existing history but doesn't add new entries
+
+**Analysis**:
+- ⭐ **Workflow Stability**: Upload → Download → Process working consistently
+- ⭐ **Allure3 Behavior**: Consistently processing history but not adding new entries
+- ⚠️ **Root Cause Hypothesis**: Allure3 may require:
+  - Specific test result changes (status changes, new tests, etc.)
+  - Minimum number of test executions per test
+  - Specific test identifier format or properties
+  - Different configuration or mode
+- ⚠️ **GitHub Pages**: history.jsonl deployment may need investigation
+
+**Next Steps**:
+- ✅ **Upload fix confirmed working consistently** (PR #124)
+- ✅ **History artifact flow confirmed working** (upload → download → process)
+- ⚠️ **Investigate Allure3 requirements for adding new history entries**:
+  - Check if Allure3 requires test result changes (status transitions)
+  - Verify if Allure3 needs specific test identifier properties
+  - Research Allure3 documentation for history entry requirements
+  - Consider if `appendHistory: true` needs different configuration
+- ⚠️ **Check GitHub Pages deployment**:
+  - Verify if history.jsonl is included in deployment
+  - Check deployment logs for history directory
+  - Consider if deployment needs explicit history.jsonl inclusion
+- ⚠️ **Alternative Approaches**:
+  - Consider if trends are visible in UI despite entry count not increasing
+  - Check if Allure3 uses different mechanism for trends
+  - Verify if history.jsonl format needs adjustment
+
+---
+
+## 🔍 Investigation Results (MERGE_NUMBER 55 - Options 1 & 2)
+
+**Date**: 2026-01-08  
+**Investigation**: Allure3 Requirements & GitHub Pages Deployment  
+**Status**: ✅ Critical Issues Identified
+
+### Option 1: Allure3 Requirements Investigation
+
+**Key Findings**:
+
+1. **History Location Mismatch** ⚠️ **CRITICAL**:
+   - ✅ Allure3 writes history to: `allure-results-combined/history/history.jsonl` (correct, based on `historyPath`)
+   - ❌ Allure3 does NOT copy history to report directory automatically
+   - ❌ History is NOT in `allure-report-combined/history/` after report generation
+   - **Impact**: History is not included in GitHub Pages deployment
+
+2. **History Copy Logic**:
+   - Current script only copies history FROM report TO results (line 280 in `generate-combined-allure-report.sh`)
+   - Script does NOT copy history FROM results TO report
+   - This is the reverse of what we need for deployment
+
+3. **Why Entries Aren't Accumulating**:
+   - Allure3 is processing the same 12 entries repeatedly
+   - Allure3 may require specific conditions to add new entries:
+     - **Test result changes** (status transitions: passed → failed, new tests, etc.)
+     - **Different test identifiers** or properties
+     - **Minimum number of executions** per test
+     - **Specific test data changes** (duration, retries, etc.)
+   - Current tests may be producing identical results, so Allure3 doesn't see a need to add new entries
+
+4. **Configuration Status**:
+   - ✅ `allure.config.ts` is correctly configured with `historyPath: "./history/history.jsonl"`
+   - ✅ `appendHistory: true` is set correctly
+   - ✅ `defineConfig()` helper is used
+   - ⚠️ Configuration is correct, but Allure3 behavior suggests it needs test result changes
+
+### Option 2: GitHub Pages Deployment Investigation
+
+**Key Findings**:
+
+1. **Deployment Configuration**:
+   - ✅ Deployment step uses: `publish_dir: ./allure-report-combined`
+   - ✅ `keep_files: true` is set (preserves existing files)
+   - ✅ Deployment happens on main branch when code changes
+
+2. **History Not Deployed** ⚠️ **CRITICAL**:
+   - ❌ History is in `allure-results-combined/history/history.jsonl`
+   - ❌ History is NOT in `allure-report-combined/history/`
+   - ❌ GitHub Pages deploys `allure-report-combined/`, which doesn't contain history
+   - **Result**: `https://cscharer.github.io/full-stack-qa/history/history.jsonl` returns 404
+
+3. **Root Cause**:
+   - Allure3 writes history to results directory (where `historyPath` points)
+   - Allure3 does NOT automatically copy history to report directory
+   - Our script doesn't copy history from results to report before deployment
+   - **Fix Required**: Copy history from `allure-results-combined/history/` to `allure-report-combined/history/` before deployment
+
+### Recommendations
+
+**Immediate Fix (Critical)**:
+
+1. **Copy History to Report Directory Before Deployment**:
+   - Add step to copy `allure-results-combined/history/history.jsonl` → `allure-report-combined/history/history.jsonl`
+   - This must happen AFTER `allure generate` but BEFORE GitHub Pages deployment
+   - This will ensure history is included in GitHub Pages deployment
+
+2. **Update Generate Script**:
+   - After Allure3 creates history in results directory, copy it to report directory
+   - This ensures history is available for both artifact upload AND GitHub Pages deployment
+
+**Investigation Needed**:
+
+1. **Why Allure3 Isn't Adding New Entries**:
+   - Check if test results are identical across runs (same status, duration, etc.)
+   - Verify if Allure3 requires test result changes to add new entries
+   - Consider if we need to introduce test result variations to trigger entry addition
+
+2. **Test Allure3 Behavior**:
+   - Run tests with intentional status changes (pass → fail, fail → pass)
+   - Verify if Allure3 adds new entries when test results change
+   - Check if Allure3 requires minimum number of runs before adding entries
+
+**Next Actions**:
+
+1. ✅ **Implement history copy to report directory** (critical for GitHub Pages)
+2. ⚠️ **Investigate test result changes** to trigger Allure3 entry addition
+3. ⚠️ **Verify if trends are visible in UI** despite entry count not increasing
+
+---
+
 **Last Updated**: 2026-01-08  
 **Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
-**Status**: ⭐ End-to-End Success - Upload fix working, history artifact flow confirmed  
-**Current MERGE_NUMBER**: 54  
-**Latest Pipeline**: #20811503566 (2026-01-08)  
+**Status**: ⭐ Consistent Success - Upload fix working reliably, Allure3 not adding new entries  
+**Current MERGE_NUMBER**: 55  
+**Latest Pipeline**: #20819791802 (2026-01-08)  
 **Investigation Document**: `docs/work/20260107_ALLURE3_INVESTIGATION.md`
 
