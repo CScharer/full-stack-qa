@@ -256,7 +256,14 @@ if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
     echo "   Size: $HISTORY_SIZE"
     echo "   ✅ History found in results directory (where historyPath points)"
     
-    # History is already in RESULTS directory, no need to copy
+    # History is already in RESULTS directory, but we need to copy it to REPORT directory
+    # for GitHub Pages deployment (deployment publishes REPORT directory, not RESULTS)
+    echo ""
+    echo "📊 Copying history to report directory for GitHub Pages deployment..."
+    mkdir -p "$REPORT_DIR/history"
+    cp "$RESULTS_DIR/history/history.jsonl" "$REPORT_DIR/history/history.jsonl" 2>/dev/null || true
+    echo "✅ History copied to report directory: $REPORT_DIR/history/history.jsonl"
+    echo "   History will be included in GitHub Pages deployment"
     echo ""
     echo "📊 History ready for next run..."
     echo "✅ History preserved: history.jsonl ready for next report generation"
