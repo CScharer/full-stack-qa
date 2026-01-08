@@ -268,43 +268,19 @@ if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
     echo "✅ History.jsonl copied to report directory"
     
     # Convert history.jsonl to history-trend.json format (for UI trends display)
-    # CRITICAL: Allure3 UI expects history-trend.json with aggregated statistics per buildOrder
-    # Format: [{"buildOrder": X, "reportName": "...", "reportUrl": "", "data": {"failed": 0, "broken": 0, "passed": 32, "skipped": 0, "unknown": 0, "total": 32}}]
-    # NOT individual test data: data should be OBJECT with counts, not ARRAY of tests
+    # CRITICAL: Allure3 UI expects history-trend.json with ARRAY of individual test data points
+    # Format: [{"buildOrder": X, "reportName": "...", "reportUrl": "", "data": [{"uid": "...", "status": "...", "time": {...}}]}]
+    # The data should be an ARRAY of test objects, not aggregated statistics object
+    # SVG chart rendering requires individual data points to calculate dimensions correctly
     if command -v jq &> /dev/null; then
-        echo "   Converting history.jsonl to history-trend.json with aggregated statistics..."
+        echo "   Converting history.jsonl to history-trend.json with individual test data (array format)..."
         
         # Get current buildOrder from executor.json
         CURRENT_BUILD_ORDER=$(jq -r '.buildOrder // "1"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "1")
         REPORT_NAME=$(jq -r '.reportName // "Allure Report"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "Allure Report")
         
-        # Count test results by status from current run
-        TOTAL_TESTS=0
-        PASSED=0
-        FAILED=0
-        BROKEN=0
-        SKIPPED=0
-        UNKNOWN=0
-        
-        # Count from result files
-        if [ -d "$RESULTS_DIR" ]; then
-            for result_file in "$RESULTS_DIR"/*-result.json; do
-                if [ -f "$result_file" ]; then
-                    status=$(jq -r '.status // "unknown"' "$result_file" 2>/dev/null || echo "unknown")
-                    TOTAL_TESTS=$((TOTAL_TESTS + 1))
-                    case "$status" in
-                        "passed") PASSED=$((PASSED + 1)) ;;
-                        "failed") FAILED=$((FAILED + 1)) ;;
-                        "broken") BROKEN=$((BROKEN + 1)) ;;
-                        "skipped") SKIPPED=$((SKIPPED + 1)) ;;
-                        *) UNKNOWN=$((UNKNOWN + 1)) ;;
-                    esac
-                fi
-            done
-        fi
-        
         # Read existing history.jsonl and convert each entry to proper format
-        # Each line in history.jsonl is a buildOrder entry - we need to aggregate its data
+        # Each line in history.jsonl is a buildOrder entry - keep data as ARRAY of individual test objects
         TEMP_TREND_FILE=$(mktemp)
         echo "[]" > "$TEMP_TREND_FILE"
         
@@ -315,77 +291,60 @@ if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
                 report_name=$(echo "$line" | jq -r '.reportName // "Allure Report"' 2>/dev/null || echo "Allure Report")
                 report_url=$(echo "$line" | jq -r '.reportUrl // ""' 2>/dev/null || echo "")
                 
-                # Aggregate statistics from data array
-                data_array=$(echo "$line" | jq -r '.data // []' 2>/dev/null || echo "[]")
+                # Extract data array directly (keep as array, don't aggregate)
+                data_array=$(echo "$line" | jq '.data // []' 2>/dev/null || echo "[]")
                 if [ "$data_array" != "[]" ] && [ "$data_array" != "null" ]; then
-                    # Count statuses from data array
-                    data_passed=$(echo "$line" | jq '[.data[]? | select(.status == "passed")] | length' 2>/dev/null || echo "0")
-                    data_failed=$(echo "$line" | jq '[.data[]? | select(.status == "failed")] | length' 2>/dev/null || echo "0")
-                    data_broken=$(echo "$line" | jq '[.data[]? | select(.status == "broken")] | length' 2>/dev/null || echo "0")
-                    data_skipped=$(echo "$line" | jq '[.data[]? | select(.status == "skipped")] | length' 2>/dev/null || echo "0")
-                    data_unknown=$(echo "$line" | jq '[.data[]? | select(.status == "unknown" or .status == null)] | length' 2>/dev/null || echo "0")
-                    data_total=$(echo "$line" | jq '[.data[]?] | length' 2>/dev/null || echo "0")
-                    
-                    # Create proper history-trend.json entry with aggregated statistics
+                    # Create history-trend.json entry with ARRAY data (individual test objects)
                     jq --argjson build_order "$build_order" \
                        --arg report_name "$report_name" \
                        --arg report_url "$report_url" \
-                       --argjson failed "$data_failed" \
-                       --argjson broken "$data_broken" \
-                       --argjson passed "$data_passed" \
-                       --argjson skipped "$data_skipped" \
-                       --argjson unknown "$data_unknown" \
-                       --argjson total "$data_total" \
+                       --argjson data_array "$data_array" \
                        '. += [{
                          "buildOrder": $build_order,
                          "reportName": $report_name,
                          "reportUrl": $report_url,
-                         "data": {
-                           "failed": $failed,
-                           "broken": $broken,
-                           "passed": $passed,
-                           "skipped": $skipped,
-                           "unknown": $unknown,
-                           "total": $total
-                         }
+                         "data": $data_array
                        }]' "$TEMP_TREND_FILE" > "${TEMP_TREND_FILE}.tmp" 2>/dev/null && \
                     mv "${TEMP_TREND_FILE}.tmp" "$TEMP_TREND_FILE" 2>/dev/null || true
                 fi
             fi
         done < "$RESULTS_DIR/history/history.jsonl"
         
-        # Add current run statistics if we have test results
-        if [ "$TOTAL_TESTS" -gt 0 ]; then
-            jq --argjson build_order "$CURRENT_BUILD_ORDER" \
-               --arg report_name "$REPORT_NAME" \
-               --argjson failed "$FAILED" \
-               --argjson broken "$BROKEN" \
-               --argjson passed "$PASSED" \
-               --argjson skipped "$SKIPPED" \
-               --argjson unknown "$UNKNOWN" \
-               --argjson total "$TOTAL_TESTS" \
-               '. += [{
-                 "buildOrder": $build_order,
-                 "reportName": $report_name,
-                 "reportUrl": "",
-                 "data": {
-                   "failed": $failed,
-                   "broken": $broken,
-                   "passed": $passed,
-                   "skipped": $skipped,
-                   "unknown": $unknown,
-                   "total": $total
-                 }
-               }]' "$TEMP_TREND_FILE" > "${TEMP_TREND_FILE}.tmp" 2>/dev/null && \
-            mv "${TEMP_TREND_FILE}.tmp" "$TEMP_TREND_FILE" 2>/dev/null || true
+        # Add current run data if we have test results (extract individual test data from result files)
+        if [ -d "$RESULTS_DIR" ] && [ "$(find "$RESULTS_DIR" -name "*-result.json" -type f | wc -l | tr -d ' ')" -gt 0 ]; then
+            # Extract individual test data from current run's result files
+            current_run_data=$(find "$RESULTS_DIR" -name "*-result.json" -type f | \
+                head -1000 | \
+                jq -s '[.[] | {
+                    uid: (.historyId // .uuid),
+                    status: .status,
+                    time: {
+                        start: .start,
+                        stop: .stop,
+                        duration: ((.stop // 0) - (.start // 0))
+                    }
+                }]' 2>/dev/null || echo "[]")
+            
+            if [ "$current_run_data" != "[]" ] && [ "$current_run_data" != "null" ]; then
+                jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+                   --arg report_name "$REPORT_NAME" \
+                   --argjson data_array "$current_run_data" \
+                   '. += [{
+                     "buildOrder": $build_order,
+                     "reportName": $report_name,
+                     "reportUrl": "",
+                     "data": $data_array
+                   }]' "$TEMP_TREND_FILE" > "${TEMP_TREND_FILE}.tmp" 2>/dev/null && \
+                mv "${TEMP_TREND_FILE}.tmp" "$TEMP_TREND_FILE" 2>/dev/null || true
+            fi
         fi
         
         # Copy final result to report directory
         cp "$TEMP_TREND_FILE" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
         rm -f "$TEMP_TREND_FILE" 2>/dev/null || true
         
-        echo "✅ History-trend.json created with aggregated statistics for UI trends display"
-        echo "   Format: data object with {failed, broken, passed, skipped, unknown, total}"
+        echo "✅ History-trend.json created with individual test data (array format) for UI trends display"
+        echo "   Format: data array with [{uid, status, time}] - required for SVG chart rendering"
         
         # Also create duration-trend.json if needed (for duration trends)
         # Format: [{"buildOrder": X, "data": [{"uid": "...", "time": {...}}]}]
@@ -542,51 +501,58 @@ echo "✅ Allure report generated successfully"
 echo "   Report location: $REPORT_DIR"
 echo "   Report size: $(du -sh "$REPORT_DIR" 2>/dev/null | cut -f1 || echo 'unknown')"
 
-# Final verification: Ensure history-trend.json has correct format (object data, not array)
+# Final verification: Ensure history-trend.json has correct format (array data, not object)
 if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null; then
     echo ""
     echo "🔍 Verifying history-trend.json format..."
     
-    # Check if any entries have array data (wrong format)
-    HAS_ARRAY_DATA=$(jq '[.[] | select(.data | type == "array")] | length' "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "0")
+    # Check if any entries have object data (wrong format - should be array)
+    HAS_OBJECT_DATA=$(jq '[.[] | select(.data | type == "object" and (.data | has("failed")))] | length' "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "0")
     
-    if [ "$HAS_ARRAY_DATA" != "0" ] && [ "$HAS_ARRAY_DATA" != "null" ]; then
-        echo "   ⚠️  Found $HAS_ARRAY_DATA entry/entries with array data (wrong format)"
-        echo "   🔧 Converting to aggregated statistics format..."
+    if [ "$HAS_OBJECT_DATA" != "0" ] && [ "$HAS_OBJECT_DATA" != "null" ]; then
+        echo "   ⚠️  Found $HAS_OBJECT_DATA entry/entries with object data (wrong format - should be array)"
+        echo "   🔧 Converting to array format with individual test data..."
         
-        # Convert all entries to have object data with aggregated statistics
+        # Convert all entries to have array data (individual test objects)
+        # This requires reading from history.jsonl to get the original test data
         TEMP_FIX_FILE=$(mktemp)
-        jq '
-            map(
-                if .data | type == "array" then
-                    {
-                        buildOrder: .buildOrder,
-                        reportName: (.reportName // "Allure Report"),
-                        reportUrl: (.reportUrl // ""),
-                        data: {
-                            failed: ([.data[]? | select(.status == "failed")] | length),
-                            broken: ([.data[]? | select(.status == "broken")] | length),
-                            passed: ([.data[]? | select(.status == "passed")] | length),
-                            skipped: ([.data[]? | select(.status == "skipped")] | length),
-                            unknown: ([.data[]? | select(.status == "unknown" or .status == null)] | length),
-                            total: (.data | length)
-                        }
-                    }
-                else
-                    .
-                end
-            )
-        ' "$REPORT_DIR/history/history-trend.json" > "$TEMP_FIX_FILE" 2>/dev/null
+        echo "[]" > "$TEMP_FIX_FILE"
+        
+        # Read from history.jsonl to get original array data
+        if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
+            while IFS= read -r line; do
+                if [ -n "$line" ]; then
+                    build_order=$(echo "$line" | jq -r '.buildOrder // 0' 2>/dev/null || echo "0")
+                    report_name=$(echo "$line" | jq -r '.reportName // "Allure Report"' 2>/dev/null || echo "Allure Report")
+                    report_url=$(echo "$line" | jq -r '.reportUrl // ""' 2>/dev/null || echo "")
+                    data_array=$(echo "$line" | jq '.data // []' 2>/dev/null || echo "[]")
+                    
+                    if [ "$data_array" != "[]" ] && [ "$data_array" != "null" ]; then
+                        jq --argjson build_order "$build_order" \
+                           --arg report_name "$report_name" \
+                           --arg report_url "$report_url" \
+                           --argjson data_array "$data_array" \
+                           '. += [{
+                             buildOrder: $build_order,
+                             reportName: $report_name,
+                             reportUrl: $report_url,
+                             data: $data_array
+                           }]' "$TEMP_FIX_FILE" > "${TEMP_FIX_FILE}.tmp" 2>/dev/null && \
+                        mv "${TEMP_FIX_FILE}.tmp" "$TEMP_FIX_FILE" 2>/dev/null || true
+                    fi
+                fi
+            done < "$RESULTS_DIR/history/history.jsonl"
+        fi
         
         if [ -f "$TEMP_FIX_FILE" ] && [ -s "$TEMP_FIX_FILE" ]; then
             mv "$TEMP_FIX_FILE" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
-            echo "   ✅ Fixed history-trend.json format - all entries now have aggregated statistics"
+            echo "   ✅ Fixed history-trend.json format - all entries now have array data (individual test objects)"
         else
             echo "   ⚠️  Failed to fix format, but continuing..."
             rm -f "$TEMP_FIX_FILE" 2>/dev/null || true
         fi
     else
-        echo "   ✅ history-trend.json format is correct (all entries have object data)"
+        echo "   ✅ history-trend.json format is correct (all entries have array data)"
     fi
     
     # CRITICAL: Allure3 UI may also need widgets/history-trend.json
