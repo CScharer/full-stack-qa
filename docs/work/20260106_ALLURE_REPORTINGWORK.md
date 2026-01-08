@@ -4,8 +4,8 @@
 **Status**: 📋 Complete Documentation  
 **Issue**: Allure3 history not appearing in reports despite multiple fix attempts  
 **Timeline**: 2026-01-04 to 2026-01-08  
-**Current MERGE_NUMBER**: 56  
-**Latest Pipeline**: #20822626422 (2026-01-08)
+**Current MERGE_NUMBER**: 57  
+**Latest Pipeline**: #20823726152 (2026-01-08)
 
 ---
 
@@ -3286,8 +3286,190 @@ module.exports = {
 
 ---
 
-**Status**: ⭐ Fix Implemented - History format conversion for UI trends display  
-**Current MERGE_NUMBER**: 56  
-**Latest Pipeline**: #20822626422 (2026-01-08)  
+---
+
+## 📊 Pipeline Results (Pipeline #20823726152 - MERGE_NUMBER 57)
+
+**Date**: 2026-01-08  
+**Pipeline Run**: #20823726152  
+**Status**: ✅ Success  
+**PR**: #130 (MERGE_NUMBER 57: Convert history.jsonl to history-trend.json for UI trends display)  
+**Approach**: MERGE_NUMBER 57 - Convert history.jsonl to history-trend.json format for UI trends display
+
+### Key Changes in MERGE_NUMBER 57
+
+**Critical Fix**: Convert `history.jsonl` (JSON Lines) to `history-trend.json` (JSON array) format so Allure3 UI can display trends.
+
+### Pipeline Execution Details
+
+**History Download**:
+- ✅ **History artifact successfully downloaded from previous run**: 5 file(s)
+- ✅ **Both formats downloaded**: `history-trend.json` and `history.jsonl`
+- ✅ History downloaded from GitHub Pages via GitHub API (fallback)
+- ✅ History found in history.jsonl format
+- ✅ History entries: 12 line(s)
+- ✅ History size: 316K (increased from 120K - now includes both formats)
+
+**BuildOrder Continuity**:
+- ✅ Current build order: 532 (from executor.json)
+- ✅ Latest history build order: 482 (from downloaded history.jsonl)
+- ✅ BuildOrder continuity verified (532 > 482)
+
+**Allure3 Report Generation**:
+- ✅ Allure3 CLI installed successfully
+- ✅ Configuration file detected: `allure.config.ts` (TypeScript format)
+- ✅ Explicit `--config` flag used: `--config allure.config.ts`
+- ✅ Report generated successfully
+- ✅ Report location: `allure-report-combined`
+- ✅ Report size: 4.4M
+
+**History Processing**:
+- ✅ **Allure3 created/updated history in results directory (history.jsonl format)**
+- ✅ History file: `allure-results-combined/history/history.jsonl`
+- ✅ History entries: 12 line(s) (unchanged - no new entry added)
+- ✅ **History found in results directory (where historyPath points)**
+
+**History Format Conversion** ⭐ **NEW FIX WORKING**:
+- ✅ **History.jsonl copied to report directory**: `allure-report-combined/history/history.jsonl`
+- ✅ **History-trend.json created for UI trends display**: `allure-report-combined/history/history-trend.json`
+- ✅ **Both formats now available in report directory**
+- ✅ **History will be included in GitHub Pages deployment**
+
+**History Verification in Report** ⭐ **CONFIRMED**:
+- ✅ **History directory exists in report**
+- ✅ **Files: 2 file(s)** (history.jsonl + history-trend.json)
+- ✅ **Size: 316K**
+- ✅ **Sample files**: history-trend.json
+- ✅ **History will be preserved in GitHub Pages deployment**
+
+**History Artifact Upload**:
+- ✅ Upload step found history in RESULTS directory
+- ✅ History artifact prepared and upload step succeeded
+- ✅ **All history-related steps completed successfully**
+
+**GitHub Pages Deployment**:
+- ✅ Deployment step executed successfully
+- ✅ **Both history files accessible on GitHub Pages**:
+  - `history.jsonl`: ✅ Accessible (114K)
+  - `history-trend.json`: ✅ Accessible (193K)
+
+### Key Findings
+
+**What's Working** ✅:
+1. Pipeline completed successfully
+2. ⭐ **History artifact successfully downloaded from previous run** - **5 files (including both formats)**
+3. ⭐ **History format conversion working** - **history-trend.json created successfully**
+4. ⭐ **Both formats available in report directory** - **2 files (history.jsonl + history-trend.json)**
+5. ⭐ **History verified in report** - **2 files, 316K**
+6. ⭐ **Both files accessible on GitHub Pages** - **history.jsonl (114K) + history-trend.json (193K)**
+7. History download from GitHub Pages working (fallback method)
+8. History conversion to `history.jsonl` working (12 entries)
+9. BuildOrder continuity verified (532 > 482)
+10. Allure3 configuration file detected and used (`allure.config.ts`)
+11. Report generation completed successfully (4.4M report)
+12. ⭐ **Allure3 created/updated history in results directory** - **CONFIRMED**
+13. ⭐ **Script successfully detected history in RESULTS directory** - **Working correctly**
+14. ⭐ **Upload step found history and prepared artifact** - **Working correctly**
+15. ⭐ **All history-related steps succeeded** - **Complete workflow working consistently**
+
+**What's Not Working** ❌:
+1. ⚠️ **History entries count unchanged**: Still 12 entries (no new entry for buildOrder 532)
+   - **Pattern confirmed**: Allure3 is consistently not adding new entries across multiple runs
+   - This suggests Allure3 may require specific conditions that we haven't met yet
+2. ⚠️ **Trends visibility**: Need to verify if trends are now visible in Allure Report UI
+   - Both formats are now available (history.jsonl + history-trend.json)
+   - GitHub Pages deployment successful
+   - **User needs to check if trends appear in UI**
+
+**Observations**:
+- ⭐ **Fix Confirmed**: History format conversion is working correctly
+- ⭐ **Both Formats Available**: history.jsonl and history-trend.json both present
+- ⭐ **Deployment Confirmed**: Both files accessible on GitHub Pages
+- ⭐ **Size Increase**: History size increased from 120K to 316K (includes both formats)
+- ⚠️ **Persistent Issue**: History entries not accumulating across 5+ consecutive runs
+- ⚠️ **UI Verification Needed**: Need to verify if trends are visible in Allure Report UI
+
+**Analysis**:
+- ⭐ **Format Conversion Working**: history-trend.json created successfully from history.jsonl
+- ⭐ **Deployment Working**: Both files deployed and accessible on GitHub Pages
+- ⚠️ **Root Cause Hypothesis**: Allure3 may require:
+  - Specific test result changes (status changes, new tests, etc.)
+  - Minimum number of test executions per test
+  - Specific test identifier format or properties
+  - Different configuration or mode
+- ⚠️ **UI Trends**: Should now be visible since history-trend.json is available
+
+**Next Steps**:
+- ✅ **Format conversion fix confirmed working** (PR #130)
+- ✅ **Both formats deployed** (history.jsonl + history-trend.json)
+- ⚠️ **Verify trends in UI** - Check if trends section displays historical data
+- ⚠️ **Investigate Allure3 requirements for adding new history entries**:
+  - Check if Allure3 requires test result changes (status transitions)
+  - Verify if Allure3 needs specific test identifier properties
+  - Research Allure3 documentation for history entry requirements
+  - Consider if `appendHistory: true` needs different configuration
+- ⚠️ **Alternative Approaches**:
+  - Check if trends are visible in UI despite entry count not increasing
+  - Verify if Allure3 uses different mechanism for trends
+  - Consider if more consecutive runs are needed before trends appear
+
+---
+
+## 📊 Pipeline Results (MERGE_NUMBER 58 - Format Verification Fix)
+
+**Date**: 2026-01-08  
+**Status**: 🔄 Awaiting Pipeline  
+**PR**: TBD (MERGE_NUMBER 58: Fix history-trend.json format verification and correction)  
+**Approach**: MERGE_NUMBER 58 - Add final verification step to ensure history-trend.json has correct format (object data, not array)
+
+### Key Changes in MERGE_NUMBER 58
+
+**Critical Fix**: Added final verification step to detect and fix incorrect `history-trend.json` format.
+
+**Root Cause Identified**:
+- Deployed `history-trend.json` has **mixed formats** - some entries have `data` as **array** (wrong format)
+- Allure3 UI expects `data` as **object** with aggregated statistics: `{failed: 0, broken: 0, passed: 32, skipped: 0, unknown: 0, total: 32}`
+- Allure3 may be generating `history-trend.json` with wrong format, overwriting our conversion
+
+**Investigation Findings**:
+- ✅ Checked deployed `history-trend.json` on GitHub Pages via API
+- ❌ Found entries with `data` as array (wrong format) - e.g., buildOrder 459
+- ✅ Found entries with `data` as object (correct format) - e.g., buildOrder 461, 463
+- ⚠️ **Mixed format issue**: Some entries correct, some incorrect
+
+**Solution Implemented**:
+- Added final verification step at end of `generate-combined-allure-report.sh`
+- Step runs after Allure3 report generation completes
+- Detects entries with array `data` (wrong format)
+- Converts array entries to object format with aggregated statistics
+- Overwrites `history-trend.json` with corrected format before deployment
+
+**Code Changes**:
+- **File**: `scripts/ci/generate-combined-allure-report.sh`
+- **Location**: After report generation success message (line ~543)
+- **Function**: Final verification and format correction
+- **Logic**: 
+  1. Check if `history-trend.json` exists in report directory
+  2. Detect entries with `data` as array using `jq`
+  3. Convert array entries to aggregated statistics format
+  4. Overwrite file with corrected format
+
+**Expected Result**:
+- All entries in `history-trend.json` will have object `data` with aggregated statistics
+- Trends should now be visible in Allure Report UI
+- Format will be automatically corrected even if Allure3 overwrites it
+
+**Next Steps**:
+- ⚠️ **Await pipeline completion** - Verify format correction works
+- ⚠️ **Check trends in UI** - Verify trends appear after format fix
+- ⚠️ **Monitor format consistency** - Ensure all future runs maintain correct format
+
+---
+
+**Last Updated**: 2026-01-08  
+**Document Location**: `docs/work/20260106_ALLURE_REPORTINGWORK.md`  
+**Status**: 🔄 Format Verification Fix - Added final verification step to correct history-trend.json format  
+**Current MERGE_NUMBER**: 58  
+**Latest Pipeline**: Awaiting pipeline run  
 **Investigation Document**: `docs/work/20260107_ALLURE3_INVESTIGATION.md`
 
