@@ -910,43 +910,49 @@
     "buildOrder": 461,
     "reportName": "Allure Report",
     "reportUrl": "",
-    "data": {
-      "uid": "2178bc57-816a-49ad-ba87-fd520c981cc3",
-      "status": "passed",
-      "time": {
-        "start": 1767683970386,
-        "stop": 1767683971846,
-        "duration": 1460
+    "data": [
+      {
+        "uid": "2178bc57-816a-49ad-ba87-fd520c981cc3",
+        "status": "passed",
+        "time": {
+          "start": 1767683970386,
+          "stop": 1767683971846,
+          "duration": 1460
+        }
       }
-    }
+    ]
   },
   {
     "buildOrder": 463,
     "reportName": "Allure Report",
     "reportUrl": "",
-    "data": {
-      "uid": "22119681f066dab38e2602398cdef2b2",
-      "status": "passed",
-      "time": {
-        "start": 1767686540314,
-        "stop": 1767686541974,
-        "duration": 1660
+    "data": [
+      {
+        "uid": "22119681f066dab38e2602398cdef2b2",
+        "status": "passed",
+        "time": {
+          "start": 1767686540314,
+          "stop": 1767686541974,
+          "duration": 1660
+        }
       }
-    }
+    ]
   },
   {
     "buildOrder": 465,
     "reportName": "Allure Report",
     "reportUrl": "",
-    "data": {
-      "uid": "88e250eaefe7d72a88f64afd42b5533f",
-      "status": "passed",
-      "time": {
-        "start": 1767690832825,
-        "stop": 1767690834139,
-        "duration": 1314
+    "data": [
+      {
+        "uid": "88e250eaefe7d72a88f64afd42b5533f",
+        "status": "passed",
+        "time": {
+          "start": 1767690832825,
+          "stop": 1767690834139,
+          "duration": 1314
+        }
       }
-    }
+    ]
   },
   {
     "buildOrder": 468,
