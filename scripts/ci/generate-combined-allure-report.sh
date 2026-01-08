@@ -258,11 +258,35 @@ if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
     
     # History is already in RESULTS directory, but we need to copy it to REPORT directory
     # for GitHub Pages deployment (deployment publishes REPORT directory, not RESULTS)
+    # CRITICAL: Allure3 UI needs history-trend.json format for trends display, not just history.jsonl
     echo ""
-    echo "📊 Copying history to report directory for GitHub Pages deployment..."
+    echo "📊 Converting history.jsonl to history-trend.json for UI trends display..."
     mkdir -p "$REPORT_DIR/history"
+    
+    # Copy history.jsonl (for Allure3 internal processing)
     cp "$RESULTS_DIR/history/history.jsonl" "$REPORT_DIR/history/history.jsonl" 2>/dev/null || true
-    echo "✅ History copied to report directory: $REPORT_DIR/history/history.jsonl"
+    echo "✅ History.jsonl copied to report directory"
+    
+    # Convert history.jsonl to history-trend.json format (for UI trends display)
+    # history.jsonl is JSON Lines format - convert to JSON array format
+    if command -v jq &> /dev/null; then
+        # Read all lines from history.jsonl and convert to JSON array
+        jq -s '.' "$RESULTS_DIR/history/history.jsonl" > "$REPORT_DIR/history/history-trend.json" 2>/dev/null || {
+            # Fallback: if jq fails, try manual conversion
+            echo "[]" > "$REPORT_DIR/history/history-trend.json"
+            while IFS= read -r line; do
+                if [ -n "$line" ]; then
+                    # Append each line as a JSON object to the array
+                    jq --argjson obj "$line" '. += [$obj]' "$REPORT_DIR/history/history-trend.json" > "$REPORT_DIR/history/history-trend.json.tmp" 2>/dev/null && \
+                    mv "$REPORT_DIR/history/history-trend.json.tmp" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
+                fi
+            done < "$RESULTS_DIR/history/history.jsonl"
+        }
+        echo "✅ History-trend.json created for UI trends display"
+    else
+        echo "⚠️  jq not available - skipping history-trend.json conversion"
+    fi
+    
     echo "   History will be included in GitHub Pages deployment"
     echo ""
     echo "📊 History ready for next run..."
