@@ -8,6 +8,9 @@ locust==2.42.6
 requests==2.32.4
 python-dotenv==1.2.1
 
+# Security updates for transitive dependencies
+urllib3>=2.6.0  # Fixes CVE: Decompression-bomb safeguards bypass (Alert #38)
+
 # Reporting and visualization
 matplotlib==3.10.8
 pandas==2.3.3

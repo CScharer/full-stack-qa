@@ -185,6 +185,8 @@ All dependency ecosystems are now managed via **Dependabot**:
 | python-dotenv | 1.2.1 | 1.2.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | black | 25.12.0 | 25.12.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | ruff | 0.14.9 | 0.14.9 | [✅] | 2025-12-19 | Updated in PR #51 |
+| urllib3 | >=2.6.0 | 2.6.3 | [✅] | 2026-01-08 | Security fix for Dependabot Alert #38 (CVE: decompression-bomb bypass) |
+| Werkzeug | >=3.1.0 | 3.1.5 | [✅] | 2026-01-08 | Security fix for Dependabot Alert #39 (CVE: safe_join Windows device names) |
 
 ### Performance Testing (requirements.txt)
 
@@ -195,6 +197,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | python-dotenv | 1.2.1 | 1.2.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | matplotlib | 3.10.8 | 3.10.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | pandas | 2.3.3 | 2.3.3 | [✅] | 2025-12-19 | Updated in PR #51 |
+| urllib3 | >=2.6.0 | 2.6.3 | [✅] | 2026-01-08 | Security fix for Dependabot Alert #38 (CVE: decompression-bomb bypass) |
 
 ---
 
