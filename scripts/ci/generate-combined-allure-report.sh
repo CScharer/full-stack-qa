@@ -575,6 +575,16 @@ echo "✅ Allure report generated successfully"
 echo "   Report location: $REPORT_DIR"
 echo "   Report size: $(du -sh "$REPORT_DIR" 2>/dev/null | cut -f1 || echo 'unknown')"
 
+# Fix summary timestamps to use only current run (not history)
+echo ""
+echo "🔧 Fixing summary timestamps to reflect current run only..."
+chmod +x scripts/ci/fix-allure-summary-timestamps.sh
+if ./scripts/ci/fix-allure-summary-timestamps.sh "$RESULTS_DIR" "$REPORT_DIR"; then
+    echo "   ✅ Summary timestamps fixed"
+else
+    echo "   ⚠️  Summary timestamp fix had issues (report will use Allure's calculated values)"
+fi
+
 # Final verification: Ensure history-trend.json has correct format (array data, not object)
 if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null; then
     echo ""
