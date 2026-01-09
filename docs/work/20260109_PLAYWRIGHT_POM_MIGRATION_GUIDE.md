@@ -1,10 +1,10 @@
 # Playwright Page Object Model (POM) Migration Guide
 
 **Date Created**: 2026-01-09  
-**Status**: 📋 Migration Planning Document  
+**Status**: ✅ **COMPLETE** - HomePage POM Migration Finished  
 **Purpose**: Guide for converting Playwright tests to use Page Object Model pattern consistently  
-**Current State**: Mixed - some tests use POM, others use direct selectors  
-**Target State**: All tests use Page Object Model pattern consistently
+**Current State**: `homepage.spec.ts` uses POM; integration `HomePage.ts` updated with data-qa selectors  
+**Target State**: ~~All tests use Page Object Model pattern consistently~~ **Phase 1-2 ACHIEVED**
 
 ---
 
@@ -12,11 +12,12 @@
 
 This document outlines the strategy and step-by-step process for migrating Playwright tests to consistently use the **Page Object Model (POM)** pattern. While some Page Objects already exist, this guide ensures all tests follow the same pattern and best practices.
 
-### Current State
+### Current State (Post-Migration)
 
-- ✅ **Page Objects Exist**: `playwright/tests/integration/pages/` contains some Page Objects
-- ⚠️ **Inconsistent Usage**: `playwright/tests/homepage.spec.ts` uses direct selectors
-- ✅ **Good Foundation**: Existing Page Objects follow good patterns
+- ✅ **Shared Page Objects Created**: `playwright/tests/pages/` contains `BasePage.ts` and `HomePage.ts`
+- ✅ **homepage.spec.ts Migrated**: Now uses `HomePage` page object from `tests/pages/`
+- ✅ **Integration HomePage Updated**: `playwright/tests/integration/pages/HomePage.ts` now uses data-qa selectors (`home-title`, `sidebar-nav-*`)
+- ✅ **Data-QA Consistency**: All HomePage selectors use `data-qa` attributes from frontend (`app/page.tsx`, `Sidebar.tsx`)
 
 ### Benefits of Consistent Page Object Model
 
@@ -533,22 +534,22 @@ async waitForContent(text: string): Promise<void> {
 
 ## 📊 Migration Checklist
 
-### Phase 1: Foundation
-- [ ] Create `playwright/tests/pages/` directory
-- [ ] Create `BasePage.ts` with common functionality
-- [ ] Review existing Page Objects in `tests/integration/pages/`
+### Phase 1: Foundation ✅ COMPLETE
+- [x] Create `playwright/tests/pages/` directory
+- [x] Create `BasePage.ts` with common functionality
+- [x] Review existing Page Objects in `tests/integration/pages/`
 
-### Phase 2: Core Migration
-- [ ] Create enhanced `HomePage.ts` in `tests/pages/`
-- [ ] Migrate `homepage.spec.ts` to use Page Object
-- [ ] Test migrated tests pass
-- [ ] Update imports in test files
+### Phase 2: Core Migration ✅ COMPLETE
+- [x] Create enhanced `HomePage.ts` in `tests/pages/` (extends BasePage, uses data-qa selectors)
+- [x] Migrate `homepage.spec.ts` to use Page Object
+- [x] Test migrated tests pass (verified locally with `npm run test:chrome`)
+- [x] Update `playwright/tests/integration/pages/HomePage.ts` to use data-qa selectors for title (`home-title`) and navigation cards (`sidebar-nav-*`)
 
 ### Phase 3: Consistency
 - [ ] Ensure all Page Objects follow same pattern
 - [ ] Add missing methods to existing Page Objects
 - [ ] Standardize naming conventions
-- [ ] Add JSDoc comments
+- [x] Add JSDoc comments (BasePage, HomePage)
 
 ### Phase 4: Advanced Features
 - [ ] Create component objects (if needed)
@@ -556,10 +557,30 @@ async waitForContent(text: string): Promise<void> {
 - [ ] Create page factory pattern (if needed)
 
 ### Phase 5: Documentation & Cleanup
-- [ ] Update test documentation
+- [x] Update test documentation (this document)
 - [ ] Add examples to README
 - [ ] Review and refactor for consistency
 - [ ] Remove duplicate code
+
+### Migration Completion Summary
+
+**Completed**: 2026-01-10
+
+The Playwright POM migration for HomePage is **complete**. The following was implemented:
+
+1. **Shared Page Objects Created**:
+   - `playwright/tests/pages/BasePage.ts` - Base class with common methods (`navigate`, `waitForPageLoad`, `getTitle`, `verifyTitleContains`, `setViewport`, `waitForVisible`)
+   - `playwright/tests/pages/HomePage.ts` - HomePage extending BasePage with data-qa selectors (`home-title`, `sidebar`, `sidebar-title`, `sidebar-navigation`, `sidebar-nav-home`, `sidebar-nav-applications`, etc.)
+
+2. **Tests Migrated**:
+   - `playwright/tests/homepage.spec.ts` - Now uses `HomePage` page object from `./pages/HomePage` instead of direct selectors
+
+3. **Integration HomePage Enhanced**:
+   - `playwright/tests/integration/pages/HomePage.ts` - Updated selectors to use data-qa attributes:
+     - `title`: `[data-qa="home-title"]` (from `frontend/app/page.tsx`)
+     - Navigation cards: `[data-qa="sidebar-nav-applications"]`, `[data-qa="sidebar-nav-companies"]`, etc. (from `frontend/components/Sidebar.tsx`)
+
+4. **Verification**: `homepage.spec.ts` tests pass when run with app services running (`npm run test:chrome` or `npx playwright test --project=chromium`)
 
 ---
 
@@ -660,6 +681,6 @@ test('integration test', async ({ page }) => {
 
 ---
 
-**Last Updated**: 2026-01-09  
+**Last Updated**: 2026-01-10  
 **Document Location**: `docs/work/20260109_PLAYWRIGHT_POM_MIGRATION_GUIDE.md`  
-**Status**: 📋 Ready for Implementation
+**Status**: ✅ **COMPLETE** - HomePage POM migration finished, homepage.spec.ts tests passing
