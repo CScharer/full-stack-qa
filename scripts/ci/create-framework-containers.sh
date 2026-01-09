@@ -364,6 +364,8 @@ for suite_name, env_groups in suite_groups.items():
                     
                     containers_created += 1
                     env_container_uuids_by_suite[suite_name].append(container_uuid)
+                    # CRITICAL: Always add to env_container_files_by_suite for parentSuite updates
+                    # This ensures split containers get proper parentSuite labels
                     env_container_files_by_suite[suite_name].append((container_file, container_uuid))
                     print(f"   ✅ Created container: {container_name} ({len(split_uuids)} tests) [from combined]")
                 continue  # Skip creating a "combined" container since we split it
@@ -444,8 +446,15 @@ for suite_name, env_groups in suite_groups.items():
         containers_created += 1
         env_container_uuids_by_suite[suite_name].append(container_uuid)
         # Store container file path for adding parentSuite later (only for env-specific containers)
+        # CRITICAL: Always add env-specific containers (not "unknown" or "combined") to ensure parentSuite labels are added
+        # This ensures proper hierarchy in Allure's Suites tab when multiple environments are present
         if env != 'unknown' and env != 'combined' and container_name != suite_name:
             env_container_files_by_suite[suite_name].append((container_file, container_uuid))
+        elif env == 'unknown':
+            # Even "unknown" containers should be tracked if they have a valid container name
+            # This helps with debugging and ensures they appear in Suites tab
+            if container_name != suite_name:
+                env_container_files_by_suite[suite_name].append((container_file, container_uuid))
         # Always show debug output for framework containers (not just first 10)
         print(f"   ✅ Created container: {container_name} ({len(result_uuids)} tests)")
 
@@ -458,7 +467,9 @@ print(f"🔍 DEBUG: Suite/Environment groups found:")
 for suite_name, env_groups in suite_groups.items():
     env_list = list(env_groups.keys())
     total_tests = sum(len(results) for results in env_groups.values())
+    env_container_count = len(env_container_uuids_by_suite.get(suite_name, []))
     print(f"   - {suite_name}: {total_tests} test(s) across {len(env_list)} environment(s) {env_list}")
+    print(f"     → Created {env_container_count} env-specific container(s) for this suite")
 
 # Create top-level containers for each framework (grouping all environments)
 # CRITICAL: Top-level containers should reference env-specific container UUIDs, not result UUIDs
@@ -486,6 +497,9 @@ for suite_name, env_groups in suite_groups.items():
     # (This shouldn't happen, but handle gracefully)
     if not env_container_uuids:
         print(f"   ⚠️  Skipping top-level container for '{suite_name}' (no env-specific containers found)", file=sys.stderr)
+        print(f"      DEBUG: Suite '{suite_name}' has {len(env_groups)} environment group(s): {list(env_groups.keys())}", file=sys.stderr)
+        print(f"      DEBUG: Total tests: {sum(len(results) for results in env_groups.values())}", file=sys.stderr)
+        print(f"      DEBUG: This may indicate containers were not created for this suite", file=sys.stderr)
         continue
     
     # Mark this suite as having a top-level container created
@@ -515,9 +529,10 @@ for suite_name, env_groups in suite_groups.items():
         json.dump(top_container_data, f, indent=2, ensure_ascii=False)
     
     top_level_containers += 1
-    if top_level_containers <= 10:  # Debug output
-        env_count = len([e for e in env_groups.keys() if e != 'unknown'])
-        print(f"   ✅ Created top-level container: {suite_name} ({len(env_container_uuids)} env containers, {env_count} environment(s))")
+    # Always show debug output for top-level containers (not just first 10)
+    # This helps diagnose issues when multiple environments are present
+    env_count = len([e for e in env_groups.keys() if e != 'unknown' and e != 'combined'])
+    print(f"   ✅ Created top-level container: {suite_name} ({len(env_container_uuids)} env containers, {env_count} environment(s))")
     
     # CRITICAL: Add parentSuite labels to env-specific containers
     # This creates the explicit hierarchy that Allure's Suites tab requires
