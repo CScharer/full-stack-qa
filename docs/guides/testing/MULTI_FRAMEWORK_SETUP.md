@@ -67,7 +67,10 @@ export TEST_ENVIRONMENT="local"
 cypress/
 ├── cypress/
 │   ├── e2e/
-│   │   └── google-search.cy.ts    # Test files (TypeScript)
+│   │   └── homepage.cy.ts         # Test files (TypeScript)
+│   ├── page-objects/              # Page Object Model classes
+│   │   ├── BasePage.ts            # Base class with common methods
+│   │   └── HomePage.ts            # HomePage Page Object
 │   └── support/
 │       ├── commands.ts             # Custom commands
 │       └── e2e.ts                  # Support file
@@ -75,6 +78,8 @@ cypress/
 ├── tsconfig.json                    # TypeScript config
 └── package.json
 ```
+
+**Page Object Model**: All Cypress tests use the Page Object Model pattern with `data-qa` selectors for consistency across frameworks.
 
 ### Features
 
@@ -86,18 +91,33 @@ cypress/
 - ✅ **Screenshot/Video** - Automatic capture
 - ✅ **Cross-browser** - Chrome, Firefox, Edge
 
-### Example Test
+### Example Test (Using Page Object Model)
 
 ```typescript
-describe('Google Search Tests', () => {
-  it('should perform a search', () => {
-    cy.visit('/')
-    cy.get('input[name="q"]').type('Cypress{enter}')
-    cy.url().should('include', 'search')
-    cy.get('#search').should('be.visible')
-  })
+import { HomePage } from '../page-objects/HomePage';
+
+describe('HomePage', () => {
+  let homePage: HomePage;
+
+  beforeEach(() => {
+    homePage = new HomePage();
+    homePage.setViewport(1920, 1080);
+    homePage.navigate();
+  });
+
+  it('should load the home page', () => {
+    homePage.verifyPageLoaded();
+  });
+
+  it('should display the navigation panel', () => {
+    homePage.verifySidebarVisible();
+    homePage.verifyNavigationTitle('Navigation');
+    homePage.verifyNavigationElements();
+  });
 })
 ```
+
+**Page Objects**: Located in `cypress/cypress/page-objects/` with `BasePage.ts` providing common functionality and page-specific classes extending it. All selectors use `data-qa` attributes from the frontend for consistency.
 
 ### Best Use Cases
 
@@ -178,12 +198,19 @@ export CI=true
 ```
 playwright/
 ├── tests/
-│   ├── google-search.spec.ts    # Test files
-│   └── pages/
-│       └── GoogleSearchPage.ts  # Page Object Model
+│   ├── homepage.spec.ts         # Test files
+│   ├── pages/                   # Shared Page Objects
+│   │   ├── BasePage.ts         # Base class with common methods
+│   │   └── HomePage.ts         # HomePage Page Object
+│   └── integration/
+│       ├── pages/              # Integration-specific Page Objects
+│       │   └── HomePage.ts     # Integration HomePage (uses data-qa)
+│       └── applications.spec.ts
 ├── playwright.config.ts          # Configuration
 └── tsconfig.json                 # TypeScript config
 ```
+
+**Page Object Model**: All Playwright tests use the Page Object Model pattern. Shared page objects are in `tests/pages/`, and integration-specific page objects are in `tests/integration/pages/`. All selectors use `data-qa` attributes for consistency.
 
 ### Features
 
@@ -195,19 +222,34 @@ playwright/
 - ✅ **HTML Reports** - Beautiful test reports
 - ✅ **Parallel Execution** - Built-in support
 
-### Example Test
+### Example Test (Using Page Object Model)
 
 ```typescript
-import { test, expect } from '@playwright/test'
-import { GoogleSearchPage } from './pages/GoogleSearchPage'
+import { test } from '@playwright/test';
+import { HomePage } from './pages/HomePage';
 
-test('should perform a search', async ({ page }) => {
-  const googlePage = new GoogleSearchPage(page)
-  await googlePage.navigate()
-  await googlePage.search('Playwright')
-  await expect(googlePage.searchResults).toBeVisible()
-})
+test.describe('HomePage', () => {
+  let homePage: HomePage;
+
+  test.beforeEach(async ({ page }) => {
+    homePage = new HomePage(page);
+    await homePage.setViewport(1920, 1080);
+    await homePage.navigate();
+  });
+
+  test('should load the home page', async () => {
+    await homePage.verifyPageLoaded();
+  });
+
+  test('should display the navigation panel', async () => {
+    await homePage.verifySidebarVisible();
+    await homePage.verifyNavigationTitle('Navigation');
+    await homePage.verifyNavigationElements();
+  });
+});
 ```
+
+**Page Objects**: Located in `tests/pages/` with `BasePage.ts` providing common functionality. All selectors use `data-qa` attributes from the frontend for cross-framework consistency.
 
 ### Best Use Cases
 
@@ -279,10 +321,16 @@ robot --include web tests/
 
 ```
 src/test/robot/
-├── GoogleSearchTests.robot    # UI tests
-├── APITests.robot              # API tests
+├── HomePageTests.robot        # UI tests (uses Page Object Model)
+├── APITests.robot             # API tests
+├── resources/                  # Page Object Resources
+│   ├── Common.robot          # Common keywords and variables
+│   └── HomePage.robot        # HomePage Page Object
+├── WebDriverManager.py
 └── README.md
 ```
+
+**Page Object Model**: Robot Framework uses Resource files for the Page Object Model pattern. Common keywords are in `resources/Common.robot`, and page-specific resources are in `resources/`. All selectors use `data-qa` attributes for consistency.
 
 ### Features
 
@@ -294,18 +342,28 @@ src/test/robot/
 - ✅ **Extensible** - Custom libraries support
 - ✅ **API + UI** - Combined testing capabilities
 
-### Example Test
+### Example Test (Using Page Object Model)
 
 ```robot
+*** Settings ***
+Resource          ${CURDIR}${/}resources${/}Common.robot
+Resource          ${CURDIR}${/}resources${/}HomePage.robot
+Test Setup        Setup WebDriver And Open Browser
+Test Teardown     Close Browser And Cleanup
+
 *** Test Cases ***
-Perform Google Search
-    Open Browser    https://www.google.com    chrome
-    Input Text      name:q    Robot Framework
-    Press Keys      name:q    RETURN
-    Wait Until Page Contains    Robot Framework
-    Page Should Contain Element    id:search
-    Close Browser
+Home Page Should Load
+    Navigate To Home Page
+    Verify Home Page Loaded
+
+Home Page Should Display Navigation Panel
+    Navigate To Home Page
+    Verify Sidebar Visible
+    Verify Navigation Title    Navigation
+    Verify Navigation Elements Present
 ```
+
+**Page Objects**: Resource files in `resources/` provide reusable keywords and selectors. `Common.robot` contains shared setup/teardown and common keywords, while page-specific resources like `HomePage.robot` contain page-specific keywords. All selectors use `data-qa` attributes for consistency.
 
 ### Best Use Cases
 
@@ -780,4 +838,4 @@ Use Maven profiles to run specific frameworks:
 ---
 
 **Created**: January 2025
-**Last Updated**: December 2025
+**Last Updated**: January 2026
