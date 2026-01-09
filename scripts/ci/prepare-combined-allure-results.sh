@@ -1108,8 +1108,12 @@ chmod +x scripts/ci/create-allure-categories.sh
 echo ""
 echo "🔍 Step 7.5: Analyzing and fixing timestamp issues..."
 chmod +x scripts/ci/analyze-and-fix-allure-timestamps.sh
-# Run in analyze-only mode first to see what issues exist
-if ./scripts/ci/analyze-and-fix-allure-timestamps.sh --analyze-only "$TARGET_DIR" 2>&1 | grep -q "issue"; then
+# Run analysis first to see what issues exist
+ANALYSIS_OUTPUT=$(./scripts/ci/analyze-and-fix-allure-timestamps.sh --analyze-only "$TARGET_DIR" 2>&1)
+ANALYSIS_EXIT=$?
+
+# Check if issues were found (script exits with non-zero if issues found, or check output)
+if echo "$ANALYSIS_OUTPUT" | grep -qiE "issue|warning|⚠️|❌" || [ "$ANALYSIS_EXIT" -ne 0 ]; then
     echo "   ⚠️  Timestamp issues detected, attempting to fix..."
     # Run with --fix to automatically fix issues
     ./scripts/ci/analyze-and-fix-allure-timestamps.sh --fix --backup "$TARGET_DIR"
