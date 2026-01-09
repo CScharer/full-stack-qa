@@ -2,6 +2,7 @@ import { Page, Locator } from '@playwright/test';
 
 /**
  * Page Object Model for the Home Page
+ * Uses data-qa selectors from frontend/app/page.tsx and frontend/components/Sidebar.tsx
  */
 export class HomePage {
   readonly page: Page;
@@ -15,14 +16,15 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    // Title changed to "Job Search Application" and centered
-    this.title = page.locator('h1.display-5, h1.display-4, h1');
-    this.applicationsCard = page.locator('a[href="/applications"]');
-    this.companiesCard = page.locator('a[href="/companies"]');
-    this.contactsCard = page.locator('a[href="/contacts"]');
-    this.clientsCard = page.locator('a[href="/clients"]');
-    this.notesCard = page.locator('a[href="/notes"]');
-    this.jobSearchSitesCard = page.locator('a[href="/job-search-sites"]');
+    // Title (data-qa from frontend/app/page.tsx)
+    this.title = page.locator('[data-qa="home-title"]');
+    // Navigation cards (data-qa attributes from Sidebar.tsx)
+    this.applicationsCard = page.locator('[data-qa="sidebar-nav-applications"]');
+    this.companiesCard = page.locator('[data-qa="sidebar-nav-companies"]');
+    this.contactsCard = page.locator('[data-qa="sidebar-nav-contacts"]');
+    this.clientsCard = page.locator('[data-qa="sidebar-nav-clients"]');
+    this.notesCard = page.locator('[data-qa="sidebar-nav-notes"]');
+    this.jobSearchSitesCard = page.locator('[data-qa="sidebar-nav-job-search-sites"]');
   }
 
   async navigate() {
