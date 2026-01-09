@@ -9,6 +9,7 @@ interface NavItem {
   href: string;
   label: string;
   description: string;
+  data_qa: string;
   icon?: string;
 }
 
@@ -17,36 +18,43 @@ const navItems: NavItem[] = [
     href: '/',
     label: 'Home',
     description: 'Dashboard and applications',
+    data_qa: 'sidebar-nav-home'
   },
   {
     href: '/applications',
     label: 'Applications',
     description: 'Manage your job applications',
+    data_qa: 'sidebar-nav-applications'
   },
   {
     href: '/companies',
     label: 'Companies',
     description: 'Track companies you\'ve applied to',
+    data_qa: 'sidebar-nav-companies'
   },
   {
     href: '/contacts',
     label: 'Contacts',
     description: 'Manage recruiters and contacts',
+    data_qa: 'sidebar-nav-contacts'
   },
   {
     href: '/clients',
     label: 'Clients',
     description: 'Manage client relationships',
+    data_qa: 'sidebar-nav-clients'
   },
   {
     href: '/notes',
     label: 'Notes',
     description: 'Track notes for applications',
+    data_qa: 'sidebar-nav-notes'
   },
   {
     href: '/job-search-sites',
     label: 'Job Search Sites',
     description: 'Manage job search platforms',
+    data_qa: 'sidebar-nav-job-search-sites'
   },
 ];
 
@@ -130,7 +138,8 @@ export function Sidebar() {
                           : 'text-dark hover-bg-light'
                       }`}
                       onClick={() => setIsOpen(false)}
-                      data-qa={`sidebar-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                      // data-qa={`sidebar-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                      data-qa={item.data_qa}
                     >
                       <div className="fw-medium">{item.label}</div>
                       <small className={`${isActive ? 'text-white-50' : 'text-muted'}`}>
