@@ -27,3 +27,7 @@ pytest-cov>=7.0.0
 # Development
 black>=25.12.0
 ruff>=0.14.10
+
+# Security updates for transitive dependencies
+urllib3>=2.6.0  # Fixes CVE: Decompression-bomb safeguards bypass (Alert #38)
+Werkzeug>=3.1.0  # Fixes CVE: safe_join() Windows device names vulnerability (Alert #39)
