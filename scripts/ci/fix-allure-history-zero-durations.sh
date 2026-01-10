@@ -36,6 +36,7 @@ FIXED_COUNT=0
 FILES_FIXED=0
 
 # Fix history-trend.json in report directory (used by UI)
+# CRITICAL: Also fix widgets/history-trend.json which is what the UI actually uses for rendering
 if [ -f "$REPORT_DIR/history/history-trend.json" ]; then
     echo "📊 Fixing history-trend.json in report directory..."
     
@@ -195,6 +196,16 @@ if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
         rm -f "$TEMP_FILE"
         echo "   ℹ️  No zero-duration entries found in results directory"
     fi
+fi
+
+# CRITICAL: Copy fixed history-trend.json to widgets directory
+# The UI uses widgets/history-trend.json for rendering, not history/history-trend.json
+if [ -f "$REPORT_DIR/history/history-trend.json" ] && [ -d "$REPORT_DIR/widgets" ]; then
+    echo ""
+    echo "📊 Copying fixed history-trend.json to widgets directory (UI uses this for rendering)..."
+    cp "$REPORT_DIR/history/history-trend.json" "$REPORT_DIR/widgets/history-trend.json" 2>/dev/null || true
+    echo "   ✅ Copied fixed history-trend.json to widgets directory"
+    echo "   This ensures the UI uses the fixed data with valid timestamps"
 fi
 
 echo ""
