@@ -39,34 +39,66 @@ FILES_FIXED=0
 if [ -f "$REPORT_DIR/history/history-trend.json" ]; then
     echo "📊 Fixing history-trend.json in report directory..."
     
-    TEMP_FILE=$(mktemp)
-    
-    # Fix zero durations: if duration is 0 or start == stop, set stop = start + 1ms
-    jq '[.[] | {
-        buildOrder: .buildOrder,
-        reportName: .reportName,
-        reportUrl: .reportUrl,
-        data: ([.data[] | 
-            if .time.duration == 0 or (.time.start == .time.stop) then
-                .time.stop = (.time.start + 1) |
-                .time.duration = 1
-            else . end
-        ])
-    }]' "$REPORT_DIR/history/history-trend.json" > "$TEMP_FILE" 2>/dev/null
-    
-    # Count how many entries were fixed
-    ORIGINAL_ZERO_COUNT=$(jq '[.[] | .data[] | select(.time.duration == 0 or .time.start == .time.stop)] | length' "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "0")
-    NEW_ZERO_COUNT=$(jq '[.[] | .data[] | select(.time.duration == 0 or .time.start == .time.stop)] | length' "$TEMP_FILE" 2>/dev/null || echo "0")
-    FIXED_IN_FILE=$((ORIGINAL_ZERO_COUNT - NEW_ZERO_COUNT))
-    
-    if [ "$FIXED_IN_FILE" -gt 0 ]; then
-        mv "$TEMP_FILE" "$REPORT_DIR/history/history-trend.json"
-        FIXED_COUNT=$((FIXED_COUNT + FIXED_IN_FILE))
-        FILES_FIXED=$((FILES_FIXED + 1))
-        echo "   ✅ Fixed $FIXED_IN_FILE zero-duration entry/entries in history-trend.json"
+    # Check if file is empty or invalid JSON
+    FILE_SIZE=$(wc -c < "$REPORT_DIR/history/history-trend.json" 2>/dev/null | tr -d ' ' || echo "0")
+    if [ "$FILE_SIZE" -le 2 ]; then
+        echo "   ⚠️  history-trend.json is empty or too small (size: $FILE_SIZE bytes) - skipping fix"
+        echo "   ℹ️  This may indicate history was not properly generated. Check history.jsonl or previous steps."
     else
-        rm -f "$TEMP_FILE"
-        echo "   ℹ️  No zero-duration entries found in history-trend.json"
+        # Verify it's valid JSON and has data
+        IS_VALID=$(jq -e 'if type == "array" then length > 0 else false end' "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "false")
+        if [ "$IS_VALID" != "true" ]; then
+            echo "   ⚠️  history-trend.json is not a valid non-empty array - skipping fix"
+            echo "   ℹ️  File may need to be rebuilt from history.jsonl"
+        else
+            TEMP_FILE=$(mktemp)
+            
+            # Fix zero durations: if duration is 0 or start == stop, set stop = start + 1ms
+            # Only process entries where .data is an array (not object or null)
+            jq '[.[] | {
+                buildOrder: .buildOrder,
+                reportName: .reportName,
+                reportUrl: .reportUrl,
+                data: (if (.data | type) == "array" then
+                    ([.data[] | 
+                        if .time and (.time.duration == 0 or (.time.start == .time.stop)) then
+                            .time.stop = ((.time.start // 0) + 1) |
+                            .time.duration = 1
+                        else . end
+                    ])
+                else
+                    .data
+                end)
+            }]' "$REPORT_DIR/history/history-trend.json" > "$TEMP_FILE" 2>/dev/null
+            
+            # Verify the temp file is valid and non-empty
+            if [ $? -eq 0 ] && [ -s "$TEMP_FILE" ]; then
+                TEMP_VALID=$(jq -e 'if type == "array" then length > 0 else false end' "$TEMP_FILE" 2>/dev/null || echo "false")
+                if [ "$TEMP_VALID" = "true" ]; then
+                    # Count how many entries were fixed
+                    ORIGINAL_ZERO_COUNT=$(jq '[.[] | .data[]? | select(.time and (.time.duration == 0 or .time.start == .time.stop))] | length' "$REPORT_DIR/history/history-trend.json" 2>/dev/null || echo "0")
+                    NEW_ZERO_COUNT=$(jq '[.[] | .data[]? | select(.time and (.time.duration == 0 or .time.start == .time.stop))] | length' "$TEMP_FILE" 2>/dev/null || echo "0")
+                    FIXED_IN_FILE=$((ORIGINAL_ZERO_COUNT - NEW_ZERO_COUNT))
+                    
+                    if [ "$FIXED_IN_FILE" -gt 0 ]; then
+                        mv "$TEMP_FILE" "$REPORT_DIR/history/history-trend.json"
+                        FIXED_COUNT=$((FIXED_COUNT + FIXED_IN_FILE))
+                        FILES_FIXED=$((FILES_FIXED + 1))
+                        echo "   ✅ Fixed $FIXED_IN_FILE zero-duration entry/entries in history-trend.json"
+                    else
+                        # Even if no fixes, preserve the file if it's valid
+                        mv "$TEMP_FILE" "$REPORT_DIR/history/history-trend.json"
+                        echo "   ℹ️  No zero-duration entries found in history-trend.json (file preserved)"
+                    fi
+                else
+                    rm -f "$TEMP_FILE"
+                    echo "   ⚠️  Fix resulted in invalid/empty array - preserving original file"
+                fi
+            else
+                rm -f "$TEMP_FILE"
+                echo "   ⚠️  Failed to process history-trend.json - preserving original file"
+            fi
+        fi
     fi
 else
     echo "   ⚠️  history-trend.json not found in report directory (may not exist yet)"
@@ -76,31 +108,61 @@ fi
 if [ -f "$REPORT_DIR/history/duration-trend.json" ]; then
     echo "📊 Fixing duration-trend.json in report directory..."
     
-    TEMP_FILE=$(mktemp)
-    
-    # Fix zero durations in duration-trend.json
-    jq '[.[] | {
-        buildOrder: .buildOrder,
-        data: ([.data[] | 
-            if .time.duration == 0 or (.time.start == .time.stop) then
-                .time.stop = (.time.start + 1) |
-                .time.duration = 1
-            else . end
-        ])
-    }]' "$REPORT_DIR/history/duration-trend.json" > "$TEMP_FILE" 2>/dev/null
-    
-    ORIGINAL_ZERO_COUNT=$(jq '[.[] | .data[] | select(.time.duration == 0 or (.time.start == .time.stop))] | length' "$REPORT_DIR/history/duration-trend.json" 2>/dev/null || echo "0")
-    NEW_ZERO_COUNT=$(jq '[.[] | .data[] | select(.time.duration == 0 or (.time.start == .time.stop))] | length' "$TEMP_FILE" 2>/dev/null || echo "0")
-    FIXED_IN_FILE=$((ORIGINAL_ZERO_COUNT - NEW_ZERO_COUNT))
-    
-    if [ "$FIXED_IN_FILE" -gt 0 ]; then
-        mv "$TEMP_FILE" "$REPORT_DIR/history/duration-trend.json"
-        FIXED_COUNT=$((FIXED_COUNT + FIXED_IN_FILE))
-        FILES_FIXED=$((FILES_FIXED + 1))
-        echo "   ✅ Fixed $FIXED_IN_FILE zero-duration entry/entries in duration-trend.json"
+    # Check if file is empty or invalid JSON
+    FILE_SIZE=$(wc -c < "$REPORT_DIR/history/duration-trend.json" 2>/dev/null | tr -d ' ' || echo "0")
+    if [ "$FILE_SIZE" -le 2 ]; then
+        echo "   ⚠️  duration-trend.json is empty or too small (size: $FILE_SIZE bytes) - skipping fix"
     else
-        rm -f "$TEMP_FILE"
-        echo "   ℹ️  No zero-duration entries found in duration-trend.json"
+        # Verify it's valid JSON and has data
+        IS_VALID=$(jq -e 'if type == "array" then length > 0 else false end' "$REPORT_DIR/history/duration-trend.json" 2>/dev/null || echo "false")
+        if [ "$IS_VALID" != "true" ]; then
+            echo "   ⚠️  duration-trend.json is not a valid non-empty array - skipping fix"
+        else
+            TEMP_FILE=$(mktemp)
+            
+            # Fix zero durations in duration-trend.json
+            # Only process entries where .data is an array (not object or null)
+            jq '[.[] | {
+                buildOrder: .buildOrder,
+                data: (if (.data | type) == "array" then
+                    ([.data[] | 
+                        if .time and (.time.duration == 0 or (.time.start == .time.stop)) then
+                            .time.stop = ((.time.start // 0) + 1) |
+                            .time.duration = 1
+                        else . end
+                    ])
+                else
+                    .data
+                end)
+            }]' "$REPORT_DIR/history/duration-trend.json" > "$TEMP_FILE" 2>/dev/null
+            
+            # Verify the temp file is valid and non-empty
+            if [ $? -eq 0 ] && [ -s "$TEMP_FILE" ]; then
+                TEMP_VALID=$(jq -e 'if type == "array" then length > 0 else false end' "$TEMP_FILE" 2>/dev/null || echo "false")
+                if [ "$TEMP_VALID" = "true" ]; then
+                    ORIGINAL_ZERO_COUNT=$(jq '[.[] | .data[]? | select(.time and (.time.duration == 0 or (.time.start == .time.stop)))] | length' "$REPORT_DIR/history/duration-trend.json" 2>/dev/null || echo "0")
+                    NEW_ZERO_COUNT=$(jq '[.[] | .data[]? | select(.time and (.time.duration == 0 or (.time.start == .time.stop)))] | length' "$TEMP_FILE" 2>/dev/null || echo "0")
+                    FIXED_IN_FILE=$((ORIGINAL_ZERO_COUNT - NEW_ZERO_COUNT))
+                    
+                    if [ "$FIXED_IN_FILE" -gt 0 ]; then
+                        mv "$TEMP_FILE" "$REPORT_DIR/history/duration-trend.json"
+                        FIXED_COUNT=$((FIXED_COUNT + FIXED_IN_FILE))
+                        FILES_FIXED=$((FILES_FIXED + 1))
+                        echo "   ✅ Fixed $FIXED_IN_FILE zero-duration entry/entries in duration-trend.json"
+                    else
+                        # Even if no fixes, preserve the file if it's valid
+                        mv "$TEMP_FILE" "$REPORT_DIR/history/duration-trend.json"
+                        echo "   ℹ️  No zero-duration entries found in duration-trend.json (file preserved)"
+                    fi
+                else
+                    rm -f "$TEMP_FILE"
+                    echo "   ⚠️  Fix resulted in invalid/empty array - preserving original file"
+                fi
+            else
+                rm -f "$TEMP_FILE"
+                echo "   ⚠️  Failed to process duration-trend.json - preserving original file"
+            fi
+        fi
     fi
 fi
 

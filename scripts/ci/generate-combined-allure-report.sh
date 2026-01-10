@@ -681,11 +681,28 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
         fi
         
         if [ -f "$TEMP_FIX_FILE" ] && [ -s "$TEMP_FIX_FILE" ]; then
-            mv "$TEMP_FIX_FILE" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
-            echo "   ✅ Rebuilt history-trend.json from history.jsonl - all entries now have array data"
+            # Verify the rebuilt file is not empty (just "[]")
+            FILE_CONTENT=$(cat "$TEMP_FIX_FILE" 2>/dev/null | tr -d '[:space:]' || echo "")
+            ARRAY_LENGTH=$(jq 'length' "$TEMP_FIX_FILE" 2>/dev/null || echo "0")
+            
+            if [ "$FILE_CONTENT" != "[]" ] && [ "$ARRAY_LENGTH" != "0" ] && [ "$ARRAY_LENGTH" != "null" ]; then
+                mv "$TEMP_FIX_FILE" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
+                echo "   ✅ Rebuilt history-trend.json from history.jsonl - all entries now have array data"
+            else
+                echo "   ⚠️  Rebuild resulted in empty array - preserving original file (if exists)"
+                rm -f "$TEMP_FIX_FILE" 2>/dev/null || true
+                # Don't overwrite existing file if rebuild is empty
+                if [ ! -f "$REPORT_DIR/history/history-trend.json" ] || [ ! -s "$REPORT_DIR/history/history-trend.json" ]; then
+                    echo "   ⚠️  No valid history-trend.json exists - history may need to be regenerated"
+                fi
+            fi
         else
             echo "   ⚠️  Failed to rebuild format, but continuing..."
             rm -f "$TEMP_FIX_FILE" 2>/dev/null || true
+            # Don't overwrite existing file if rebuild failed
+            if [ ! -f "$REPORT_DIR/history/history-trend.json" ] || [ ! -s "$REPORT_DIR/history/history-trend.json" ]; then
+                echo "   ⚠️  No valid history-trend.json exists - history may need to be regenerated"
+            fi
         fi
     else
         echo "   ✅ history-trend.json format is correct (all entries have array data)"
