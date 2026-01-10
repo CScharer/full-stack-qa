@@ -610,6 +610,7 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
         TEMP_FIX_FILE=$(mktemp)
         echo "[]" > "$TEMP_FIX_FILE"
         
+        # Try to rebuild from history.jsonl first (if it exists)
         if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
             while IFS= read -r line; do
                 if [ -n "$line" ]; then
@@ -641,9 +642,59 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
                     fi
                 fi
             done < "$RESULTS_DIR/history/history.jsonl"
-            
-            # Add current run data if not already in history.jsonl (extract from result files)
-            if [ -d "$RESULTS_DIR" ] && [ "$(find "$RESULTS_DIR" -name "*-result.json" -type f | wc -l | tr -d ' ')" -gt 0 ]; then
+        fi
+        
+        # If history.jsonl didn't exist or produced empty results, try extracting from history.json
+        # history.json has individual test data in items arrays: {hash: {items: [{uid, status, time}]}}
+        ARRAY_LENGTH=$(jq 'length' "$TEMP_FIX_FILE" 2>/dev/null || echo "0")
+        if [ "$ARRAY_LENGTH" = "0" ] || [ "$ARRAY_LENGTH" = "null" ]; then
+            if [ -f "$REPORT_DIR/history/history.json" ] || [ -f "$RESULTS_DIR/history/history.json" ]; then
+                HISTORY_JSON_FILE=""
+                if [ -f "$REPORT_DIR/history/history.json" ]; then
+                    HISTORY_JSON_FILE="$REPORT_DIR/history/history.json"
+                elif [ -f "$RESULTS_DIR/history/history.json" ]; then
+                    HISTORY_JSON_FILE="$RESULTS_DIR/history/history.json"
+                fi
+                
+                if [ -n "$HISTORY_JSON_FILE" ]; then
+                    echo "   🔧 Extracting individual test data from history.json..."
+                    
+                    # Extract all individual test items from history.json
+                    # Structure: {hash: {items: [{uid, status, time}]}}
+                    # We need to collect all items from all hashes and group by buildOrder
+                    # For now, we'll create a single entry with all items (buildOrder from executor.json)
+                    CURRENT_BUILD_ORDER=$(jq -r '.buildOrder // "1"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "1")
+                    REPORT_NAME=$(jq -r '.reportName // "Allure Report"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "Allure Report")
+                    
+                    # Extract all items from all hash entries in history.json
+                    all_items=$(jq '[.[] | .items[]? | {
+                        uid: .uid,
+                        status: .status,
+                        time: .time
+                    }]' "$HISTORY_JSON_FILE" 2>/dev/null || echo "[]")
+                    
+                    if [ "$all_items" != "[]" ] && [ "$all_items" != "null" ]; then
+                        ITEMS_COUNT=$(echo "$all_items" | jq 'length' 2>/dev/null || echo "0")
+                        if [ "$ITEMS_COUNT" != "0" ] && [ "$ITEMS_COUNT" != "null" ] && [ "$ITEMS_COUNT" -gt 0 ]; then
+                            jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+                               --arg report_name "$REPORT_NAME" \
+                               --argjson data_array "$all_items" \
+                               '. += [{
+                                 buildOrder: $build_order,
+                                 reportName: $report_name,
+                                 reportUrl: "",
+                                 data: $data_array
+                               }]' "$TEMP_FIX_FILE" > "${TEMP_FIX_FILE}.tmp" 2>/dev/null && \
+                            mv "${TEMP_FIX_FILE}.tmp" "$TEMP_FIX_FILE" 2>/dev/null || true
+                            echo "   ✅ Extracted $ITEMS_COUNT individual test(s) from history.json"
+                        fi
+                    fi
+                fi
+            fi
+        fi
+        
+        # Add current run data if not already in history.jsonl (extract from result files)
+        if [ -d "$RESULTS_DIR" ] && [ "$(find "$RESULTS_DIR" -name "*-result.json" -type f | wc -l | tr -d ' ')" -gt 0 ]; then
                 CURRENT_BUILD_ORDER=$(jq -r '.buildOrder // "1"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "1")
                 REPORT_NAME=$(jq -r '.reportName // "Allure Report"' "$RESULTS_DIR/executor.json" 2>/dev/null || echo "Allure Report")
                 
@@ -678,7 +729,6 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
                     fi
                 fi
             fi
-        fi
         
         if [ -f "$TEMP_FIX_FILE" ] && [ -s "$TEMP_FIX_FILE" ]; then
             # Verify the rebuilt file is not empty (just "[]")
