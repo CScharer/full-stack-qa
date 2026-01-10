@@ -28,6 +28,33 @@ if [ -z "$BUILD_URL" ]; then
   fi
 fi
 
+# Get PR number from GitHub context or branch name
+PR_NUMBER=""
+if [ -n "${GITHUB_EVENT_NAME}" ] && [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+  # Try to get PR number from event payload
+  if [ -f "${GITHUB_EVENT_PATH}" ]; then
+    PR_NUMBER=$(jq -r '.pull_request.number // .number // ""' "${GITHUB_EVENT_PATH}" 2>/dev/null || echo "")
+  fi
+fi
+
+# If PR number not found, try to extract from branch name (e.g., "fix/issue-123" or "pr-456")
+if [ -z "$PR_NUMBER" ] && [ -n "${GITHUB_HEAD_REF}" ]; then
+  # Try patterns like "pr-123", "pr/123", "fix/pr-123", etc.
+  PR_NUMBER=$(echo "${GITHUB_HEAD_REF}" | grep -oE '(pr|PR)[-/]?[0-9]+' | grep -oE '[0-9]+' | head -1 || echo "")
+fi
+
+# Construct report name with pipeline and PR information
+REPORT_NAME="Allure Report"
+if [ -n "${BUILD_ORDER}" ] && [ "${BUILD_ORDER}" != "1" ]; then
+  if [ -n "$PR_NUMBER" ]; then
+    REPORT_NAME="Allure Report - Pipeline #${BUILD_ORDER} - PR #${PR_NUMBER}"
+  else
+    REPORT_NAME="Allure Report - Pipeline #${BUILD_ORDER}"
+  fi
+elif [ -n "$PR_NUMBER" ]; then
+  REPORT_NAME="Allure Report - PR #${PR_NUMBER}"
+fi
+
 # Create directory if it doesn't exist
 mkdir -p "$RESULTS_DIR"
 
@@ -41,12 +68,16 @@ cat > "$RESULTS_DIR/executor.json" << EOF
   "buildName": "${BUILD_NAME}",
   "buildUrl": "${BUILD_URL}",
   "reportUrl": "",
-  "reportName": "Allure Report"
+  "reportName": "${REPORT_NAME}"
 }
 EOF
 
 echo "✅ Created Allure executor file: $RESULTS_DIR/executor.json"
 echo "   Build Name: $BUILD_NAME"
 echo "   Build Order: $BUILD_ORDER"
+echo "   Report Name: $REPORT_NAME"
+if [ -n "$PR_NUMBER" ]; then
+  echo "   PR Number: $PR_NUMBER"
+fi
 echo "   Build URL: ${BUILD_URL:-N/A}"
 

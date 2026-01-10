@@ -100,6 +100,17 @@ print(f"   Min start: {min_start} ({datetime.fromtimestamp(min_start / 1000)})")
 print(f"   Max stop: {max_stop} ({datetime.fromtimestamp(max_stop / 1000)})")
 print(f"   Duration: {duration}ms ({duration / 1000}s)")
 
+# Get reportName from executor.json to preserve it in summary
+report_name = "Allure Report"
+executor_file = Path(results_dir) / "executor.json"
+if executor_file.exists():
+    try:
+        with open(executor_file, 'r', encoding='utf-8') as f:
+            executor_data = json.load(f)
+            report_name = executor_data.get('reportName', 'Allure Report')
+    except Exception:
+        pass
+
 # Update summary.json
 summary_file = Path(report_dir) / "widgets" / "summary.json"
 if not summary_file.exists():
