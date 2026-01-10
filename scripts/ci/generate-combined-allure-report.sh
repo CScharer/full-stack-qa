@@ -608,8 +608,25 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
         # Preserve existing array-format entries, only rebuild object-format entries
         # This maintains historical buildOrder entries for trend charts
         TEMP_FIX_FILE=$(mktemp)
-        # Start with existing array-format entries (preserve history)
+        # Start with existing array-format entries from REPORT directory (preserve history from current report)
         jq '[.[] | select(.data | type == "array")]' "$REPORT_DIR/history/history-trend.json" > "$TEMP_FIX_FILE" 2>/dev/null || echo "[]" > "$TEMP_FIX_FILE"
+        
+        # Also preserve array-format entries from RESULTS directory (downloaded previous history)
+        # This ensures we don't lose historical buildOrder entries from previous runs
+        if [ -f "$RESULTS_DIR/history/history-trend.json" ]; then
+            PREVIOUS_ARRAY_ENTRIES=$(jq '[.[] | select(.data | type == "array")]' "$RESULTS_DIR/history/history-trend.json" 2>/dev/null || echo "[]")
+            if [ "$PREVIOUS_ARRAY_ENTRIES" != "[]" ] && [ "$PREVIOUS_ARRAY_ENTRIES" != "null" ]; then
+                PREVIOUS_COUNT=$(echo "$PREVIOUS_ARRAY_ENTRIES" | jq 'length' 2>/dev/null || echo "0")
+                if [ "$PREVIOUS_COUNT" != "0" ] && [ "$PREVIOUS_COUNT" != "null" ] && [ "$PREVIOUS_COUNT" -gt 0 ]; then
+                    # Merge previous array entries with current ones (avoid duplicates by buildOrder)
+                    jq --argjson previous "$PREVIOUS_ARRAY_ENTRIES" \
+                       '($previous + .) | group_by(.buildOrder) | map(.[0])' \
+                       "$TEMP_FIX_FILE" > "${TEMP_FIX_FILE}.tmp" 2>/dev/null && \
+                    mv "${TEMP_FIX_FILE}.tmp" "$TEMP_FIX_FILE" 2>/dev/null || true
+                    echo "   ✅ Preserved $PREVIOUS_COUNT array-format entry/entries from previous history"
+                fi
+            fi
+        fi
         
         # Try to rebuild from history.jsonl first (if it exists)
         if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
