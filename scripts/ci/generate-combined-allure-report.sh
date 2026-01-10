@@ -458,6 +458,13 @@ else
             echo "✅ Allure2 history copied to report directory ($HISTORY_FILES file(s))"
             echo "   History will be uploaded as artifact and deployed to GitHub Pages"
         fi
+        
+        # Step 5.5: Fix zero durations in history files (prevents NaN errors in trend charts)
+        echo ""
+        echo "🔧 Step 5.5: Fixing zero durations in history files..."
+        chmod +x scripts/ci/fix-allure-history-zero-durations.sh
+        ./scripts/ci/fix-allure-history-zero-durations.sh "$RESULTS_DIR" "$REPORT_DIR"
+        echo "✅ Zero duration fix completed"
     fi
 else
     # Allure2: Check for individual JSON files
@@ -696,5 +703,18 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
         else
             echo "   ✅ widgets/history-trend.json already exists and is up to date"
         fi
+    fi
+fi
+
+# Step 5.5: Fix zero durations in history files (prevents NaN errors in trend charts)
+# This must run after history is copied/created but before report is finalized
+if [ -f "$REPORT_DIR/history/history-trend.json" ] || [ -f "$REPORT_DIR/history/duration-trend.json" ]; then
+    echo ""
+    echo "🔧 Step 5.5: Fixing zero durations in history files..."
+    chmod +x scripts/ci/fix-allure-history-zero-durations.sh
+    if ./scripts/ci/fix-allure-history-zero-durations.sh "$RESULTS_DIR" "$REPORT_DIR"; then
+        echo "✅ Zero duration fix completed"
+    else
+        echo "   ⚠️  Zero duration fix had issues (continuing anyway)"
     fi
 fi

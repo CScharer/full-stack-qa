@@ -444,13 +444,21 @@ Allure reports automatically track test execution trends over time, showing:
 **In CI/CD Pipeline** (Automatic):
 1. Before generating a new report, the pipeline downloads history from the previous deployment
 2. History is merged with new test results during report generation
-3. Updated history is included in the new report
-4. History is preserved for the next run (both in GitHub Pages and as artifact)
+3. **Zero durations are automatically fixed** (prevents NaN errors in trend charts)
+4. Updated history is included in the new report
+5. History is preserved for the next run (both in GitHub Pages and as artifact)
 
 **History Preservation Methods**:
 - **Primary**: Downloads from GitHub Pages (previous deployment)
 - **Fallback**: Downloads from GitHub Actions artifact (if GitHub Pages unavailable)
 - **Upload**: History is uploaded as artifact (90-day retention) for reliability
+
+**Zero Duration Fix** (Automatic):
+- Some tests may have `start == stop`, resulting in `duration = 0`
+- Zero durations cause NaN errors in SVG chart rendering, resulting in empty trend charts
+- The pipeline automatically fixes this by setting minimum duration of 1ms for affected entries
+- This ensures chart coordinates can be calculated correctly
+- See troubleshooting section for more details
 
 **Manual Local Usage**:
 ```bash
@@ -647,6 +655,25 @@ python3 -m http.server 8080 -d target/allure-report
 **Issue**: "Nested arrays in history"
 - **Cause**: History merge creating nested structure
 - **Solution**: Fixed in PR #102 using `flatten` in jq commands
+
+**Issue**: "Empty trend chart with NaN errors in browser console"
+- **Cause**: Zero durations (start == stop) in history-trend.json cause NaN values when Allure2 calculates chart coordinates
+- **Symptoms**: 
+  - Trend chart displays but is empty (no data points)
+  - Browser console shows SVG errors: `Expected number, "M0,NaNL..."` and `Expected length, "NaN"`
+  - History files exist and have data, but chart can't render
+- **Solution**: 
+  - Script `fix-allure-history-zero-durations.sh` automatically fixes zero durations
+  - Sets minimum duration of 1ms for entries where start == stop
+  - Runs automatically during report generation (Step 5.5)
+  - Ensures all durations are valid numbers for chart calculations
+- **Verification**:
+  ```bash
+  # Check for zero durations in history
+  jq '[.[] | .data[] | select(.time.duration == 0 or .time.start == .time.stop)] | length' \
+    allure-report-combined/history/history-trend.json
+  # Should return 0 after fix
+  ```
 
 ### Debugging Commands
 
