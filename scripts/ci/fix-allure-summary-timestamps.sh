@@ -133,8 +133,10 @@ try:
     summary['time']['start'] = min_start
     summary['time']['stop'] = max_stop
     summary['time']['duration'] = duration
-    # Preserve reportName from executor.json
-    if 'reportName' not in summary or summary.get('reportName') == 'Allure Report':
+    # Always update reportName from executor.json to ensure pipeline/PR info is displayed
+    if report_name and report_name != 'Allure Report':
+        summary['reportName'] = report_name
+    elif 'reportName' not in summary:
         summary['reportName'] = report_name
     
     # Write updated summary

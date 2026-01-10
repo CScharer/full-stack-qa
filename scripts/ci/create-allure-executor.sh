@@ -16,7 +16,8 @@ set -e
 
 RESULTS_DIR="${1:-allure-results-combined}"
 BUILD_NAME="${2:-${GITHUB_WORKFLOW:-CI Build}}"
-BUILD_ORDER="${3:-${GITHUB_RUN_NUMBER:-1}}"
+# Use GITHUB_RUN_NUMBER if available, otherwise use GITHUB_RUN_ID as fallback
+BUILD_ORDER="${3:-${GITHUB_RUN_NUMBER:-${GITHUB_RUN_ID:-1}}}"
 BUILD_URL="${4:-}"
 
 # If BUILD_URL not provided, construct from GitHub Actions context
@@ -44,8 +45,9 @@ if [ -z "$PR_NUMBER" ] && [ -n "${GITHUB_HEAD_REF}" ]; then
 fi
 
 # Construct report name with pipeline and PR information
+# Always include pipeline number if available (even if it's "1")
 REPORT_NAME="Allure Report"
-if [ -n "${BUILD_ORDER}" ] && [ "${BUILD_ORDER}" != "1" ]; then
+if [ -n "${BUILD_ORDER}" ] && [ "${BUILD_ORDER}" != "" ] && [ "${BUILD_ORDER}" != "null" ]; then
   if [ -n "$PR_NUMBER" ]; then
     REPORT_NAME="Allure Report - Pipeline #${BUILD_ORDER} - PR #${PR_NUMBER}"
   else
