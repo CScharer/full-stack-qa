@@ -20,6 +20,7 @@ echo ""
 
 # CRITICAL: Clean up old container files before creating new ones
 # Old containers from previous runs can interfere with Allure's Suites tab display
+# This cleanup MUST happen before any container processing to prevent conflicts
 echo "🧹 Cleaning up old container files..."
 OLD_CONTAINER_COUNT=$(find "$RESULTS_DIR" -name "*-container.json" -type f 2>/dev/null | wc -l | tr -d ' ')
 if [ "$OLD_CONTAINER_COUNT" -gt 0 ]; then
@@ -28,6 +29,26 @@ if [ "$OLD_CONTAINER_COUNT" -gt 0 ]; then
     echo "   ✅ Cleaned up old container files"
 else
     echo "   No old container files found"
+fi
+echo ""
+
+# CRITICAL: Verify cleanup was successful
+REMAINING_CONTAINERS=$(find "$RESULTS_DIR" -name "*-container.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+if [ "$REMAINING_CONTAINERS" -gt 0 ]; then
+    echo "   ⚠️  WARNING: $REMAINING_CONTAINERS container file(s) still remain after cleanup"
+    echo "   This may indicate a cleanup issue - listing remaining files:"
+    find "$RESULTS_DIR" -name "*-container.json" -type f 2>/dev/null | head -5 | sed 's/^/      /'
+    echo "   Attempting force cleanup..."
+    find "$RESULTS_DIR" -name "*-container.json" -type f -delete 2>/dev/null || true
+    REMAINING_AFTER_FORCE=$(find "$RESULTS_DIR" -name "*-container.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$REMAINING_AFTER_FORCE" -gt 0 ]; then
+        echo "   ❌ ERROR: $REMAINING_AFTER_FORCE container file(s) still remain after force cleanup"
+        echo "   This may cause Allure2 to only process one framework in Suites tab"
+    else
+        echo "   ✅ Force cleanup successful"
+    fi
+else
+    echo "   ✅ Cleanup verified - no remaining container files"
 fi
 echo ""
 
@@ -595,6 +616,44 @@ print(f"   Container files found in directory: {len(container_files)}")
 if len(container_files) != (containers_created + top_level_containers):
     print(f"⚠️  WARNING: Expected {containers_created + top_level_containers} container files, but found {len(container_files)}")
     print(f"   This may indicate some containers were not created or were deleted")
+
+# CRITICAL: Verify all top-level containers have valid structure
+# Allure2 requires proper container hierarchy to display all frameworks in Suites tab
+print(f"")
+print(f"🔍 Verifying top-level container structure...")
+top_level_issues = []
+for suite_name in suite_groups.keys():
+    # Check if top-level container exists for this suite
+    top_container_found = False
+    for container_file in container_files:
+        try:
+            with open(container_file, 'r', encoding='utf-8') as f:
+                container_data = json.load(f)
+                container_name = container_data.get('name', '')
+                suite_label = next((l.get('value') for l in container_data.get('labels', []) if l.get('name') == 'suite'), None)
+                children = container_data.get('children', [])
+                has_env_suffix = any(env in container_name for env in ['[DEV]', '[TEST]', '[PROD]'])
+                
+                # Check if this is a top-level container for this suite
+                if (container_name == suite_name or suite_label == suite_name) and not has_env_suffix:
+                    top_container_found = True
+                    # Verify it has children (env containers)
+                    if len(children) == 0:
+                        top_level_issues.append(f"   ⚠️  Top-level container '{suite_name}' has no children (env containers)")
+                    break
+        except Exception as e:
+            continue
+    
+    if not top_container_found:
+        top_level_issues.append(f"   ⚠️  Top-level container not found for suite '{suite_name}'")
+
+if top_level_issues:
+    print(f"   Found {len(top_level_issues)} issue(s) with top-level containers:")
+    for issue in top_level_issues:
+        print(issue)
+    print(f"   ⚠️  These issues may cause Allure2 to only display one framework in Suites tab")
+else:
+    print(f"   ✅ All top-level containers have valid structure")
 
 # List container files for debugging
 if len(container_files) > 0:
