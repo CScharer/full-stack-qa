@@ -603,12 +603,13 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
     
     if [ "$HAS_OBJECT_DATA" != "0" ] && [ "$HAS_OBJECT_DATA" != "null" ]; then
         echo "   ⚠️  Found $HAS_OBJECT_DATA entry/entries with object data (wrong format - should be array)"
-        echo "   🔧 Rebuilding from history.jsonl to ensure correct array format..."
+        echo "   🔧 Rebuilding entries with object data to ensure correct array format..."
         
-        # Always rebuild from history.jsonl when we detect object data (source of truth)
-        # This ensures all entries have array format, not single objects or aggregated stats
+        # Preserve existing array-format entries, only rebuild object-format entries
+        # This maintains historical buildOrder entries for trend charts
         TEMP_FIX_FILE=$(mktemp)
-        echo "[]" > "$TEMP_FIX_FILE"
+        # Start with existing array-format entries (preserve history)
+        jq '[.[] | select(.data | type == "array")]' "$REPORT_DIR/history/history-trend.json" > "$TEMP_FIX_FILE" 2>/dev/null || echo "[]" > "$TEMP_FIX_FILE"
         
         # Try to rebuild from history.jsonl first (if it exists)
         if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
