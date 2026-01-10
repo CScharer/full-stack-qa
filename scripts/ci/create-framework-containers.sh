@@ -18,6 +18,19 @@ echo "════════════════════════�
 echo "   Results directory: $RESULTS_DIR"
 echo ""
 
+# CRITICAL: Clean up old container files before creating new ones
+# Old containers from previous runs can interfere with Allure's Suites tab display
+echo "🧹 Cleaning up old container files..."
+OLD_CONTAINER_COUNT=$(find "$RESULTS_DIR" -name "*-container.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+if [ "$OLD_CONTAINER_COUNT" -gt 0 ]; then
+    echo "   Found $OLD_CONTAINER_COUNT old container file(s) - removing..."
+    find "$RESULTS_DIR" -name "*-container.json" -type f -delete 2>/dev/null || true
+    echo "   ✅ Cleaned up old container files"
+else
+    echo "   No old container files found"
+fi
+echo ""
+
 # Use Python to create containers for each framework suite
 python3 <<'PYTHON_SCRIPT'
 import json
