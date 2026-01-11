@@ -215,35 +215,57 @@ try:
     failures = stats.get('failures', 0)
     pending = stats.get('pending', 0)
     
-    # Extract test execution start time from stats (Cypress provides start/end times)
-    # Try multiple possible timestamp fields
+    # CRITICAL: Extract test execution start time
+    # Priority: 1) File modification time (most accurate for environment-specific results)
+    #           2) Stats timestamp from JSON (may be same across environments)
+    #           3) Current time (fallback)
+    # 
+    # File modification time is preferred because:
+    # - Each environment's JSON file is modified when tests run
+    # - Different environments run at different times, so file mtime differs
+    # - Stats timestamp may be the same if JSON files are generated/copied together
+    
     test_start_time = None
-    if 'start' in stats:
-        test_start_time = stats.get('start')
-    elif 'startedAt' in stats:
-        test_start_time = stats.get('startedAt')
-    elif 'startTime' in stats:
-        test_start_time = stats.get('startTime')
     
-    # Convert to milliseconds if it's a string (ISO format) or already a timestamp
-    if test_start_time:
-        if isinstance(test_start_time, str):
-            try:
-                # Parse ISO format timestamp
-                dt = datetime.fromisoformat(test_start_time.replace('Z', '+00:00'))
-                test_start_time = int(dt.timestamp() * 1000)
-            except:
-                test_start_time = None
-        elif isinstance(test_start_time, (int, float)):
-            # If already a timestamp, ensure it's in milliseconds
-            if test_start_time < 10000000000:  # Likely seconds, convert to milliseconds
-                test_start_time = int(test_start_time * 1000)
-            else:
-                test_start_time = int(test_start_time)
+    # First, try file modification time (most reliable for environment-specific timestamps)
+    try:
+        file_mtime = os.path.getmtime(json_file)
+        test_start_time = int(file_mtime * 1000)
+        print(f"   📅 Using file modification time: {datetime.fromtimestamp(file_mtime).isoformat()}")
+    except:
+        pass
     
-    # Fallback to current time if no timestamp found
+    # If file mtime not available, try stats timestamp
+    if not test_start_time:
+        if 'start' in stats:
+            test_start_time = stats.get('start')
+        elif 'startedAt' in stats:
+            test_start_time = stats.get('startedAt')
+        elif 'startTime' in stats:
+            test_start_time = stats.get('startTime')
+        
+        # Convert to milliseconds if it's a string (ISO format) or already a timestamp
+        if test_start_time:
+            if isinstance(test_start_time, str):
+                try:
+                    # Parse ISO format timestamp
+                    dt = datetime.fromisoformat(test_start_time.replace('Z', '+00:00'))
+                    test_start_time = int(dt.timestamp() * 1000)
+                    print(f"   📅 Using stats timestamp: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
+                except:
+                    test_start_time = None
+            elif isinstance(test_start_time, (int, float)):
+                # If already a timestamp, ensure it's in milliseconds
+                if test_start_time < 10000000000:  # Likely seconds, convert to milliseconds
+                    test_start_time = int(test_start_time * 1000)
+                else:
+                    test_start_time = int(test_start_time)
+                print(f"   📅 Using stats timestamp: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
+    
+    # Final fallback to current time (should rarely happen)
     if not test_start_time:
         test_start_time = int(datetime.now().timestamp() * 1000)
+        print(f"   ⚠️  Using current time as fallback (file mtime and stats timestamp unavailable)")
     
     print(f"📊 Cypress Stats: {total} tests, {passes} passed, {failures} failed, {pending} pending")
     if test_start_time:
