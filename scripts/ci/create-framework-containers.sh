@@ -552,7 +552,9 @@ for suite_name, env_groups in sorted(suite_groups.items()):
         "children": env_container_uuids,  # References env containers, not results
         "description": f"{suite_name} test suite (all environments)",
         "labels": [
-            {"name": "suite", "value": suite_name}
+            # NOTE: Top-level containers should NOT have suite labels
+            # Allure2 may group containers by suite label and only show the first one
+            # The container name and children structure are sufficient for hierarchy
         ],
         "befores": [],
         "afters": [],
