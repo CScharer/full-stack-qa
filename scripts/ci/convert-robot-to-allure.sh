@@ -204,22 +204,21 @@ try:
                     except:
                         pass
     
-    # CRITICAL: Fallback to file modification time if no timestamp found
-    # File modification time is preferred over current time because:
-    # - Each environment's XML file is modified when tests run
-    # - Different environments run at different times, so file mtime differs
+    # CRITICAL: Fallback to file modification time if no timestamp found in XML
+    # File modification time is a fallback (not preferred) because:
+    # - It reflects when artifact was downloaded/processed, not when tests actually ran
+    # - XML timestamps (from Robot Framework) are preferred as they reflect actual test execution
     # - Current time would be the same for all environments if processed together
     if not test_start_time:
         try:
-            # Use file modification time as fallback (more accurate than current time)
-            # This ensures each environment's results have different timestamps
+            # Use file modification time as fallback (only if XML timestamp unavailable)
             file_mtime = os.path.getmtime(output_xml)
             test_start_time = int(file_mtime * 1000)
             print(f"   ⚠️  No timestamp in XML, using file modification time: {datetime.fromtimestamp(file_mtime).isoformat()}")
         except:
             # Final fallback to current time (should rarely happen)
             test_start_time = int(datetime.now().timestamp() * 1000)
-            print(f"   ⚠️  Using current time as fallback (file modification time unavailable)")
+            print(f"   ⚠️  Using current time as fallback (XML timestamp and file modification time unavailable)")
     
     print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
     
