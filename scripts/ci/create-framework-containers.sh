@@ -561,7 +561,11 @@ for suite_name, env_groups in sorted(suite_groups.items()):
     }
     
     # Write top-level container file
-    top_container_file = Path(results_dir) / f"{top_container_uuid}-container.json"
+    # CRITICAL: Use deterministic filename based on suite name to ensure consistent file system order
+    # This helps Allure2 process all containers correctly (not just the first one alphabetically)
+    # Convert suite name to a safe filename (replace spaces with hyphens, lowercase)
+    safe_suite_name = suite_name.lower().replace(' ', '-').replace('_', '-')
+    top_container_file = Path(results_dir) / f"{safe_suite_name}-{top_container_uuid}-container.json"
     with open(top_container_file, 'w', encoding='utf-8') as f:
         json.dump(top_container_data, f, indent=2, ensure_ascii=False)
     
