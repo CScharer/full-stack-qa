@@ -189,16 +189,24 @@ if [ "$METHOD" = "pages" ]; then
                 
                 if echo "$API_RESPONSE" | jq -e '. | type == "array"' >/dev/null 2>&1; then
                     # Directory exists and has files
-                    # Filter for JSON files only (exclude history-trend.json, duration-trend.json, etc.)
-                    FILE_COUNT=$(echo "$API_RESPONSE" | jq '[.[] | select(.type == "file" and (.name | endswith(".json")))] | length')
-                    echo "   Found $FILE_COUNT JSON file(s) in history directory"
+                    # CRITICAL: For Allure2, exclude history-trend.json, duration-trend.json, etc. from results directory
+                    # Allure2 expects individual history JSON files (one per test), not aggregated trend files
+                    # Trend files (history-trend.json) should only be in report directory, not results directory
+                    # If history-trend.json is in results directory, Allure2 will try to read it and fail with format mismatch
+                    FILE_COUNT=$(echo "$API_RESPONSE" | jq '[.[] | select(.type == "file" and (.name | endswith(".json")) and (.name | test("^(history-trend|duration-trend|retry-trend|categories-trend)\\.json$") | not))] | length')
+                    echo "   Found $FILE_COUNT JSON file(s) in history directory (excluding trend files)"
                     
                     if [ "$FILE_COUNT" -gt 0 ]; then
-                        # Download JSON files
+                        # Download JSON files (excluding trend files)
                         FAILED_DOWNLOADS=0
                         while IFS= read -r url; do
                             if [ -n "$url" ] && [ "$url" != "null" ]; then
                                 filename=$(basename "$url")
+                                # Skip trend files - they should not be in results directory
+                                if echo "$filename" | grep -qE "^(history-trend|duration-trend|retry-trend|categories-trend)\.json$"; then
+                                    echo "   ⏭️  Skipping $filename (trend files should not be in results directory)"
+                                    continue
+                                fi
                                 if curl -f -s "$url" -o "$TARGET_DIR/history/$filename" 2>/dev/null; then
                                     echo "   ✅ Downloaded: $filename"
                                     DOWNLOADED_COUNT=$((DOWNLOADED_COUNT + 1))
@@ -207,10 +215,10 @@ if [ "$METHOD" = "pages" ]; then
                                     FAILED_DOWNLOADS=$((FAILED_DOWNLOADS + 1))
                                 fi
                             fi
-                        done < <(echo "$API_RESPONSE" | jq -r '.[] | select(.type == "file" and (.name | endswith(".json"))) | .download_url' 2>/dev/null)
+                        done < <(echo "$API_RESPONSE" | jq -r '.[] | select(.type == "file" and (.name | endswith(".json")) and (.name | test("^(history-trend|duration-trend|retry-trend|categories-trend)\\.json$") | not)) | .download_url' 2>/dev/null)
                         
-                        # Count actual downloaded files
-                        ACTUAL_COUNT=$(find "$TARGET_DIR/history" -name "*.json" -type f 2>/dev/null | wc -l | tr -d ' ')
+                        # Count actual downloaded files (excluding trend files)
+                        ACTUAL_COUNT=$(find "$TARGET_DIR/history" -name "*.json" -type f ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" ! -name "categories-trend.json" 2>/dev/null | wc -l | tr -d ' ')
                         if [ "$ACTUAL_COUNT" -gt 0 ]; then
                             if [ "$ACTUAL_COUNT" -lt "$FILE_COUNT" ] || [ "$FAILED_DOWNLOADS" -gt 0 ]; then
                                 echo "   ⚠️  Downloaded $ACTUAL_COUNT of $FILE_COUNT files ($FAILED_DOWNLOADS failed)"
