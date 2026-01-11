@@ -193,45 +193,45 @@ rm -rf "$REPORT_DIR"
 
 if [ "$ALLURE_VERSION" = "3" ]; then
     # Allure3: Use config file if available
-    if [ "$ALLURE3_CREATED_HISTORY" = true ]; then
-        echo "   Allure3 will process existing Allure3-created history and merge with new results"
-    else
-        echo "   Allure3 will create fresh history from test results (Step 4: bootstrap)"
-    fi
+if [ "$ALLURE3_CREATED_HISTORY" = true ]; then
+    echo "   Allure3 will process existing Allure3-created history and merge with new results"
+else
+    echo "   Allure3 will create fresh history from test results (Step 4: bootstrap)"
+fi
     
-    CONFIG_FLAG=""
-    CONFIG_FILE=""
-    # Try TypeScript config first, then JavaScript
-    if [ -f "allure.config.ts" ]; then
-        echo "   ✅ Found allure.config.ts - using explicit --config flag"
-        CONFIG_FILE="allure.config.ts"
-        CONFIG_FLAG="--config allure.config.ts"
-        echo "   📄 Config file contents:"
-        cat allure.config.ts | sed 's/^/      /'
-    elif [ -f "allure.config.js" ]; then
-        echo "   ✅ Found allure.config.js - using explicit --config flag"
-        CONFIG_FILE="allure.config.js"
-        CONFIG_FLAG="--config allure.config.js"
-        echo "   📄 Config file contents:"
-        cat allure.config.js | sed 's/^/      /'
-    else
-        echo "   ⚠️  No allure.config.ts or allure.config.js found - Allure3 will use defaults"
-    fi
-    
-    # Run allure generate with explicit config flag and capture all output
-    echo ""
-    echo "   🔍 Executing: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\" $CONFIG_FLAG"
-    allure generate "$RESULTS_DIR" -o "$REPORT_DIR" $CONFIG_FLAG 2>&1 | tee /tmp/allure-generate.log || {
+CONFIG_FLAG=""
+CONFIG_FILE=""
+# Try TypeScript config first, then JavaScript
+if [ -f "allure.config.ts" ]; then
+    echo "   ✅ Found allure.config.ts - using explicit --config flag"
+    CONFIG_FILE="allure.config.ts"
+    CONFIG_FLAG="--config allure.config.ts"
+    echo "   📄 Config file contents:"
+    cat allure.config.ts | sed 's/^/      /'
+elif [ -f "allure.config.js" ]; then
+    echo "   ✅ Found allure.config.js - using explicit --config flag"
+    CONFIG_FILE="allure.config.js"
+    CONFIG_FLAG="--config allure.config.js"
+    echo "   📄 Config file contents:"
+    cat allure.config.js | sed 's/^/      /'
+else
+    echo "   ⚠️  No allure.config.ts or allure.config.js found - Allure3 will use defaults"
+fi
+
+# Run allure generate with explicit config flag and capture all output
+echo ""
+echo "   🔍 Executing: allure generate \"$RESULTS_DIR\" -o \"$REPORT_DIR\" $CONFIG_FLAG"
+allure generate "$RESULTS_DIR" -o "$REPORT_DIR" $CONFIG_FLAG 2>&1 | tee /tmp/allure-generate.log || {
         echo "⚠️  Allure3 generate command had warnings/errors (checking log...)"
-        if [ -f /tmp/allure-generate.log ]; then
-            echo "   Last 50 lines of Allure output:"
-            tail -50 /tmp/allure-generate.log | sed 's/^/   /'
-        fi
-        # Check if the command actually failed or just had warnings
-        if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
+    if [ -f /tmp/allure-generate.log ]; then
+        echo "   Last 50 lines of Allure output:"
+        tail -50 /tmp/allure-generate.log | sed 's/^/   /'
+    fi
+    # Check if the command actually failed or just had warnings
+    if [ ! -d "$REPORT_DIR" ] || [ ! -f "$REPORT_DIR/index.html" ]; then
             echo "❌ Allure3 generate command failed - report not created"
-            exit 1
-        else
+        exit 1
+    else
             echo "⚠️  Allure3 generate had warnings but report was created successfully"
         fi
     }
@@ -278,26 +278,26 @@ HISTORY_SOURCE=""
 # Check RESULTS directory first (where historyPath points)
 if [ "$ALLURE_VERSION" = "3" ]; then
     # Allure3: Check for history.jsonl
-    if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
-        HISTORY_CREATED=true
-        HISTORY_SOURCE="results"
-        echo ""
+if [ -f "$RESULTS_DIR/history/history.jsonl" ]; then
+    HISTORY_CREATED=true
+    HISTORY_SOURCE="results"
+    echo ""
         echo "✅ Allure3 history found (history.jsonl format)"
-        HISTORY_SIZE=$(du -sh "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')
-        HISTORY_LINES=$(wc -l < "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
-        echo "   History file: $RESULTS_DIR/history/history.jsonl"
-        echo "   History entries: $HISTORY_LINES line(s)"
-        echo "   Size: $HISTORY_SIZE"
-        echo "   ✅ History found in results directory (where historyPath points)"
+    HISTORY_SIZE=$(du -sh "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | cut -f1 || echo 'unknown')
+    HISTORY_LINES=$(wc -l < "$RESULTS_DIR/history/history.jsonl" 2>/dev/null | tr -d ' ' || echo "0")
+    echo "   History file: $RESULTS_DIR/history/history.jsonl"
+    echo "   History entries: $HISTORY_LINES line(s)"
+    echo "   Size: $HISTORY_SIZE"
+    echo "   ✅ History found in results directory (where historyPath points)"
     
     # History is already in RESULTS directory, but we need to copy it to REPORT directory
     # for GitHub Pages deployment (deployment publishes REPORT directory, not RESULTS)
     # CRITICAL: Allure3 UI needs history-trend.json format for trends display, not just history.jsonl
     # Note: Allure2 automatically generates trend files, so this conversion is only for Allure3
     if [ "$ALLURE_VERSION" = "3" ]; then
-        echo ""
-        echo "📊 Converting history.jsonl to history-trend.json for UI trends display..."
-        mkdir -p "$REPORT_DIR/history"
+    echo ""
+    echo "📊 Converting history.jsonl to history-trend.json for UI trends display..."
+    mkdir -p "$REPORT_DIR/history"
     
     # Copy history.jsonl (for Allure3 internal processing)
     cp "$RESULTS_DIR/history/history.jsonl" "$REPORT_DIR/history/history.jsonl" 2>/dev/null || true
@@ -372,16 +372,16 @@ if [ "$ALLURE_VERSION" = "3" ]; then
                 }]' 2>/dev/null || echo "[]")
             
             if [ "$current_run_data" != "[]" ] && [ "$current_run_data" != "null" ]; then
-                jq --argjson build_order "$CURRENT_BUILD_ORDER" \
-                   --arg report_name "$REPORT_NAME" \
+            jq --argjson build_order "$CURRENT_BUILD_ORDER" \
+               --arg report_name "$REPORT_NAME" \
                    --argjson data_array "$current_run_data" \
-                   '. += [{
-                     "buildOrder": $build_order,
-                     "reportName": $report_name,
-                     "reportUrl": "",
+               '. += [{
+                 "buildOrder": $build_order,
+                 "reportName": $report_name,
+                 "reportUrl": "",
                      "data": $data_array
-                   }]' "$TEMP_TREND_FILE" > "${TEMP_TREND_FILE}.tmp" 2>/dev/null && \
-                mv "${TEMP_TREND_FILE}.tmp" "$TEMP_TREND_FILE" 2>/dev/null || true
+               }]' "$TEMP_TREND_FILE" > "${TEMP_TREND_FILE}.tmp" 2>/dev/null && \
+            mv "${TEMP_TREND_FILE}.tmp" "$TEMP_TREND_FILE" 2>/dev/null || true
             fi
         fi
         
@@ -441,22 +441,54 @@ if [ "$ALLURE_VERSION" = "3" ]; then
         echo "⚠️  jq not available - skipping history-trend.json conversion"
     fi
     
-        echo "   History will be included in GitHub Pages deployment"
-        echo ""
-        echo "📊 History ready for next run..."
-        echo "✅ History preserved: history.jsonl ready for next report generation"
-        echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+    echo "   History will be included in GitHub Pages deployment"
+    echo ""
+    echo "📊 History ready for next run..."
+    echo "✅ History preserved: history.jsonl ready for next report generation"
+    echo "   History will be uploaded as artifact and deployed to GitHub Pages"
     fi
 else
-        # Allure2: History is automatically processed, just copy to report directory
+        # Allure2: History is automatically processed by 'allure generate'
+        # CRITICAL: Allure2 creates individual {md5-hash}.json files in REPORT_DIR/history/
+        # These individual files are REQUIRED for Allure2 to merge history across runs
+        # We must ensure ALL individual files are preserved (not just history.json)
         echo ""
-        echo "📊 Copying Allure2 history to report directory..."
+        echo "📊 Verifying Allure2 history in report directory..."
         mkdir -p "$REPORT_DIR/history"
-        if [ -d "$RESULTS_DIR/history" ]; then
-            cp -r "$RESULTS_DIR/history"/* "$REPORT_DIR/history/" 2>/dev/null || true
-            HISTORY_FILES=$(find "$REPORT_DIR/history" -name "*.json" -type f | wc -l | tr -d ' ')
-            echo "✅ Allure2 history copied to report directory ($HISTORY_FILES file(s))"
+        
+        # Allure2 creates history files in REPORT_DIR/history/ during 'allure generate'
+        # Count ALL JSON files (including individual {md5-hash}.json files)
+        HISTORY_FILES=$(find "$REPORT_DIR/history" -name "*.json" -type f | wc -l | tr -d ' ')
+        INDIVIDUAL_FILES=$(find "$REPORT_DIR/history" -name "*.json" -type f ! -name "history.json" ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" ! -name "categories-trend.json" | wc -l | tr -d ' ')
+        
+        if [ "$HISTORY_FILES" -gt 0 ]; then
+            echo "✅ Allure2 history found in report directory ($HISTORY_FILES total file(s))"
+            echo "   Individual test history files: $INDIVIDUAL_FILES file(s)"
+            echo "   These files are REQUIRED for Allure2 to merge history across runs"
             echo "   History will be uploaded as artifact and deployed to GitHub Pages"
+            
+            # CRITICAL: Verify individual files exist (not just history.json)
+            if [ "$INDIVIDUAL_FILES" -eq 0 ]; then
+                echo "   ⚠️  WARNING: No individual history files found (only aggregated files)"
+                echo "   This may prevent Allure2 from properly merging history"
+                echo "   Allure2 needs individual {md5-hash}.json files to merge history"
+            else
+                echo "   ✅ Individual history files present - Allure2 can merge history correctly"
+            fi
+        else
+            echo "   ℹ️  No history files found in report directory (expected for first run)"
+        fi
+        
+        # Also copy from RESULTS_DIR if it exists (for artifact upload)
+        if [ -d "$RESULTS_DIR/history" ]; then
+            # Only copy if REPORT_DIR/history is empty or has fewer files
+            RESULTS_HISTORY_FILES=$(find "$RESULTS_DIR/history" -name "*.json" -type f ! -name "history-trend.json" ! -name "duration-trend.json" ! -name "retry-trend.json" ! -name "categories-trend.json" | wc -l | tr -d ' ')
+            if [ "$RESULTS_HISTORY_FILES" -gt 0 ] && [ "$INDIVIDUAL_FILES" -eq 0 ]; then
+                echo "   📋 Copying history from results directory to report directory..."
+                cp -r "$RESULTS_DIR/history"/* "$REPORT_DIR/history/" 2>/dev/null || true
+                HISTORY_FILES=$(find "$REPORT_DIR/history" -name "*.json" -type f | wc -l | tr -d ' ')
+                echo "   ✅ History copied to report directory ($HISTORY_FILES file(s))"
+            fi
         fi
         
         # Step 5.5: Fix zero durations in history files (prevents NaN errors in trend charts)
@@ -796,7 +828,7 @@ if [ -f "$REPORT_DIR/history/history-trend.json" ] && command -v jq &> /dev/null
             ARRAY_LENGTH=$(jq 'length' "$TEMP_FIX_FILE" 2>/dev/null || echo "0")
             
             if [ "$FILE_CONTENT" != "[]" ] && [ "$ARRAY_LENGTH" != "0" ] && [ "$ARRAY_LENGTH" != "null" ]; then
-                mv "$TEMP_FIX_FILE" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
+            mv "$TEMP_FIX_FILE" "$REPORT_DIR/history/history-trend.json" 2>/dev/null || true
                 echo "   ✅ Rebuilt history-trend.json from history.jsonl - all entries now have array data"
             else
                 echo "   ⚠️  Rebuild resulted in empty array - preserving original file (if exists)"
