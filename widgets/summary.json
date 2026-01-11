@@ -1,20 +1,20 @@
 {
-  "reportName": "Allure Report - Pipeline #585",
+  "reportName": "Allure Report - Pipeline #587",
   "testRuns": [],
   "statistic": {
     "failed": 0,
     "broken": 0,
-    "skipped": 27,
-    "passed": 259,
+    "skipped": 9,
+    "passed": 88,
     "unknown": 0,
-    "total": 286
+    "total": 97
   },
   "time": {
-    "start": 1768088074776,
-    "stop": 1768100914000,
-    "duration": 12839224,
+    "start": 1768122637127,
+    "stop": 1768132928000,
+    "duration": 10290873,
     "minDuration": 0,
-    "maxDuration": 12429000,
-    "sumDuration": 22415490
+    "maxDuration": 10244000,
+    "sumDuration": 10679294
   }
 }
