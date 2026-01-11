@@ -1096,7 +1096,14 @@ chmod +x scripts/ci/preserve-allure-history.sh
 echo ""
 echo "⚙️  Step 6: Creating executor.json..."
 chmod +x scripts/ci/create-allure-executor.sh
-./scripts/ci/create-allure-executor.sh "$TARGET_DIR"
+# Pass GITHUB_RUN_NUMBER explicitly to ensure correct build order
+# If not available, the script will fall back to GITHUB_RUN_ID or default to 1
+if [ -n "${GITHUB_RUN_NUMBER}" ]; then
+    ./scripts/ci/create-allure-executor.sh "$TARGET_DIR" "" "${GITHUB_RUN_NUMBER}"
+else
+    # Fallback: try to get run number from GITHUB_RUN_ID or use default
+    ./scripts/ci/create-allure-executor.sh "$TARGET_DIR"
+fi
 
 # Step 7: Create categories.json
 echo ""
