@@ -199,51 +199,49 @@ for full_name, attempts in test_attempts.items():
             test_results[full_name] = (best_test_case, best_status, is_flaky, retry_info)
         
         # CRITICAL: Extract test execution start time
-        # Priority: 1) File modification time (most accurate for environment-specific results)
-        #           2) JUnit XML timestamp (may be same across environments)
-        #           3) Current time (fallback)
+        # Priority: 1) JUnit XML timestamp (most accurate - reflects actual test execution time)
+        #           2) File modification time (fallback - reflects when artifact was downloaded/processed)
+        #           3) Current time (final fallback)
         # 
-        # File modification time is preferred because:
-        # - Each environment's XML file is modified when tests run
-        # - Different environments run at different times, so file mtime differs
-        # - JUnit timestamp may be the same if XML files are generated/copied together
+        # JUnit XML timestamp is preferred because:
+        # - It comes directly from the test framework and reflects when tests actually executed
+        # - Each environment's tests run at different times, so JUnit timestamps differ
+        # - File modification time reflects artifact download/processing, which happens all at once
         
         test_start_time = None
         
-        # First, try file modification time (most reliable for environment-specific timestamps)
-        # Use the first JUnit file's modification time
-        if junit_files:
+        # First, try JUnit XML timestamp (most reliable - reflects actual test execution)
+        for suite in test_suites:
+            suite_timestamp = suite.get('timestamp')
+            if suite_timestamp:
+                try:
+                    # JUnit timestamps are typically ISO format or Unix timestamp
+                    if suite_timestamp.isdigit():
+                        # Unix timestamp (seconds)
+                        test_start_time = int(float(suite_timestamp) * 1000)
+                    else:
+                        # ISO format
+                        dt = datetime.fromisoformat(suite_timestamp.replace('Z', '+00:00'))
+                        test_start_time = int(dt.timestamp() * 1000)
+                    print(f"   📅 Using JUnit XML timestamp: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
+                    break
+                except:
+                    continue
+        
+        # If JUnit timestamp not available, try file modification time (fallback)
+        if not test_start_time and junit_files:
             try:
                 first_junit_file = str(junit_files[0])
                 file_mtime = os.path.getmtime(first_junit_file)
                 test_start_time = int(file_mtime * 1000)
-                print(f"   📅 Using file modification time: {datetime.fromtimestamp(file_mtime).isoformat()}")
+                print(f"   ⚠️  JUnit timestamp unavailable, using file modification time: {datetime.fromtimestamp(file_mtime).isoformat()}")
             except:
                 pass
-        
-        # If file mtime not available, try JUnit XML timestamp
-        if not test_start_time:
-            for suite in test_suites:
-                suite_timestamp = suite.get('timestamp')
-                if suite_timestamp:
-                    try:
-                        # JUnit timestamps are typically ISO format or Unix timestamp
-                        if suite_timestamp.isdigit():
-                            # Unix timestamp (seconds)
-                            test_start_time = int(float(suite_timestamp) * 1000)
-                        else:
-                            # ISO format
-                            dt = datetime.fromisoformat(suite_timestamp.replace('Z', '+00:00'))
-                            test_start_time = int(dt.timestamp() * 1000)
-                        print(f"   📅 Using JUnit XML timestamp: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
-                        break
-                    except:
-                        continue
         
         # Final fallback to current time (should rarely happen)
         if not test_start_time:
             test_start_time = int(datetime.now().timestamp() * 1000)
-            print(f"   ⚠️  Using current time as fallback (file mtime and JUnit timestamp unavailable)")
+            print(f"   ⚠️  Using current time as fallback (JUnit timestamp and file mtime unavailable)")
         
         print(f"📅 Test execution start time: {datetime.fromtimestamp(test_start_time / 1000).isoformat()}")
         
