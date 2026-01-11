@@ -1,1 +1,1 @@
-{"id":"32bab60eed0fdbcb84d2225155540e1a","fullName":"Performance.Locust.QuickSmoke","name":"Locust: Quick Smoke Test [TEST]","status":"passed","testResultsByEnv":{"default":"59d72de7b8062ce1c30f5ce7fe93835b"}}
+{"id":"32bab60eed0fdbcb84d2225155540e1a","fullName":"Performance.Locust.QuickSmoke","name":"Locust: Quick Smoke Test [DEV]","status":"passed","testResultsByEnv":{"default":"bc06b7bdc411bd753fe8eca48270118f"}}

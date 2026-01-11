@@ -1,1 +1,1 @@
-{"id":"4a5b98cf4d78671eac9277e5ad1a899d","fullName":"com.cjs.qa.junit.tests.HtmlUnitUpgradeVerificationTest.testWebClientWithDataUrl","name":"testWebClientWithDataUrl [PROD]","status":"passed","testResultsByEnv":{"default":"e06d36b6eeed8879c51bb3f37a4387e4"}}
+{"id":"4a5b98cf4d78671eac9277e5ad1a899d","fullName":"com.cjs.qa.junit.tests.HtmlUnitUpgradeVerificationTest.testWebClientWithDataUrl","name":"testWebClientWithDataUrl [TEST]","status":"passed","testResultsByEnv":{"default":"3c3976631e49956a9c2c352ba2f3b8af"}}

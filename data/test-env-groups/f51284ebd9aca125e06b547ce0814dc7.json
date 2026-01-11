@@ -1,1 +1,1 @@
-{"id":"f51284ebd9aca125e06b547ce0814dc7","fullName":"com.cjs.qa.junit.tests.DataDrivenTests.testWebsiteAccessibility","name":"testWebsiteAccessibility [DEV]","status":"passed","testResultsByEnv":{"default":"f626cd07410624d8b5195be6dd4dc350"}}
+{"id":"f51284ebd9aca125e06b547ce0814dc7","fullName":"com.cjs.qa.junit.tests.DataDrivenTests.testWebsiteAccessibility","name":"testWebsiteAccessibility [PROD]","status":"passed","testResultsByEnv":{"default":"74bf534519ab11404dbaf2e5354bd02e"}}

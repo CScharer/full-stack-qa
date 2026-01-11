@@ -1,1 +1,1 @@
-{"id":"8013a72827fa71d520f9a16d7c96e939","fullName":"com.cjs.qa.junit.tests.RetryAnalyzerTest.testRetryAnalyzerWithZeroRetries","name":"testRetryAnalyzerWithZeroRetries [TEST]","status":"passed","testResultsByEnv":{"default":"5a8c11480f5bd9c644f07b65c49b1b57"}}
+{"id":"8013a72827fa71d520f9a16d7c96e939","fullName":"com.cjs.qa.junit.tests.RetryAnalyzerTest.testRetryAnalyzerWithZeroRetries","name":"testRetryAnalyzerWithZeroRetries [DEV]","status":"passed","testResultsByEnv":{"default":"65de6e1c3ff9d71111cd6d92a9a5dfee"}}
