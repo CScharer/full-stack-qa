@@ -18,7 +18,7 @@
     "checkInterval": 2
   },
   "allure": {
-    "reportVersion": 2,
+    "reportVersion": 3,
     "cliVersion": {
       "2": "2.36.0",
       "3": "3.0.0"

@@ -1179,7 +1179,7 @@ This section documents the historical context and key fixes that were implemente
 
 **Result**: Selenide tests now appear as a separate top-level suite with proper environment containers.
 
-### Suites Tab Fixes (Completed ✅)
+### Suites Tab Fixes (In Progress ⚠️)
 
 **Problem**: Only Playwright tests were appearing in the Allure report's Suites tab, even though all frameworks were showing correctly in the Overview section.
 
@@ -1187,15 +1187,28 @@ This section documents the historical context and key fixes that were implemente
 1. Missing container files for frameworks
 2. Incorrect container hierarchy (top-level containers pointing directly to result UUIDs)
 3. Multiple duplicate containers being created
+4. **Potential Allure2 Limitation**: Allure2 may only process/display the first top-level container it encounters
 
 **Fixes Implemented**:
-1. **Container Creation Script**: Created `create-framework-containers.sh` to generate container files for all frameworks
-2. **Proper Hierarchy**: Top-level containers → Environment-specific containers → Results
-3. **Environment-Specific Containers**: Creates containers like "Cypress Tests [DEV]", "Cypress Tests [TEST]", "Cypress Tests [PROD]"
-4. **Deduplication**: Prevents multiple top-level containers for the same suite
-5. **Combined Environment Handling**: Splits "combined" environment by test name patterns ([DEV], [TEST], [PROD])
+1. **Container Creation Script**: Created `create-framework-containers.sh` to generate container files for all frameworks ✅
+2. **Proper Hierarchy**: Top-level containers → Environment-specific containers → Results ✅
+3. **Environment-Specific Containers**: Creates containers like "Cypress Tests [DEV]", "Cypress Tests [TEST]", "Cypress Tests [PROD]" ✅
+4. **Deduplication**: Prevents multiple top-level containers for the same suite ✅
+5. **Combined Environment Handling**: Splits "combined" environment by test name patterns ([DEV], [TEST], [PROD]) ✅
+6. **Container Cleanup**: Removed old containers before creating new ones ✅
+7. **Deterministic Filenames**: Changed to `{suite-name}-{uuid}-container.json` for consistent ordering ✅
+8. **Removed Suite Labels**: Removed `suite` labels from top-level containers to prevent grouping ✅
 
-**Result**: All frameworks now appear in Suites tab with proper hierarchy and environment breakdown.
+**Current Status**: 
+- ✅ All 9 containers are created correctly (verified in pipeline logs)
+- ❌ Only "Playwright Tests" appears in Suites tab (other frameworks missing)
+- ⚠️ **Issue persists despite multiple fixes** - may be Allure2 limitation/bug
+
+**Next Steps**:
+- Test with Allure3 (may have different container processing logic)
+- See `docs/work/20260111_ALLURE_SUITES_TAB_ISSUE.md` for detailed investigation
+
+**Result**: Containers are created correctly, but Allure2 only displays the first one in Suites tab. All frameworks appear correctly in Overview section.
 
 ### Environment Detection Fixes (Completed ✅)
 
