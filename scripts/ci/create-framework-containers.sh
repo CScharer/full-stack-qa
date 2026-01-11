@@ -516,7 +516,10 @@ top_level_containers = 0
 # This prevents duplicate top-level containers for the same suite
 top_level_containers_created = set()
 
-for suite_name, env_groups in suite_groups.items():
+# CRITICAL: Sort suite names to ensure consistent container creation order
+# This helps Allure2 process all containers correctly (not just the first one alphabetically)
+# Sort by suite name to ensure predictable order regardless of dictionary insertion order
+for suite_name, env_groups in sorted(suite_groups.items()):
     # CRITICAL: Skip if we've already created a top-level container for this suite name
     # This prevents duplicate containers when the same suite appears multiple times
     # (e.g., if Selenide tests were grouped under both "Surefire test" and "Selenide Tests")
