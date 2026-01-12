@@ -19,11 +19,12 @@ This guide explains how to run and debug tests locally without Docker, which is 
 
 ### ✅ Can Run Locally (No Docker Required)
 
-1. **Cypress Tests** - TypeScript E2E tests
-2. **Playwright Tests** - TypeScript E2E tests  
-3. **Vibium Tests** - TypeScript browser automation tests
-4. **Robot Framework API Tests** - Python keyword-driven API tests
-5. **Code Compilation** - Maven build and compile
+1. **Frontend Unit Tests** - Vitest + React Testing Library (functional + snapshot tests)
+2. **Cypress Tests** - TypeScript E2E tests
+3. **Playwright Tests** - TypeScript E2E tests  
+4. **Vibium Tests** - TypeScript browser automation tests
+5. **Robot Framework API Tests** - Python keyword-driven API tests
+6. **Code Compilation** - Maven build and compile
 
 ### ⚠️ Requires Selenium Grid (Docker or Local Grid)
 
@@ -55,6 +56,44 @@ This script will:
 - ⚠️ Skip Selenium/Java tests (require Grid)
 
 ### Run Individual Test Frameworks
+
+#### Frontend Unit Tests (Vitest)
+
+**Prerequisites:**
+- Node.js 18+
+- npm or yarn
+
+**Setup:**
+```bash
+cd frontend
+npm install
+```
+
+**Run Tests:**
+```bash
+# Run all tests (functional + snapshot)
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in UI mode (interactive)
+npm run test:ui
+
+# Run only snapshot tests
+npm test -- __tests__/**/*.snapshot.test.tsx
+
+# Update snapshots after intentional UI changes
+npm test -- -u
+```
+
+**Snapshot Tests:**
+- 65 snapshot tests covering UI components, complex components, and page components
+- Snapshot files are auto-generated in `__snapshots__/` directories
+- Update snapshots when making intentional UI changes: `npm test -- -u`
 
 #### Cypress Tests
 ```bash
@@ -110,6 +149,7 @@ This section helps you debug test failures in the CI/CD pipeline by running test
 **File**: `./scripts/run-tests-local.sh`
 
 This script runs all test frameworks that don't require Docker:
+- ✅ Frontend Unit Tests (Vitest - functional + snapshot)
 - ✅ Cypress Tests (TypeScript E2E)
 - ✅ Playwright Tests (TypeScript E2E)
 - ✅ Robot Framework Tests (Python - API tests only)

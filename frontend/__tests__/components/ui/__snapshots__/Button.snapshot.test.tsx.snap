@@ -1,0 +1,74 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button Snapshot Tests > matches snapshot for danger variant 1`] = `
+<button
+  class="btn btn-danger"
+  data-qa="test-button-danger"
+>
+  Delete
+</button>
+`;
+
+exports[`Button Snapshot Tests > matches snapshot for disabled button 1`] = `
+<button
+  class="btn btn-primary"
+  data-qa="test-button-disabled"
+  disabled=""
+>
+  Disabled
+</button>
+`;
+
+exports[`Button Snapshot Tests > matches snapshot for large size 1`] = `
+<button
+  class="btn btn-primary btn-lg"
+  data-qa="test-button-large"
+>
+  Large
+</button>
+`;
+
+exports[`Button Snapshot Tests > matches snapshot for outline variant 1`] = `
+<button
+  class="btn btn-outline-primary"
+  data-qa="test-button-outline"
+>
+  Outline
+</button>
+`;
+
+exports[`Button Snapshot Tests > matches snapshot for primary button 1`] = `
+<button
+  class="btn btn-primary"
+  data-qa="test-button-primary"
+>
+  Click me
+</button>
+`;
+
+exports[`Button Snapshot Tests > matches snapshot for secondary variant 1`] = `
+<button
+  class="btn btn-secondary"
+  data-qa="test-button-secondary"
+>
+  Secondary
+</button>
+`;
+
+exports[`Button Snapshot Tests > matches snapshot for small size 1`] = `
+<button
+  class="btn btn-primary btn-sm"
+  data-qa="test-button-small"
+>
+  Small
+</button>
+`;
+
+exports[`Button Snapshot Tests > matches snapshot for success variant 1`] = `
+<button
+  class="btn btn-success"
+  data-qa="test-button-success"
+>
+  Save
+</button>
+`;

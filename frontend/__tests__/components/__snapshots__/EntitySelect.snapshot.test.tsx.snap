@@ -1,0 +1,253 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EntitySelect Snapshot Tests > matches snapshot for empty entity select 1`] = `
+<div
+  class="mb-3"
+  data-qa="entity-select-select-entity"
+>
+  <label
+    class="form-label"
+    data-qa="entity-select-select-entity-label"
+  >
+    Select Entity
+  </label>
+  <div
+    class="position-relative"
+  >
+    <div
+      class="mb-3"
+      data-qa="input-wrapper-entity-select-select-entity-search-input"
+    >
+      <input
+        class="form-control  "
+        data-qa="entity-select-select-entity-search-input"
+        placeholder="Select or search..."
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntitySelect Snapshot Tests > matches snapshot for entity select with custom placeholder 1`] = `
+<div
+  class="mb-3"
+  data-qa="entity-select-select-entity"
+>
+  <label
+    class="form-label"
+    data-qa="entity-select-select-entity-label"
+  >
+    Select Entity
+  </label>
+  <div
+    class="position-relative"
+  >
+    <div
+      class="mb-3"
+      data-qa="input-wrapper-entity-select-select-entity-search-input"
+    >
+      <input
+        class="form-control  "
+        data-qa="entity-select-select-entity-search-input"
+        placeholder="Choose an option..."
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntitySelect Snapshot Tests > matches snapshot for entity select with display text 1`] = `
+<div
+  class="mb-3"
+  data-qa="entity-select-select-contact"
+>
+  <label
+    class="form-label"
+    data-qa="entity-select-select-contact-label"
+  >
+    Select Contact
+  </label>
+  <div
+    class="d-flex align-items-center gap-2 mb-2"
+    data-qa="entity-select-select-contact-selected"
+  >
+    <div
+      class="form-control"
+      data-qa="entity-select-select-contact-selected-value"
+    >
+      John Doe (Company A)
+    </div>
+    <button
+      class="btn btn-outline-secondary btn-sm"
+      data-qa="entity-select-select-contact-clear-button"
+      type="button"
+    >
+      Clear
+    </button>
+  </div>
+  <div
+    class="position-relative"
+  >
+    <div
+      class="mb-3"
+      data-qa="input-wrapper-entity-select-select-contact-search-input"
+    >
+      <input
+        class="form-control  "
+        data-qa="entity-select-select-contact-search-input"
+        placeholder="Search..."
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntitySelect Snapshot Tests > matches snapshot for entity select with options 1`] = `
+<div
+  class="mb-3"
+  data-qa="entity-select-select-entity"
+>
+  <label
+    class="form-label"
+    data-qa="entity-select-select-entity-label"
+  >
+    Select Entity
+  </label>
+  <div
+    class="position-relative"
+  >
+    <div
+      class="mb-3"
+      data-qa="input-wrapper-entity-select-select-entity-search-input"
+    >
+      <input
+        class="form-control  "
+        data-qa="entity-select-select-entity-search-input"
+        placeholder="Select or search..."
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntitySelect Snapshot Tests > matches snapshot for entity select with selected value 1`] = `
+<div
+  class="mb-3"
+  data-qa="entity-select-select-entity"
+>
+  <label
+    class="form-label"
+    data-qa="entity-select-select-entity-label"
+  >
+    Select Entity
+  </label>
+  <div
+    class="d-flex align-items-center gap-2 mb-2"
+    data-qa="entity-select-select-entity-selected"
+  >
+    <div
+      class="form-control"
+      data-qa="entity-select-select-entity-selected-value"
+    >
+      Option 1
+    </div>
+    <button
+      class="btn btn-outline-secondary btn-sm"
+      data-qa="entity-select-select-entity-clear-button"
+      type="button"
+    >
+      Clear
+    </button>
+  </div>
+  <div
+    class="position-relative"
+  >
+    <div
+      class="mb-3"
+      data-qa="input-wrapper-entity-select-select-entity-search-input"
+    >
+      <input
+        class="form-control  "
+        data-qa="entity-select-select-entity-search-input"
+        placeholder="Search..."
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntitySelect Snapshot Tests > matches snapshot for loading entity select 1`] = `
+<div
+  class="mb-3"
+  data-qa="entity-select-select-entity"
+>
+  <label
+    class="form-label"
+    data-qa="entity-select-select-entity-label"
+  >
+    Select Entity
+  </label>
+  <div
+    class="position-relative"
+  >
+    <div
+      class="mb-3"
+      data-qa="input-wrapper-entity-select-select-entity-search-input"
+    >
+      <input
+        class="form-control  "
+        data-qa="entity-select-select-entity-search-input"
+        disabled=""
+        placeholder="Select or search..."
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntitySelect Snapshot Tests > matches snapshot for required entity select 1`] = `
+<div
+  class="mb-3"
+  data-qa="entity-select-select-entity"
+>
+  <label
+    class="form-label"
+    data-qa="entity-select-select-entity-label"
+  >
+    Select Entity
+    <span
+      class="text-danger"
+    >
+       *
+    </span>
+  </label>
+  <div
+    class="position-relative"
+  >
+    <div
+      class="mb-3"
+      data-qa="input-wrapper-entity-select-select-entity-search-input"
+    >
+      <input
+        class="form-control  "
+        data-qa="entity-select-select-entity-search-input"
+        placeholder="Select or search..."
+        type="text"
+        value=""
+      />
+    </div>
+  </div>
+</div>
+`;
