@@ -30,7 +30,7 @@ export default function JobSearchSitesPage() {
   return (
     <div className="container py-3 py-md-4" style={{ paddingBottom: '60px' }}>
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
-        <h1 className="h2 mb-0">Job Search Sites</h1>
+        <h1 className="h2 mb-0" data-qa="job-search-sites-title">Job Search Sites</h1>
         <Link href="/job-search-sites/new">
           <Button className="w-100 w-md-auto" data-qa="job-search-sites-new-button">Add</Button>
         </Link>
@@ -40,7 +40,7 @@ export default function JobSearchSitesPage() {
         <>
           <div className="card shadow-sm">
             <div className="table-responsive">
-              <table className="table table-hover mb-0">
+              <table className="table table-hover mb-0" data-qa="job-search-sites-table">
                 <thead className="table-light">
                   <tr>
                     <th>Name</th>
@@ -129,7 +129,7 @@ export default function JobSearchSitesPage() {
       ) : (
         <div className="card shadow-sm text-center py-5">
           <div className="card-body">
-            <p className="text-muted mb-4">No job search sites found.</p>
+            <p className="text-muted mb-4" data-qa="job-search-sites-empty-state">No job search sites found.</p>
           </div>
         </div>
       )}

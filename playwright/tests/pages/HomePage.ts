@@ -134,4 +134,12 @@ export class HomePage extends BasePage {
     await expect(this.notesCard).toBeVisible();
     await expect(this.jobSearchSitesCard).toBeVisible();
   }
+
+  /**
+   * Click Add Application button
+   */
+  async clickAddApplication(): Promise<void> {
+    const addApplicationButton = this.page.locator('[data-qa="home-new-application-button"]');
+    await addApplicationButton.click();
+  }
 }

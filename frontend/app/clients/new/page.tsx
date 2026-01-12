@@ -32,7 +32,7 @@ export default function NewClientPage() {
   return (
     <div className="container py-3 py-md-4">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
-        <h1 className="h3 h-md-2 mb-0">New Client</h1>
+        <h1 className="h3 h-md-2 mb-0" data-qa="client-create-title">New Client</h1>
         <Button variant="secondary" onClick={() => router.back()} className="w-100 w-md-auto" data-qa="client-create-cancel-button">
           Cancel
         </Button>
@@ -54,6 +54,7 @@ export default function NewClientPage() {
               label="Name"
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              data-qa="client-create-name"
             />
 
             <div className="d-flex flex-column flex-sm-row gap-2">

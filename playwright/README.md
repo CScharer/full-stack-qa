@@ -29,6 +29,21 @@ npm run test:firefox
 npm run test:webkit
 ```
 
+### Specific Test File
+```bash
+# Run a specific test file with Chrome
+npx playwright test wizard.spec.ts --project=chromium
+
+# Or using npm script
+npm run test:chrome -- wizard.spec.ts
+
+# Run a specific test file in headed mode (see browser)
+npx playwright test wizard.spec.ts --project=chromium --headed
+
+# Run a specific test file in UI mode (interactive)
+npx playwright test wizard.spec.ts --project=chromium --ui
+```
+
 ### Headed Mode (See Browser)
 ```bash
 npm run test:headed

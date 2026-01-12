@@ -124,7 +124,7 @@ export default function NewContactPage() {
               label="Title"
               value={formData.title || ''}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              data-qa="contact-create-title"
+              data-qa="contact-create-title-input"
             />
 
             <Input

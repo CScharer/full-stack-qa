@@ -35,7 +35,7 @@ export default function CompaniesPage() {
   return (
     <div className="container py-3 py-md-4" style={{ paddingBottom: '60px' }}>
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
-        <h1 className="h2 mb-0">Companies</h1>
+        <h1 className="h2 mb-0" data-qa="companies-title">Companies</h1>
         <Link href="/companies/new">
           <Button className="w-100 w-md-auto" data-qa="companies-new-button">Add</Button>
         </Link>
@@ -67,7 +67,7 @@ export default function CompaniesPage() {
         <>
           <div className="card shadow-sm">
             <div className="table-responsive">
-              <table className="table table-hover mb-0">
+              <table className="table table-hover mb-0" data-qa="companies-table">
                 <thead className="table-light">
                   <tr>
                     <th>Name</th>
@@ -78,11 +78,12 @@ export default function CompaniesPage() {
                 </thead>
                 <tbody>
                   {data.data.map((company) => (
-                    <tr key={company.id}>
+                    <tr key={company.id} data-qa={`company-row-${company.id}`}>
                       <td>
                         <Link
                           href={`/companies/${company.id}`}
                           className="text-decoration-none fw-medium"
+                          data-qa={`company-name-link-${company.id}`}
                         >
                           {company.name}
                         </Link>
@@ -101,12 +102,14 @@ export default function CompaniesPage() {
                           <Link
                             href={`/companies/${company.id}/edit`}
                             className="btn btn-sm btn-outline-primary"
+                            data-qa={`company-edit-button-${company.id}`}
                           >
                             Edit
                           </Link>
                           <button
                             onClick={() => handleDelete(company.id)}
                             className="btn btn-sm btn-outline-danger"
+                            data-qa={`company-delete-button-${company.id}`}
                           >
                             Delete
                           </button>
@@ -150,7 +153,7 @@ export default function CompaniesPage() {
       ) : (
         <div className="card shadow-sm text-center py-5">
           <div className="card-body">
-            <p className="text-muted mb-4">No companies found.</p>
+            <p className="text-muted mb-4" data-qa="companies-empty-state">No companies found.</p>
           </div>
         </div>
       )}

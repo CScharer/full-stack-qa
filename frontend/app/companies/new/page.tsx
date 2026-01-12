@@ -43,7 +43,7 @@ export default function NewCompanyPage() {
 
       <div className="card shadow-sm">
         <div className="card-header">
-          <h1 className="h3 mb-0">New Company</h1>
+          <h1 className="h3 mb-0" data-qa="company-create-title">New Company</h1>
         </div>
         <div className="card-body">
           <form onSubmit={handleSubmit}>
@@ -53,6 +53,7 @@ export default function NewCompanyPage() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Acme Corporation"
               required
+              data-qa="company-create-name"
             />
 
             <Input
@@ -60,6 +61,7 @@ export default function NewCompanyPage() {
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               placeholder="123 Main St"
+              data-qa="company-create-address"
             />
 
             <div className="row">
@@ -69,6 +71,7 @@ export default function NewCompanyPage() {
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   placeholder="San Francisco"
+                  data-qa="company-create-city"
                 />
               </div>
               <div className="col-md-6">
@@ -77,6 +80,7 @@ export default function NewCompanyPage() {
                   value={formData.state}
                   onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                   placeholder="CA"
+                  data-qa="company-create-state"
                 />
               </div>
             </div>
@@ -88,6 +92,7 @@ export default function NewCompanyPage() {
                   value={formData.zip}
                   onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                   placeholder="94102"
+                  data-qa="company-create-zip"
                 />
               </div>
               <div className="col-md-6">
@@ -97,6 +102,7 @@ export default function NewCompanyPage() {
                     value={formData.country}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                     className="form-select"
+                    data-qa="company-create-country"
                   >
                     <option value="United States">United States</option>
                     <option value="Canada">Canada</option>
@@ -112,6 +118,7 @@ export default function NewCompanyPage() {
                 value={formData.job_type}
                 onChange={(e) => setFormData({ ...formData, job_type: e.target.value })}
                 className="form-select"
+                data-qa="company-create-job-type"
               >
                 <option value="Technology">Technology</option>
                 <option value="Finance">Finance</option>

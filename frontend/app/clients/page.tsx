@@ -30,7 +30,7 @@ export default function ClientsPage() {
   return (
     <div className="container py-3 py-md-4" style={{ paddingBottom: '60px' }}>
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
-        <h1 className="h2 mb-0">Clients</h1>
+        <h1 className="h2 mb-0" data-qa="clients-title">Clients</h1>
         <Link href="/clients/new">
           <Button className="w-100 w-md-auto" data-qa="clients-new-button">Add</Button>
         </Link>
@@ -47,7 +47,7 @@ export default function ClientsPage() {
         <>
           <div className="card shadow-sm">
             <div className="table-responsive">
-              <table className="table table-hover mb-0">
+              <table className="table table-hover mb-0" data-qa="clients-table">
                 <thead className="table-light">
                   <tr>
                     <th>Name</th>
@@ -56,11 +56,12 @@ export default function ClientsPage() {
                 </thead>
                 <tbody>
                   {data.data.map((client) => (
-                    <tr key={client.id}>
+                    <tr key={client.id} data-qa={`client-row-${client.id}`}>
                       <td>
                         <Link
                           href={`/clients/${client.id}`}
                           className="text-decoration-none fw-medium"
+                          data-qa={`client-name-link-${client.id}`}
                         >
                           {client.name || 'Unnamed Client'}
                         </Link>
@@ -70,12 +71,14 @@ export default function ClientsPage() {
                           <Link
                             href={`/clients/${client.id}/edit`}
                             className="btn btn-sm btn-outline-primary"
+                            data-qa={`client-edit-button-${client.id}`}
                           >
                             Edit
                           </Link>
                           <button
                             onClick={() => handleDelete(client.id)}
                             className="btn btn-sm btn-outline-danger"
+                            data-qa={`client-delete-button-${client.id}`}
                           >
                             Delete
                           </button>
@@ -119,7 +122,7 @@ export default function ClientsPage() {
       ) : (
         <div className="card shadow-sm text-center py-5">
           <div className="card-body">
-            <p className="text-muted mb-4">No clients found.</p>
+            <p className="text-muted mb-4" data-qa="clients-empty-state">No clients found.</p>
           </div>
         </div>
       )}
