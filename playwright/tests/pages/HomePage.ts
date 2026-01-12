@@ -140,6 +140,14 @@ export class HomePage extends BasePage {
    */
   async clickAddApplication(): Promise<void> {
     const addApplicationButton = this.page.locator('[data-qa="home-new-application-button"]');
+    // Wait for button to be visible and actionable before clicking
+    await this.waitForVisible(addApplicationButton, 10000);
+    await expect(addApplicationButton).toBeVisible();
+    await expect(addApplicationButton).toBeEnabled();
+    // Click and wait for navigation
     await addApplicationButton.click();
+    // Wait for navigation to complete
+    await this.page.waitForURL('**/applications/new/step1', { timeout: 15000 });
+    await this.waitForPageLoad();
   }
 }

@@ -69,7 +69,15 @@ export class WizardStep1Page extends BasePage {
    * Click Cancel button
    */
   async cancel(): Promise<void> {
+    // Wait for button to be visible and actionable
+    await this.waitForVisible(this.cancelButton, 10000);
+    await expect(this.cancelButton).toBeVisible();
+    await expect(this.cancelButton).toBeEnabled();
+    // Click and wait for navigation
     await this.cancelButton.click();
+    // Wait for navigation to complete
+    await this.page.waitForURL('**/applications', { timeout: 15000 });
+    await this.waitForPageLoad();
   }
 
   /**
