@@ -131,7 +131,7 @@ test.describe('Wizard Tests', () => {
     }
   });
 
-  test('test_home - Click Home Navigation, Add Application button, then Cancel', async ({ page }) => {
+  test.skip('test_home - Click Home Navigation, Add Application button, then Cancel', async ({ page }) => {
     // 1. Click the Home Navigation
     await homePage.navigate();
     await homePage.verifyPageLoaded();

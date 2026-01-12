@@ -1,0 +1,589 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Sidebar Snapshot Tests > matches snapshot for default sidebar (closed on mobile) 1`] = `
+<div>
+  <div
+    class="d-md-none position-fixed top-0 start-0 m-3 z-4"
+    data-qa="sidebar-mobile-toggle"
+    style="z-index: 1040;"
+  >
+    <button
+      class="btn btn-primary btn-sm"
+      data-qa="sidebar-toggle-button"
+    >
+      ☰ Menu
+    </button>
+  </div>
+  <aside
+    class="bg-light border-end shadow-sm d-none d-md-block position-relative"
+    data-qa="sidebar"
+    style="width: 280px; height: auto; min-height: 100vh; overflow-y: auto; z-index: auto; flex-shrink: 0;"
+  >
+    <div
+      class="p-3 p-md-4"
+    >
+      <div
+        class="d-flex justify-content-between align-items-center mb-3 mb-md-4"
+      >
+        <a
+          class="text-decoration-none"
+          href="/"
+        >
+          <h2
+            class="h5 mb-0 text-primary fw-bold"
+            data-qa="sidebar-title"
+          >
+            Navigation
+          </h2>
+        </a>
+        <button
+          class="btn btn-link btn-sm d-md-none text-dark"
+          data-qa="sidebar-close-button"
+        >
+          ✕
+        </button>
+      </div>
+      <nav
+        data-qa="sidebar-navigation"
+      >
+        <ul
+          class="list-unstyled mb-0"
+        >
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded bg-primary text-white"
+              data-qa="sidebar-nav-home"
+              href="/"
+            >
+              <div
+                class="fw-medium"
+              >
+                Home
+              </div>
+              <small
+                class="text-white-50"
+              >
+                Dashboard and applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-applications"
+              href="/applications"
+            >
+              <div
+                class="fw-medium"
+              >
+                Applications
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage your job applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-companies"
+              href="/companies"
+            >
+              <div
+                class="fw-medium"
+              >
+                Companies
+              </div>
+              <small
+                class="text-muted"
+              >
+                Track companies you've applied to
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-contacts"
+              href="/contacts"
+            >
+              <div
+                class="fw-medium"
+              >
+                Contacts
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage recruiters and contacts
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-clients"
+              href="/clients"
+            >
+              <div
+                class="fw-medium"
+              >
+                Clients
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage client relationships
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-notes"
+              href="/notes"
+            >
+              <div
+                class="fw-medium"
+              >
+                Notes
+              </div>
+              <small
+                class="text-muted"
+              >
+                Track notes for applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-job-search-sites"
+              href="/job-search-sites"
+            >
+              <div
+                class="fw-medium"
+              >
+                Job Search Sites
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage job search platforms
+              </small>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+</div>
+`;
+
+exports[`Sidebar Snapshot Tests > matches snapshot for sidebar with active applications route 1`] = `
+<div>
+  <div
+    class="d-md-none position-fixed top-0 start-0 m-3 z-4"
+    data-qa="sidebar-mobile-toggle"
+    style="z-index: 1040;"
+  >
+    <button
+      class="btn btn-primary btn-sm"
+      data-qa="sidebar-toggle-button"
+    >
+      ☰ Menu
+    </button>
+  </div>
+  <aside
+    class="bg-light border-end shadow-sm d-none d-md-block position-relative"
+    data-qa="sidebar"
+    style="width: 280px; height: auto; min-height: 100vh; overflow-y: auto; z-index: auto; flex-shrink: 0;"
+  >
+    <div
+      class="p-3 p-md-4"
+    >
+      <div
+        class="d-flex justify-content-between align-items-center mb-3 mb-md-4"
+      >
+        <a
+          class="text-decoration-none"
+          href="/"
+        >
+          <h2
+            class="h5 mb-0 text-primary fw-bold"
+            data-qa="sidebar-title"
+          >
+            Navigation
+          </h2>
+        </a>
+        <button
+          class="btn btn-link btn-sm d-md-none text-dark"
+          data-qa="sidebar-close-button"
+        >
+          ✕
+        </button>
+      </div>
+      <nav
+        data-qa="sidebar-navigation"
+      >
+        <ul
+          class="list-unstyled mb-0"
+        >
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-home"
+              href="/"
+            >
+              <div
+                class="fw-medium"
+              >
+                Home
+              </div>
+              <small
+                class="text-muted"
+              >
+                Dashboard and applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded bg-primary text-white"
+              data-qa="sidebar-nav-applications"
+              href="/applications"
+            >
+              <div
+                class="fw-medium"
+              >
+                Applications
+              </div>
+              <small
+                class="text-white-50"
+              >
+                Manage your job applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-companies"
+              href="/companies"
+            >
+              <div
+                class="fw-medium"
+              >
+                Companies
+              </div>
+              <small
+                class="text-muted"
+              >
+                Track companies you've applied to
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-contacts"
+              href="/contacts"
+            >
+              <div
+                class="fw-medium"
+              >
+                Contacts
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage recruiters and contacts
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-clients"
+              href="/clients"
+            >
+              <div
+                class="fw-medium"
+              >
+                Clients
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage client relationships
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-notes"
+              href="/notes"
+            >
+              <div
+                class="fw-medium"
+              >
+                Notes
+              </div>
+              <small
+                class="text-muted"
+              >
+                Track notes for applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-job-search-sites"
+              href="/job-search-sites"
+            >
+              <div
+                class="fw-medium"
+              >
+                Job Search Sites
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage job search platforms
+              </small>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+</div>
+`;
+
+exports[`Sidebar Snapshot Tests > matches snapshot for sidebar with active home route 1`] = `
+<div>
+  <div
+    class="d-md-none position-fixed top-0 start-0 m-3 z-4"
+    data-qa="sidebar-mobile-toggle"
+    style="z-index: 1040;"
+  >
+    <button
+      class="btn btn-primary btn-sm"
+      data-qa="sidebar-toggle-button"
+    >
+      ☰ Menu
+    </button>
+  </div>
+  <aside
+    class="bg-light border-end shadow-sm d-none d-md-block position-relative"
+    data-qa="sidebar"
+    style="width: 280px; height: auto; min-height: 100vh; overflow-y: auto; z-index: auto; flex-shrink: 0;"
+  >
+    <div
+      class="p-3 p-md-4"
+    >
+      <div
+        class="d-flex justify-content-between align-items-center mb-3 mb-md-4"
+      >
+        <a
+          class="text-decoration-none"
+          href="/"
+        >
+          <h2
+            class="h5 mb-0 text-primary fw-bold"
+            data-qa="sidebar-title"
+          >
+            Navigation
+          </h2>
+        </a>
+        <button
+          class="btn btn-link btn-sm d-md-none text-dark"
+          data-qa="sidebar-close-button"
+        >
+          ✕
+        </button>
+      </div>
+      <nav
+        data-qa="sidebar-navigation"
+      >
+        <ul
+          class="list-unstyled mb-0"
+        >
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded bg-primary text-white"
+              data-qa="sidebar-nav-home"
+              href="/"
+            >
+              <div
+                class="fw-medium"
+              >
+                Home
+              </div>
+              <small
+                class="text-white-50"
+              >
+                Dashboard and applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-applications"
+              href="/applications"
+            >
+              <div
+                class="fw-medium"
+              >
+                Applications
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage your job applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-companies"
+              href="/companies"
+            >
+              <div
+                class="fw-medium"
+              >
+                Companies
+              </div>
+              <small
+                class="text-muted"
+              >
+                Track companies you've applied to
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-contacts"
+              href="/contacts"
+            >
+              <div
+                class="fw-medium"
+              >
+                Contacts
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage recruiters and contacts
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-clients"
+              href="/clients"
+            >
+              <div
+                class="fw-medium"
+              >
+                Clients
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage client relationships
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-notes"
+              href="/notes"
+            >
+              <div
+                class="fw-medium"
+              >
+                Notes
+              </div>
+              <small
+                class="text-muted"
+              >
+                Track notes for applications
+              </small>
+            </a>
+          </li>
+          <li
+            class="mb-2"
+          >
+            <a
+              class="text-decoration-none d-block p-2 rounded text-dark hover-bg-light"
+              data-qa="sidebar-nav-job-search-sites"
+              href="/job-search-sites"
+            >
+              <div
+                class="fw-medium"
+              >
+                Job Search Sites
+              </div>
+              <small
+                class="text-muted"
+              >
+                Manage job search platforms
+              </small>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+</div>
+`;

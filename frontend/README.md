@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Application
+
+This is a [Next.js](https://nextjs.org) project with TypeScript that provides the user interface for the job search application.
 
 ## Getting Started
+
+### Prerequisites
+
+- Node.js >= 18.0.0
+- npm >= 9.0.0
+
+### Development
 
 First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3003](http://localhost:3003) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Testing
+
+### Running Tests
+
+```bash
+# Run all tests (functional + snapshot)
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in UI mode (interactive)
+npm run test:ui
+```
+
+### Snapshot Tests
+
+The frontend includes comprehensive snapshot tests to catch unintended UI changes.
+
+#### Running Snapshot Tests
+
+```bash
+# Run all snapshot tests
+npm test -- __tests__/**/*.snapshot.test.tsx
+
+# Run specific snapshot test file
+npm test -- __tests__/components/ui/Button.snapshot.test.tsx
+
+# Update snapshots after intentional UI changes
+npm test -- -u
+
+# Update specific snapshot file
+npm test -- __tests__/components/ui/Button.snapshot.test.tsx -u
+```
+
+#### Snapshot Test Coverage
+
+- **UI Components**: 23 snapshot tests (Button, Input, Error, Loading)
+- **Complex Components**: 19 snapshot tests (Sidebar, StatusBar, EntitySelect, EntityCreateModal)
+- **Page Components**: 23 snapshot tests (all main pages)
+- **Total**: 65 snapshot tests
+
+#### Snapshot Files
+
+- Snapshot files are auto-generated in `__snapshots__/` directories
+- Commit snapshots to version control
+- Review snapshot changes in PRs before accepting
+- Update snapshots when making intentional UI changes
+
+### Test Structure
+
+```
+frontend/
+├── __tests__/
+│   ├── components/
+│   │   ├── ui/                    # UI component tests
+│   │   └── __snapshots__/         # Snapshot files
+│   ├── pages/                      # Page component tests
+│   └── __mocks__/                  # Mock data
+├── vitest.config.ts                # Vitest configuration
+└── vitest.setup.ts                 # Test setup
+```
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API
+- [Vitest Documentation](https://vitest.dev/) - testing framework
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) - component testing

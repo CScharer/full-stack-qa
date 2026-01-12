@@ -1,0 +1,101 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Loading Snapshot Tests > matches snapshot for custom loading message 1`] = `
+<div
+  class="d-flex flex-column align-items-center justify-content-center p-5"
+  data-qa="test-loading-custom"
+>
+  <div
+    class="spinner-border text-primary mb-3"
+    data-qa="test-loading-custom-spinner"
+    role="status"
+  >
+    <span
+      class="visually-hidden"
+    >
+      Loading...
+    </span>
+  </div>
+  <p
+    class="text-muted"
+    data-qa="test-loading-custom-message"
+  >
+    Loading applications...
+  </p>
+</div>
+`;
+
+exports[`Loading Snapshot Tests > matches snapshot for default loading message 1`] = `
+<div
+  class="d-flex flex-column align-items-center justify-content-center p-5"
+  data-qa="test-loading-default"
+>
+  <div
+    class="spinner-border text-primary mb-3"
+    data-qa="test-loading-default-spinner"
+    role="status"
+  >
+    <span
+      class="visually-hidden"
+    >
+      Loading...
+    </span>
+  </div>
+  <p
+    class="text-muted"
+    data-qa="test-loading-default-message"
+  >
+    Loading...
+  </p>
+</div>
+`;
+
+exports[`Loading Snapshot Tests > matches snapshot for long loading message 1`] = `
+<div
+  class="d-flex flex-column align-items-center justify-content-center p-5"
+  data-qa="test-loading-long"
+>
+  <div
+    class="spinner-border text-primary mb-3"
+    data-qa="test-loading-long-spinner"
+    role="status"
+  >
+    <span
+      class="visually-hidden"
+    >
+      Loading...
+    </span>
+  </div>
+  <p
+    class="text-muted"
+    data-qa="test-loading-long-message"
+  >
+    Please wait while we load your data from the server
+  </p>
+</div>
+`;
+
+exports[`Loading Snapshot Tests > matches snapshot for short loading message 1`] = `
+<div
+  class="d-flex flex-column align-items-center justify-content-center p-5"
+  data-qa="test-loading-short"
+>
+  <div
+    class="spinner-border text-primary mb-3"
+    data-qa="test-loading-short-spinner"
+    role="status"
+  >
+    <span
+      class="visually-hidden"
+    >
+      Loading...
+    </span>
+  </div>
+  <p
+    class="text-muted"
+    data-qa="test-loading-short-message"
+  >
+    Loading...
+  </p>
+</div>
+`;

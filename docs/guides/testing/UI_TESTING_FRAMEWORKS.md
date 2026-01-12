@@ -706,6 +706,152 @@ pip install robotframework-seleniumlibrary
 
 ---
 
+## 🧪 Frontend Unit Testing with Vitest
+
+### Overview
+
+The frontend application uses **Vitest** for unit testing and **React Testing Library** for component testing. In addition to functional tests, the frontend includes comprehensive **snapshot tests** to catch unintended UI changes.
+
+### Setup
+
+```bash
+cd frontend
+npm install
+```
+
+### Running Tests
+
+```bash
+# Run all tests (functional + snapshot)
+cd frontend
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in UI mode (interactive)
+npm run test:ui
+
+# Run only snapshot tests
+npm test -- __tests__/**/*.snapshot.test.tsx
+
+# Update snapshots
+npm test -- -u
+```
+
+### Test Structure
+
+```
+frontend/
+├── __tests__/
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── Button.snapshot.test.tsx
+│   │   │   ├── Input.snapshot.test.tsx
+│   │   │   ├── Error.snapshot.test.tsx
+│   │   │   ├── Loading.snapshot.test.tsx
+│   │   │   └── __snapshots__/          # Auto-generated
+│   │   ├── Sidebar.snapshot.test.tsx
+│   │   ├── StatusBar.snapshot.test.tsx
+│   │   ├── EntitySelect.snapshot.test.tsx
+│   │   ├── EntityCreateModal.snapshot.test.tsx
+│   │   └── __snapshots__/              # Auto-generated
+│   └── pages/
+│       ├── home.snapshot.test.tsx
+│       ├── applications.snapshot.test.tsx
+│       ├── companies.snapshot.test.tsx
+│       ├── contacts.snapshot.test.tsx
+│       ├── clients.snapshot.test.tsx
+│       ├── notes.snapshot.test.tsx
+│       ├── job-search-sites.snapshot.test.tsx
+│       └── __snapshots__/               # Auto-generated
+├── vitest.config.ts                     # Configuration
+└── vitest.setup.ts                      # Test setup
+```
+
+### Snapshot Testing
+
+**Snapshot tests** capture the rendered output of components and compare it against previously saved snapshots. They help catch unintended UI changes and serve as living documentation.
+
+#### Snapshot Test Coverage
+
+- **UI Components**: 23 snapshot tests (Button, Input, Error, Loading)
+- **Complex Components**: 19 snapshot tests (Sidebar, StatusBar, EntitySelect, EntityCreateModal)
+- **Page Components**: 23 snapshot tests (all main pages with loading, error, success, and empty states)
+- **Total**: 65 snapshot tests
+
+#### Running Snapshot Tests
+
+```bash
+# Run all snapshot tests
+cd frontend
+npm test -- __tests__/**/*.snapshot.test.tsx
+
+# Run specific snapshot test file
+npm test -- __tests__/components/ui/Button.snapshot.test.tsx
+
+# Update snapshots after intentional changes
+npm test -- -u
+
+# Update specific snapshot file
+npm test -- __tests__/components/ui/Button.snapshot.test.tsx -u
+```
+
+#### Snapshot Test Example
+
+```typescript
+import { describe, it, expect } from 'vitest';
+import { render } from '@testing-library/react';
+import { Button } from '@/components/ui/Button';
+
+describe('Button Snapshot Tests', () => {
+  it('matches snapshot for primary button', () => {
+    const { container } = render(
+      <Button data-qa="test-button">Click me</Button>
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});
+```
+
+#### Best Practices for Snapshot Tests
+
+- ✅ Test stable, reusable components
+- ✅ Test different states (loading, error, success, empty)
+- ✅ Test different variants and props combinations
+- ✅ Review snapshot changes before accepting
+- ✅ Update snapshots intentionally, not automatically
+- ⚠️ Avoid testing highly dynamic content without mocking
+
+#### Managing Snapshots
+
+- **Snapshot files** are auto-generated in `__snapshots__/` directories
+- **Commit snapshots** to version control
+- **Review changes** in PRs before accepting
+- **Update snapshots** when making intentional UI changes: `npm test -- -u`
+
+### Features
+
+- ✅ **Vitest** - Fast, modern test runner
+- ✅ **React Testing Library** - Component testing utilities
+- ✅ **Snapshot Testing** - 65 snapshot tests for UI regression detection
+- ✅ **TypeScript** - Full type safety
+- ✅ **Mock Data** - Comprehensive mock data for all entities
+- ✅ **Coverage Reports** - Code coverage tracking
+
+### Best Use Cases
+
+- Component unit testing
+- UI regression detection
+- Quick feedback on UI changes
+- Documentation of component structure
+- Catching unintended changes
+
+---
+
 ## Playwright Data-qa Migration (Completed 2026-01-11)
 
 ### Migration Summary

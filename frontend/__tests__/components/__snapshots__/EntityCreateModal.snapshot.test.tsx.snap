@@ -1,0 +1,275 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EntityCreateModal Snapshot Tests > matches snapshot for closed modal 1`] = `<div />`;
+
+exports[`EntityCreateModal Snapshot Tests > matches snapshot for modal with complex content 1`] = `
+<div>
+  <div
+    class="modal show d-block"
+    data-qa="entity-create-modal-create-contact"
+    style="background-color: rgba(0, 0, 0, 0.5);"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered"
+      data-qa="entity-create-modal-create-contact-dialog"
+    >
+      <div
+        class="modal-content"
+        data-qa="entity-create-modal-create-contact-content"
+      >
+        <div
+          class="modal-header"
+          data-qa="entity-create-modal-create-contact-header"
+        >
+          <h5
+            class="modal-title"
+            data-qa="entity-create-modal-create-contact-title"
+          >
+            Create Contact
+          </h5>
+          <button
+            aria-label="Close"
+            class="btn-close"
+            data-qa="entity-create-modal-create-contact-close-button"
+            type="button"
+          />
+        </div>
+        <div
+          class="modal-body"
+          data-qa="entity-create-modal-create-contact-body"
+        >
+          <div>
+            <input
+              placeholder="Name"
+              type="text"
+            />
+            <input
+              placeholder="Email"
+              type="email"
+            />
+            <textarea
+              placeholder="Notes"
+            />
+          </div>
+        </div>
+        <div
+          class="modal-footer"
+          data-qa="entity-create-modal-create-contact-footer"
+        >
+          <button
+            class="btn btn-secondary"
+            data-qa="entity-create-modal-create-contact-cancel-button"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            data-qa="entity-create-modal-create-contact-save-button"
+            type="button"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntityCreateModal Snapshot Tests > matches snapshot for modal with loading state 1`] = `
+<div>
+  <div
+    class="modal show d-block"
+    data-qa="entity-create-modal-create-entity"
+    style="background-color: rgba(0, 0, 0, 0.5);"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered"
+      data-qa="entity-create-modal-create-entity-dialog"
+    >
+      <div
+        class="modal-content"
+        data-qa="entity-create-modal-create-entity-content"
+      >
+        <div
+          class="modal-header"
+          data-qa="entity-create-modal-create-entity-header"
+        >
+          <h5
+            class="modal-title"
+            data-qa="entity-create-modal-create-entity-title"
+          >
+            Create Entity
+          </h5>
+          <button
+            aria-label="Close"
+            class="btn-close"
+            data-qa="entity-create-modal-create-entity-close-button"
+            type="button"
+          />
+        </div>
+        <div
+          class="modal-body"
+          data-qa="entity-create-modal-create-entity-body"
+        >
+          <div>
+            Modal content
+          </div>
+        </div>
+        <div
+          class="modal-footer"
+          data-qa="entity-create-modal-create-entity-footer"
+        >
+          <button
+            class="btn btn-secondary"
+            data-qa="entity-create-modal-create-entity-cancel-button"
+            disabled=""
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            data-qa="entity-create-modal-create-entity-save-button"
+            disabled=""
+            type="button"
+          >
+            Saving...
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntityCreateModal Snapshot Tests > matches snapshot for modal with long title 1`] = `
+<div>
+  <div
+    class="modal show d-block"
+    data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title"
+    style="background-color: rgba(0, 0, 0, 0.5);"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered"
+      data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-dialog"
+    >
+      <div
+        class="modal-content"
+        data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-content"
+      >
+        <div
+          class="modal-header"
+          data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-header"
+        >
+          <h5
+            class="modal-title"
+            data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-title"
+          >
+            Create a New Entity with a Very Long Title
+          </h5>
+          <button
+            aria-label="Close"
+            class="btn-close"
+            data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-close-button"
+            type="button"
+          />
+        </div>
+        <div
+          class="modal-body"
+          data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-body"
+        >
+          <div>
+            Modal content
+          </div>
+        </div>
+        <div
+          class="modal-footer"
+          data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-footer"
+        >
+          <button
+            class="btn btn-secondary"
+            data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-cancel-button"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            data-qa="entity-create-modal-create-a-new-entity-with-a-very-long-title-save-button"
+            type="button"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`EntityCreateModal Snapshot Tests > matches snapshot for open modal 1`] = `
+<div>
+  <div
+    class="modal show d-block"
+    data-qa="entity-create-modal-create-entity"
+    style="background-color: rgba(0, 0, 0, 0.5);"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered"
+      data-qa="entity-create-modal-create-entity-dialog"
+    >
+      <div
+        class="modal-content"
+        data-qa="entity-create-modal-create-entity-content"
+      >
+        <div
+          class="modal-header"
+          data-qa="entity-create-modal-create-entity-header"
+        >
+          <h5
+            class="modal-title"
+            data-qa="entity-create-modal-create-entity-title"
+          >
+            Create Entity
+          </h5>
+          <button
+            aria-label="Close"
+            class="btn-close"
+            data-qa="entity-create-modal-create-entity-close-button"
+            type="button"
+          />
+        </div>
+        <div
+          class="modal-body"
+          data-qa="entity-create-modal-create-entity-body"
+        >
+          <div>
+            Modal content
+          </div>
+        </div>
+        <div
+          class="modal-footer"
+          data-qa="entity-create-modal-create-entity-footer"
+        >
+          <button
+            class="btn btn-secondary"
+            data-qa="entity-create-modal-create-entity-cancel-button"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            data-qa="entity-create-modal-create-entity-save-button"
+            type="button"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,130 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Input Snapshot Tests > matches snapshot for basic input 1`] = `
+<div
+  class="mb-3"
+  data-qa="input-wrapper-test-input-basic"
+>
+  <input
+    class="form-control  "
+    data-qa="test-input-basic"
+  />
+</div>
+`;
+
+exports[`Input Snapshot Tests > matches snapshot for disabled input 1`] = `
+<div
+  class="mb-3"
+  data-qa="input-wrapper-test-input-disabled"
+>
+  <label
+    class="form-label"
+    data-qa="label-test-input-disabled"
+  >
+    Disabled Field
+  </label>
+  <input
+    class="form-control  "
+    data-qa="test-input-disabled"
+    disabled=""
+  />
+</div>
+`;
+
+exports[`Input Snapshot Tests > matches snapshot for input with error 1`] = `
+<div
+  class="mb-3"
+  data-qa="input-wrapper-test-input-error"
+>
+  <input
+    class="form-control is-invalid "
+    data-qa="test-input-error"
+  />
+  <div
+    class="invalid-feedback"
+    data-qa="error-test-input-error"
+  >
+    This field is required
+  </div>
+</div>
+`;
+
+exports[`Input Snapshot Tests > matches snapshot for input with label 1`] = `
+<div
+  class="mb-3"
+  data-qa="input-wrapper-test-input-label"
+>
+  <label
+    class="form-label"
+    data-qa="label-test-input-label"
+  >
+    Name
+  </label>
+  <input
+    class="form-control  "
+    data-qa="test-input-label"
+  />
+</div>
+`;
+
+exports[`Input Snapshot Tests > matches snapshot for input with label and error 1`] = `
+<div
+  class="mb-3"
+  data-qa="input-wrapper-test-input-label-error"
+>
+  <label
+    class="form-label"
+    data-qa="label-test-input-label-error"
+  >
+    Email
+  </label>
+  <input
+    class="form-control is-invalid "
+    data-qa="test-input-label-error"
+  />
+  <div
+    class="invalid-feedback"
+    data-qa="error-test-input-label-error"
+  >
+    Invalid email address
+  </div>
+</div>
+`;
+
+exports[`Input Snapshot Tests > matches snapshot for input with placeholder 1`] = `
+<div
+  class="mb-3"
+  data-qa="input-wrapper-test-input-placeholder"
+>
+  <label
+    class="form-label"
+    data-qa="label-test-input-placeholder"
+  >
+    Name
+  </label>
+  <input
+    class="form-control  "
+    data-qa="test-input-placeholder"
+    placeholder="Enter your name"
+  />
+</div>
+`;
+
+exports[`Input Snapshot Tests > matches snapshot for input with value 1`] = `
+<div
+  class="mb-3"
+  data-qa="input-wrapper-test-input-value"
+>
+  <label
+    class="form-label"
+    data-qa="label-test-input-value"
+  >
+    Name
+  </label>
+  <input
+    class="form-control  "
+    data-qa="test-input-value"
+    value="John Doe"
+  />
+</div>
+`;

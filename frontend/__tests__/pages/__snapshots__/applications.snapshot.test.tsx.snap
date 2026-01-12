@@ -1,0 +1,515 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ApplicationsPage Snapshot Tests > matches snapshot for applications list 1`] = `
+<div>
+  <div
+    class="container py-3 py-md-4"
+    data-qa="applications-page"
+    style="padding-bottom: 60px;"
+  >
+    <div
+      class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2"
+    >
+      <h1
+        class="h2 mb-0"
+        data-qa="applications-title"
+      >
+        Applications
+      </h1>
+      <a
+        href="/applications/new"
+      >
+        <button
+          class="btn btn-primary  w-100 w-md-auto"
+          data-qa="applications-new-button"
+        >
+          Add
+        </button>
+      </a>
+    </div>
+    <div
+      class="card shadow-sm mb-3 mb-md-4"
+      data-qa="applications-filters"
+    >
+      <div
+        class="card-body"
+      >
+        <div
+          class="row g-2"
+        >
+          <div
+            class="col-12 col-md-4"
+          >
+            <label
+              class="form-label small"
+            >
+              Status
+            </label>
+            <input
+              class="form-control form-control-sm"
+              data-qa="applications-filter-status"
+              placeholder="Filter by status"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="col-12 col-md-4"
+          >
+            <label
+              class="form-label small"
+            >
+              Company ID
+            </label>
+            <input
+              class="form-control form-control-sm"
+              data-qa="applications-filter-company-id"
+              placeholder="Filter by company ID"
+              type="number"
+              value=""
+            />
+          </div>
+          <div
+            class="col-12 col-md-4"
+          >
+            <label
+              class="form-label small"
+            >
+              Client ID
+            </label>
+            <input
+              class="form-control form-control-sm"
+              data-qa="applications-filter-client-id"
+              placeholder="Filter by client ID"
+              type="number"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="card shadow-sm"
+      data-qa="applications-list-card"
+    >
+      <div
+        class="table-responsive"
+      >
+        <table
+          class="table table-hover mb-0"
+          data-qa="applications-table"
+        >
+          <thead
+            class="table-light"
+          >
+            <tr>
+              <th>
+                Position
+              </th>
+              <th
+                class="d-none d-md-table-cell"
+              >
+                Status
+              </th>
+              <th
+                class="d-none d-lg-table-cell"
+              >
+                Company
+              </th>
+              <th
+                class="d-none d-xl-table-cell"
+              >
+                Client
+              </th>
+              <th
+                class="d-none d-xl-table-cell"
+              >
+                Contact
+              </th>
+              <th>
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            data-qa="applications-table-body"
+          >
+            <tr
+              data-qa="application-row-1"
+            >
+              <td>
+                <a
+                  class="text-decoration-none"
+                  data-qa="application-position-link-1"
+                  href="/applications/1"
+                >
+                  Senior Software Engineer
+                </a>
+                <div
+                  class="d-md-none mt-1"
+                >
+                  <span
+                    class="badge bg-primary"
+                  >
+                    Applied
+                  </span>
+                </div>
+              </td>
+              <td
+                class="d-none d-md-table-cell"
+              >
+                <span
+                  class="badge bg-primary"
+                  data-qa="application-status-1"
+                >
+                  Applied
+                </span>
+              </td>
+              <td
+                class="d-none d-lg-table-cell"
+                data-qa="application-company-1"
+              >
+                1
+              </td>
+              <td
+                class="d-none d-xl-table-cell"
+                data-qa="application-client-1"
+              >
+                1
+              </td>
+              <td
+                class="d-none d-xl-table-cell"
+                data-qa="application-contact-1"
+              >
+                N/A
+              </td>
+              <td>
+                <div
+                  class="d-flex gap-1 gap-md-2"
+                >
+                  <a
+                    class="btn btn-sm btn-outline-primary"
+                    data-qa="application-edit-button-1"
+                    href="/applications/1/edit"
+                  >
+                    Edit
+                  </a>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    data-qa="application-delete-button-1"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr
+              data-qa="application-row-2"
+            >
+              <td>
+                <a
+                  class="text-decoration-none"
+                  data-qa="application-position-link-2"
+                  href="/applications/2"
+                >
+                  Frontend Developer
+                </a>
+                <div
+                  class="d-md-none mt-1"
+                >
+                  <span
+                    class="badge bg-primary"
+                  >
+                    Interview
+                  </span>
+                </div>
+              </td>
+              <td
+                class="d-none d-md-table-cell"
+              >
+                <span
+                  class="badge bg-primary"
+                  data-qa="application-status-2"
+                >
+                  Interview
+                </span>
+              </td>
+              <td
+                class="d-none d-lg-table-cell"
+                data-qa="application-company-2"
+              >
+                2
+              </td>
+              <td
+                class="d-none d-xl-table-cell"
+                data-qa="application-client-2"
+              >
+                N/A
+              </td>
+              <td
+                class="d-none d-xl-table-cell"
+                data-qa="application-contact-2"
+              >
+                N/A
+              </td>
+              <td>
+                <div
+                  class="d-flex gap-1 gap-md-2"
+                >
+                  <a
+                    class="btn btn-sm btn-outline-primary"
+                    data-qa="application-edit-button-2"
+                    href="/applications/2/edit"
+                  >
+                    Edit
+                  </a>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    data-qa="application-delete-button-2"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div
+      class="bg-light border-top py-2 px-3 "
+      data-qa="status-bar"
+      style="position: fixed; bottom: 0px; left: 0px; right: 0px; z-index: 1000;"
+    >
+      <div
+        class="container-fluid"
+      >
+        <div
+          class="d-flex justify-content-between align-items-center"
+        >
+          <small
+            class="text-muted"
+            data-qa="status-bar-message"
+          >
+            Ready
+          </small>
+          <small
+            class="text-muted"
+            data-qa="status-bar-timestamp"
+          >
+            2:35:03 PM
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ApplicationsPage Snapshot Tests > matches snapshot for empty state 1`] = `
+<div>
+  <div
+    class="container py-3 py-md-4"
+    data-qa="applications-page"
+    style="padding-bottom: 60px;"
+  >
+    <div
+      class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2"
+    >
+      <h1
+        class="h2 mb-0"
+        data-qa="applications-title"
+      >
+        Applications
+      </h1>
+      <a
+        href="/applications/new"
+      >
+        <button
+          class="btn btn-primary  w-100 w-md-auto"
+          data-qa="applications-new-button"
+        >
+          Add
+        </button>
+      </a>
+    </div>
+    <div
+      class="card shadow-sm mb-3 mb-md-4"
+      data-qa="applications-filters"
+    >
+      <div
+        class="card-body"
+      >
+        <div
+          class="row g-2"
+        >
+          <div
+            class="col-12 col-md-4"
+          >
+            <label
+              class="form-label small"
+            >
+              Status
+            </label>
+            <input
+              class="form-control form-control-sm"
+              data-qa="applications-filter-status"
+              placeholder="Filter by status"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="col-12 col-md-4"
+          >
+            <label
+              class="form-label small"
+            >
+              Company ID
+            </label>
+            <input
+              class="form-control form-control-sm"
+              data-qa="applications-filter-company-id"
+              placeholder="Filter by company ID"
+              type="number"
+              value=""
+            />
+          </div>
+          <div
+            class="col-12 col-md-4"
+          >
+            <label
+              class="form-label small"
+            >
+              Client ID
+            </label>
+            <input
+              class="form-control form-control-sm"
+              data-qa="applications-filter-client-id"
+              placeholder="Filter by client ID"
+              type="number"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="card shadow-sm text-center py-5"
+    >
+      <div
+        class="card-body"
+      >
+        <p
+          class="text-muted mb-4"
+          data-qa="applications-empty-state"
+        >
+          No applications found.
+        </p>
+      </div>
+    </div>
+    <div
+      class="bg-light border-top py-2 px-3 "
+      data-qa="status-bar"
+      style="position: fixed; bottom: 0px; left: 0px; right: 0px; z-index: 1000;"
+    >
+      <div
+        class="container-fluid"
+      >
+        <div
+          class="d-flex justify-content-between align-items-center"
+        >
+          <small
+            class="text-muted"
+            data-qa="status-bar-message"
+          >
+            Ready
+          </small>
+          <small
+            class="text-muted"
+            data-qa="status-bar-timestamp"
+          >
+            2:35:03 PM
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ApplicationsPage Snapshot Tests > matches snapshot for error state 1`] = `
+<div>
+  <div
+    class="alert alert-danger d-flex align-items-center"
+    data-qa="error"
+    role="alert"
+  >
+    <svg
+      aria-label="Error:"
+      class="bi flex-shrink-0 me-2"
+      height="20"
+      role="img"
+      width="20"
+    >
+      <use
+        href="#exclamation-triangle-fill"
+      />
+    </svg>
+    <div
+      class="flex-grow-1"
+      data-qa="error-message"
+    >
+      Failed to load applications
+    </div>
+    <button
+      class="btn btn-sm btn-outline-danger ms-3"
+      data-qa="error-retry"
+      type="button"
+    >
+      Retry
+    </button>
+    <svg
+      style="display: none;"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <symbol
+        fill="currentColor"
+        id="exclamation-triangle-fill"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+        />
+      </symbol>
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`ApplicationsPage Snapshot Tests > matches snapshot for loading state 1`] = `
+<div>
+  <div
+    class="d-flex flex-column align-items-center justify-content-center p-5"
+    data-qa="loading"
+  >
+    <div
+      class="spinner-border text-primary mb-3"
+      data-qa="loading-spinner"
+      role="status"
+    >
+      <span
+        class="visually-hidden"
+      >
+        Loading...
+      </span>
+    </div>
+    <p
+      class="text-muted"
+      data-qa="loading-message"
+    >
+      Loading applications...
+    </p>
+  </div>
+</div>
+`;
