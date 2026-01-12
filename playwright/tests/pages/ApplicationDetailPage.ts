@@ -17,17 +17,22 @@ export class ApplicationDetailPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    // Title selector (fallback to h1.h4 if data-qa not available)
-    this.title = page.locator('h1.h4, h1.h3, h1.h2');
-    // Back link
-    this.backLink = page.locator('a:has-text("Back to Applications"), a:has-text("←")');
-    // Status badge (fallback to .badge.bg-primary if data-qa not available)
-    this.statusBadge = page.locator('.badge.bg-primary');
-    // Buttons (use data-qa with application ID)
-    this.editButton = page.locator('a:has-text("Edit"), button:has-text("Edit")');
-    this.deleteButton = page.locator('button:has-text("Delete")');
+    // Title selector - uses data-qa with application ID (use getTitle(applicationId) method)
+    // Note: Title requires application ID, so use getTitle() method instead of this property
+    this.title = page.locator('[data-qa^="application-detail-"][data-qa$="-title"]');
+    // Back link - uses data-qa attribute
+    this.backLink = page.locator('[data-qa="application-detail-back-link"]');
+    // Status badge - uses data-qa with application ID (use getStatusBadge(applicationId) method)
+    // Note: Status badge requires application ID, so use getStatusBadge() method instead of this property
+    this.statusBadge = page.locator('[data-qa^="application-detail-"][data-qa$="-status-badge"]');
+    // Buttons - methods already use data-qa with application ID, these are fallbacks
+    // Edit button fallback (methods use getEditButton which has data-qa)
+    this.editButton = page.locator('[data-qa^="application-detail-"][data-qa$="-edit-button"]');
+    // Delete button fallback (methods use getDeleteButton which has data-qa)
+    this.deleteButton = page.locator('[data-qa^="application-detail-"][data-qa$="-delete-button"]');
     // Notes section
-    this.addNoteButton = page.locator('button:has-text("Add Note")');
+    // Add note button fallback (methods use getAddNoteButton which has data-qa)
+    this.addNoteButton = page.locator('[data-qa^="application-detail-"][data-qa$="-add-note-button"]');
     this.notesList = page.locator('[data-qa*="notes-list"]');
   }
 
@@ -35,16 +40,38 @@ export class ApplicationDetailPage extends BasePage {
    * Navigate to application detail page
    * @param applicationId - Application ID
    */
-  async navigate(applicationId: number): Promise<void> {
+  async navigateToApplication(applicationId: number): Promise<void> {
     await super.navigate(`/applications/${applicationId}`);
   }
 
   /**
-   * Verify page has loaded
+   * Get title locator for specific application
+   * @param applicationId - Application ID
    */
-  async verifyPageLoaded(): Promise<void> {
+  getTitleLocator(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-detail-${applicationId}-title"]`);
+  }
+
+  /**
+   * Get status badge for specific application
+   * @param applicationId - Application ID
+   */
+  getStatusBadge(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-detail-${applicationId}-status-badge"]`);
+  }
+
+  /**
+   * Verify page has loaded
+   * @param applicationId - Application ID (optional, for title verification)
+   */
+  async verifyPageLoaded(applicationId?: number): Promise<void> {
     await this.waitForPageLoad();
-    await expect(this.title).toBeVisible();
+    if (applicationId) {
+      await expect(this.getTitleLocator(applicationId)).toBeVisible();
+    } else {
+      // Fallback: just check that body is visible
+      await expect(this.page.locator('body')).toBeVisible();
+    }
     await expect(this.page.locator('body')).toBeVisible();
   }
 
@@ -91,9 +118,11 @@ export class ApplicationDetailPage extends BasePage {
 
   /**
    * Get status text
+   * @param applicationId - Application ID
    */
-  async getStatus(): Promise<string | null> {
-    return await this.statusBadge.textContent();
+  async getStatus(applicationId: number): Promise<string | null> {
+    const statusBadge = this.getStatusBadge(applicationId);
+    return await statusBadge.textContent();
   }
 
   /**

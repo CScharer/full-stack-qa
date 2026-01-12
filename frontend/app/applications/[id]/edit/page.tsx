@@ -109,6 +109,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 required
+                data-qa={`application-edit-${params.id}-status-select`}
               >
                 <option value="Pending">Pending</option>
                 <option value="Applied">Applied</option>
@@ -126,6 +127,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
                 value={formData.work_setting}
                 onChange={(e) => setFormData({ ...formData, work_setting: e.target.value })}
                 required
+                data-qa={`application-edit-${params.id}-work-setting-select`}
               >
                 <option value="Remote">Remote</option>
                 <option value="Hybrid">Hybrid</option>
@@ -137,24 +139,28 @@ export default function EditApplicationPage({ params }: { params: { id: string }
               label="Position"
               value={formData.position || ''}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+              data-qa={`application-edit-${params.id}-position-input`}
             />
 
             <Input
               label="Requirement"
               value={formData.requirement || ''}
               onChange={(e) => setFormData({ ...formData, requirement: e.target.value })}
+              data-qa={`application-edit-${params.id}-requirement-input`}
             />
 
             <Input
               label="Compensation"
               value={formData.compensation || ''}
               onChange={(e) => setFormData({ ...formData, compensation: e.target.value })}
+              data-qa={`application-edit-${params.id}-compensation-input`}
             />
 
             <Input
               label="Location"
               value={formData.location || ''}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              data-qa={`application-edit-${params.id}-location-input`}
             />
 
             <Input
@@ -162,6 +168,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
               type="url"
               value={formData.job_link || ''}
               onChange={(e) => setFormData({ ...formData, job_link: e.target.value })}
+              data-qa={`application-edit-${params.id}-job-link-input`}
             />
 
             <div className="mb-3">
@@ -171,6 +178,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
                 rows={5}
                 value={formData.job_description || ''}
                 onChange={(e) => setFormData({ ...formData, job_description: e.target.value })}
+                data-qa={`application-edit-${params.id}-job-description-textarea`}
               />
             </div>
 
@@ -178,12 +186,14 @@ export default function EditApplicationPage({ params }: { params: { id: string }
               label="Resume"
               value={formData.resume || ''}
               onChange={(e) => setFormData({ ...formData, resume: e.target.value })}
+              data-qa={`application-edit-${params.id}-resume-input`}
             />
 
             <Input
               label="Cover Letter"
               value={formData.cover_letter || ''}
               onChange={(e) => setFormData({ ...formData, cover_letter: e.target.value })}
+              data-qa={`application-edit-${params.id}-cover-letter-input`}
             />
 
             <Input
@@ -191,6 +201,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
               type="number"
               value={formData.company_id || ''}
               onChange={(e) => setFormData({ ...formData, company_id: e.target.value ? parseInt(e.target.value) : undefined })}
+              data-qa={`application-edit-${params.id}-company-id-input`}
             />
 
             <Input
@@ -198,6 +209,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
               type="number"
               value={formData.client_id || ''}
               onChange={(e) => setFormData({ ...formData, client_id: e.target.value ? parseInt(e.target.value) : undefined })}
+              data-qa={`application-edit-${params.id}-client-id-input`}
             />
 
             <Input
@@ -205,6 +217,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
               type="number"
               value={formData.entered_iwd || 0}
               onChange={(e) => setFormData({ ...formData, entered_iwd: parseInt(e.target.value) || 0 })}
+              data-qa={`application-edit-${params.id}-entered-iwd-input`}
             />
 
             <Input
@@ -212,6 +225,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
               type="date"
               value={formData.date_close || ''}
               onChange={(e) => setFormData({ ...formData, date_close: e.target.value })}
+              data-qa={`application-edit-${params.id}-date-close-input`}
             />
 
             <div className="d-flex flex-column flex-sm-row gap-2">

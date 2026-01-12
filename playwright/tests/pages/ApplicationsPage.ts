@@ -33,8 +33,8 @@ export class ApplicationsPage extends BasePage {
     this.applicationsTable = page.locator('[data-qa="applications-table"]');
     this.applicationsTableBody = page.locator('[data-qa="applications-table-body"]');
     this.applicationsListCard = page.locator('[data-qa="applications-list-card"]');
-    // Empty state (fallback to text if data-qa not available)
-    this.emptyState = page.locator('text=No applications found');
+    // Empty state - uses data-qa attribute
+    this.emptyState = page.locator('[data-qa="applications-empty-state"]');
   }
 
   /**

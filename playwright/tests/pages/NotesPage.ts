@@ -18,17 +18,19 @@ export class NotesPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    // Title selector (fallback to h1.h2 if data-qa not available)
-    this.title = page.locator('h1.h2:has-text("Notes")');
-    // New note button (fallback to button with "Add" text)
+    // Title selector - uses data-qa attribute
+    this.title = page.locator('[data-qa="notes-title"]');
+    // New note button - NOTE: Notes page does not have a "New Note" button
+    // Notes can only be created from within an application page
+    // This selector is kept for backward compatibility but will not match any element on the notes page
     this.newNoteButton = page.locator('a[href="/notes/new"], button:has-text("Add")');
     // Filters
     this.filtersCard = page.locator('[data-qa="notes-filters"]');
     this.applicationIdFilter = page.locator('[data-qa="notes-filter-application-id"]');
-    // Notes list (fallback to card or list if data-qa not available)
-    this.notesList = page.locator('.card, .list-group');
-    // Empty state
-    this.emptyState = page.locator('text=No notes found');
+    // Notes list - uses data-qa attribute
+    this.notesList = page.locator('[data-qa="notes-list-card"]');
+    // Empty state - uses data-qa attribute
+    this.emptyState = page.locator('[data-qa="notes-empty-state"]');
     // Pagination
     this.paginationPreviousButton = page.locator('[data-qa="notes-pagination-previous-button"]');
     this.paginationNextButton = page.locator('[data-qa="notes-pagination-next-button"]');
@@ -52,8 +54,12 @@ export class NotesPage extends BasePage {
 
   /**
    * Click New Note button
+   * NOTE: This method will not work on the notes page as there is no "New Note" button.
+   * Notes can only be created from within an application page.
+   * This method is kept for backward compatibility.
    */
   async clickNewNote(): Promise<void> {
+    // This will fail if called - notes page doesn't have a new note button
     await this.newNoteButton.click();
   }
 

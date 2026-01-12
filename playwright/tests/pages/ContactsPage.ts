@@ -35,8 +35,8 @@ export class ContactsPage extends BasePage {
     // Table
     this.contactsTable = page.locator('[data-qa="contacts-table"]');
     this.contactsTableBody = page.locator('[data-qa="contacts-table-body"]');
-    // Empty state (fallback to text if data-qa not available)
-    this.emptyState = page.locator('text=No contacts found');
+    // Empty state - uses data-qa attribute
+    this.emptyState = page.locator('[data-qa="contacts-empty-state"]');
     // Pagination
     this.paginationPreviousButton = page.locator('[data-qa="contacts-pagination-previous-button"]');
     this.paginationNextButton = page.locator('[data-qa="contacts-pagination-next-button"]');

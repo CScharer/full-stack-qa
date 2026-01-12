@@ -18,17 +18,17 @@ export class CompaniesPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    // Title selector (fallback to h1.h2 if data-qa not available)
-    this.title = page.locator('h1.h2:has-text("Companies")');
+    // Title selector - uses data-qa attribute
+    this.title = page.locator('[data-qa="companies-title"]');
     // New company button
     this.newCompanyButton = page.locator('[data-qa="companies-new-button"]');
     // Filters
     this.filtersCard = page.locator('[data-qa="companies-filters"]');
     this.jobTypeFilter = page.locator('[data-qa="companies-filter-job-type"]');
-    // Table (fallback to table.table if data-qa not available)
-    this.companiesTable = page.locator('table.table');
-    // Empty state
-    this.emptyState = page.locator('text=No companies found');
+    // Table - uses data-qa attribute
+    this.companiesTable = page.locator('[data-qa="companies-table"]');
+    // Empty state - uses data-qa attribute
+    this.emptyState = page.locator('[data-qa="companies-empty-state"]');
     // Pagination
     this.paginationPreviousButton = page.locator('[data-qa="companies-pagination-previous-button"]');
     this.paginationNextButton = page.locator('[data-qa="companies-pagination-next-button"]');
@@ -58,46 +58,90 @@ export class CompaniesPage extends BasePage {
   }
 
   /**
-   * Get company row by name
+   * Get company row by ID (preferred method using data-qa)
+   * @param companyId - Company ID
+   */
+  getCompanyRow(companyId: number): Locator {
+    return this.page.locator(`[data-qa="company-row-${companyId}"]`);
+  }
+
+  /**
+   * Get company row by name (fallback method)
    * @param companyName - Company name
    */
-  async getCompanyRow(companyName: string): Promise<Locator> {
+  async getCompanyRowByName(companyName: string): Promise<Locator> {
     return this.companiesTable.locator(`tbody tr:has-text("${companyName}")`);
   }
 
   /**
-   * Click company name link
+   * Click company name link by ID (preferred method using data-qa)
+   * @param companyId - Company ID
+   */
+  async clickCompany(companyId: number): Promise<void> {
+    const link = this.page.locator(`[data-qa="company-name-link-${companyId}"]`);
+    await link.click();
+  }
+
+  /**
+   * Click company name link by name (fallback method)
    * @param companyName - Company name
    */
-  async clickCompany(companyName: string): Promise<void> {
-    const row = await this.getCompanyRow(companyName);
+  async clickCompanyByName(companyName: string): Promise<void> {
+    const row = await this.getCompanyRowByName(companyName);
     await row.locator('a').first().click();
   }
 
   /**
-   * Click edit button for a company
+   * Click edit button for a company by ID (preferred method using data-qa)
+   * @param companyId - Company ID
+   */
+  async clickEdit(companyId: number): Promise<void> {
+    const editButton = this.page.locator(`[data-qa="company-edit-button-${companyId}"]`);
+    await editButton.click();
+  }
+
+  /**
+   * Click edit button for a company by name (fallback method)
    * @param companyName - Company name
    */
-  async clickEdit(companyName: string): Promise<void> {
-    const row = await this.getCompanyRow(companyName);
+  async clickEditByName(companyName: string): Promise<void> {
+    const row = await this.getCompanyRowByName(companyName);
     await row.locator('a:has-text("Edit")').click();
   }
 
   /**
-   * Click delete button for a company
+   * Click delete button for a company by ID (preferred method using data-qa)
+   * @param companyId - Company ID
+   */
+  async clickDelete(companyId: number): Promise<void> {
+    const deleteButton = this.page.locator(`[data-qa="company-delete-button-${companyId}"]`);
+    await deleteButton.click();
+  }
+
+  /**
+   * Click delete button for a company by name (fallback method)
    * @param companyName - Company name
    */
-  async clickDelete(companyName: string): Promise<void> {
-    const row = await this.getCompanyRow(companyName);
+  async clickDeleteByName(companyName: string): Promise<void> {
+    const row = await this.getCompanyRowByName(companyName);
     await row.locator('button:has-text("Delete")').click();
   }
 
   /**
-   * Check if company exists in the table
+   * Check if company exists in the table by ID (preferred method using data-qa)
+   * @param companyId - Company ID
+   */
+  async hasCompany(companyId: number): Promise<boolean> {
+    const row = this.getCompanyRow(companyId);
+    return await row.count() > 0;
+  }
+
+  /**
+   * Check if company exists in the table by name (fallback method)
    * @param companyName - Company name
    */
-  async hasCompany(companyName: string): Promise<boolean> {
-    const row = await this.getCompanyRow(companyName);
+  async hasCompanyByName(companyName: string): Promise<boolean> {
+    const row = await this.getCompanyRowByName(companyName);
     return await row.count() > 0;
   }
 

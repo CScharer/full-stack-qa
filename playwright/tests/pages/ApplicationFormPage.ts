@@ -19,17 +19,74 @@ export class ApplicationFormPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    // Title selector (fallback to h1 if data-qa not available)
-    this.title = page.locator('h1.h3, h1.h4, h1.h2, h1');
-    // Form inputs (fallback to label-based selectors if data-qa not available)
-    this.positionInput = page.locator('input[placeholder*="Position"], label:has-text("Position") + input, label:has-text("Position") ~ input, input[name="position"]');
-    this.statusSelect = page.locator('select').filter({ hasText: /Pending|Interview|Rejected|Accepted/ }).first();
-    this.workSettingSelect = page.locator('select').filter({ hasText: /Remote|Hybrid|On-site/ }).first();
-    this.locationInput = page.locator('input[placeholder*="Location"], label:has-text("Location") + input, label:has-text("Location") ~ input, input[name="location"]');
-    this.jobLinkInput = page.locator('input[type="url"], label:has-text("Job Link") + input, label:has-text("Job Link") ~ input, input[name="job_link"]');
-    // Buttons
-    this.submitButton = page.locator('button[type="submit"]:has-text("Create"), button[type="submit"]:has-text("Update"), button:has-text("Create Application"), button:has-text("Update Application"), button:has-text("Next")');
-    this.cancelButton = page.locator('button:has-text("Cancel"), a:has-text("Cancel")');
+    // Title selector - wizard step2 uses data-qa="wizard-step2-title", edit form uses h1
+    this.title = page.locator('[data-qa="wizard-step2-title"], h1.h3, h1.h4, h1.h2, h1');
+    // Form inputs - wizard step2 uses data-qa attributes (no ID needed)
+    // Edit form uses data-qa with application ID - use getter methods for edit form
+    this.positionInput = page.locator('[data-qa="application-position"]');
+    this.statusSelect = page.locator('[data-qa="application-status"]');
+    this.workSettingSelect = page.locator('[data-qa="application-work-setting"]');
+    this.locationInput = page.locator('[data-qa="application-location"]');
+    this.jobLinkInput = page.locator('[data-qa="application-job-link"]');
+    // Buttons - wizard step2 uses data-qa attributes
+    this.submitButton = page.locator('[data-qa="wizard-step2-submit-button"], button[type="submit"]:has-text("Update"), button[type="submit"]:has-text("Create Application"), button[type="submit"]:has-text("Update Application")');
+    this.cancelButton = page.locator('[data-qa="wizard-step2-back-button"], [data-qa^="application-edit-"][data-qa$="-cancel-button"], button:has-text("Cancel"), a:has-text("Cancel")');
+  }
+
+  /**
+   * Get position input for edit form
+   * @param applicationId - Application ID
+   */
+  getPositionInput(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-edit-${applicationId}-position-input"]`);
+  }
+
+  /**
+   * Get status select for edit form
+   * @param applicationId - Application ID
+   */
+  getStatusSelect(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-edit-${applicationId}-status-select"]`);
+  }
+
+  /**
+   * Get work setting select for edit form
+   * @param applicationId - Application ID
+   */
+  getWorkSettingSelect(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-edit-${applicationId}-work-setting-select"]`);
+  }
+
+  /**
+   * Get location input for edit form
+   * @param applicationId - Application ID
+   */
+  getLocationInput(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-edit-${applicationId}-location-input"]`);
+  }
+
+  /**
+   * Get job link input for edit form
+   * @param applicationId - Application ID
+   */
+  getJobLinkInput(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-edit-${applicationId}-job-link-input"]`);
+  }
+
+  /**
+   * Get submit button for edit form
+   * @param applicationId - Application ID
+   */
+  getSubmitButton(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-edit-${applicationId}-submit-button"]`);
+  }
+
+  /**
+   * Get cancel button for edit form
+   * @param applicationId - Application ID
+   */
+  getCancelButton(applicationId: number): Locator {
+    return this.page.locator(`[data-qa="application-edit-${applicationId}-cancel-button"], [data-qa="application-edit-${applicationId}-cancel-button-bottom"]`);
   }
 
   /**
@@ -48,7 +105,7 @@ export class ApplicationFormPage extends BasePage {
   }
 
   /**
-   * Fill form with data
+   * Fill form with data (for wizard step2 - new application)
    * @param data - Form data
    */
   async fillForm(data: {
@@ -76,17 +133,62 @@ export class ApplicationFormPage extends BasePage {
   }
 
   /**
-   * Submit the form
+   * Fill edit form with data
+   * @param applicationId - Application ID
+   * @param data - Form data
+   */
+  async fillEditForm(applicationId: number, data: {
+    position?: string;
+    status?: string;
+    workSetting?: string;
+    location?: string;
+    jobLink?: string;
+  }): Promise<void> {
+    if (data.position) {
+      await this.getPositionInput(applicationId).fill(data.position);
+    }
+    if (data.status) {
+      await this.getStatusSelect(applicationId).selectOption(data.status);
+    }
+    if (data.workSetting) {
+      await this.getWorkSettingSelect(applicationId).selectOption(data.workSetting);
+    }
+    if (data.location) {
+      await this.getLocationInput(applicationId).fill(data.location);
+    }
+    if (data.jobLink) {
+      await this.getJobLinkInput(applicationId).fill(data.jobLink);
+    }
+  }
+
+  /**
+   * Submit the form (for wizard step2 - new application)
    */
   async submit(): Promise<void> {
     await this.submitButton.click();
   }
 
   /**
-   * Cancel the form
+   * Submit the edit form
+   * @param applicationId - Application ID
+   */
+  async submitEdit(applicationId: number): Promise<void> {
+    await this.getSubmitButton(applicationId).click();
+  }
+
+  /**
+   * Cancel the form (for wizard step2 - new application)
    */
   async cancel(): Promise<void> {
     await this.cancelButton.click();
+  }
+
+  /**
+   * Cancel the edit form
+   * @param applicationId - Application ID
+   */
+  async cancelEdit(applicationId: number): Promise<void> {
+    await this.getCancelButton(applicationId).click();
   }
 
   /**

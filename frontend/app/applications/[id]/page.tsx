@@ -87,7 +87,7 @@ export default function ApplicationDetailPage({ params }: { params: Promise<{ id
   return (
     <div className="container py-3 py-md-4">
       <div className="mb-2 mb-md-3">
-        <Link href="/applications" className="text-decoration-none">
+        <Link href="/applications" className="text-decoration-none" data-qa="application-detail-back-link">
           ← Back to Applications
         </Link>
       </div>
@@ -95,10 +95,10 @@ export default function ApplicationDetailPage({ params }: { params: Promise<{ id
       <div className="card shadow-sm">
         <div className="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
           <div>
-            <h1 className="h4 h-md-3 mb-1 mb-md-2">
+            <h1 className="h4 h-md-3 mb-1 mb-md-2" data-qa={`application-detail-${application.id}-title`}>
               {application.position || 'Application Details'}
             </h1>
-            <span className="badge bg-primary">
+            <span className="badge bg-primary" data-qa={`application-detail-${application.id}-status-badge`}>
               {application.status}
             </span>
           </div>

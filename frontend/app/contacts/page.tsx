@@ -205,7 +205,7 @@ export default function ContactsPage() {
       ) : (
         <div className="card shadow-sm text-center py-5">
           <div className="card-body">
-            <p className="text-muted mb-4">No contacts found.</p>
+            <p className="text-muted mb-4" data-qa="contacts-empty-state">No contacts found.</p>
           </div>
         </div>
       )}

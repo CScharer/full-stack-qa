@@ -16,14 +16,14 @@ export class JobSearchSitesPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    // Title selector (fallback to h1.h2 if data-qa not available)
-    this.title = page.locator('h1.h2:has-text("Job Search Sites")');
+    // Title selector - uses data-qa attribute
+    this.title = page.locator('[data-qa="job-search-sites-title"]');
     // New site button
     this.newSiteButton = page.locator('[data-qa="job-search-sites-new-button"]');
-    // Table (fallback to table.table if data-qa not available)
-    this.sitesTable = page.locator('table.table');
-    // Empty state
-    this.emptyState = page.locator('text=No job search sites found');
+    // Table - uses data-qa attribute
+    this.sitesTable = page.locator('[data-qa="job-search-sites-table"]');
+    // Empty state - uses data-qa attribute
+    this.emptyState = page.locator('[data-qa="job-search-sites-empty-state"]');
     // Pagination
     this.paginationPreviousButton = page.locator('[data-qa="job-search-sites-pagination-previous-button"]');
     this.paginationNextButton = page.locator('[data-qa="job-search-sites-pagination-next-button"]');
