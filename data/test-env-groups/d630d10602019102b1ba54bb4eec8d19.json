@@ -1,1 +1,1 @@
-{"id":"d630d10602019102b1ba54bb4eec8d19","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testPageLoadPerformance","name":"Verify page load performance [DEV]","status":"passed","testResultsByEnv":{"default":"7d66c563758737a9e607bb6c84c81d17"}}
+{"id":"d630d10602019102b1ba54bb4eec8d19","fullName":"com.cjs.qa.junit.tests.EnhancedGridTests.testPageLoadPerformance","name":"Verify page load performance [TEST]","status":"passed","testResultsByEnv":{"default":"d68937106c861fbe36380f0ca46b93a1"}}
