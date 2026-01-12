@@ -529,13 +529,16 @@ This document lists all locators in the Playwright Page Object Models that use f
    - Submit: `wizard-step2-submit-button` ✅
    - Back: `wizard-step2-back-button` ✅
 
-### ⏳ Needs data-qa Attributes Added
+### ✅ Phase 1 Complete - List Pages
 
-1. **ApplicationsPage**: Empty state message
-2. **CompaniesPage**: Title, table, empty state, table rows, name links, edit/delete buttons
-3. **ClientsPage**: Title, table, empty state, table rows, name links, edit/delete buttons
-4. **NotesPage**: Title, notes list card, empty state
-5. **JobSearchSitesPage**: Title, table, empty state
+1. **ApplicationsPage**: Empty state message ✅
+2. **CompaniesPage**: Title, table, empty state, table rows, name links, edit/delete buttons ✅
+3. **ClientsPage**: Title, table, empty state, table rows, name links, edit/delete buttons ✅
+4. **NotesPage**: Title, notes list card, empty state ✅
+5. **JobSearchSitesPage**: Title, table, empty state ✅
+
+### ⏳ Needs data-qa Attributes Added (Phase 2)
+
 6. **ApplicationFormPage (Edit Form)**: All form inputs (status select, work setting select, position, requirement, compensation, location, job link, job description textarea, resume, cover letter, company ID, client ID, entered IWD, date close)
 7. **ApplicationDetailPage**: Title, back link, status badge
 

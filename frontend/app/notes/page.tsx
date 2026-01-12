@@ -33,7 +33,7 @@ export default function NotesPage() {
   return (
     <div className="container py-3 py-md-4" style={{ paddingBottom: '60px' }}>
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
-        <h1 className="h2 mb-0">Notes</h1>
+        <h1 className="h2 mb-0" data-qa="notes-title">Notes</h1>
         <p className="text-muted mb-0 small">
           Notes can only be created from within an application page.
         </p>
@@ -63,7 +63,7 @@ export default function NotesPage() {
 
       {data?.data && data.data.length > 0 ? (
         <>
-          <div className="card shadow-sm">
+          <div className="card shadow-sm" data-qa="notes-list-card">
             <div className="table-responsive">
               <table className="table table-hover mb-0">
                 <thead className="table-light">
@@ -146,7 +146,7 @@ export default function NotesPage() {
       ) : (
         <div className="card shadow-sm text-center py-5">
           <div className="card-body">
-            <p className="text-muted mb-4">No notes found.</p>
+            <p className="text-muted mb-4" data-qa="notes-empty-state">No notes found.</p>
             <p className="text-muted small mb-3">
               Notes can only be created from within an application page.
             </p>

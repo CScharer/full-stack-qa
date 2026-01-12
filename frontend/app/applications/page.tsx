@@ -195,7 +195,7 @@ export default function ApplicationsPage() {
       ) : (
         <div className="card shadow-sm text-center py-5">
           <div className="card-body">
-            <p className="text-muted mb-4">No applications found.</p>
+            <p className="text-muted mb-4" data-qa="applications-empty-state">No applications found.</p>
           </div>
         </div>
       )}
