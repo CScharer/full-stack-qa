@@ -701,6 +701,47 @@ pip install robotframework-seleniumlibrary
 
 ---
 
-**Created**: January 2025
+**Created**: January 2025  
 **Last Updated**: January 2026
 
+---
+
+## Playwright Data-qa Migration (Completed 2026-01-11)
+
+### Migration Summary
+
+✅ **Status**: Complete - All Playwright Page Objects now use `data-qa` attributes exclusively.
+
+### What Was Done
+
+1. **Frontend Updates**: Added `data-qa` attributes to all form inputs, page titles, tables, empty states, and dynamic elements across:
+   - List pages (Companies, Clients, Notes, Job Search Sites, Applications)
+   - Detail pages (Application Detail)
+   - Form pages (Company, Contact, Client creation forms, Application wizard steps, Application edit form)
+
+2. **Page Object Updates**: Updated all Page Objects to use `data-qa` selectors:
+   - Replaced all fallback selectors (CSS classes, text content) with `data-qa` attributes
+   - Added ID-based methods for dynamic elements (table rows, links, buttons)
+   - Kept intentional fallback methods for backward compatibility where needed
+
+3. **New Page Objects Created**:
+   - `CompanyFormPage.ts` - Company creation form
+   - `ContactFormPage.ts` - Contact creation form
+   - `ClientFormPage.ts` - Client creation form
+   - `WizardStep1Page.ts` - Application wizard step 1 (contact selection)
+
+4. **Testing**: All tests verified and passing with new `data-qa` selectors.
+
+### Benefits
+
+- **Stable Selectors**: `data-qa` attributes are less likely to change than CSS classes or text content
+- **Cross-Framework Consistency**: Same `data-qa` attributes used by Cypress, Playwright, and Robot Framework
+- **Maintainability**: Clear separation between test selectors and styling/implementation details
+- **Reliability**: Reduced test flakiness from UI changes that don't affect functionality
+
+### Best Practices
+
+- ✅ Always use `data-qa` attributes in Page Objects
+- ✅ Never use direct locators (`page.locator()`, `getByLabel()`, etc.) in test files
+- ✅ Use Page Object methods for all interactions
+- ✅ For dynamic elements, use ID-based `data-qa` patterns: `data-qa="${entity-type}-${id}-${action}"`
