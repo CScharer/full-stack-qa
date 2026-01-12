@@ -1,1 +1,1 @@
-{"id":"18b0383345c9b08fd91320b0cf2e86d3","fullName":"com.cjs.qa.junit.tests.SmokeTests.smokeTestGridConnection","name":"smokeTestGridConnection [DEV]","status":"passed","testResultsByEnv":{"default":"fc1dbeafb93371c3114d93ac9e68abc8"}}
+{"id":"18b0383345c9b08fd91320b0cf2e86d3","fullName":"com.cjs.qa.junit.tests.SmokeTests.smokeTestGridConnection","name":"smokeTestGridConnection [TEST]","status":"passed","testResultsByEnv":{"default":"dff0982e037bcd60e4912ba75ba2d34b"}}
