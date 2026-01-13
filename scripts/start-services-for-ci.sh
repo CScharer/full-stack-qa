@@ -32,56 +32,90 @@ if [ -f "$ENV_CONFIG_SCRIPT" ]; then
     source "$ENV_CONFIG_SCRIPT"
     set -e
     
-    # Export environment configuration (sets DATABASE_PATH, CORS_ORIGINS, etc.)
-    # Only call if function exists (in case sourcing failed)
-    if type export_environment_config &>/dev/null; then
-        export_environment_config "$ENVIRONMENT"
+    # Load environment configuration (same approach as start-be.sh)
+    # Source the config script to get access to functions
+    local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+    eval "$(get_ports_for_environment "$env")"
+    eval "$(get_database_for_environment "$env")"
+    eval "$(get_api_endpoints)"
+    eval "$(get_timeouts)"
+    
+    # Set ports (allow override from environment)
+    export API_PORT=${API_PORT:-"$API_PORT"}
+    export API_HOST=${API_HOST:-"0.0.0.0"}
+    
+    # Set database configuration (same logic as start-be.sh)
+    # Always use DATABASE_PATH (absolute path) for highest priority in backend config
+    if [ -n "$DATABASE_PATH" ]; then
+        # Convert relative path to absolute if needed
+        if [[ "$DATABASE_PATH" != /* ]]; then
+            # Relative path - make it absolute from project root
+            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
+        else
+            # Already absolute
+            export DATABASE_PATH
+        fi
+    elif [ -n "$DATABASE_DIR" ] && [ -n "$DATABASE_NAME" ]; then
+        # If DATABASE_PATH not set, construct it from DATABASE_DIR + DATABASE_NAME
+        if [[ "$DATABASE_DIR" != /* ]]; then
+            # Relative path - make it absolute from project root
+            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_DIR}/${DATABASE_NAME}"
+        else
+            # DATABASE_DIR is absolute
+            export DATABASE_PATH="${DATABASE_DIR}/${DATABASE_NAME}"
+        fi
     else
-        echo "⚠️  Warning: export_environment_config function not found. Using fallback configuration." >&2
+        # Fallback: construct from environment
+        export DATABASE_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa_${env}.db"
     fi
     
-    # Ensure DATABASE_PATH is absolute and doesn't include scripts/
-    # This must happen AFTER export_environment_config since it sets DATABASE_PATH
+    # Ensure DATABASE_PATH is absolute and doesn't include scripts/ (same as start-be.sh)
+    # This must happen BEFORE changing directory
     if [ -n "$DATABASE_PATH" ]; then
-        # Store original for debugging
-        local original_path="$DATABASE_PATH"
+        original_path="$DATABASE_PATH"
         
-        # Remove any scripts/ from the path (handle multiple occurrences and different patterns)
-        # Use multiple passes to ensure we catch all variations
-        DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g' | sed 's|^\./||')
+        # Remove any leading ./ or scripts/ prefix (works for both relative and absolute)
+        DATABASE_PATH="${DATABASE_PATH#./}"
+        # Remove scripts/ prefix if present (handle both relative and absolute paths)
+        if [[ "$DATABASE_PATH" == scripts/* ]]; then
+            DATABASE_PATH="${DATABASE_PATH#scripts/}"
+        fi
+        # Remove /scripts/ from anywhere in the path (handles absolute paths like /path/scripts/Data)
+        DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g')
         
         # Convert to absolute if still relative
         if [[ "$DATABASE_PATH" != /* ]]; then
-            # Ensure we're using project root, not scripts directory
-            # Remove leading ./ if present, then prepend SCRIPT_DIR
-            DATABASE_PATH="${DATABASE_PATH#./}"
-            # Make absolute path - ensure SCRIPT_DIR doesn't have trailing slash
-            local clean_script_dir="${SCRIPT_DIR%/}"
-            export DATABASE_PATH="${clean_script_dir}/${DATABASE_PATH}"
+            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
         else
-            # Already absolute, but still clean up any scripts/ references
-            # Use a more aggressive cleanup for absolute paths
-            DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g')
             export DATABASE_PATH
         fi
         
-        # Final verification - remove scripts/ one more time if it somehow got added
-        # This is a safety check to ensure we never have scripts/ in the final path
-        while [[ "$DATABASE_PATH" == *"/scripts/"* ]]; do
-            DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g')
-        done
-        export DATABASE_PATH
-        
-        # Verify the final path doesn't contain scripts/
-        if [[ "$DATABASE_PATH" == *"/scripts/"* ]] || [[ "$DATABASE_PATH" == *"scripts/"* ]]; then
-            echo "   ⚠️  WARNING: Database path still contains 'scripts/' after cleanup!" >&2
-            echo "   Original: $original_path" >&2
-            echo "   Current: $DATABASE_PATH" >&2
-            # Force fix by replacing any remaining scripts/ references
-            export DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g')
+        if [ "$original_path" != "$DATABASE_PATH" ]; then
+            echo "   🔧 Database path corrected: $original_path -> $DATABASE_PATH" >&2
         fi
-        
-        echo "   🔧 Database path cleaned: $original_path -> $DATABASE_PATH" >&2
+    fi
+    
+    # Get CORS_ORIGINS and set it directly (same approach as start-be.sh)
+    # Extract value after = sign - it's already in JSON format with quotes
+    local cors_line=$(get_cors_origins "$env")
+    local cors_value="${cors_line#CORS_ORIGINS=}"
+    # Export directly - the value already has quotes, don't add more
+    export CORS_ORIGINS=${cors_value}
+    
+    # Pydantic Settings expects JSON array format for List fields
+    if [ -z "$CORS_ORIGINS" ]; then
+        # Fallback to default if config parsing fails
+        case "$env" in
+            dev)
+                export CORS_ORIGINS='["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
+                ;;
+            test)
+                export CORS_ORIGINS='["http://127.0.0.1:3004","http://localhost:3004","http://0.0.0.0:3004"]'
+                ;;
+            prod)
+                export CORS_ORIGINS='["http://127.0.0.1:3005","http://localhost:3005","http://0.0.0.0:3005"]'
+                ;;
+        esac
     fi
 fi
 
