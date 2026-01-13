@@ -22,7 +22,7 @@ exports[`StatusBar Snapshot Tests > matches snapshot for default status bar 1`] 
         class="text-muted"
         data-qa="status-bar-timestamp"
       >
-        6:00:00 AM
+        12:00:00 PM
       </small>
     </div>
   </div>
@@ -51,7 +51,7 @@ exports[`StatusBar Snapshot Tests > matches snapshot for status bar with custom 
         class="text-muted"
         data-qa="status-bar-timestamp"
       >
-        6:00:00 AM
+        12:00:00 PM
       </small>
     </div>
   </div>
@@ -80,7 +80,7 @@ exports[`StatusBar Snapshot Tests > matches snapshot for status bar with empty m
         class="text-muted"
         data-qa="status-bar-timestamp"
       >
-        6:00:00 AM
+        12:00:00 PM
       </small>
     </div>
   </div>
@@ -109,7 +109,7 @@ exports[`StatusBar Snapshot Tests > matches snapshot for status bar with long me
         class="text-muted"
         data-qa="status-bar-timestamp"
       >
-        6:00:00 AM
+        12:00:00 PM
       </small>
     </div>
   </div>

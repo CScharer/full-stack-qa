@@ -61,7 +61,7 @@ exports[`JobSearchSitesPage Snapshot Tests > matches snapshot for empty state 1`
             class="text-muted"
             data-qa="status-bar-timestamp"
           >
-            6:00:00 AM
+            12:00:00 PM
           </small>
         </div>
       </div>
@@ -251,7 +251,7 @@ exports[`JobSearchSitesPage Snapshot Tests > matches snapshot for job search sit
             class="text-muted"
             data-qa="status-bar-timestamp"
           >
-            6:00:00 AM
+            12:00:00 PM
           </small>
         </div>
       </div>
