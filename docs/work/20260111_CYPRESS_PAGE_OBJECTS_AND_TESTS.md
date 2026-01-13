@@ -818,14 +818,20 @@ cypress/cypress/
 - [x] Create WizardStep1Page.ts
 - [x] Test page object (TypeScript compilation verified)
 
-### Phase 6: Test Files 🚧 IN PROGRESS
-- [ ] Create applications.cy.ts
-- [ ] Create companies.cy.ts
-- [ ] Create contacts.cy.ts
-- [ ] Create clients.cy.ts
-- [ ] Create notes.cy.ts
-- [ ] Create job-search-sites.cy.ts
-- [x] Create wizard.cy.ts ✅
+### Phase 6: Test Files ✅ COMPLETE (wizard.cy.ts only)
+
+**Note**: The following test files are **OPTIONAL/SKIPPED** because:
+- Playwright versions are either skipped (`test.describe.skip`) or don't exist
+- `wizard.spec.ts` already covers the main functionality (navigation, forms, API verification)
+- Only `wizard.spec.ts` and `homepage.spec.ts` are actively used in Playwright
+
+- [ ] Create applications.cy.ts (OPTIONAL - Playwright version is skipped)
+- [ ] Create companies.cy.ts (OPTIONAL - Playwright version is skipped)
+- [ ] Create contacts.cy.ts (OPTIONAL - Playwright version doesn't exist)
+- [ ] Create clients.cy.ts (OPTIONAL - Playwright version doesn't exist)
+- [ ] Create notes.cy.ts (OPTIONAL - Playwright version doesn't exist)
+- [ ] Create job-search-sites.cy.ts (OPTIONAL - Playwright version doesn't exist)
+- [x] Create wizard.cy.ts ✅ **REQUIRED** - Matches active Playwright wizard.spec.ts
   - [x] Implement all 8 test cases matching Playwright wizard.spec.ts
   - [x] Set up API calls for initial counts in beforeEach
   - [x] Implement test_home (Home → Add Application → Cancel)
