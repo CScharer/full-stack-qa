@@ -59,6 +59,7 @@ STAGE 3: DEV ENVIRONMENT (Parallel UI + Performance)
 │   ├── test-be-dev (runs when run_be_tests == 'true' && be_env_dev == 'true')
 │   ├── test-fs-dev (runs when run_fs_tests == 'true' && be_env_dev == 'true')
 │   ├── test-fe-dev
+│   ├── test-fe-ss-dev (Frontend snapshot tests - runs when enable_snapshot_tests == 'true')
 │   └── gate-dev (Waits for all Stage 3 + gate-setup)
 │       └── deploy-dev (if main & gate-dev success)
 ▼
@@ -67,12 +68,14 @@ STAGE 4: TEST ENVIRONMENT (Parallel UI + Performance)
 │   ├── test-be-test (runs when run_be_tests == 'true' && be_env_test == 'true')
 │   ├── test-fs-test (runs when run_fs_tests == 'true' && be_env_test == 'true')
 │   ├── test-fe-test
+│   ├── test-fe-ss-test (Frontend snapshot tests - runs when enable_snapshot_tests == 'true')
 │   └── gate-test (Waits for all Stage 4 + gate-dev)
 │       └── deploy-test (if main & gate-test success)
 ▼
 STAGE 5: PROD ENVIRONMENT (UI Only)
 │   │   (Waits for gate-test)
 │   ├── test-fe-prod
+│   ├── test-fe-ss-prod (Frontend snapshot tests - runs when enable_snapshot_tests == 'true')
 │   └── gate-prod (Waits for Stage 5 + gate-test)
 │       └── deploy-prod (if main & gate-prod success)
 ▼
@@ -237,9 +240,17 @@ STAGE 7: PIPELINE SUMMARY
 
 ### **STAGE 3-5: ENVIRONMENT TESTING**
 
-#### **UI Tests** (`test-dev-environment`, etc.)
+#### **UI Tests** (`test-fe-dev`, `test-fe-test`, `test-fe-prod`)
 - **Workflow**: Calls `.github/workflows/env-fe.yml`.
-- **Parallelism**: Runs in parallel with performance tests in the same environment.
+- **Parallelism**: Runs in parallel with performance tests and snapshot tests in the same environment.
+
+#### **Frontend Snapshot Tests** (`test-fe-ss-dev`, `test-fe-ss-test`, `test-fe-ss-prod`)
+- **Purpose**: Run Vitest snapshot tests to catch unintended UI changes
+- **Dependencies**: Same as UI tests (gate-setup, determine-envs, etc.)
+- **Control**: Enabled/disabled via `enable_snapshot_tests` output from `determine-envs` job (defaults to `true`)
+- **Execution**: Runs in parallel with FE E2E tests (no dependency on services)
+- **Coverage**: 65 snapshot tests covering UI components, complex components, and page components
+- **Failure Impact**: Included in gate jobs, so failures cause pipeline to fail
 
 #### **Performance Tests** (`performance-dev`, etc.)
 - **Workflow**: Calls `.github/workflows/env-be.yml`.

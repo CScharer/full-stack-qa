@@ -235,6 +235,7 @@ jobs:
       enable_robot_tests: ${{ steps.set-envs.outputs.enable_robot_tests || 'true' }}
       enable_selenide_tests: ${{ steps.set-envs.outputs.enable_selenide_tests || 'false' }}
       enable_vibium_tests: ${{ steps.set-envs.outputs.enable_vibium_tests || 'true' }}
+      enable_snapshot_tests: ${{ steps.set-envs.outputs.enable_snapshot_tests || 'true' }}
 
     steps:
       - name: Checkout code
@@ -544,17 +545,17 @@ jobs:
   # STAGE 3: DEV ENVIRONMENT TESTING & DEPLOYMENT
   # ==================================================================================
 
-  frontend-snapshot-tests:
-    name: Frontend Snapshot Tests
+  test-fe-ss-dev:
+    name: Test FE SS (DEV)
     runs-on: ubuntu-latest
-    # Run snapshot tests in parallel with frontend E2E tests
-    # They don't require services to be running, so they can run independently
     needs: [determine-schedule-type, setup-base-urls, determine-test-execution, determine-envs, gate-setup]
     if: |
       always() &&
       !cancelled() &&
-      needs.determine-schedule-type.outputs.code-changed == 'true' &&
-      needs.gate-setup.result != 'failure'
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_dev == 'true' &&
+      needs.determine-envs.outputs.enable_snapshot_tests == 'true' &&
+      needs.gate-setup.result == 'success'
     env:
       TZ: UTC
       LC_ALL: en_US.UTF-8
@@ -577,6 +578,7 @@ jobs:
         env:
           TZ: UTC
           LC_ALL: en_US.UTF-8
+          TEST_ENVIRONMENT: dev
         run: npm test -- __tests__/**/*.snapshot.test.tsx --run
 
   test-fe-dev:
@@ -648,7 +650,7 @@ jobs:
   gate-dev:
     name: Gate (DEV)
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup, test-fe-dev, test-be-dev, test-fs-dev]
+    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-setup, test-fe-dev, test-fe-ss-dev, test-be-dev, test-fs-dev]
     if: always() && !cancelled()
     steps:
       - name: Checkout code
@@ -660,6 +662,7 @@ jobs:
           ./scripts/ci/check-gate-status-env.sh "dev" \
             "gate-setup:${{ needs.gate-setup.result }}" \
             "test-fe-dev:${{ needs.test-fe-dev.result }}" \
+            "test-fe-ss-dev:${{ needs.test-fe-ss-dev.result }}" \
             "test-be-dev:${{ needs.test-be-dev.result }}" \
             "test-fs-dev:${{ needs.test-fs-dev.result }}" \
             "determine-schedule-type.code-changed:${{ needs.determine-schedule-type.outputs.code-changed }}" \
@@ -698,6 +701,43 @@ jobs:
       enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests == 'true' }}
       enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests == 'true' }}
       enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests == 'true' }}
+
+  test-fe-ss-test:
+    name: Test FE SS (TEST)
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type, setup-base-urls, determine-test-execution, determine-envs, gate-setup, gate-dev]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_test == 'true' &&
+      needs.determine-envs.outputs.enable_snapshot_tests == 'true' &&
+      needs.gate-setup.result == 'success' &&
+      needs.gate-dev.result == 'success'
+    env:
+      TZ: UTC
+      LC_ALL: en_US.UTF-8
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run frontend snapshot tests
+        working-directory: frontend
+        env:
+          TZ: UTC
+          LC_ALL: en_US.UTF-8
+          TEST_ENVIRONMENT: test
+        run: npm test -- __tests__/**/*.snapshot.test.tsx --run
 
   deploy-test:
     name: Deploy (TEST)
@@ -745,7 +785,7 @@ jobs:
   gate-test:
     name: Gate (TEST)
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-dev, test-fe-test, test-be-test, test-fs-test]
+    needs: [determine-schedule-type, determine-envs, determine-test-execution, gate-dev, test-fe-test, test-fe-ss-test, test-be-test, test-fs-test]
     if: always() && !cancelled()
     steps:
       - name: Checkout code
@@ -757,6 +797,7 @@ jobs:
           ./scripts/ci/check-gate-status-env.sh "test" \
             "gate-dev:${{ needs.gate-dev.result }}" \
             "test-fe-test:${{ needs.test-fe-test.result }}" \
+            "test-fe-ss-test:${{ needs.test-fe-ss-test.result }}" \
             "test-be-test:${{ needs.test-be-test.result }}" \
             "test-fs-test:${{ needs.test-fs-test.result }}" \
             "determine-schedule-type.code-changed:${{ needs.determine-schedule-type.outputs.code-changed }}" \
@@ -795,6 +836,43 @@ jobs:
       enable_robot_tests: ${{ needs.determine-envs.outputs.enable_robot_tests == 'true' }}
       enable_selenide_tests: ${{ needs.determine-envs.outputs.enable_selenide_tests == 'true' }}
       enable_vibium_tests: ${{ needs.determine-envs.outputs.enable_vibium_tests == 'true' }}
+
+  test-fe-ss-prod:
+    name: Test FE SS (PROD)
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type, setup-base-urls, determine-test-execution, determine-envs, gate-setup, gate-test]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.determine-test-execution.outputs.run_ui_tests == 'true' &&
+      needs.determine-envs.outputs.run_prod == 'true' &&
+      needs.determine-envs.outputs.enable_snapshot_tests == 'true' &&
+      needs.gate-setup.result == 'success' &&
+      needs.gate-test.result == 'success'
+    env:
+      TZ: UTC
+      LC_ALL: en_US.UTF-8
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run frontend snapshot tests
+        working-directory: frontend
+        env:
+          TZ: UTC
+          LC_ALL: en_US.UTF-8
+          TEST_ENVIRONMENT: prod
+        run: npm test -- __tests__/**/*.snapshot.test.tsx --run
 
   deploy-prod:
     name: Deploy (PROD)
@@ -840,7 +918,7 @@ jobs:
   gate-prod:
     name: Gate (PROD)
     runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-envs, gate-test, test-fe-prod]
+    needs: [determine-schedule-type, determine-envs, gate-test, test-fe-prod, test-fe-ss-prod]
     if: always() && !cancelled()
     steps:
       - name: Checkout code
@@ -852,6 +930,7 @@ jobs:
           ./scripts/ci/check-gate-status-env.sh "prod" \
             "gate-test:${{ needs.gate-test.result }}" \
             "test-fe-prod:${{ needs.test-fe-prod.result }}" \
+            "test-fe-ss-prod:${{ needs.test-fe-ss-prod.result }}" \
             "determine-schedule-type.code-changed:${{ needs.determine-schedule-type.outputs.code-changed }}" \
             "determine-envs.run_prod:${{ needs.determine-envs.outputs.run_prod }}"
 
