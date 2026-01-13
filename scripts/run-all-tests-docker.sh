@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 BASE_URL="${BASE_URL:-https://www.google.com}"
-ENVIRONMENT="${ENVIRONMENT:-${TEST_ENVIRONMENT:-docker}}"
+ENVIRONMENT="${ENVIRONMENT:-docker}"
 SELENIUM_REMOTE_URL="${SELENIUM_REMOTE_URL:-http://selenium-hub:4444/wd/hub}"
 
 echo -e "${BLUE}Configuration:${NC}"

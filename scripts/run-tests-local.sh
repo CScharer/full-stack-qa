@@ -21,7 +21,7 @@ TESTS_FAILED=0
 
 # Default values
 BASE_URL=${BASE_URL:-"https://www.google.com"}
-ENVIRONMENT=${ENVIRONMENT:-${TEST_ENVIRONMENT:-"local"}}
+ENVIRONMENT=${ENVIRONMENT:-"local"}
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🧪 Running Tests Locally (No Docker)${NC}"
