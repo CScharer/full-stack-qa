@@ -72,7 +72,7 @@ run_test_suite "Selenium Grid Tests" \
 
 # 3. Cypress Tests
 run_test_suite "Cypress Tests" \
-    "docker-compose run --rm -e BASE_URL=$BASE_URL -e ENVIRONMENT=$ENVIRONMENT -e CYPRESS_BASE_URL=$BASE_URL tests bash -c 'cd /app/cypress && xvfb-run -a npm run cypress:run || npm run cypress:run'"
+    "docker-compose run --rm -e BASE_URL=$BASE_URL -e ENVIRONMENT=$ENVIRONMENT tests bash -c 'cd /app/cypress && xvfb-run -a npm run cypress:run || npm run cypress:run'"
 
 # 4. Playwright Tests
 run_test_suite "Playwright Tests" \

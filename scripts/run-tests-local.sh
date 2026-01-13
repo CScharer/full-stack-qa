@@ -94,7 +94,7 @@ if [ -d "$SCRIPT_DIR/cypress" ]; then
     run_test_suite "Cypress Tests" \
         "cd \"$SCRIPT_DIR/cypress\" && \
         if [ ! -d 'node_modules' ]; then npm install; fi && \
-        export CYPRESS_BASE_URL=\"$BASE_URL\" && \
+        export BASE_URL=\"$BASE_URL\" && \
         export ENVIRONMENT=\"$ENVIRONMENT\" && \
         npm run cypress:run"
 else

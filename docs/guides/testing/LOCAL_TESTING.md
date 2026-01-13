@@ -120,7 +120,7 @@ npm test -- -u
 ```bash
 cd cypress
 npm install  # First time only
-export CYPRESS_BASE_URL="https://www.google.com"
+export BASE_URL="https://www.google.com"
 export ENVIRONMENT="local"
 npm run cypress:run
 ```
@@ -278,7 +278,7 @@ npm run cypress:open
 
 **Environment Variables:**
 ```bash
-export CYPRESS_BASE_URL="http://localhost:3003"
+export BASE_URL="http://localhost:3003"
 export ENVIRONMENT="local"
 ```
 

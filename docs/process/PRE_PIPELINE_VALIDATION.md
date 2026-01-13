@@ -258,7 +258,7 @@ For each Node.js project (`cypress/`, `playwright/`, `vibium/`, `frontend/`) **t
 - `[ ]` **Cypress Tests** (if Cypress changes made)
   ```bash
   cd cypress
-  export CYPRESS_BASE_URL="https://www.google.com"  # Or your test URL
+  export BASE_URL="https://www.google.com"  # Or your test URL
   export ENVIRONMENT="local"
   npm run cypress:run
   ```

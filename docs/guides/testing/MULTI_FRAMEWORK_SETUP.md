@@ -57,7 +57,7 @@ npm run cypress:open   # Interactive mode
 ### Environment Variables
 
 ```bash
-export CYPRESS_BASE_URL="http://localhost:3003"
+export BASE_URL="http://localhost:3003"
 export ENVIRONMENT="local"
 ```
 

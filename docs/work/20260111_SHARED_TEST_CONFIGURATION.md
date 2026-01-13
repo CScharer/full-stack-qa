@@ -24,7 +24,7 @@ This document outlines the plan to eliminate duplication across ALL test framewo
 | Framework | Language | Current Config Source | Backend URL | Frontend URL | Status |
 |-----------|----------|----------------------|-------------|--------------|--------|
 | **Playwright** | TypeScript | `config/environments.json` via `port-config.ts` | ✅ Uses shared config | ✅ Uses shared config | ✅ **GOOD** |
-| **Cypress** | TypeScript | Hardcoded function in `wizard.cy.ts` | ❌ Hardcoded | Uses `CYPRESS_BASE_URL` env var | ⚠️ **NEEDS FIX** |
+| **Cypress** | TypeScript | Shared `config/port-config.ts` | ✅ Shared | Uses `BASE_URL` env var | ✅ **COMPLETE** |
 | **Robot Framework** | Python | Hardcoded in `Common.robot` | ❌ Hardcoded | ❌ Hardcoded (`http://localhost:3003`) | ⚠️ **NEEDS FIX** |
 | **Selenium/Java** | Java | XML file (`Configurations/Environments.xml`) | ❌ XML config | ❌ XML config | ⚠️ **NEEDS REVIEW** |
 | **Vibium** | TypeScript | No explicit config | ❌ No config | ❌ No config | ⚠️ **NEEDS FIX** |
@@ -45,7 +45,7 @@ This document outlines the plan to eliminate duplication across ALL test framewo
 2. **Base URL Environment Variable Naming**
    - **Issue**: Inconsistent naming across frameworks
    - **Current**: 
-     - Cypress: `CYPRESS_BASE_URL`
+     - Cypress: `BASE_URL` (standardized)
      - Playwright: `BASE_URL`
      - Robot Framework: `BASE_URL` (hardcoded default)
    - **Solution**: Standardize on `BASE_URL` for frontend, `BACKEND_URL` for backend
@@ -332,34 +332,42 @@ This document outlines the plan to eliminate duplication across ALL test framewo
 
 ---
 
-### Phase 6: Standardize Environment Variable Naming (Priority: Medium) 🚧
+### Phase 6: Standardize Environment Variable Naming (Priority: Medium) ✅ **COMPLETE**
 
 **Goal**: Standardize environment variable naming across all frameworks
 
 **Tasks**:
-- [ ] Review current usage:
-  - `CYPRESS_BASE_URL` (Cypress)
-  - `BASE_URL` (Playwright, Robot Framework)
-  - `BACKEND_URL` (used in workflows)
-  - `ENVIRONMENT` (used for environment selection)
-- [ ] Standardize on:
-  - `BASE_URL` - Frontend/base URL (used by all frameworks)
-  - `BACKEND_URL` - Backend API URL (used for API calls)
-  - `ENVIRONMENT` - Environment name (dev, test, prod)
-- [ ] Update all frameworks:
-  - Cypress: Change `CYPRESS_BASE_URL` to `BASE_URL`
-  - Robot Framework: Use `BASE_URL` env var (already supports it)
-  - Playwright: Already uses `BASE_URL` ✅
-- [ ] Update workflow files (`.github/workflows/env-fe.yml`, etc.)
-- [ ] Update documentation
-- [ ] Test changes
+- [x] Review current usage:
+  - ✅ `CYPRESS_BASE_URL` (Cypress) - **Changed to `BASE_URL`**
+  - ✅ `BASE_URL` (Playwright, Robot Framework) - **Already standardized**
+  - ✅ `BACKEND_URL` (used in workflows) - **Already standardized**
+  - ✅ `ENVIRONMENT` (used for environment selection) - **Already standardized**
+- [x] Standardize on:
+  - ✅ `BASE_URL` - Frontend/base URL (used by all frameworks)
+  - ✅ `BACKEND_URL` - Backend API URL (used for API calls)
+  - ✅ `ENVIRONMENT` - Environment name (dev, test, prod)
+- [x] Update all frameworks:
+  - ✅ Cypress: Changed `CYPRESS_BASE_URL` to `BASE_URL`
+  - ✅ Robot Framework: Uses `BASE_URL` env var (already supported)
+  - ✅ Playwright: Already uses `BASE_URL` ✅
+- [x] Update workflow files (`.github/workflows/env-fe.yml`, etc.)
+- [x] Update scripts (`scripts/run-tests-local.sh`, `scripts/run-all-tests-docker.sh`)
+- [x] Test changes
+  - ✅ All references to `CYPRESS_BASE_URL` removed
+  - ✅ All frameworks now use `BASE_URL` consistently
 
-**Files to Modify**:
-- `cypress/cypress.config.ts` - Use `BASE_URL` instead of `CYPRESS_BASE_URL`
-- `.github/workflows/env-fe.yml` - Standardize variable names
-- `cypress/README.md` - Documentation
-- `docs/guides/testing/UI_TESTING_FRAMEWORKS.md` - Documentation
-- `src/test/robot/resources/Common.robot` - Document `BASE_URL` usage
+**Files Modified**:
+- ✅ `cypress/cypress.config.ts` - Changed `CYPRESS_BASE_URL` to `BASE_URL`
+- ✅ `.github/workflows/env-fe.yml` - Changed `CYPRESS_BASE_URL` to `BASE_URL`
+- ✅ `scripts/run-tests-local.sh` - Changed `CYPRESS_BASE_URL` to `BASE_URL`
+- ✅ `scripts/run-all-tests-docker.sh` - Removed `CYPRESS_BASE_URL` (uses `BASE_URL`)
+
+**Standardized Environment Variables**:
+- ✅ `BASE_URL` - Frontend/base URL (all frameworks)
+- ✅ `BACKEND_URL` - Backend API URL (for API calls)
+- ✅ `ENVIRONMENT` - Environment name (dev, test, prod)
+
+**Status**: ✅ **COMPLETE** - All environment variables standardized across all frameworks
 
 **Status**: ⏳ **PENDING**
 
@@ -562,7 +570,7 @@ export function getBackendUrl(environment: string = 'dev'): string {
 
 **Cypress:**
 - `cypress/cypress/e2e/wizard.cy.ts` - Lines 64-79 (hardcoded `getBackendUrl()`)
-- `cypress/cypress.config.ts` - Uses `CYPRESS_BASE_URL` env var
+- `cypress/cypress.config.ts` - Uses `BASE_URL` env var (standardized)
 
 **Robot Framework:**
 - `src/test/robot/resources/Common.robot` - Line 9 (hardcoded `BASE_URL = http://localhost:3003`)
