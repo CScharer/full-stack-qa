@@ -41,18 +41,47 @@ if [ -f "$ENV_CONFIG_SCRIPT" ]; then
     fi
     
     # Ensure DATABASE_PATH is absolute and doesn't include scripts/
+    # This must happen AFTER export_environment_config since it sets DATABASE_PATH
     if [ -n "$DATABASE_PATH" ]; then
-        # Remove any scripts/ from the path (handle multiple occurrences)
-        DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g')
+        # Store original for debugging
+        local original_path="$DATABASE_PATH"
+        
+        # Remove any scripts/ from the path (handle multiple occurrences and different patterns)
+        # Use multiple passes to ensure we catch all variations
+        DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g' | sed 's|^\./||')
+        
         # Convert to absolute if still relative
         if [[ "$DATABASE_PATH" != /* ]]; then
             # Ensure we're using project root, not scripts directory
-            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH#./}"
+            # Remove leading ./ if present, then prepend SCRIPT_DIR
+            DATABASE_PATH="${DATABASE_PATH#./}"
+            # Make absolute path - ensure SCRIPT_DIR doesn't have trailing slash
+            local clean_script_dir="${SCRIPT_DIR%/}"
+            export DATABASE_PATH="${clean_script_dir}/${DATABASE_PATH}"
         else
             # Already absolute, but still clean up any scripts/ references
+            # Use a more aggressive cleanup for absolute paths
+            DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g')
+            export DATABASE_PATH
+        fi
+        
+        # Final verification - remove scripts/ one more time if it somehow got added
+        # This is a safety check to ensure we never have scripts/ in the final path
+        while [[ "$DATABASE_PATH" == *"/scripts/"* ]]; do
+            DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g')
+        done
+        export DATABASE_PATH
+        
+        # Verify the final path doesn't contain scripts/
+        if [[ "$DATABASE_PATH" == *"/scripts/"* ]] || [[ "$DATABASE_PATH" == *"scripts/"* ]]; then
+            echo "   ⚠️  WARNING: Database path still contains 'scripts/' after cleanup!" >&2
+            echo "   Original: $original_path" >&2
+            echo "   Current: $DATABASE_PATH" >&2
+            # Force fix by replacing any remaining scripts/ references
             export DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g')
         fi
-        echo "   🔧 Database path cleaned: $DATABASE_PATH" >&2
+        
+        echo "   🔧 Database path cleaned: $original_path -> $DATABASE_PATH" >&2
     fi
 fi
 
