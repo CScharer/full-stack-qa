@@ -184,6 +184,10 @@ target/test-reports/
 # Allure combined results and reports (generated in CI/CD)
 allure-results-combined/
 allure-report-combined/
+
+# Allure report directories (generated artifacts - should not be committed)
+allure-report/
+widgets/
 checkstyle-current.xml
 checkstyle-result.xml
 pmd.xml
