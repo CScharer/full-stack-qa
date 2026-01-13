@@ -32,24 +32,90 @@ if [ -f "$ENV_CONFIG_SCRIPT" ]; then
     source "$ENV_CONFIG_SCRIPT"
     set -e
     
-    # Export environment configuration (sets DATABASE_PATH, CORS_ORIGINS, etc.)
-    # Only call if function exists (in case sourcing failed)
-    if type export_environment_config &>/dev/null; then
-        export_environment_config "$ENVIRONMENT"
+    # Load environment configuration (same approach as start-be.sh)
+    # Source the config script to get access to functions
+    env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+    eval "$(get_ports_for_environment "$env")"
+    eval "$(get_database_for_environment "$env")"
+    eval "$(get_api_endpoints)"
+    eval "$(get_timeouts)"
+    
+    # Set ports (allow override from environment)
+    export API_PORT=${API_PORT:-"$API_PORT"}
+    export API_HOST=${API_HOST:-"0.0.0.0"}
+    
+    # Set database configuration (same logic as start-be.sh)
+    # Always use DATABASE_PATH (absolute path) for highest priority in backend config
+    if [ -n "$DATABASE_PATH" ]; then
+        # Convert relative path to absolute if needed
+        if [[ "$DATABASE_PATH" != /* ]]; then
+            # Relative path - make it absolute from project root
+            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
+        else
+            # Already absolute
+            export DATABASE_PATH
+        fi
+    elif [ -n "$DATABASE_DIR" ] && [ -n "$DATABASE_NAME" ]; then
+        # If DATABASE_PATH not set, construct it from DATABASE_DIR + DATABASE_NAME
+        if [[ "$DATABASE_DIR" != /* ]]; then
+            # Relative path - make it absolute from project root
+            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_DIR}/${DATABASE_NAME}"
+        else
+            # DATABASE_DIR is absolute
+            export DATABASE_PATH="${DATABASE_DIR}/${DATABASE_NAME}"
+        fi
     else
-        echo "⚠️  Warning: export_environment_config function not found. Using fallback configuration." >&2
+        # Fallback: construct from environment
+        export DATABASE_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa_${env}.db"
     fi
     
-    # Ensure DATABASE_PATH is absolute and doesn't include scripts/
+    # Ensure DATABASE_PATH is absolute and doesn't include scripts/ (same as start-be.sh)
+    # This must happen BEFORE changing directory
     if [ -n "$DATABASE_PATH" ]; then
-        # Remove any scripts/ from the path
+        original_path="$DATABASE_PATH"
+        
+        # Remove any leading ./ or scripts/ prefix (works for both relative and absolute)
+        DATABASE_PATH="${DATABASE_PATH#./}"
+        # Remove scripts/ prefix if present (handle both relative and absolute paths)
+        if [[ "$DATABASE_PATH" == scripts/* ]]; then
+            DATABASE_PATH="${DATABASE_PATH#scripts/}"
+        fi
+        # Remove /scripts/ from anywhere in the path (handles absolute paths like /path/scripts/Data)
         DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g')
+        
         # Convert to absolute if still relative
         if [[ "$DATABASE_PATH" != /* ]]; then
             export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
         else
             export DATABASE_PATH
         fi
+        
+        if [ "$original_path" != "$DATABASE_PATH" ]; then
+            echo "   🔧 Database path corrected: $original_path -> $DATABASE_PATH" >&2
+        fi
+    fi
+    
+    # Get CORS_ORIGINS and set it directly (same approach as start-be.sh)
+    # Extract value after = sign - it's already in JSON format with quotes
+    cors_line=$(get_cors_origins "$env")
+    cors_value="${cors_line#CORS_ORIGINS=}"
+    # Export directly - the value already has quotes, don't add more
+    export CORS_ORIGINS=${cors_value}
+    
+    # Pydantic Settings expects JSON array format for List fields
+    if [ -z "$CORS_ORIGINS" ]; then
+        # Fallback to default if config parsing fails
+        case "$env" in
+            dev)
+                export CORS_ORIGINS='["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
+                ;;
+            test)
+                export CORS_ORIGINS='["http://127.0.0.1:3004","http://localhost:3004","http://0.0.0.0:3004"]'
+                ;;
+            prod)
+                export CORS_ORIGINS='["http://127.0.0.1:3005","http://localhost:3005","http://0.0.0.0:3005"]'
+                ;;
+        esac
     fi
 fi
 
@@ -300,10 +366,15 @@ else
 
     # Start backend in background (optimized: parallel startup)
     # Ensure DATABASE_PATH and CORS_ORIGINS are exported for the backend process
+    # Note: CORS_ORIGINS must be passed as a JSON array string (Pydantic Settings expects JSON for List fields)
+    # Export variables first to ensure they're available to the uvicorn process
+    export DATABASE_PATH
+    export CORS_ORIGINS
+    export ENVIRONMENT
+    
     cd "$BACKEND_DIR"
     if [ "$API_RELOAD" = "true" ]; then
-        nohup env DATABASE_PATH="$DATABASE_PATH" CORS_ORIGINS="$CORS_ORIGINS" ENVIRONMENT="$ENVIRONMENT" \
-            uvicorn app.main:app \
+        nohup uvicorn app.main:app \
             --host "$API_HOST" \
             --port "$API_PORT" \
             --reload \
@@ -312,8 +383,7 @@ else
         disown $BACKEND_PID 2>/dev/null || true
     else
         # Don't include --reload flag when reload is disabled
-        nohup env DATABASE_PATH="$DATABASE_PATH" CORS_ORIGINS="$CORS_ORIGINS" ENVIRONMENT="$ENVIRONMENT" \
-            uvicorn app.main:app \
+        nohup uvicorn app.main:app \
             --host "$API_HOST" \
             --port "$API_PORT" \
             > "$SCRIPT_DIR/backend.log" 2>&1 &
