@@ -42,14 +42,17 @@ if [ -f "$ENV_CONFIG_SCRIPT" ]; then
     
     # Ensure DATABASE_PATH is absolute and doesn't include scripts/
     if [ -n "$DATABASE_PATH" ]; then
-        # Remove any scripts/ from the path
-        DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g')
+        # Remove any scripts/ from the path (handle multiple occurrences)
+        DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g')
         # Convert to absolute if still relative
         if [[ "$DATABASE_PATH" != /* ]]; then
-            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
+            # Ensure we're using project root, not scripts directory
+            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH#./}"
         else
-            export DATABASE_PATH
+            # Already absolute, but still clean up any scripts/ references
+            export DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g' | sed 's|scripts/||g')
         fi
+        echo "   🔧 Database path cleaned: $DATABASE_PATH" >&2
     fi
 fi
 
@@ -300,10 +303,15 @@ else
 
     # Start backend in background (optimized: parallel startup)
     # Ensure DATABASE_PATH and CORS_ORIGINS are exported for the backend process
+    # Note: CORS_ORIGINS must be passed as a JSON array string (Pydantic Settings expects JSON for List fields)
+    # Export variables first to ensure they're available to the uvicorn process
+    export DATABASE_PATH
+    export CORS_ORIGINS
+    export ENVIRONMENT
+    
     cd "$BACKEND_DIR"
     if [ "$API_RELOAD" = "true" ]; then
-        nohup env DATABASE_PATH="$DATABASE_PATH" CORS_ORIGINS="$CORS_ORIGINS" ENVIRONMENT="$ENVIRONMENT" \
-            uvicorn app.main:app \
+        nohup uvicorn app.main:app \
             --host "$API_HOST" \
             --port "$API_PORT" \
             --reload \
@@ -312,8 +320,7 @@ else
         disown $BACKEND_PID 2>/dev/null || true
     else
         # Don't include --reload flag when reload is disabled
-        nohup env DATABASE_PATH="$DATABASE_PATH" CORS_ORIGINS="$CORS_ORIGINS" ENVIRONMENT="$ENVIRONMENT" \
-            uvicorn app.main:app \
+        nohup uvicorn app.main:app \
             --host "$API_HOST" \
             --port "$API_PORT" \
             > "$SCRIPT_DIR/backend.log" 2>&1 &
