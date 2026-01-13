@@ -518,16 +518,43 @@ jobs:
           chmod +x scripts/ci/check-test-data-changes.sh
           ./scripts/ci/check-test-data-changes.sh "${{ github.event.before }}" "${{ github.sha }}"
 
+  gate-setup:
+    name: Gate (SETUP)
+    runs-on: ubuntu-latest
+    needs: [determine-schedule-type, determine-envs, validate-test-data-json, code-quality-analysis, docker-build-test, build-and-compile, validate-dependency-versions]
+    if: |
+      always() && 
+      needs.determine-schedule-type.outputs.code-changed == 'true' &&
+      !cancelled()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Setup Jobs Status
+        run: |
+          chmod +x scripts/ci/check-gate-status.sh
+          ./scripts/ci/check-gate-status.sh "Setup" \
+            "validate-test-data-json:${{ needs.validate-test-data-json.result }}" \
+            "code-quality-analysis:${{ needs.code-quality-analysis.result }}" \
+            "docker-build-test:${{ needs.docker-build-test.result }}" \
+            "build-and-compile:${{ needs.build-and-compile.result }}" \
+            "validate-dependency-versions:${{ needs.validate-dependency-versions.result }}"
+
+  # ==================================================================================
+  # STAGE 3: DEV ENVIRONMENT TESTING & DEPLOYMENT
+  # ==================================================================================
+
   frontend-snapshot-tests:
     name: Frontend Snapshot Tests
     runs-on: ubuntu-latest
-    # Note: Does NOT depend on determine-test-execution because snapshot tests are setup/validation tests
-    # that should run regardless of whether UI E2E tests are enabled. They're part of code quality checks.
-    needs: [determine-schedule-type, validate-test-data-json]
+    # Run snapshot tests in parallel with frontend E2E tests
+    # They don't require services to be running, so they can run independently
+    needs: [determine-schedule-type, setup-base-urls, determine-test-execution, determine-envs, gate-setup]
     if: |
       always() &&
+      !cancelled() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
-      !cancelled()
+      needs.gate-setup.result != 'failure'
     env:
       TZ: UTC
       LC_ALL: en_US.UTF-8
@@ -551,33 +578,6 @@ jobs:
           TZ: UTC
           LC_ALL: en_US.UTF-8
         run: npm test -- __tests__/**/*.snapshot.test.tsx --run
-
-  gate-setup:
-    name: Gate (SETUP)
-    runs-on: ubuntu-latest
-    needs: [determine-schedule-type, determine-envs, validate-test-data-json, frontend-snapshot-tests, code-quality-analysis, docker-build-test, build-and-compile, validate-dependency-versions]
-    if: |
-      always() && 
-      needs.determine-schedule-type.outputs.code-changed == 'true' &&
-      !cancelled()
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Check Setup Jobs Status
-        run: |
-          chmod +x scripts/ci/check-gate-status.sh
-          ./scripts/ci/check-gate-status.sh "Setup" \
-            "validate-test-data-json:${{ needs.validate-test-data-json.result }}" \
-            "frontend-snapshot-tests:${{ needs.frontend-snapshot-tests.result }}" \
-            "code-quality-analysis:${{ needs.code-quality-analysis.result }}" \
-            "docker-build-test:${{ needs.docker-build-test.result }}" \
-            "build-and-compile:${{ needs.build-and-compile.result }}" \
-            "validate-dependency-versions:${{ needs.validate-dependency-versions.result }}"
-
-  # ==================================================================================
-  # STAGE 3: DEV ENVIRONMENT TESTING & DEPLOYMENT
-  # ==================================================================================
 
   test-fe-dev:
     name: Test FE (DEV)
