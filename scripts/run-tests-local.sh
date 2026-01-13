@@ -21,13 +21,13 @@ TESTS_FAILED=0
 
 # Default values
 BASE_URL=${BASE_URL:-"https://www.google.com"}
-TEST_ENVIRONMENT=${TEST_ENVIRONMENT:-"local"}
+ENVIRONMENT=${ENVIRONMENT:-"local"}
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🧪 Running Tests Locally (No Docker)${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo ""
-echo "Environment: $TEST_ENVIRONMENT"
+echo "Environment: $ENVIRONMENT"
 echo "Base URL: $BASE_URL"
 echo ""
 
@@ -95,7 +95,7 @@ if [ -d "$SCRIPT_DIR/cypress" ]; then
         "cd \"$SCRIPT_DIR/cypress\" && \
         if [ ! -d 'node_modules' ]; then npm install; fi && \
         export CYPRESS_BASE_URL=\"$BASE_URL\" && \
-        export TEST_ENVIRONMENT=\"$TEST_ENVIRONMENT\" && \
+        export ENVIRONMENT=\"$ENVIRONMENT\" && \
         npm run cypress:run"
 else
     echo -e "${YELLOW}⚠️  Cypress directory not found, skipping...${NC}"
@@ -107,7 +107,7 @@ if [ -d "$SCRIPT_DIR/playwright" ] && [ -f "$SCRIPT_DIR/playwright/package.json"
         "cd \"$SCRIPT_DIR/playwright\" && \
         if [ ! -d 'node_modules' ]; then npm install && npx playwright install --with-deps chromium; fi && \
         export BASE_URL=\"$BASE_URL\" && \
-        export TEST_ENVIRONMENT=\"$TEST_ENVIRONMENT\" && \
+        export ENVIRONMENT=\"$ENVIRONMENT\" && \
         export CI=true && \
         npm test"
 else
@@ -140,7 +140,7 @@ if [ "$SKIP_ROBOT" = false ]; then
         # Run but don't fail the script if Grid is needed (expected behavior)
         cd "$SCRIPT_DIR"
         export BASE_URL="$BASE_URL"
-        export TEST_ENVIRONMENT="$TEST_ENVIRONMENT"
+        export ENVIRONMENT="$ENVIRONMENT"
         if ./mvnw test -Probot 2>&1 | grep -q "Selenium Grid\|WebDriverException"; then
             echo -e "${YELLOW}⚠️  Robot Framework tests require Selenium Grid (expected).${NC}"
             # Don't count as failure since it's expected

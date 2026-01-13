@@ -175,7 +175,7 @@ services:
       - HEADLESS=${HEADLESS:-false}
       - PARALLEL_THREADS=${PARALLEL_THREADS:-5}
       - BASE_URL=${BASE_URL:-https://www.google.com}
-      - TEST_ENVIRONMENT=${TEST_ENVIRONMENT:-docker}
+      - ENVIRONMENT=${ENVIRONMENT:-docker}
       - CI=true
       - NODE_ENV=test
       - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/service-account-key.json

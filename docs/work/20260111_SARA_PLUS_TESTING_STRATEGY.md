@@ -22,14 +22,12 @@ SARA Plus™ is a comprehensive business management application designed for dea
 ## Interview Notes - Automated Software Testing Position
 
 **Interview Date**: 2026-01-11  
-**Contacts**: 
-- Greg Strub - Senior Director of Development
-  - https://www.linkedin.com/in/greg-strub-42608318/
-  - Greg.Strub@saraplus.com
-- Sai Mekala - Architect
-  - Sai.Mekala@saraplus.com
-- Brent David Anderson - SDET
-  - https://www.linkedin.com/in/brent-david-anderson-992555a/
+**Contacts**:
+| Name | Position | Email | LinkedIn|
+| -- | -- | -- | -- |
+| Greg Strub | Senior Director of Development | Greg.Strub@saraplus.com | https://www.linkedin.com/in/greg-strub-42608318/ |
+| Sai Mekala | Architect | Sai.Mekala@saraplus.com | |
+| Brent David Anderson | SDET | | https://www.linkedin.com/in/brent-david-anderson-992555a/ |
 
 ### Platform and Service Partners
 - AT&T

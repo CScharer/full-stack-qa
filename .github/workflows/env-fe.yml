@@ -268,7 +268,7 @@ jobs:
         timeout-minutes: ${{ inputs.smoke_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -398,7 +398,7 @@ jobs:
           SELENIUM_GRID_RETRY_MAX_DELAY_MS: '10000'
           SELENIUM_GRID_RETRY_TIMEOUT_MS: '30000'
           BROWSER: ${{ matrix.browser }}
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -517,7 +517,7 @@ jobs:
         timeout-minutes: ${{ inputs.mobile_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -633,7 +633,7 @@ jobs:
         timeout-minutes: ${{ inputs.responsive_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -720,12 +720,32 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 || sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2
 
+      - name: Determine Backend URL
+        id: backend-url
+        run: |
+          ENV="${{ inputs.environment }}"
+          case "$ENV" in
+            dev)
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
+              ;;
+            test)
+              echo "backend_url=http://localhost:8004" >> "$GITHUB_OUTPUT"
+              ;;
+            prod)
+              echo "backend_url=http://localhost:8005" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
       - name: Run Cypress Tests
         timeout-minutes: ${{ inputs.cypress_tests_timeout_minutes || 5 }}
         working-directory: ./cypress
         env:
           CYPRESS_BASE_URL: ${{ inputs.base_url }}
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
         run: |
           echo "════════════════════════════════════════"
           echo "🎬 Cypress Tests - ${{ inputs.environment }}"
@@ -736,7 +756,10 @@ jobs:
             BASE_URL="https://www.google.com"
           fi
           echo "Base URL: $BASE_URL"
+          echo "Backend URL: $BACKEND_URL"
           export CYPRESS_BASE_URL="$BASE_URL"
+          export ENVIRONMENT="${{ inputs.environment }}"
+          export BACKEND_URL="$BACKEND_URL"
           echo ""
           xvfb-run -a npm run cypress:run
 
@@ -803,12 +826,32 @@ jobs:
         working-directory: ./playwright
         run: npx playwright install --with-deps chromium
 
+      - name: Determine Backend URL
+        id: backend-url
+        run: |
+          ENV="${{ inputs.environment }}"
+          case "$ENV" in
+            dev)
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
+              ;;
+            test)
+              echo "backend_url=http://localhost:8004" >> "$GITHUB_OUTPUT"
+              ;;
+            prod)
+              echo "backend_url=http://localhost:8005" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
       - name: Run Playwright Tests
         timeout-minutes: ${{ inputs.playwright_tests_timeout_minutes || 5 }}
         working-directory: ./playwright
         env:
           BASE_URL: ${{ inputs.base_url }}
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
           CI: true
           # Playwright doesn't use Selenium Grid - unset to avoid conflicts
           SELENIUM_REMOTE_URL: ''
@@ -914,7 +957,7 @@ jobs:
         timeout-minutes: ${{ inputs.robot_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
           PYTHON_EXE: ${{ env.PYTHON_EXE || 'python3' }}
         run: |
@@ -1068,7 +1111,7 @@ jobs:
         timeout-minutes: ${{ inputs.selenide_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -1166,7 +1209,7 @@ jobs:
       - name: Run Vibium Tests
         timeout-minutes: ${{ inputs.vibium_tests_timeout_minutes || 5 }}
         env:
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"

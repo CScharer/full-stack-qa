@@ -684,7 +684,7 @@ This section tracks the status of running all tests in Docker to match the CI/CD
 - ✅ Set all environment variables matching CI/CD
 
 #### 2. docker-compose.yml Updates
-- ✅ Added `BASE_URL`, `TEST_ENVIRONMENT`, `CI` environment variables
+- ✅ Added `BASE_URL`, `ENVIRONMENT`, `CI` environment variables
 - ✅ Mounted Cypress and Playwright directories
 - ✅ Mounted Robot Framework test results directory
 

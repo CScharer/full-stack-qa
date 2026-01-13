@@ -22,6 +22,24 @@ import { getEnvironmentConfig } from '../config/port-config';
  * 4. Verifies job search sites display correctly
  * 5. Verifies via API that no data was created
  * 
+ * ⚠️ PREREQUISITES: Services must be running before executing these tests
+ * 
+ * Start services (choose one method):
+ * 
+ * Option 1: Start both services together (recommended):
+ *   ./scripts/start-env.sh                    # Default: dev environment
+ *   ./scripts/start-env.sh --env test        # Test environment
+ * 
+ * Option 2: Start services separately (2 terminals):
+ *   Terminal 1 - Backend:
+ *     ./scripts/start-be.sh                  # Default: dev environment
+ *   Terminal 2 - Frontend:
+ *     ./scripts/start-fe.sh                  # Default: dev environment
+ * 
+ * Services will be available at:
+ *   - Frontend: http://localhost:3003 (dev), http://localhost:3004 (test)
+ *   - Backend API: http://localhost:8003 (dev), http://localhost:8004 (test)
+ * 
  * Run this test locally with Chrome:
  *   cd playwright
  *   npx playwright test wizard.spec.ts --project=chromium

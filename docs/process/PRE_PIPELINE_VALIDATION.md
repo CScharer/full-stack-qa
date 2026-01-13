@@ -259,7 +259,7 @@ For each Node.js project (`cypress/`, `playwright/`, `vibium/`, `frontend/`) **t
   ```bash
   cd cypress
   export CYPRESS_BASE_URL="https://www.google.com"  # Or your test URL
-  export TEST_ENVIRONMENT="local"
+  export ENVIRONMENT="local"
   npm run cypress:run
   ```
   **Required**: Tests pass or failures are expected/acceptable
@@ -268,7 +268,7 @@ For each Node.js project (`cypress/`, `playwright/`, `vibium/`, `frontend/`) **t
   ```bash
   cd playwright
   export BASE_URL="https://www.google.com"  # Or your test URL
-  export TEST_ENVIRONMENT="local"
+  export ENVIRONMENT="local"
   export CI=true
   npm test
   ```

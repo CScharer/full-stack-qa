@@ -121,7 +121,7 @@ npm test -- -u
 cd cypress
 npm install  # First time only
 export CYPRESS_BASE_URL="https://www.google.com"
-export TEST_ENVIRONMENT="local"
+export ENVIRONMENT="local"
 npm run cypress:run
 ```
 
@@ -131,7 +131,7 @@ cd playwright
 npm install  # First time only
 npx playwright install --with-deps chromium  # First time only
 export BASE_URL="https://www.google.com"
-export TEST_ENVIRONMENT="local"
+export ENVIRONMENT="local"
 export CI=true
 npm test
 ```
@@ -279,7 +279,7 @@ npm run cypress:open
 **Environment Variables:**
 ```bash
 export CYPRESS_BASE_URL="http://localhost:3003"
-export TEST_ENVIRONMENT="local"
+export ENVIRONMENT="local"
 ```
 
 ### Playwright
@@ -310,7 +310,7 @@ npm run test:headed
 **Environment Variables:**
 ```bash
 export BASE_URL="http://localhost:3003"
-export TEST_ENVIRONMENT="local"
+export ENVIRONMENT="local"
 export CI=true
 ```
 
