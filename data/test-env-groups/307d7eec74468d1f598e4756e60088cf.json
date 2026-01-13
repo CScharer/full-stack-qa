@@ -1,1 +1,1 @@
-{"id":"307d7eec74468d1f598e4756e60088cf","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testCookieManagement","name":"testCookieManagement [DEV]","status":"passed","testResultsByEnv":{"default":"9743fc1ed9c53cd4829b4dff63c26f48"}}
+{"id":"307d7eec74468d1f598e4756e60088cf","fullName":"com.cjs.qa.junit.tests.AdvancedFeaturesTests.testCookieManagement","name":"testCookieManagement [PROD]","status":"passed","testResultsByEnv":{"default":"bd487b60c08edc8515fd0a2b7dd90e4b"}}
