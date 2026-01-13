@@ -720,13 +720,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 || sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2
 
+      - name: Determine Backend URL
+        id: backend-url
+        run: |
+          case "${{ inputs.environment }}" in
+            dev)
+              echo "backend_url=http://localhost:8003" >> $GITHUB_OUTPUT
+              ;;
+            test)
+              echo "backend_url=http://localhost:8004" >> $GITHUB_OUTPUT
+              ;;
+            prod)
+              echo "backend_url=http://localhost:8005" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "backend_url=http://localhost:8003" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
       - name: Run Cypress Tests
         timeout-minutes: ${{ inputs.cypress_tests_timeout_minutes || 5 }}
         working-directory: ./cypress
         env:
           CYPRESS_BASE_URL: ${{ inputs.base_url }}
           CYPRESS_ENVIRONMENT: ${{ inputs.environment }}
-          BACKEND_URL: ${{ inputs.environment == 'dev' && 'http://localhost:8003' || inputs.environment == 'test' && 'http://localhost:8004' || inputs.environment == 'prod' && 'http://localhost:8005' || 'http://localhost:8003' }}
+          BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
           TEST_ENVIRONMENT: ${{ inputs.environment }}
         run: |
           echo "════════════════════════════════════════"
@@ -738,8 +756,10 @@ jobs:
             BASE_URL="https://www.google.com"
           fi
           echo "Base URL: $BASE_URL"
-          export CYPRESS_BASE_URL="$BASE_URL"
           echo "Backend URL: $BACKEND_URL"
+          export CYPRESS_BASE_URL="$BASE_URL"
+          export BACKEND_URL="$BACKEND_URL"
+          export CYPRESS_ENVIRONMENT="${{ inputs.environment }}"
           echo ""
           xvfb-run -a npm run cypress:run
 
