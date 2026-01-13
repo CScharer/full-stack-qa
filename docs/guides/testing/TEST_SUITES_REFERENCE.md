@@ -298,7 +298,7 @@ All TestNG suite files are located in: `src/test/resources/`
 ```typescript
 {
   e2e: {
-    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:3003',
+    baseUrl: process.env.BASE_URL || 'http://localhost:3003',
     retries: {
       runMode: 1,  // Retry once in CI
       openMode: 0  // No retry in interactive mode

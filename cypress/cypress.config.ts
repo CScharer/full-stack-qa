@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress'
 
 export default defineConfig({
   e2e: {
-    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:3003', // Default to DEV port per ONE_GOAL.md
+    baseUrl: process.env.BASE_URL || 'http://localhost:3003', // Default to DEV port per ONE_GOAL.md
     viewportWidth: 1920,
     viewportHeight: 1080,
     video: false,
@@ -19,8 +19,9 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       // Allow baseUrl to be overridden by environment variable
-      if (process.env.CYPRESS_BASE_URL) {
-        config.baseUrl = process.env.CYPRESS_BASE_URL
+      // Standardized to use BASE_URL (consistent with other frameworks)
+      if (process.env.BASE_URL) {
+        config.baseUrl = process.env.BASE_URL
       }
       
       // Make environment variables available to Cypress tests via Cypress.env()

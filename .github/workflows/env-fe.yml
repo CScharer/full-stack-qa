@@ -743,7 +743,7 @@ jobs:
         timeout-minutes: ${{ inputs.cypress_tests_timeout_minutes || 5 }}
         working-directory: ./cypress
         env:
-          CYPRESS_BASE_URL: ${{ inputs.base_url }}
+          BASE_URL: ${{ inputs.base_url }}
           ENVIRONMENT: ${{ inputs.environment }}
           BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
         run: |
@@ -757,7 +757,7 @@ jobs:
           fi
           echo "Base URL: $BASE_URL"
           echo "Backend URL: $BACKEND_URL"
-          export CYPRESS_BASE_URL="$BASE_URL"
+          export BASE_URL="$BASE_URL"
           export ENVIRONMENT="${{ inputs.environment }}"
           export BACKEND_URL="$BACKEND_URL"
           echo ""

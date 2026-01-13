@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  // Allow webpack to resolve modules from parent directories (for shared config)
+  webpack: (config, { isServer }) => {
+    // Add parent directory to module resolution
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      path.resolve(__dirname, '..'),
+    ];
+    return config;
+  },
 };
 
 export default nextConfig;

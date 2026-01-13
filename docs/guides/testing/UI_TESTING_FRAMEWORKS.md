@@ -361,8 +361,9 @@ describe('HomePage', () => {
 
 **Environment Configuration**: 
 - Backend URL is determined from environment using `getBackendUrl()` helper
-- Currently uses hardcoded values (to be migrated to shared config)
+- ✅ Uses shared `config/port_config.py` via `ConfigHelper.py`
 - See `config/environments.json` for environment port mappings
+- See [Shared Test Configuration](../work/20260111_SHARED_TEST_CONFIGURATION.md) for details
 
 ### Best Use Cases
 

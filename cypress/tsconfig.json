@@ -1,20 +1,13 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020"],
     "module": "commonjs",
-    "moduleResolution": "node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "types": ["node", "cypress"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./cypress/*"]
     }
   },
-  "include": ["cypress/**/*.ts", "cypress/**/*.js", "cypress.config.ts"],
+  "include": ["cypress/**/*.ts", "cypress/**/*.js", "cypress.config.ts", "../config/port-config.ts"],
   "exclude": ["node_modules"]
 }
