@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
-import { afterEach, vi, beforeAll } from 'vitest';
+import { afterEach, beforeAll } from 'vitest';
 
 // Set consistent locale for tests to ensure toLocaleTimeString() produces consistent output
 // This ensures snapshot tests are stable across different environments
