@@ -723,18 +723,19 @@ jobs:
       - name: Determine Backend URL
         id: backend-url
         run: |
-          case "${{ inputs.environment }}" in
+          ENV="${{ inputs.environment }}"
+          case "$ENV" in
             dev)
-              echo "backend_url=http://localhost:8003" >> $GITHUB_OUTPUT
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
               ;;
             test)
-              echo "backend_url=http://localhost:8004" >> $GITHUB_OUTPUT
+              echo "backend_url=http://localhost:8004" >> "$GITHUB_OUTPUT"
               ;;
             prod)
-              echo "backend_url=http://localhost:8005" >> $GITHUB_OUTPUT
+              echo "backend_url=http://localhost:8005" >> "$GITHUB_OUTPUT"
               ;;
             *)
-              echo "backend_url=http://localhost:8003" >> $GITHUB_OUTPUT
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
               ;;
           esac
 
