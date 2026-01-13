@@ -108,4 +108,13 @@ export class HomePage extends BasePage {
     cy.get(this.notesCard).should('be.visible');
     cy.get(this.jobSearchSitesCard).should('be.visible');
   }
+
+  /**
+   * Click Add Application button on home page
+   */
+  clickAddApplication(): void {
+    const addApplicationButton = '[data-qa="home-new-application-button"]';
+    cy.get(addApplicationButton, { timeout: 10000 }).should('be.visible').should('be.enabled');
+    cy.get(addApplicationButton).click();
+  }
 }

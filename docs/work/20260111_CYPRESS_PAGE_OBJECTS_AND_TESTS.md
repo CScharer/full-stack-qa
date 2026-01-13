@@ -382,7 +382,7 @@ Located in: `cypress/cypress/e2e/`
 
 ---
 
-### Phase 6: Test Files (Priority: High)
+### Phase 6: Test Files (Priority: High) 🚧 IN PROGRESS
 
 **Goal**: Create test files matching Playwright tests
 
@@ -497,6 +497,15 @@ Located in: `cypress/cypress/e2e/`
      - Handle API errors gracefully
      - Use all page objects: HomePage, ApplicationsPage, CompaniesPage, CompanyFormPage, ContactsPage, ContactFormPage, ClientsPage, ClientFormPage, NotesPage, JobSearchSitesPage, WizardStep1Page
      - **File Path**: Must be created at `cypress/cypress/e2e/wizard.cy.ts` (matches Playwright's `playwright/tests/wizard.spec.ts`)
+   
+   - **Status**: ✅ **COMPLETE** - wizard.cy.ts created
+     - All 8 test cases implemented matching Playwright wizard.spec.ts
+     - API calls for initial counts set up in beforeEach
+     - Backend URL determined from environment (Cypress.env('BACKEND_URL') or default to dev)
+     - All page objects used correctly
+     - Added clickAddApplication() method to HomePage
+     - Tests run serially (Cypress default behavior)
+     - TypeScript compilation verified
 
 **Test Structure Pattern**:
 ```typescript
@@ -750,7 +759,7 @@ cypress/cypress/
 │   ├── clients.cy.ts                     ❌ (to create)
 │   ├── notes.cy.ts                       ❌ (to create)
 │   ├── job-search-sites.cy.ts            ❌ (to create)
-│   └── wizard.cy.ts                      ❌ (to create)
+│   └── wizard.cy.ts                       ✅ (Phase 6 - wizard test complete)
 ├── page-objects/
 │   ├── BasePage.ts                       ✅ (exists, enhanced - Phase 1 complete)
 │   ├── HomePage.ts                       ✅ (exists, may need updates)
@@ -809,26 +818,28 @@ cypress/cypress/
 - [x] Create WizardStep1Page.ts
 - [x] Test page object (TypeScript compilation verified)
 
-### Phase 6: Test Files
+### Phase 6: Test Files 🚧 IN PROGRESS
 - [ ] Create applications.cy.ts
 - [ ] Create companies.cy.ts
 - [ ] Create contacts.cy.ts
 - [ ] Create clients.cy.ts
 - [ ] Create notes.cy.ts
 - [ ] Create job-search-sites.cy.ts
-- [ ] Create wizard.cy.ts
-  - [ ] Implement all 8 test cases matching Playwright wizard.spec.ts
-  - [ ] Set up API calls for initial counts in beforeEach
-  - [ ] Implement test_home (Home → Add Application → Cancel)
-  - [ ] Implement test_application (Applications → Add → Cancel)
-  - [ ] Implement test_companies (Companies → Add → Fill → Cancel)
-  - [ ] Implement test_contacts (Contacts → Add → Fill → Cancel)
-  - [ ] Implement test_clients (Clients → Add → Fill → Cancel)
-  - [ ] Implement test_notes (Notes → Verify empty)
-  - [ ] Implement test_job_search_sites (Job Search Sites → Verify names/URLs)
-  - [ ] Implement test_no_data (API verification of no data created)
-  - [ ] Verify tests run serially
-  - [ ] Verify all page objects are used correctly
+- [x] Create wizard.cy.ts ✅
+  - [x] Implement all 8 test cases matching Playwright wizard.spec.ts
+  - [x] Set up API calls for initial counts in beforeEach
+  - [x] Implement test_home (Home → Add Application → Cancel)
+  - [x] Implement test_application (Applications → Add → Cancel)
+  - [x] Implement test_companies (Companies → Add → Fill → Cancel)
+  - [x] Implement test_contacts (Contacts → Add → Fill → Cancel)
+  - [x] Implement test_clients (Clients → Add → Fill → Cancel)
+  - [x] Implement test_notes (Notes → Verify empty)
+  - [x] Implement test_job_search_sites (Job Search Sites → Verify names/URLs)
+  - [x] Implement test_no_data (API verification of no data created)
+  - [x] Verify tests run serially (Cypress runs serially by default)
+  - [x] Verify all page objects are used correctly
+  - [x] Added clickAddApplication() method to HomePage
+  - [x] TypeScript compilation verified
 - [ ] Run all tests and verify they pass
 
 ### Phase 7: Documentation & Cleanup
