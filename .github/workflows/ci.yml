@@ -521,11 +521,16 @@ jobs:
   frontend-snapshot-tests:
     name: Frontend Snapshot Tests
     runs-on: ubuntu-latest
+    # Note: Does NOT depend on determine-test-execution because snapshot tests are setup/validation tests
+    # that should run regardless of whether UI E2E tests are enabled. They're part of code quality checks.
     needs: [determine-schedule-type, validate-test-data-json]
     if: |
       always() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
       !cancelled()
+    env:
+      TZ: UTC
+      LC_ALL: en_US.UTF-8
 
     steps:
       - name: Checkout code
@@ -542,6 +547,9 @@ jobs:
 
       - name: Run frontend snapshot tests
         working-directory: frontend
+        env:
+          TZ: UTC
+          LC_ALL: en_US.UTF-8
         run: npm test -- __tests__/**/*.snapshot.test.tsx --run
 
   gate-setup:
