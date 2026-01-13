@@ -215,7 +215,7 @@ exports[`CompaniesPage Snapshot Tests > matches snapshot for companies list 1`] 
             class="text-muted"
             data-qa="status-bar-timestamp"
           >
-            2:35:03 PM
+            6:00:00 AM
           </small>
         </div>
       </div>
@@ -314,7 +314,7 @@ exports[`CompaniesPage Snapshot Tests > matches snapshot for empty state 1`] = `
             class="text-muted"
             data-qa="status-bar-timestamp"
           >
-            2:35:03 PM
+            6:00:00 AM
           </small>
         </div>
       </div>

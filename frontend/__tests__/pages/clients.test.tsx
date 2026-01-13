@@ -2,10 +2,11 @@
  * Tests for Clients page using Vitest and mock data
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ClientsPage from '@/app/clients/page';
 import { mockClientResponse } from '@/__mocks__/data';
+import { getByQa } from '../utils/test-helpers';
 
 // Mock the hooks
 const mockUseClients = vi.fn();
@@ -47,9 +48,13 @@ describe('ClientsPage', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Clients')).toBeInTheDocument();
-      expect(screen.getByText('Client A')).toBeInTheDocument();
-      expect(screen.getByText('Client B')).toBeInTheDocument();
+      // Use data-qa for title
+      expect(getByQa('clients-title')).toHaveTextContent('Clients');
+      
+      // Query within the clients table container
+      const clientsTable = getByQa('clients-table');
+      expect(within(clientsTable).getByText('Client A')).toBeInTheDocument();
+      expect(within(clientsTable).getByText('Client B')).toBeInTheDocument();
     });
   });
 

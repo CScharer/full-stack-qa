@@ -800,6 +800,39 @@ npm test -- -u
 npm test -- __tests__/components/ui/Button.snapshot.test.tsx -u
 ```
 
+#### CI/CD Integration
+
+Snapshot tests run automatically in the CI pipeline:
+- **Job**: `frontend-snapshot-tests`
+- **Runs After**: `validate-test-data-json` step
+- **Gate**: Included in `gate-setup` job status check
+- **Location**: `.github/workflows/ci.yml`
+
+#### Using data-qa Attributes in Unit Tests
+
+Unit tests use `data-qa` attributes for stable, maintainable selectors, consistent with the Page Object Model approach used in E2E tests.
+
+**Test Helper Utility**: `frontend/__tests__/utils/test-helpers.ts`
+
+```typescript
+import { getByQa } from '../utils/test-helpers';
+import { within } from '@testing-library/react';
+
+// Query by data-qa attribute
+const title = getByQa('applications-title');
+expect(title).toHaveTextContent('Applications');
+
+// Query within a container that has data-qa
+const tableBody = getByQa('applications-table-body');
+expect(within(tableBody).getByText('Senior Software Engineer')).toBeInTheDocument();
+```
+
+**Benefits**:
+- More stable than text-based queries
+- Aligns with E2E test approach
+- Less brittle to UI text changes
+- Scoped queries within containers
+
 #### Snapshot Test Example
 
 ```typescript

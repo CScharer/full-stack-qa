@@ -2,10 +2,11 @@
  * Tests for Applications page using Vitest and mock data
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ApplicationsPage from '@/app/applications/page';
 import { mockApplicationResponse } from '@/__mocks__/data';
+import { getByQa } from '../utils/test-helpers';
 
 // Mock the hooks
 const mockUseApplications = vi.fn();
@@ -81,9 +82,13 @@ describe('ApplicationsPage', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Applications')).toBeInTheDocument();
-      expect(screen.getByText('Senior Software Engineer')).toBeInTheDocument();
-      expect(screen.getByText('Frontend Developer')).toBeInTheDocument();
+      // Use data-qa for title
+      expect(getByQa('applications-title')).toHaveTextContent('Applications');
+      
+      // Query within the applications table body container
+      const tableBody = getByQa('applications-table-body');
+      expect(within(tableBody).getByText('Senior Software Engineer')).toBeInTheDocument();
+      expect(within(tableBody).getByText('Frontend Developer')).toBeInTheDocument();
     });
   });
 
