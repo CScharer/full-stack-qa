@@ -852,7 +852,6 @@ jobs:
           BASE_URL: ${{ inputs.base_url }}
           ENVIRONMENT: ${{ inputs.environment }}
           BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
           CI: true
           # Playwright doesn't use Selenium Grid - unset to avoid conflicts
           SELENIUM_REMOTE_URL: ''
