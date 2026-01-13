@@ -359,6 +359,11 @@ describe('HomePage', () => {
 
 **Service Prerequisites**: Backend and frontend services must be running. Use `./scripts/start-env.sh` to start both services.
 
+**Environment Configuration**: 
+- Backend URL is determined from environment using `getBackendUrl()` helper
+- Currently uses hardcoded values (to be migrated to shared config)
+- See `config/environments.json` for environment port mappings
+
 ### Best Use Cases
 
 - Frontend-heavy applications
