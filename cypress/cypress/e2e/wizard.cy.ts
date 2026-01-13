@@ -119,7 +119,9 @@ describe('Wizard Tests', () => {
 
     // Determine backend URL based on environment
     // Get environment from env var, default to 'dev' to match other scripts
-    const environment = Cypress.env('ENVIRONMENT') || 'dev';
+    // Use process.env.ENVIRONMENT to match Playwright pattern (process.env.ENVIRONMENT)
+    // Fallback to Cypress.env for compatibility
+    const environment = (process.env.ENVIRONMENT || Cypress.env('ENVIRONMENT') || 'dev') as string;
     backendBaseUrl = getBackendUrl(environment);
 
     // Get initial counts for all entities via API

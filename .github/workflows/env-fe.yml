@@ -744,7 +744,7 @@ jobs:
         working-directory: ./cypress
         env:
           CYPRESS_BASE_URL: ${{ inputs.base_url }}
-          CYPRESS_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -758,8 +758,8 @@ jobs:
           echo "Base URL: $BASE_URL"
           echo "Backend URL: $BACKEND_URL"
           export CYPRESS_BASE_URL="$BASE_URL"
+          export ENVIRONMENT="${{ inputs.environment }}"
           export BACKEND_URL="$BACKEND_URL"
-          export CYPRESS_ENVIRONMENT="${{ inputs.environment }}"
           echo ""
           xvfb-run -a npm run cypress:run
 
@@ -826,11 +826,32 @@ jobs:
         working-directory: ./playwright
         run: npx playwright install --with-deps chromium
 
+      - name: Determine Backend URL
+        id: backend-url
+        run: |
+          ENV="${{ inputs.environment }}"
+          case "$ENV" in
+            dev)
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
+              ;;
+            test)
+              echo "backend_url=http://localhost:8004" >> "$GITHUB_OUTPUT"
+              ;;
+            prod)
+              echo "backend_url=http://localhost:8005" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "backend_url=http://localhost:8003" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
       - name: Run Playwright Tests
         timeout-minutes: ${{ inputs.playwright_tests_timeout_minutes || 5 }}
         working-directory: ./playwright
         env:
           BASE_URL: ${{ inputs.base_url }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
           TEST_ENVIRONMENT: ${{ inputs.environment }}
           CI: true
           # Playwright doesn't use Selenium Grid - unset to avoid conflicts
