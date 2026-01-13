@@ -186,6 +186,8 @@ Backend URL is determined from environment:
 const backendBaseUrl = getBackendUrl(Cypress.env('ENVIRONMENT') || 'dev');
 ```
 
+**Note**: Currently uses hardcoded backend URL mapping. Future improvement: migrate to shared `config/environments.json` utility (similar to Playwright's `port-config.ts`).
+
 ### Serial Test Execution
 Cypress runs tests serially by default (unlike Playwright which requires explicit configuration):
 ```typescript

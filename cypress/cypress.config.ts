@@ -23,6 +23,15 @@ export default defineConfig({
         config.baseUrl = process.env.CYPRESS_BASE_URL
       }
       
+      // Make environment variables available to Cypress tests via Cypress.env()
+      // This is necessary because process.env is not available in the browser context
+      if (process.env.BACKEND_URL) {
+        config.env.BACKEND_URL = process.env.BACKEND_URL
+      }
+      if (process.env.ENVIRONMENT) {
+        config.env.ENVIRONMENT = process.env.ENVIRONMENT
+      }
+      
       // Generate JSON results for Allure conversion
       on('after:run', (results) => {
         // Write results summary to JSON file for Allure conversion
