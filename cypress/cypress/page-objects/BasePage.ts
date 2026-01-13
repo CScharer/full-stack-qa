@@ -70,7 +70,7 @@ export class BasePage {
    * @param timeout - Optional timeout in milliseconds
    * @returns Cypress chainable for the element
    */
-  getElement(selector: string, timeout?: number): Cypress.Chainable<JQuery<HTMLElement>> {
+  getElement(selector: string, timeout?: number): Cypress.Chainable {
     if (timeout) {
       return cy.get(selector, { timeout });
     }
