@@ -34,7 +34,7 @@ if [ -f "$ENV_CONFIG_SCRIPT" ]; then
     
     # Load environment configuration (same approach as start-be.sh)
     # Source the config script to get access to functions
-    local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+    env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
     eval "$(get_ports_for_environment "$env")"
     eval "$(get_database_for_environment "$env")"
     eval "$(get_api_endpoints)"
@@ -97,8 +97,8 @@ if [ -f "$ENV_CONFIG_SCRIPT" ]; then
     
     # Get CORS_ORIGINS and set it directly (same approach as start-be.sh)
     # Extract value after = sign - it's already in JSON format with quotes
-    local cors_line=$(get_cors_origins "$env")
-    local cors_value="${cors_line#CORS_ORIGINS=}"
+    cors_line=$(get_cors_origins "$env")
+    cors_value="${cors_line#CORS_ORIGINS=}"
     # Export directly - the value already has quotes, don't add more
     export CORS_ORIGINS=${cors_value}
     
