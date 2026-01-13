@@ -4,7 +4,8 @@
 # Reads from config/environments.json (single source of truth)
 # Provides functions to get all configuration values (ports, database, API, timeouts, CORS)
 
-set -e
+# Note: We don't use 'set -e' here because this script is sourced by other scripts
+# and we want to handle errors gracefully rather than exiting the parent script
 
 # Get script directory to find config JSON
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

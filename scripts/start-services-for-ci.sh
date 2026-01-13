@@ -27,9 +27,18 @@ FORCE_STOP=${FORCE_STOP:-"false"}  # Force stop existing services on ports
 # Source environment configuration to get DATABASE_PATH, CORS_ORIGINS, etc.
 ENV_CONFIG_SCRIPT="${SCRIPT_DIR}/scripts/ci/env-config.sh"
 if [ -f "$ENV_CONFIG_SCRIPT" ]; then
+    # Temporarily disable exit on error when sourcing to handle errors gracefully
+    set +e
     source "$ENV_CONFIG_SCRIPT"
+    set -e
+    
     # Export environment configuration (sets DATABASE_PATH, CORS_ORIGINS, etc.)
-    export_environment_config "$ENVIRONMENT"
+    # Only call if function exists (in case sourcing failed)
+    if type export_environment_config &>/dev/null; then
+        export_environment_config "$ENVIRONMENT"
+    else
+        echo "⚠️  Warning: export_environment_config function not found. Using fallback configuration." >&2
+    fi
     
     # Ensure DATABASE_PATH is absolute and doesn't include scripts/
     if [ -n "$DATABASE_PATH" ]; then
