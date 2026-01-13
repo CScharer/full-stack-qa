@@ -746,7 +746,6 @@ jobs:
           CYPRESS_BASE_URL: ${{ inputs.base_url }}
           CYPRESS_ENVIRONMENT: ${{ inputs.environment }}
           BACKEND_URL: ${{ steps.backend-url.outputs.backend_url }}
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
         run: |
           echo "════════════════════════════════════════"
           echo "🎬 Cypress Tests - ${{ inputs.environment }}"
