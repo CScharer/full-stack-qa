@@ -725,6 +725,8 @@ jobs:
         working-directory: ./cypress
         env:
           CYPRESS_BASE_URL: ${{ inputs.base_url }}
+          CYPRESS_ENVIRONMENT: ${{ inputs.environment }}
+          BACKEND_URL: ${{ inputs.environment == 'dev' && 'http://localhost:8003' || inputs.environment == 'test' && 'http://localhost:8004' || inputs.environment == 'prod' && 'http://localhost:8005' || 'http://localhost:8003' }}
           TEST_ENVIRONMENT: ${{ inputs.environment }}
         run: |
           echo "════════════════════════════════════════"
@@ -737,6 +739,7 @@ jobs:
           fi
           echo "Base URL: $BASE_URL"
           export CYPRESS_BASE_URL="$BASE_URL"
+          echo "Backend URL: $BACKEND_URL"
           echo ""
           xvfb-run -a npm run cypress:run
 
