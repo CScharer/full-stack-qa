@@ -113,6 +113,8 @@ npm test -- -u
 - 65 snapshot tests covering UI components, complex components, and page components
 - Snapshot files are auto-generated in `__snapshots__/` directories
 - Update snapshots when making intentional UI changes: `npm test -- -u`
+- **CI/CD Integration**: Snapshot tests run automatically in CI for each environment (dev, test, prod) as separate jobs (`test-fe-ss-dev`, `test-fe-ss-test`, `test-fe-ss-prod`)
+- Snapshot tests run in parallel with FE E2E tests and can be enabled/disabled via `enable_snapshot_tests` input
 
 #### Cypress Tests
 ```bash

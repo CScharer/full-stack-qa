@@ -802,10 +802,16 @@ npm test -- __tests__/components/ui/Button.snapshot.test.tsx -u
 
 #### CI/CD Integration
 
-Snapshot tests run automatically in the CI pipeline:
-- **Job**: `frontend-snapshot-tests`
-- **Runs After**: `validate-test-data-json` step
-- **Gate**: Included in `gate-setup` job status check
+Snapshot tests run automatically in the CI pipeline for each environment:
+- **Jobs**: 
+  - `test-fe-ss-dev` - Runs for dev environment
+  - `test-fe-ss-test` - Runs for test environment  
+  - `test-fe-ss-prod` - Runs for prod environment
+- **Dependencies**: Same as FE E2E tests (gate-setup, determine-envs, determine-test-execution)
+- **Control**: Enabled/disabled via `enable_snapshot_tests` output (defaults to `true`)
+- **Execution**: Runs in parallel with FE E2E tests (no services required)
+- **Gate Integration**: Included in environment gate jobs (`gate-dev`, `gate-test`, `gate-prod`)
+- **Failure Impact**: Failures cause the pipeline to fail (same as other FE tests)
 - **Location**: `.github/workflows/ci.yml`
 
 #### Using data-qa Attributes in Unit Tests

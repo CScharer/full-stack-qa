@@ -70,6 +70,7 @@ echo "enable_playwright_tests=true" >> $GITHUB_OUTPUT
 echo "enable_robot_tests=true" >> $GITHUB_OUTPUT
 echo "enable_selenide_tests=true" >> $GITHUB_OUTPUT
 echo "enable_vibium_tests=true" >> $GITHUB_OUTPUT
+echo "enable_snapshot_tests=true" >> $GITHUB_OUTPUT
 echo "✅ Test execution controls set (same for all environments)"
 
 if [ "$ENV_SELECT" == "all" ]; then
