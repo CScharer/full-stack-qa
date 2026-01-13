@@ -2,10 +2,11 @@
  * Tests for Companies page using Vitest and mock data
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CompaniesPage from '@/app/companies/page';
 import { mockCompanyResponse } from '@/__mocks__/data';
+import { getByQa } from '../utils/test-helpers';
 
 // Mock the hooks
 const mockUseCompanies = vi.fn();
@@ -47,9 +48,13 @@ describe('CompaniesPage', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Companies')).toBeInTheDocument();
-      expect(screen.getByText('Tech Corp')).toBeInTheDocument();
-      expect(screen.getByText('Startup Inc')).toBeInTheDocument();
+      // Use data-qa for title
+      expect(getByQa('companies-title')).toHaveTextContent('Companies');
+      
+      // Query within the companies table container
+      const companiesTable = getByQa('companies-table');
+      expect(within(companiesTable).getByText('Tech Corp')).toBeInTheDocument();
+      expect(within(companiesTable).getByText('Startup Inc')).toBeInTheDocument();
     });
   });
 

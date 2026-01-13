@@ -10,6 +10,7 @@ import { ClientFormPage } from './pages/ClientFormPage';
 import { NotesPage } from './pages/NotesPage';
 import { JobSearchSitesPage } from './pages/JobSearchSitesPage';
 import { WizardStep1Page } from './pages/WizardStep1Page';
+import { getEnvironmentConfig } from '../config/port-config';
 
 /**
  * Wizard Test - Navigate through all pages and verify cancel functionality
@@ -75,9 +76,13 @@ test.describe('Wizard Tests', () => {
     wizardStep1Page = new WizardStep1Page(page);
 
     // Determine backend URL based on environment
-    // Default to dev environment (port 8003)
-    const frontendUrl = process.env.BASE_URL || 'http://localhost:3003';
-    backendBaseUrl = process.env.BACKEND_URL || frontendUrl.replace(':3003', ':8003');
+    // Get environment from env var, default to 'dev' to match other scripts
+    const environment = process.env.ENVIRONMENT || 'dev';
+    const envConfig = getEnvironmentConfig(environment, 'dev');
+    
+    // Use BACKEND_URL env var if provided, otherwise use environment config
+    // Note: API calls append /api/v1/ to this URL, so we only need the base backend URL
+    backendBaseUrl = process.env.BACKEND_URL || envConfig.backend.url;
 
     // Get initial counts for all entities via API
     try {
@@ -131,7 +136,7 @@ test.describe('Wizard Tests', () => {
     }
   });
 
-  test.skip('test_home - Click Home Navigation, Add Application button, then Cancel', async ({ page }) => {
+  test('test_home - Click Home Navigation, Add Application button, then Cancel', async ({ page }) => {
     // 1. Click the Home Navigation
     await homePage.navigate();
     await homePage.verifyPageLoaded();

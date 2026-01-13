@@ -86,6 +86,25 @@ npm run test:ui
 # Run only snapshot tests
 npm test -- __tests__/**/*.snapshot.test.tsx
 
+# Update snapshots after intentional changes
+npm test -- -u
+```
+
+**Using data-qa Attributes in Tests:**
+
+Unit tests use `data-qa` attributes for stable selectors. Import the test helper:
+
+```typescript
+import { getByQa } from '../utils/test-helpers';
+import { within } from '@testing-library/react';
+
+// Query by data-qa
+const title = getByQa('applications-title');
+
+// Query within container
+const table = getByQa('applications-table-body');
+within(table).getByText('Expected Text');
+
 # Update snapshots after intentional UI changes
 npm test -- -u
 ```

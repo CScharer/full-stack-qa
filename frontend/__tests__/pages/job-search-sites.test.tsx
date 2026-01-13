@@ -2,10 +2,11 @@
  * Tests for Job Search Sites page using Vitest and mock data
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import JobSearchSitesPage from '@/app/job-search-sites/page';
 import { mockJobSearchSiteResponse } from '@/__mocks__/data';
+import { getByQa } from '../utils/test-helpers';
 
 // Mock the hooks
 const mockUseJobSearchSites = vi.fn();
@@ -47,9 +48,13 @@ describe('JobSearchSitesPage', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Job Search Sites')).toBeInTheDocument();
-      expect(screen.getByText('LinkedIn')).toBeInTheDocument();
-      expect(screen.getByText('Indeed')).toBeInTheDocument();
+      // Use data-qa for title
+      expect(getByQa('job-search-sites-title')).toHaveTextContent('Job Search Sites');
+      
+      // Query within the job search sites table container
+      const jobSearchSitesTable = getByQa('job-search-sites-table');
+      expect(within(jobSearchSitesTable).getByText('LinkedIn')).toBeInTheDocument();
+      expect(within(jobSearchSitesTable).getByText('Indeed')).toBeInTheDocument();
     });
   });
 

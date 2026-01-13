@@ -1,7 +1,7 @@
 /**
  * Snapshot tests for Applications page
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ApplicationsPage from '@/app/applications/page';
@@ -19,6 +19,9 @@ describe('ApplicationsPage Snapshot Tests', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
+    // Mock Date to return a fixed timestamp for StatusBar
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-11T12:00:00Z'));
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -26,6 +29,10 @@ describe('ApplicationsPage Snapshot Tests', () => {
       },
     });
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('matches snapshot for loading state', () => {

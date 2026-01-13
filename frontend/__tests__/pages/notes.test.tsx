@@ -2,10 +2,11 @@
  * Tests for Notes page using Vitest and mock data
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NotesPage from '@/app/notes/page';
 import { mockNoteResponse } from '@/__mocks__/data';
+import { getByQa } from '../utils/test-helpers';
 
 // Mock the hooks
 const mockUseNotes = vi.fn();
@@ -47,8 +48,14 @@ describe('NotesPage', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Notes')).toBeInTheDocument();
-      expect(screen.getByText(/initial phone screen/i)).toBeInTheDocument();
+      // Use data-qa for title
+      expect(getByQa('notes-title')).toHaveTextContent('Notes');
+      
+      // Query within the notes list card container
+      const notesListCard = getByQa('notes-list-card');
+      // Note text appears in both mobile and desktop views, so use getAllByText within container
+      const noteTexts = within(notesListCard).getAllByText(/initial phone screen/i);
+      expect(noteTexts.length).toBeGreaterThan(0);
     });
   });
 });
