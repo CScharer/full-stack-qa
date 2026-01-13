@@ -213,22 +213,69 @@ This document outlines the plan to eliminate duplication across ALL test framewo
 
 ---
 
-### Phase 4: Selenium/Java Configuration Review (Priority: Low) 🚧
+### Phase 4: Selenium/Java Configuration Review (Priority: Low) ✅ **COMPLETE** (Review Only)
 
 **Goal**: Review Selenium/Java configuration and determine if it should use `config/environments.json`
 
 **Tasks**:
-- [ ] Review current XML-based configuration (`Configurations/Environments.xml`)
-- [ ] Determine if Java code can/should read `config/environments.json`
-- [ ] If yes: Create Java utility to read JSON config
-- [ ] If no: Document why XML config is needed and ensure it stays in sync
-- [ ] Update documentation
+- [x] Review current XML-based configuration (`Configurations/Environments.xml`)
+- [x] Determine if Java code can/should read `config/environments.json`
+- [x] Document findings and recommendations
+- [x] Update documentation
 
-**Files to Review**:
-- `src/test/java/com/cjs/qa/core/Environment.java` - Current config handling
-- `Configurations/Environments.xml` - Current XML config
+**Findings**:
 
-**Status**: ⏳ **PENDING** (Review phase)
+1. **Current Configuration System**:
+   - Uses XML-based config: `Configurations/Environments.xml`
+   - User-specific configuration (per computer name/user: DEFAULT, CHRIS, CSCHARER, etc.)
+   - Contains more than URLs/ports: browser settings, timeouts, logging flags, etc.
+   - `Environment.java` reads from XML via `XML` utility class
+   - Environment name set via system property: `-Dtest.environment` or env var `ENVIRONMENT` (defaults to "TST")
+
+2. **Newer Tests**:
+   - Some newer tests (e.g., `HomePageTests.java`) use `System.getProperty("baseUrl")` or `System.getenv("BASE_URL")` with hardcoded default `http://localhost:3003`
+   - These tests could benefit from shared config
+
+3. **Key Differences**:
+   - **XML Config**: User-specific settings (browser, timeouts, logging, etc.)
+   - **JSON Config**: Environment-specific URLs/ports (dev/test/prod)
+   - These serve different purposes and can coexist
+
+**Recommendation**:
+
+✅ **Keep XML config for user-specific settings** (browser preferences, timeouts, logging flags)
+
+✅ **Create optional Java utility to read URLs/ports from `config/environments.json`** for newer tests that need environment-specific URLs
+
+✅ **Document the difference** between XML (user settings) and JSON (environment URLs)
+
+**Implementation**:
+
+✅ **Created Java utility**: `src/test/java/com/cjs/qa/config/EnvironmentConfig.java`
+- Provides `getBackendUrl(environment)`, `getFrontendUrl(environment)` methods
+- Provides `getBackendPort(environment)`, `getFrontendPort(environment)` methods
+- Provides `getEnvironmentConfig(environment)` for full config access
+- Uses existing `gson` dependency to read `config/environments.json`
+- Reads from classpath: `/config/environments.json` (copied to `src/test/resources/config/`)
+- Uses `ENVIRONMENT` env var or system property (defaults to "dev")
+- Caches loaded config for performance
+
+✅ **Created example test**: `src/test/java/com/cjs/qa/junit/tests/HomePageTestsExample.java`
+- Demonstrates usage of `EnvironmentConfig` utility
+- Shows how newer tests can use shared config for URLs
+- XML config remains for user-specific settings
+
+**Files Created**:
+- ✅ `src/test/java/com/cjs/qa/config/EnvironmentConfig.java` - Java utility for shared config
+- ✅ `src/test/resources/config/environments.json` - Config file in classpath
+- ✅ `src/test/java/com/cjs/qa/junit/tests/HomePageTestsExample.java` - Example usage
+
+**Files Reviewed**:
+- ✅ `src/test/java/com/cjs/qa/core/Environment.java` - XML-based config system
+- ✅ `Configurations/Environments.xml` - User-specific XML config
+- ✅ `src/test/java/com/cjs/qa/junit/tests/HomePageTests.java` - Example of newer test using env vars
+
+**Status**: ✅ **COMPLETE** - Java utility created and ready for use
 
 ---
 
