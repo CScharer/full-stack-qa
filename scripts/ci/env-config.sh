@@ -154,30 +154,32 @@ get_timeouts() {
 }
 
 # Get CORS origins for an environment
+# Returns as JSON array format (Pydantic Settings expects JSON for List fields)
 get_cors_origins() {
     local env=$(echo "${1:-dev}" | tr '[:upper:]' '[:lower:]')
     
     if [ -f "$ENV_CONFIG_JSON" ] && command -v jq &> /dev/null; then
-        local origins=$(jq -r ".environments[\"$env\"].corsOrigins | join(\",\")" "$ENV_CONFIG_JSON" 2>/dev/null)
+        # Get as JSON array (Pydantic Settings expects JSON format for List fields)
+        local origins=$(jq -c ".environments[\"$env\"].corsOrigins" "$ENV_CONFIG_JSON" 2>/dev/null)
         if [ -n "$origins" ] && [ "$origins" != "null" ]; then
             echo "CORS_ORIGINS=$origins"
             return 0
         fi
     fi
     
-    # Fallback
+    # Fallback - return as JSON array
     case "$env" in
         dev)
-            echo "CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003"
+            echo 'CORS_ORIGINS=["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
             ;;
         test)
-            echo "CORS_ORIGINS=http://127.0.0.1:3004,http://localhost:3004"
+            echo 'CORS_ORIGINS=["http://127.0.0.1:3004","http://localhost:3004","http://0.0.0.0:3004"]'
             ;;
         prod)
-            echo "CORS_ORIGINS=http://127.0.0.1:3005,http://localhost:3005"
+            echo 'CORS_ORIGINS=["http://127.0.0.1:3005","http://localhost:3005","http://0.0.0.0:3005"]'
             ;;
         *)
-            echo "CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003"
+            echo 'CORS_ORIGINS=["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
             ;;
     esac
 }

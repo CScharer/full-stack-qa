@@ -94,15 +94,16 @@ npm run dev  # ✅ This works
 ```bash
 # Database configuration (optional - defaults to full_stack_qa_dev.db)
 ENVIRONMENT=dev  # Options: dev, test, prod
-# Or use explicit path:
-# DATABASE_PATH=../Data/Core/full_stack_qa_dev.db
+# The scripts automatically set DATABASE_PATH to the correct absolute path
+# You can override with an absolute path if needed:
+# DATABASE_PATH=/absolute/path/to/Data/Core/full_stack_qa_dev.db
 
 API_HOST=0.0.0.0
 API_PORT=8003  # dev: 8003, test: 8004, prod: 8005
-CORS_ORIGINS=http://127.0.0.1:3003,http://localhost:3003
+# CORS_ORIGINS is automatically set by the scripts based on environment
 ```
 
-**Note**: The backend automatically uses `full_stack_qa_dev.db` for development by default. You only need to set `ENVIRONMENT` or `DATABASE_PATH` if you want to use a different database.
+**Note**: The backend automatically uses `full_stack_qa_dev.db` for development by default. The service scripts (`start-be.sh`, `start-env.sh`) automatically configure `DATABASE_PATH` and `CORS_ORIGINS` based on the `ENVIRONMENT` variable. Database paths are normalized to absolute paths to ensure they work correctly regardless of where the script is run from.
 
 ### Frontend (.env.local file in `frontend/` directory)
 ```bash

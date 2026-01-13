@@ -40,16 +40,20 @@ FORCE_STOP=true ./scripts/start-services-for-ci.sh
 **Features**:
 - ✅ Idempotent - safe to run multiple times
 - ✅ Checks if services are already running
-- ✅ Uses centralized port configuration (`port-config.sh`)
+- ✅ Uses centralized environment configuration (`env-config.sh`)
+- ✅ Automatically sets `DATABASE_PATH`, `CORS_ORIGINS`, and other environment variables
 - ✅ Uses `wait-for-service.sh` utility for service readiness
 - ✅ Uses `port-utils.sh` for port management
 - ✅ Supports environment-specific ports (dev, test, prod)
+- ✅ Ensures database paths are absolute and correctly formatted
 
 **Environment Variables**:
 - `ENVIRONMENT` - Environment name (dev, test, prod) - defaults to "dev"
 - `API_RELOAD` - Enable/disable API reload (default: "false" for CI)
 - `MAX_WAIT` - Maximum wait time for services (default: 120 seconds)
 - `FORCE_STOP` - Force stop existing services on ports (default: "false")
+
+**Note**: The script automatically configures `DATABASE_PATH` and `CORS_ORIGINS` based on the environment. Database paths are normalized to absolute paths and any incorrect `scripts/` prefixes are removed.
 
 ---
 
@@ -66,16 +70,20 @@ ENVIRONMENT=test ./scripts/stop-services.sh
 ```
 
 **Features**:
+- ✅ Environment-aware - automatically detects environment from `ENVIRONMENT` variable
 - ✅ Stops services by PID file (if exists)
-- ✅ Stops services by port (fallback)
+- ✅ Stops services by port (fallback - checks all environment ports)
+- ✅ Uses centralized environment configuration (`env-config.sh`)
 - ✅ Uses `port-utils.sh` for port management
 - ✅ Cleans up Next.js lock files
-- ✅ Verifies ports are free after stopping
+- ✅ Verifies ports are free after stopping (checks all environments)
 
 **Environment Variables**:
 - `ENVIRONMENT` - Environment name (dev, test, prod) - defaults to "dev"
-- `API_PORT` - Backend API port (default: 8003 for dev)
-- `FRONTEND_PORT` - Frontend port (default: 3003 for dev)
+- `API_PORT` - Backend API port (automatically set from environment config)
+- `FRONTEND_PORT` - Frontend port (automatically set from environment config)
+
+**Note**: The script is environment-aware and will stop services on the correct ports for the specified environment. As a safety measure, it also checks and stops services on all environment ports (dev, test, prod) to ensure complete cleanup.
 
 ---
 
