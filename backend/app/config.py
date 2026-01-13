@@ -2,9 +2,27 @@
 Configuration settings for ONE GOAL API
 """
 import os
+import sys
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Optional
+
+# Add project root to path to import shared config
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+try:
+    from config.port_config import (
+        get_environment_config,
+        get_backend_url,
+        get_frontend_url,
+        get_api_config,
+        get_database_config,
+    )
+    SHARED_CONFIG_AVAILABLE = True
+except ImportError:
+    # Fallback if shared config not available
+    SHARED_CONFIG_AVAILABLE = False
 
 
 class Settings(BaseSettings):
@@ -29,15 +47,14 @@ class Settings(BaseSettings):
     environment: str = "dev"  # Environment name (dev/test/prod) - used for database selection
     
     # API Configuration
+    # Note: These can be overridden by env vars, but defaults come from shared config
     api_host: str = "localhost"
-    api_port: int = 8008
+    api_port: int = 8003  # Default from shared config (dev environment)
     api_reload: bool = True
     
     # CORS Configuration
-    cors_origins: List[str] = [
-        "http://127.0.0.1:3003",
-        "http://localhost:3003",
-    ]
+    # Note: Defaults come from shared config, can be overridden by env vars
+    cors_origins: List[str] = []
 
 
 # Get absolute path to database
@@ -122,3 +139,38 @@ def _validate_not_schema_database(db_path: Path) -> None:
 
 # Global settings instance
 settings = Settings()
+
+# Initialize settings with shared config if available
+if SHARED_CONFIG_AVAILABLE:
+    try:
+        # Get environment from env var or default to 'dev'
+        env = os.getenv("ENVIRONMENT", settings.environment).lower()
+        env_config = get_environment_config(env)
+        
+        # Set API port from shared config (can still be overridden by API_PORT env var)
+        if not os.getenv("API_PORT"):
+            # Extract port from backend URL
+            backend_url = env_config['backend']['url']
+            # Parse port from URL (e.g., "http://localhost:8003" -> 8003)
+            if ':' in backend_url:
+                try:
+                    port_str = backend_url.split(':')[-1].split('/')[0]
+                    settings.api_port = int(port_str)
+                except (ValueError, IndexError):
+                    pass  # Keep default if parsing fails
+        
+        # Set CORS origins from shared config (can still be overridden by CORS_ORIGINS env var)
+        if not os.getenv("CORS_ORIGINS") and not settings.cors_origins:
+            settings.cors_origins = env_config.get('corsOrigins', [
+                "http://127.0.0.1:3003",
+                "http://localhost:3003",
+            ])
+    except Exception as e:
+        # If shared config fails, use defaults
+        print(f"⚠️  Warning: Could not load shared config: {e}")
+        print("   Using default configuration values")
+        if not settings.cors_origins:
+            settings.cors_origins = [
+                "http://127.0.0.1:3003",
+                "http://localhost:3003",
+            ]

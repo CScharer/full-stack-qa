@@ -10,6 +10,13 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/lib/*": ["./lib/*"],
+      "@/components/*": ["./components/*"],
+      "@config/*": ["../config/*"]
+    },
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
@@ -17,12 +24,7 @@
       {
         "name": "next"
       }
-    ],
-    "paths": {
-      "@/*": ["./*"],
-      "@/lib/*": ["./lib/*"],
-      "@/components/*": ["./components/*"]
-    }
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -30,7 +32,10 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "../config/port-config.ts",
+    "../config/environments.json",
+    "../config/ports.json"
   ],
   "exclude": ["node_modules"]
 }

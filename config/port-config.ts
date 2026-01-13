@@ -1,20 +1,24 @@
 /**
- * Environment Configuration (DEPRECATED - Use shared config)
+ * Shared Environment Configuration
+ * Single source of truth for all environment configuration across all test frameworks
  * 
- * This file is kept for backward compatibility but now re-exports from
- * the shared config/port-config.ts to ensure consistency across all frameworks.
+ * This file reads from config/environments.json to ensure consistency
+ * between all test frameworks (Cypress, Playwright, Robot Framework, etc.).
  * 
- * @deprecated Import directly from '../config/port-config' instead
- * 
- * Usage (new):
- *   import { getPortsForEnvironment, getEnvironmentConfig } from '../config/port-config';
- * 
- * Usage (old - still works):
- *   import { getPortsForEnvironment, getEnvironmentConfig } from './config/port-config';
+ * Usage:
+ *   // From Cypress
+ *   import { getEnvironmentConfig, getBackendUrl } from '../../config/port-config';
+ *   
+ *   // From Playwright
+ *   import { getEnvironmentConfig, getBackendUrl } from '../config/port-config';
+ *   
+ *   const config = getEnvironmentConfig('dev');
+ *   const backendUrl = getBackendUrl('test');
+ *   console.log(config.database.name); // "full_stack_qa_dev.db"
  */
-
-// Re-export everything from the shared config
-export * from '../../config/port-config';
+// Import JSON files - paths are relative to this file's location (config/)
+import envConfig from './environments.json';
+import portConfig from './ports.json';  // Fallback for backward compatibility
 
 export interface PortConfig {
   frontend: {
@@ -124,6 +128,34 @@ export function getEnvironmentConfig(
 }
 
 /**
+ * Get backend URL for a specific environment
+ * @param environment - Environment name (dev, test, prod)
+ * @param defaultEnv - Default environment if invalid (defaults to 'dev')
+ * @returns Backend URL
+ */
+export function getBackendUrl(
+  environment: string = 'dev',
+  defaultEnv: Environment = 'dev'
+): string {
+  const envConfig = getEnvironmentConfig(environment, defaultEnv);
+  return envConfig.backend.url;
+}
+
+/**
+ * Get frontend URL for a specific environment
+ * @param environment - Environment name (dev, test, prod)
+ * @param defaultEnv - Default environment if invalid (defaults to 'dev')
+ * @returns Frontend URL
+ */
+export function getFrontendUrl(
+  environment: string = 'dev',
+  defaultEnv: Environment = 'dev'
+): string {
+  const envConfig = getEnvironmentConfig(environment, defaultEnv);
+  return envConfig.frontend.url;
+}
+
+/**
  * Get API configuration
  */
 export function getApiConfig(): ApiConfig {
@@ -169,4 +201,3 @@ export function getAllPortConfigs(): Record<Environment, PortConfig> {
 export function getFullConfig(): FullConfig {
   return envConfig;
 }
-

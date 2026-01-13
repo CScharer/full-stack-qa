@@ -10,6 +10,7 @@ import { ClientFormPage } from '../page-objects/ClientFormPage';
 import { NotesPage } from '../page-objects/NotesPage';
 import { JobSearchSitesPage } from '../page-objects/JobSearchSitesPage';
 import { WizardStep1Page } from '../page-objects/WizardStep1Page';
+import { getBackendUrl } from '../../../config/port-config';
 
 /**
  * Wizard Test - Navigate through all pages and verify cancel functionality
@@ -56,28 +57,6 @@ import { WizardStep1Page } from '../page-objects/WizardStep1Page';
  *   # Then select wizard.cy.ts from the test list
  */
 
-/**
- * Get backend URL from environment variable or use default
- * @param environment - Environment name (dev, test, prod)
- * @returns Backend base URL
- */
-function getBackendUrl(environment: string = 'dev'): string {
-  // Use BACKEND_URL env var if provided
-  if (Cypress.env('BACKEND_URL')) {
-    return Cypress.env('BACKEND_URL') as string;
-  }
-  
-  // Default backend URLs based on environment
-  const backendUrls: Record<string, string> = {
-    dev: 'http://localhost:8003',
-    test: 'http://localhost:8004',
-    prod: 'http://localhost:8005',
-  };
-  
-  const env = (environment || 'dev').toLowerCase();
-  return backendUrls[env] || backendUrls.dev;
-}
-
 describe('Wizard Tests', () => {
   // Cypress runs tests serially by default, but we can use .only() if needed
   // Note: Tests are already serial by default in Cypress
@@ -118,11 +97,16 @@ describe('Wizard Tests', () => {
     wizardStep1Page = new WizardStep1Page();
 
     // Determine backend URL based on environment
-    // Get environment from Cypress.env (set in cypress.config.ts from process.env.ENVIRONMENT)
-    // Fallback to 'dev' to match other scripts
+    // Priority 1: Use BACKEND_URL env var if provided (allows CI/CD override)
+    // Priority 2: Use environment from Cypress.env (set in cypress.config.ts from process.env.ENVIRONMENT)
+    // Priority 3: Fallback to 'dev' to match other scripts
     // Note: process.env is not available in browser context, so we use Cypress.env()
-    const environment = (Cypress.env('ENVIRONMENT') || 'dev') as string;
-    backendBaseUrl = getBackendUrl(environment);
+    if (Cypress.env('BACKEND_URL')) {
+      backendBaseUrl = Cypress.env('BACKEND_URL') as string;
+    } else {
+      const environment = (Cypress.env('ENVIRONMENT') || 'dev') as string;
+      backendBaseUrl = getBackendUrl(environment);
+    }
 
     // Get initial counts for all entities via API
     // Use aliases to store the counts for later use
