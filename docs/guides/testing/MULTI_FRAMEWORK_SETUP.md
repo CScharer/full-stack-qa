@@ -58,7 +58,7 @@ npm run cypress:open   # Interactive mode
 
 ```bash
 export CYPRESS_BASE_URL="http://localhost:3003"
-export TEST_ENVIRONMENT="local"
+export ENVIRONMENT="local"
 ```
 
 ### Test Structure
@@ -189,7 +189,7 @@ cd playwright && npm run test:headed
 
 ```bash
 export BASE_URL="http://localhost:3003"
-export TEST_ENVIRONMENT="local"
+export ENVIRONMENT="local"
 export CI=true
 ```
 

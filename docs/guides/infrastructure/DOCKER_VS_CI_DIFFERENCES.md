@@ -143,7 +143,7 @@ environment:
 env:
   SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
   BASE_URL: ${{ inputs.base_url }}  # From workflow input
-  TEST_ENVIRONMENT: ${{ inputs.environment }}
+  ENVIRONMENT: ${{ inputs.environment }}
 ```
 
 **Why this matters**: 
