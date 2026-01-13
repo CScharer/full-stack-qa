@@ -94,42 +94,101 @@ fi
 # Export ENVIRONMENT for backend config (uses full_stack_qa_{env}.db)
 export ENVIRONMENT
 
-# Function to load environment-specific ports from .env file
-load_environment_ports() {
-    # Convert to lowercase (compatible with bash 3.2+)
-    local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
-    local env_file="${BACKEND_DIR}/.env"
+# Function to load environment-specific configuration from config/environments.json
+load_environment_config() {
+    # Source the centralized config script
+    local config_script="${SCRIPT_DIR}/scripts/ci/env-config.sh"
     
-    # Default ports (DEV)
-    local api_port=8003
-    local api_host="localhost"
-    
-    # Load ports from .env if it exists
-    if [ -f "$env_file" ]; then
-        local env_upper=$(echo "${env}" | tr '[:lower:]' '[:upper:]')
-        local port_var="${env_upper}_PORT"
-        local host_var="${env_upper}_HOST"
+    if [ -f "$config_script" ]; then
+        # Source the config script to get access to functions
+        source "$config_script"
         
-        # Extract port
-        local extracted_port=$(grep -E "^${port_var}=" "$env_file" | cut -d'=' -f2 | tr -d ' ' || echo "")
-        if [ -n "$extracted_port" ]; then
-            api_port="$extracted_port"
+        # Get ports, URLs, CORS origins, and database config for the environment using eval to set variables
+        local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+        eval "$(get_ports_for_environment "$env")"
+        eval "$(get_database_for_environment "$env")"
+        
+        # Set ports (allow override from environment)
+        export API_PORT=${API_PORT:-"$API_PORT"}
+        export API_HOST=${API_HOST:-"localhost"}
+        
+        # Set database configuration
+        # Always use DATABASE_PATH (absolute path) for highest priority in backend config
+        # This ensures the backend finds the database regardless of where it's run from
+        if [ -n "$DATABASE_PATH" ]; then
+            # Convert relative path to absolute if needed
+            if [[ "$DATABASE_PATH" != /* ]]; then
+                # Relative path - make it absolute from project root
+                export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
+            else
+                # Already absolute
+                export DATABASE_PATH
+            fi
+        elif [ -n "$DATABASE_DIR" ] && [ -n "$DATABASE_NAME" ]; then
+            # If DATABASE_PATH not set, construct it from DATABASE_DIR + DATABASE_NAME
+            # Convert to absolute path from project root
+            if [[ "$DATABASE_DIR" != /* ]]; then
+                # Relative path - make it absolute from project root
+                export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_DIR}/${DATABASE_NAME}"
+            else
+                # DATABASE_DIR is absolute
+                export DATABASE_PATH="${DATABASE_DIR}/${DATABASE_NAME}"
+            fi
+        else
+            # Fallback: construct from environment
+            export DATABASE_PATH="${SCRIPT_DIR}/Data/Core/full_stack_qa_${env}.db"
         fi
         
-        # Extract host
-        local extracted_host=$(grep -E "^${host_var}=" "$env_file" | cut -d'=' -f2 | tr -d ' ' || echo "")
-        if [ -n "$extracted_host" ]; then
-            api_host="$extracted_host"
+        # Get CORS_ORIGINS and set it directly (preserve JSON format)
+        # Extract value after = sign - it's already in JSON format with quotes
+        local cors_line=$(get_cors_origins "$env")
+        local cors_value="${cors_line#CORS_ORIGINS=}"
+        # Export directly - the value already has quotes, don't add more
+        export CORS_ORIGINS=${cors_value}
+        
+        # Pydantic Settings expects JSON array format for List fields (e.g., ["http://localhost:3004"])
+        if [ -z "$CORS_ORIGINS" ]; then
+            # Fallback to default if config parsing fails
+            case "$env" in
+                dev)
+                    export CORS_ORIGINS='["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
+                    export API_PORT=${API_PORT:-"8003"}
+                    ;;
+                test)
+                    export CORS_ORIGINS='["http://127.0.0.1:3004","http://localhost:3004","http://0.0.0.0:3004"]'
+                    export API_PORT=${API_PORT:-"8004"}
+                    ;;
+                prod)
+                    export CORS_ORIGINS='["http://127.0.0.1:3005","http://localhost:3005","http://0.0.0.0:3005"]'
+                    export API_PORT=${API_PORT:-"8005"}
+                    ;;
+            esac
         fi
+    else
+        # Fallback if config script doesn't exist
+        local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+        case "$env" in
+            dev)
+                export CORS_ORIGINS='["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
+                export API_PORT=${API_PORT:-"8003"}
+                export API_HOST=${API_HOST:-"localhost"}
+                ;;
+            test)
+                export CORS_ORIGINS='["http://127.0.0.1:3004","http://localhost:3004","http://0.0.0.0:3004"]'
+                export API_PORT=${API_PORT:-"8004"}
+                export API_HOST=${API_HOST:-"localhost"}
+                ;;
+            prod)
+                export CORS_ORIGINS='["http://127.0.0.1:3005","http://localhost:3005","http://0.0.0.0:3005"]'
+                export API_PORT=${API_PORT:-"8005"}
+                export API_HOST=${API_HOST:-"localhost"}
+                ;;
+        esac
     fi
-    
-    # Export the ports (allow override from environment)
-    export API_PORT=${API_PORT:-"$api_port"}
-    export API_HOST=${API_HOST:-"$api_host"}
 }
 
-# Load environment-specific ports
-load_environment_ports
+# Load environment-specific configuration
+load_environment_config
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🚀 Starting ONE GOAL Backend API${NC}"
@@ -173,9 +232,13 @@ echo ""
 echo -e "${GREEN}✅ Starting FastAPI server...${NC}"
 echo -e "${BLUE}   Environment: $ENVIRONMENT${NC}"
 echo -e "${BLUE}   Database: full_stack_qa_${ENVIRONMENT}.db${NC}"
+if [ -n "$DATABASE_PATH" ]; then
+    echo -e "${BLUE}   Database Path: ${DATABASE_PATH}${NC}"
+fi
 echo -e "${BLUE}   Host: $API_HOST${NC}"
 echo -e "${BLUE}   Port: $API_PORT${NC}"
 echo -e "${BLUE}   Reload: $API_RELOAD${NC}"
+echo -e "${BLUE}   CORS Origins: ${CORS_ORIGINS:-not set}${NC}"
 echo ""
 echo -e "${GREEN}📚 API Documentation:${NC}"
 echo -e "   Swagger UI: http://$API_HOST:$API_PORT/docs"
@@ -185,7 +248,58 @@ echo ""
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo ""
 
+# Ensure DATABASE_PATH is absolute BEFORE changing directory
+# Backend's Path.resolve() resolves relative to current working directory
+# So we must set it to absolute path before cd'ing to backend/
+if [ -n "$DATABASE_PATH" ]; then
+    # Store original for debugging (use regular variable, not local)
+    original_path="$DATABASE_PATH"
+    
+    # Remove any leading ./ or scripts/ prefix (works for both relative and absolute)
+    DATABASE_PATH="${DATABASE_PATH#./}"
+    # Remove scripts/ prefix if present (handle both relative and absolute paths)
+    if [[ "$DATABASE_PATH" == scripts/* ]]; then
+        DATABASE_PATH="${DATABASE_PATH#scripts/}"
+    fi
+    # Remove /scripts/ from anywhere in the path (handles absolute paths like /path/scripts/Data)
+    # Use sed or parameter expansion to replace /scripts/ with /
+    DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g')
+    
+    # Convert to absolute if still relative
+    if [[ "$DATABASE_PATH" != /* ]]; then
+        export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
+    else
+        # Already absolute - export as is (should be clean now)
+        export DATABASE_PATH
+    fi
+    
+    # Debug: show the transformation if it changed
+    if [ "$original_path" != "$DATABASE_PATH" ]; then
+        echo -e "${BLUE}   Database path corrected: ${original_path} -> ${DATABASE_PATH}${NC}"
+    fi
+    
+    # Verify the path exists
+    if [ ! -f "$DATABASE_PATH" ]; then
+        echo -e "${YELLOW}⚠️  Warning: Database file not found at: $DATABASE_PATH${NC}"
+        echo -e "${YELLOW}   The backend will fail to start if the database doesn't exist${NC}"
+    else
+        echo -e "${GREEN}✓ Database file found at: $DATABASE_PATH${NC}"
+    fi
+    
+    # Unset DATABASE_DIR and DATABASE_NAME to prevent backend from using them as fallbacks
+    # The backend should use DATABASE_PATH (absolute path) which has highest priority
+    unset DATABASE_DIR
+    unset DATABASE_NAME
+    
+    # Debug: Show what will be exported
+    echo -e "${BLUE}   Exporting DATABASE_PATH=${DATABASE_PATH}${NC}"
+fi
+
 cd "$BACKEND_DIR"
+# Export CORS_ORIGINS so Pydantic Settings can read it (JSON array format)
+# Don't re-quote it - it's already in the correct format from eval
+export CORS_ORIGINS
+
 if [ "$API_RELOAD" = "true" ]; then
     exec uvicorn app.main:app \
         --host "$API_HOST" \

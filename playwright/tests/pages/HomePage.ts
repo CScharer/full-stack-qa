@@ -146,8 +146,8 @@ export class HomePage extends BasePage {
     await expect(addApplicationButton).toBeEnabled();
     // Click and wait for navigation
     await addApplicationButton.click();
-    // Wait for navigation to complete
-    await this.page.waitForURL('**/applications/new/step1', { timeout: 15000 });
+    // Wait for navigation to complete - use regex for more reliable matching
+    await this.page.waitForURL(/\/applications\/new\/step1/, { timeout: 20000 });
     await this.waitForPageLoad();
   }
 }

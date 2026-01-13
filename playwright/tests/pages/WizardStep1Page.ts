@@ -75,8 +75,9 @@ export class WizardStep1Page extends BasePage {
     await expect(this.cancelButton).toBeEnabled();
     // Click and wait for navigation
     await this.cancelButton.click();
-    // Wait for navigation to complete
-    await this.page.waitForURL('**/applications', { timeout: 15000 });
+    // Wait for navigation to complete - use more specific URL pattern to avoid matching /applications/new/step1
+    // Match /applications but not /applications/new or /applications/[id]
+    await this.page.waitForURL(/\/applications$|\/applications\?/, { timeout: 20000 });
     await this.waitForPageLoad();
   }
 

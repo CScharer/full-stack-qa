@@ -90,33 +90,65 @@ if [[ ! "$ENVIRONMENT" =~ ^(dev|test|prod)$ ]]; then
     exit 1
 fi
 
-# Function to load environment-specific ports from .env file
-load_environment_ports() {
-    # Convert to lowercase (compatible with bash 3.2+)
-    local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
-    local env_file="${FRONTEND_DIR}/.env"
+# Function to load environment-specific configuration from config/environments.json
+load_environment_config() {
+    # Source the centralized config script
+    local config_script="${SCRIPT_DIR}/scripts/ci/env-config.sh"
     
-    # Default port (DEV)
-    local frontend_port=3003
-    
-    # Load port from .env if it exists
-    if [ -f "$env_file" ]; then
-        local env_upper=$(echo "${env}" | tr '[:lower:]' '[:upper:]')
-        local port_var="${env_upper}_PORT"
+    if [ -f "$config_script" ]; then
+        # Source the config script to get access to functions
+        source "$config_script"
         
-        # Extract port
-        local extracted_port=$(grep -E "^${port_var}=" "$env_file" | cut -d'=' -f2 | tr -d ' ' || echo "")
-        if [ -n "$extracted_port" ]; then
-            frontend_port="$extracted_port"
+        # Get ports and URLs for the environment using eval to set variables
+        local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+        eval "$(get_ports_for_environment "$env")"
+        eval "$(get_api_endpoints)"
+        
+        # Set port (allow override from environment)
+        export PORT=${PORT:-"$FRONTEND_PORT"}
+        
+        # Set NEXT_PUBLIC_API_URL (required by Next.js for client-side API calls)
+        if [ -n "$API_URL" ] && [ -n "$API_BASE_PATH" ]; then
+            export NEXT_PUBLIC_API_URL="${API_URL}${API_BASE_PATH}"
+        else
+            # Fallback to default if config parsing fails
+            case "$env" in
+                dev)
+                    export NEXT_PUBLIC_API_URL="http://localhost:8003/api/v1"
+                    export PORT=${PORT:-"3003"}
+                    ;;
+                test)
+                    export NEXT_PUBLIC_API_URL="http://localhost:8004/api/v1"
+                    export PORT=${PORT:-"3004"}
+                    ;;
+                prod)
+                    export NEXT_PUBLIC_API_URL="http://localhost:8005/api/v1"
+                    export PORT=${PORT:-"3005"}
+                    ;;
+            esac
         fi
+    else
+        # Fallback if config script doesn't exist
+        local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+        case "$env" in
+            dev)
+                export NEXT_PUBLIC_API_URL="http://localhost:8003/api/v1"
+                export PORT=${PORT:-"3003"}
+                ;;
+            test)
+                export NEXT_PUBLIC_API_URL="http://localhost:8004/api/v1"
+                export PORT=${PORT:-"3004"}
+                ;;
+            prod)
+                export NEXT_PUBLIC_API_URL="http://localhost:8005/api/v1"
+                export PORT=${PORT:-"3005"}
+                ;;
+        esac
     fi
-    
-    # Export the port (allow override from environment)
-    export PORT=${PORT:-"$frontend_port"}
 }
 
-# Load environment-specific ports
-load_environment_ports
+# Load environment-specific configuration
+load_environment_config
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🚀 Starting ONE GOAL Frontend${NC}"
@@ -152,13 +184,16 @@ fi
 # Start the server
 echo ""
 echo -e "${GREEN}✅ Starting Next.js development server...${NC}"
+echo -e "${BLUE}   Environment: $ENVIRONMENT${NC}"
 echo -e "${BLUE}   Port: $PORT${NC}"
 echo -e "${BLUE}   URL: http://127.0.0.1:$PORT${NC}"
+echo -e "${BLUE}   API URL: ${NEXT_PUBLIC_API_URL:-not set}${NC}"
 echo ""
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo ""
 
 cd "$FRONTEND_DIR"
 export PORT="$PORT"
+export NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL"
 # Pass port via -p flag
 exec npm run dev -- -p "$PORT"

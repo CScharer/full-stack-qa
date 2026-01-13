@@ -24,6 +24,26 @@ else
 fi
 FORCE_STOP=${FORCE_STOP:-"false"}  # Force stop existing services on ports
 
+# Source environment configuration to get DATABASE_PATH, CORS_ORIGINS, etc.
+ENV_CONFIG_SCRIPT="${SCRIPT_DIR}/scripts/ci/env-config.sh"
+if [ -f "$ENV_CONFIG_SCRIPT" ]; then
+    source "$ENV_CONFIG_SCRIPT"
+    # Export environment configuration (sets DATABASE_PATH, CORS_ORIGINS, etc.)
+    export_environment_config "$ENVIRONMENT"
+    
+    # Ensure DATABASE_PATH is absolute and doesn't include scripts/
+    if [ -n "$DATABASE_PATH" ]; then
+        # Remove any scripts/ from the path
+        DATABASE_PATH=$(echo "$DATABASE_PATH" | sed 's|/scripts/|/|g')
+        # Convert to absolute if still relative
+        if [[ "$DATABASE_PATH" != /* ]]; then
+            export DATABASE_PATH="${SCRIPT_DIR}/${DATABASE_PATH}"
+        else
+            export DATABASE_PATH
+        fi
+    fi
+fi
+
 # Function to load environment-specific ports from .env files
 load_environment_ports() {
     # Convert to lowercase (compatible with bash 3.2+)
@@ -270,9 +290,11 @@ else
     pip install -q -r "$BACKEND_DIR/requirements.txt" || true
 
     # Start backend in background (optimized: parallel startup)
+    # Ensure DATABASE_PATH and CORS_ORIGINS are exported for the backend process
     cd "$BACKEND_DIR"
     if [ "$API_RELOAD" = "true" ]; then
-        nohup uvicorn app.main:app \
+        nohup env DATABASE_PATH="$DATABASE_PATH" CORS_ORIGINS="$CORS_ORIGINS" ENVIRONMENT="$ENVIRONMENT" \
+            uvicorn app.main:app \
             --host "$API_HOST" \
             --port "$API_PORT" \
             --reload \
@@ -281,7 +303,8 @@ else
         disown $BACKEND_PID 2>/dev/null || true
     else
         # Don't include --reload flag when reload is disabled
-        nohup uvicorn app.main:app \
+        nohup env DATABASE_PATH="$DATABASE_PATH" CORS_ORIGINS="$CORS_ORIGINS" ENVIRONMENT="$ENVIRONMENT" \
+            uvicorn app.main:app \
             --host "$API_HOST" \
             --port "$API_PORT" \
             > "$SCRIPT_DIR/backend.log" 2>&1 &
@@ -289,6 +312,9 @@ else
         disown $BACKEND_PID 2>/dev/null || true
     fi
     echo "   ✅ Backend started (PID: $BACKEND_PID)"
+    if [ -n "$DATABASE_PATH" ]; then
+        echo "   📁 Database: $DATABASE_PATH"
+    fi
 fi  # End of if is_port_in_use "$API_PORT"
 
 # Check and start Frontend (optimized: start in parallel with backend)
@@ -341,14 +367,20 @@ else
     # Start frontend in background
     cd "$FRONTEND_DIR"
     export PORT="$FRONTEND_PORT"
+    # Set NEXT_PUBLIC_API_URL based on environment
+    if [ -n "$API_URL" ]; then
+        export NEXT_PUBLIC_API_URL="$API_URL/api/v1"
+    else
+        # Fallback: construct from API_PORT
+        export NEXT_PUBLIC_API_URL="http://localhost:$API_PORT/api/v1"
+    fi
     # Pass port via -p flag since package.json no longer has default port
     nohup npm run dev -- -p "$FRONTEND_PORT" \
         > "$SCRIPT_DIR/frontend.log" 2>&1 &
     FRONTEND_PID=$!
     disown $FRONTEND_PID 2>/dev/null || true
     echo "   ✅ Frontend started (PID: $FRONTEND_PID)"
-
-    echo "   ✅ Frontend started (PID: $FRONTEND_PID)"
+    echo "   🌐 API URL: $NEXT_PUBLIC_API_URL"
 fi  # End of if is_port_in_use "$FRONTEND_PORT"
 
 # Wait for both services in parallel (optimized: wait concurrently)

@@ -7,8 +7,37 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PID_FILE="$SCRIPT_DIR/.service-pids"
-API_PORT=${API_PORT:-"8003"}  # Default to DEV port per ONE_GOAL.md
-FRONTEND_PORT=${FRONTEND_PORT:-"3003"}  # Default to DEV port per ONE_GOAL.md
+
+# Determine environment and ports
+# Priority: ENVIRONMENT env var > detect from running processes > default to dev
+ENVIRONMENT=${ENVIRONMENT:-"dev"}
+
+# Try to load environment configuration
+ENV_CONFIG_SCRIPT="${SCRIPT_DIR}/scripts/ci/env-config.sh"
+if [ -f "$ENV_CONFIG_SCRIPT" ]; then
+    source "$ENV_CONFIG_SCRIPT"
+    # Get ports for the environment
+    env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+    eval "$(get_ports_for_environment "$env")"
+    API_PORT=${API_PORT:-"8003"}  # Fallback to dev if not set
+    FRONTEND_PORT=${FRONTEND_PORT:-"3003"}  # Fallback to dev if not set
+else
+    # Fallback: use environment variable or default to dev
+    case "$ENVIRONMENT" in
+        test)
+            API_PORT=${API_PORT:-"8004"}
+            FRONTEND_PORT=${FRONTEND_PORT:-"3004"}
+            ;;
+        prod)
+            API_PORT=${API_PORT:-"8005"}
+            FRONTEND_PORT=${FRONTEND_PORT:-"3005"}
+            ;;
+        *)
+            API_PORT=${API_PORT:-"8003"}  # Default to DEV port per ONE_GOAL.md
+            FRONTEND_PORT=${FRONTEND_PORT:-"3003"}  # Default to DEV port per ONE_GOAL.md
+            ;;
+    esac
+fi
 
 # Source port utilities if available
 PORT_UTILS="${SCRIPT_DIR}/scripts/ci/port-utils.sh"
@@ -40,6 +69,12 @@ else
 fi
 
 echo "🛑 Stopping services..."
+if [ -n "$ENVIRONMENT" ]; then
+    echo "   Environment: $ENVIRONMENT"
+    echo "   Backend port: $API_PORT"
+    echo "   Frontend port: $FRONTEND_PORT"
+fi
+echo ""
 
 # Stop services by PID file if it exists
 if [ -f "$PID_FILE" ]; then
@@ -61,8 +96,23 @@ if [ -f "$PID_FILE" ]; then
 fi
 
 # Also stop services by port (in case PID file is missing or stale)
+# Stop services on the configured ports for the environment
 stop_port "$API_PORT" "Backend"
 stop_port "$FRONTEND_PORT" "Frontend"
+
+# Also check and stop services on other environment ports (dev, test, prod)
+# This ensures we stop services even if ENVIRONMENT wasn't set correctly
+for port in 8003 8004 8005; do
+    if [ "$port" != "$API_PORT" ] && lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
+        stop_port "$port" "Backend (port $port)"
+    fi
+done
+
+for port in 3003 3004 3005; do
+    if [ "$port" != "$FRONTEND_PORT" ] && lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
+        stop_port "$port" "Frontend (port $port)"
+    fi
+done
 
 # Fallback: try to kill by process name (less reliable)
 echo ""
@@ -80,35 +130,44 @@ if [ -d "$FRONTEND_DIR" ]; then
     fi
 fi
 
-# Verify ports are free
+# Verify ports are free (check all environment ports)
 echo ""
 echo "   Verifying ports are free..."
-if [ -f "$PORT_UTILS" ]; then
-    if is_port_in_use "$API_PORT"; then
-        echo "   ⚠️  Port $API_PORT is still in use"
+# Check all backend ports (dev, test, prod)
+for port in 8003 8004 8005; do
+    if [ -f "$PORT_UTILS" ]; then
+        if is_port_in_use "$port"; then
+            echo "   ⚠️  Port $port is still in use"
+        else
+            echo "   ✅ Port $port is free"
+        fi
     else
-        echo "   ✅ Port $API_PORT is free"
+        # Fallback to inline check if utility doesn't exist
+        if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
+            echo "   ⚠️  Port $port is still in use"
+        else
+            echo "   ✅ Port $port is free"
+        fi
     fi
-    
-    if is_port_in_use "$FRONTEND_PORT"; then
-        echo "   ⚠️  Port $FRONTEND_PORT is still in use"
+done
+
+# Check all frontend ports (dev, test, prod)
+for port in 3003 3004 3005; do
+    if [ -f "$PORT_UTILS" ]; then
+        if is_port_in_use "$port"; then
+            echo "   ⚠️  Port $port is still in use"
+        else
+            echo "   ✅ Port $port is free"
+        fi
     else
-        echo "   ✅ Port $FRONTEND_PORT is free"
+        # Fallback to inline check if utility doesn't exist
+        if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
+            echo "   ⚠️  Port $port is still in use"
+        else
+            echo "   ✅ Port $port is free"
+        fi
     fi
-else
-    # Fallback to inline check if utility doesn't exist
-    if lsof -Pi :$API_PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
-        echo "   ⚠️  Port $API_PORT is still in use"
-    else
-        echo "   ✅ Port $API_PORT is free"
-    fi
-    
-    if lsof -Pi :$FRONTEND_PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
-        echo "   ⚠️  Port $FRONTEND_PORT is still in use"
-    else
-        echo "   ✅ Port $FRONTEND_PORT is free"
-    fi
-fi
+done
 
 echo ""
 echo "✅ Service cleanup complete"
