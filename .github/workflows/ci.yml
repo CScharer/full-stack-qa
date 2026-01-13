@@ -578,7 +578,7 @@ jobs:
         env:
           TZ: UTC
           LC_ALL: en_US.UTF-8
-          TEST_ENVIRONMENT: dev
+          ENVIRONMENT: dev
         run: npm test -- __tests__/**/*.snapshot.test.tsx --run
 
   test-fe-dev:
@@ -736,7 +736,7 @@ jobs:
         env:
           TZ: UTC
           LC_ALL: en_US.UTF-8
-          TEST_ENVIRONMENT: test
+          ENVIRONMENT: test
         run: npm test -- __tests__/**/*.snapshot.test.tsx --run
 
   deploy-test:
@@ -871,7 +871,7 @@ jobs:
         env:
           TZ: UTC
           LC_ALL: en_US.UTF-8
-          TEST_ENVIRONMENT: prod
+          ENVIRONMENT: prod
         run: npm test -- __tests__/**/*.snapshot.test.tsx --run
 
   deploy-prod:

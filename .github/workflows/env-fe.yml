@@ -268,7 +268,7 @@ jobs:
         timeout-minutes: ${{ inputs.smoke_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -398,7 +398,7 @@ jobs:
           SELENIUM_GRID_RETRY_MAX_DELAY_MS: '10000'
           SELENIUM_GRID_RETRY_TIMEOUT_MS: '30000'
           BROWSER: ${{ matrix.browser }}
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -517,7 +517,7 @@ jobs:
         timeout-minutes: ${{ inputs.mobile_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -633,7 +633,7 @@ jobs:
         timeout-minutes: ${{ inputs.responsive_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -957,7 +957,7 @@ jobs:
         timeout-minutes: ${{ inputs.robot_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
           PYTHON_EXE: ${{ env.PYTHON_EXE || 'python3' }}
         run: |
@@ -1111,7 +1111,7 @@ jobs:
         timeout-minutes: ${{ inputs.selenide_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"
@@ -1209,7 +1209,7 @@ jobs:
       - name: Run Vibium Tests
         timeout-minutes: ${{ inputs.vibium_tests_timeout_minutes || 5 }}
         env:
-          TEST_ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment }}
           BASE_URL: ${{ inputs.base_url }}
         run: |
           echo "════════════════════════════════════════"

@@ -19,12 +19,12 @@ NC='\033[0m' # No Color
 
 # Configuration
 BASE_URL="${BASE_URL:-https://www.google.com}"
-TEST_ENVIRONMENT="${TEST_ENVIRONMENT:-docker}"
+ENVIRONMENT="${ENVIRONMENT:-${TEST_ENVIRONMENT:-docker}}"
 SELENIUM_REMOTE_URL="${SELENIUM_REMOTE_URL:-http://selenium-hub:4444/wd/hub}"
 
 echo -e "${BLUE}Configuration:${NC}"
 echo "  Base URL: $BASE_URL"
-echo "  Test Environment: $TEST_ENVIRONMENT"
+echo "  Test Environment: $ENVIRONMENT"
 echo "  Selenium Grid: $SELENIUM_REMOTE_URL"
 echo ""
 
@@ -72,15 +72,15 @@ run_test_suite "Selenium Grid Tests" \
 
 # 3. Cypress Tests
 run_test_suite "Cypress Tests" \
-    "docker-compose run --rm -e BASE_URL=$BASE_URL -e TEST_ENVIRONMENT=$TEST_ENVIRONMENT -e CYPRESS_BASE_URL=$BASE_URL tests bash -c 'cd /app/cypress && xvfb-run -a npm run cypress:run || npm run cypress:run'"
+    "docker-compose run --rm -e BASE_URL=$BASE_URL -e ENVIRONMENT=$ENVIRONMENT -e CYPRESS_BASE_URL=$BASE_URL tests bash -c 'cd /app/cypress && xvfb-run -a npm run cypress:run || npm run cypress:run'"
 
 # 4. Playwright Tests
 run_test_suite "Playwright Tests" \
-    "docker-compose run --rm -e BASE_URL=$BASE_URL -e TEST_ENVIRONMENT=$TEST_ENVIRONMENT -e CI=true tests bash -c 'cd /app/playwright && npm test'"
+    "docker-compose run --rm -e BASE_URL=$BASE_URL -e ENVIRONMENT=$ENVIRONMENT -e CI=true tests bash -c 'cd /app/playwright && npm test'"
 
 # 5. Robot Framework Tests
 run_test_suite "Robot Framework Tests" \
-    "docker-compose run --rm -e BASE_URL=$BASE_URL -e TEST_ENVIRONMENT=$TEST_ENVIRONMENT -e SELENIUM_REMOTE_URL=$SELENIUM_REMOTE_URL tests bash -c './mvnw test -Probot'"
+    "docker-compose run --rm -e BASE_URL=$BASE_URL -e ENVIRONMENT=$ENVIRONMENT -e SELENIUM_REMOTE_URL=$SELENIUM_REMOTE_URL tests bash -c './mvnw test -Probot'"
 
 # Summary
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
