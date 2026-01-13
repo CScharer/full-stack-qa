@@ -4,9 +4,10 @@ Library           SeleniumLibrary
 Library           BuiltIn
 Library           OperatingSystem
 Library           ${CURDIR}${/}..${/}WebDriverManager.py
+Library           ${CURDIR}${/}ConfigHelper.py
 
 *** Variables ***
-${BASE_URL}               http://localhost:3003
+${BASE_URL}               ${EMPTY}    # Will be set from shared config
 ${SELENIUM_REMOTE_URL}    ${EMPTY}
 ${BROWSER}                chrome
 ${TIMEOUT}                10s
@@ -23,8 +24,12 @@ Setup WebDriver And Open Browser
     # Only set up ChromeDriver for local execution (not remote grid)
     Run Keyword If    not ${has_remote}    WebDriverManager.Setup Chromedriver
 
-    # Get base URL from Robot variable (set via --variable or default)
-    ${base_url}=    Set Variable If    '${BASE_URL}' != ''    ${BASE_URL}    http://localhost:3003
+    # Get base URL from shared config (config/environments.json)
+    # Priority: 1) BASE_URL env var, 2) BASE_URL Robot variable, 3) Shared config based on ENVIRONMENT
+    ${base_url_env}=    Get Environment Variable    BASE_URL    default=${EMPTY}
+    ${base_url}=    Run Keyword If    '${base_url_env}' != '' and '${base_url_env}' != '${EMPTY}'    Set Variable    ${base_url_env}
+    ...    ELSE IF    '${BASE_URL}' != '' and '${BASE_URL}' != '${EMPTY}'    Set Variable    ${BASE_URL}
+    ...    ELSE    Get Base Url From Shared Config
 
     # Use remote WebDriver if SELENIUM_REMOTE_URL is set, otherwise use local Chrome
     Run Keyword If    ${has_remote}
@@ -59,3 +64,10 @@ Verify Page Title Contains
 Verify Page Loaded
     [Documentation]    Verify page has loaded by checking body element
     Wait Until Element Is Visible    tag:body    timeout=${SHORT_TIMEOUT}
+
+Get Base Url From Shared Config
+    [Documentation]    Get base URL from shared config/environments.json based on ENVIRONMENT
+    [Return]    Base URL from shared config
+    ${environment}=    Get Environment Variable    ENVIRONMENT    default=dev
+    ${base_url}=    ConfigHelper.Get Base Url For Robot    ${environment}
+    [Return]    ${base_url}
