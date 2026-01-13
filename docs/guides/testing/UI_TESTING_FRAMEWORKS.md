@@ -252,12 +252,24 @@ npm install
 
 ### Running Tests
 
+⚠️ **Prerequisites**: Services must be running before executing tests.
+```bash
+# Start services (from project root)
+./scripts/start-env.sh                    # Default: dev environment
+```
+
 ```bash
 # Interactive mode (Test Runner)
 ./scripts/run-cypress-tests.sh open
+# Or: cd cypress && npm run cypress:open
 
 # Headless mode
 ./scripts/run-cypress-tests.sh run chrome
+# Or: cd cypress && npm run cypress:run
+
+# Run specific test file
+cd cypress
+npx cypress run --browser chrome --spec cypress/e2e/wizard.cy.ts
 
 # Specific browser
 ./scripts/run-cypress-tests.sh run firefox
@@ -270,10 +282,23 @@ npm install
 cypress/
 ├── cypress/
 │   ├── e2e/
-│   │   └── homepage.cy.ts        # Test files (TypeScript)
-│   ├── page-objects/             # Page Object Model classes
+│   │   ├── homepage.cy.ts        # Homepage tests
+│   │   └── wizard.cy.ts          # Comprehensive wizard test suite (8 test cases)
+│   ├── page-objects/             # Page Object Model classes (14 total)
 │   │   ├── BasePage.ts          # Base class with common methods
-│   │   └── HomePage.ts          # HomePage Page Object
+│   │   ├── HomePage.ts          # Home page object
+│   │   ├── ApplicationsPage.ts  # Applications list page
+│   │   ├── ApplicationFormPage.ts # Application form page
+│   │   ├── ApplicationDetailPage.ts # Application detail page
+│   │   ├── CompaniesPage.ts     # Companies list page
+│   │   ├── CompanyFormPage.ts    # Company form page
+│   │   ├── ContactsPage.ts      # Contacts list page
+│   │   ├── ContactFormPage.ts   # Contact form page
+│   │   ├── ClientsPage.ts       # Clients list page
+│   │   ├── ClientFormPage.ts    # Client form page
+│   │   ├── NotesPage.ts         # Notes list page
+│   │   ├── JobSearchSitesPage.ts # Job search sites list page
+│   │   └── WizardStep1Page.ts  # Wizard step 1 page
 │   └── support/
 │       ├── commands.ts            # Custom commands
 │       └── e2e.ts                 # Support file
@@ -281,7 +306,7 @@ cypress/
 └── tsconfig.json                  # TypeScript config
 ```
 
-**Page Object Model**: All Cypress tests use the Page Object Model pattern with `data-qa` selectors for consistency.
+**Page Object Model**: All Cypress tests use the Page Object Model pattern with `data-qa` selectors for consistency. **14 page objects** are available, matching the Playwright implementation.
 
 ### Features
 
@@ -320,6 +345,19 @@ describe('HomePage', () => {
 ```
 
 **Page Objects**: Located in `cypress/cypress/page-objects/` with `BasePage.ts` providing common functionality. All selectors use `data-qa` attributes from the frontend.
+
+**Available Page Objects (14 total):**
+- **Base & Home**: `BasePage.ts`, `HomePage.ts`
+- **List Pages**: `ApplicationsPage.ts`, `CompaniesPage.ts`, `ContactsPage.ts`, `ClientsPage.ts`, `NotesPage.ts`, `JobSearchSitesPage.ts`
+- **Form Pages**: `ApplicationFormPage.ts`, `CompanyFormPage.ts`, `ContactFormPage.ts`, `ClientFormPage.ts`
+- **Detail Pages**: `ApplicationDetailPage.ts`
+- **Wizard Pages**: `WizardStep1Page.ts`
+
+**Test Files:**
+- `wizard.cy.ts` - Comprehensive test suite with 8 test cases covering navigation, forms, and API verification
+- `homepage.cy.ts` - Homepage tests
+
+**Service Prerequisites**: Backend and frontend services must be running. Use `./scripts/start-env.sh` to start both services.
 
 ### Best Use Cases
 
