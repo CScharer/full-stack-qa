@@ -1,1 +1,1 @@
-{"id":"5101cad0b662ec82172af307b2b433ac","fullName":"com.cjs.qa.junit.tests.DataDrivenTests.testSearchEdgeCases","name":"testSearchEdgeCases [PROD]","status":"passed","testResultsByEnv":{"default":"46c10bed060695a06eb54238c067e5ef"}}
+{"id":"5101cad0b662ec82172af307b2b433ac","fullName":"com.cjs.qa.junit.tests.DataDrivenTests.testSearchEdgeCases","name":"testSearchEdgeCases [TEST]","status":"passed","testResultsByEnv":{"default":"08f1c6b3a4196a10fe3242ce352a2c7e"}}

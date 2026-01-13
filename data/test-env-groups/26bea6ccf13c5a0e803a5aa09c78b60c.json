@@ -1,1 +1,1 @@
-{"id":"26bea6ccf13c5a0e803a5aa09c78b60c","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileDeviceEmulation","name":"testMobileDeviceEmulation [DEV]","status":"passed","testResultsByEnv":{"default":"d010f6282d7269f8c614583617fda5c8"}}
+{"id":"26bea6ccf13c5a0e803a5aa09c78b60c","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileDeviceEmulation","name":"testMobileDeviceEmulation [PROD]","status":"passed","testResultsByEnv":{"default":"f885e00b1b8ca28fdfc65633f1b5e0a0"}}
