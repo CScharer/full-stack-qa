@@ -10,7 +10,9 @@ This backend provides REST endpoints for managing job applications, companies, c
 - **Framework**: FastAPI
 - **Database**: SQLite (environment-based: `full_stack_qa_dev.db` by default)
 - **Validation**: Pydantic
-- **API Version**: v1 (`/api/v1/*`)
+- **API Version**: Configurable via `config/environments.json` (default: v1 `/api/v1/*`)
+
+**Note**: The API base path is centralized in `config/environments.json` under `api.basePath`. To change the API version, update `api.basePath` in the config file. All code (backend routes, frontend client, tests, scripts) automatically uses the configured value.
 
 ## 🚀 Quick Start
 
@@ -107,15 +109,33 @@ backend/
 
 ## 🔧 Configuration
 
-Configuration is managed through environment variables (see `.env.example`):
+Configuration is managed through:
+1. **Centralized Config** (`config/environments.json`) - Single source of truth for ports, database, API paths, CORS, timeouts
+2. **Environment Variables** (see `.env.example`) - Can override config values
+
+### Environment Variables
 
 - `ENVIRONMENT`: Environment name (dev/test/prod) - selects database automatically (default: `dev` → `full_stack_qa_dev.db`)
 - `DATABASE_PATH`: Full path to database file (optional, overrides ENVIRONMENT)
 - `DATABASE_NAME`: Database filename only (optional, used with default directory)
 - `API_HOST`: API host (default: `localhost`)
-- `API_PORT`: API port (default: `8008`)
-- `CORS_ORIGINS`: Comma-separated list of allowed origins
-- `ENVIRONMENT`: Environment name (development/production)
+- `API_PORT`: API port (read from `config/environments.json` by default)
+- `CORS_ORIGINS`: Comma-separated list of allowed origins (read from `config/environments.json` by default)
+
+### API Version Configuration
+
+The API base path (e.g., `/api/v1`) is configured in `config/environments.json` under `api.basePath`. The backend automatically uses this value for all router prefixes. To change the API version:
+
+1. Edit `config/environments.json`:
+   ```json
+   {
+     "api": {
+       "basePath": "/api/v2"  // Change from "/api/v1" to "/api/v2"
+     }
+   }
+   ```
+
+2. Restart the backend - all routes will automatically use the new base path.
 
 ## 📚 API Documentation
 

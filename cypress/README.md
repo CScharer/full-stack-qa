@@ -165,11 +165,26 @@ await page.locator('[data-qa="input"]').fill('text');
 ```
 
 ### API Calls
-Use `cy.request()` for API verification:
+Use the shared API utility for API verification (recommended):
 ```typescript
+import { CypressApiRequestUtility } from '../support/api-utils';
+
+const apiUtils = new CypressApiRequestUtility();
+const counts = await apiUtils.getAllEntityCounts();
+expect(counts.applications).to.equal(expectedCount);
+```
+
+Or use `cy.request()` directly with the API base path from config:
+```typescript
+import { getBackendUrl, getApiBasePath } from '../../config/port-config';
+
+const environment = Cypress.env('ENVIRONMENT') || 'dev';
+const backendBaseUrl = getBackendUrl(environment);
+const apiBasePath = getApiBasePath(); // "/api/v1" from config
+
 cy.request({
   method: 'GET',
-  url: `${backendBaseUrl}/api/v1/applications?limit=1`,
+  url: `${backendBaseUrl}${apiBasePath}/applications?limit=1`,
   failOnStatusCode: false,
 }).then((response) => {
   if (response.status === 200 && response.body) {
@@ -180,13 +195,17 @@ cy.request({
 ```
 
 ### Environment Configuration
-Backend URL is determined from environment:
+Backend URL and API base path are determined from shared config:
 ```typescript
-// Uses Cypress.env('BACKEND_URL') or defaults to dev
-const backendBaseUrl = getBackendUrl(Cypress.env('ENVIRONMENT') || 'dev');
+import { getBackendUrl, getApiBasePath } from '../../config/port-config';
+
+// Uses Cypress.env('BACKEND_URL') or reads from config/environments.json
+const environment = Cypress.env('ENVIRONMENT') || 'dev';
+const backendBaseUrl = getBackendUrl(environment);
+const apiBasePath = getApiBasePath(); // "/api/v1" from config/environments.json
 ```
 
-**Note**: Currently uses hardcoded backend URL mapping. Future improvement: migrate to shared `config/environments.json` utility (similar to Playwright's `port-config.ts`).
+**Note**: All configuration (backend URL, API base path, ports) is centralized in `config/environments.json`. The API base path can be changed in one place and all code will automatically use the new value.
 
 ### Serial Test Execution
 Cypress runs tests serially by default (unlike Playwright which requires explicit configuration):

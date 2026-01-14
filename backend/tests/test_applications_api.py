@@ -4,7 +4,9 @@ Tests for Applications API endpoints.
 import pytest
 from fastapi.testclient import TestClient
 from app.models import ApplicationCreate, ApplicationUpdate
+from conftest import api_url
 
+ENDPOINT: str = "/applications"
 
 def test_create_application(client: TestClient):
     """Test creating an application."""
@@ -16,7 +18,7 @@ def test_create_application(client: TestClient):
         "modified_by": "test@example.com"
     }
     
-    response = client.post("/api/v1/applications", json=application_data)
+    response = client.post(api_url(ENDPOINT), json=application_data)
     assert response.status_code == 201
     data = response.json()
     assert data["status"] == "Pending"
@@ -34,11 +36,11 @@ def test_get_application(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/applications", json=application_data)
+    create_response = client.post(api_url(ENDPOINT), json=application_data)
     application_id = create_response.json()["id"]
     
     # Then get it
-    response = client.get(f"/api/v1/applications/{application_id}")
+    response = client.get(api_url(f"{ENDPOINT}/{application_id}"))
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == application_id
@@ -47,7 +49,7 @@ def test_get_application(client: TestClient):
 
 def test_get_application_not_found(client: TestClient):
     """Test getting a non-existent application."""
-    response = client.get("/api/v1/applications/99999")
+    response = client.get(api_url(f"{ENDPOINT}/99999"))
     assert response.status_code == 404
     data = response.json()
     assert "not found" in data["detail"]["error"].lower()
@@ -64,10 +66,10 @@ def test_list_applications(client: TestClient):
             "created_by": "test@example.com",
             "modified_by": "test@example.com"
         }
-        client.post("/api/v1/applications", json=application_data)
+        client.post(api_url(ENDPOINT), json=application_data)
     
     # List them
-    response = client.get("/api/v1/applications")
+    response = client.get(api_url(ENDPOINT))
     assert response.status_code == 200
     data = response.json()
     assert "data" in data
@@ -85,7 +87,7 @@ def test_update_application(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/applications", json=application_data)
+    create_response = client.post(api_url(ENDPOINT), json=application_data)
     application_id = create_response.json()["id"]
     
     # Update it
@@ -93,7 +95,7 @@ def test_update_application(client: TestClient):
         "status": "Interview",
         "modified_by": "test@example.com"
     }
-    response = client.put(f"/api/v1/applications/{application_id}", json=update_data)
+    response = client.put(api_url(f"{ENDPOINT}/{application_id}"), json=update_data)
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "Interview"
@@ -108,15 +110,15 @@ def test_delete_application(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/applications", json=application_data)
+    create_response = client.post(api_url(ENDPOINT), json=application_data)
     application_id = create_response.json()["id"]
     
     # Delete it
-    response = client.delete(f"/api/v1/applications/{application_id}")
+    response = client.delete(api_url(f"{ENDPOINT}/{application_id}"))
     assert response.status_code == 204
     
     # Verify it's deleted
-    get_response = client.get(f"/api/v1/applications/{application_id}")
+    get_response = client.get(api_url(f"{ENDPOINT}/{application_id}"))
     assert get_response.status_code == 404
 
 
@@ -130,10 +132,10 @@ def test_list_applications_with_filtering(client: TestClient):
             "created_by": "test@example.com",
             "modified_by": "test@example.com"
         }
-        client.post("/api/v1/applications", json=application_data)
+        client.post(api_url(ENDPOINT), json=application_data)
     
     # Filter by status
-    response = client.get("/api/v1/applications?status=Pending")
+    response = client.get(api_url(f"{ENDPOINT}?status=Pending"))
     assert response.status_code == 200
     data = response.json()
     assert all(app["status"] == "Pending" for app in data["data"])
@@ -149,10 +151,10 @@ def test_list_applications_pagination(client: TestClient):
             "created_by": "test@example.com",
             "modified_by": "test@example.com"
         }
-        client.post("/api/v1/applications", json=application_data)
+        client.post(api_url(ENDPOINT), json=application_data)
     
     # Get first page
-    response = client.get("/api/v1/applications?page=1&limit=2")
+    response = client.get(api_url(f"{ENDPOINT}?page=1&limit=2"))
     assert response.status_code == 200
     data = response.json()
     assert len(data["data"]) <= 2

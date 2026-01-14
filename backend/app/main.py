@@ -5,6 +5,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 
+# Import shared config to get API base path
+from config.port_config import get_api_base_path
+
+# Get API base path from config (e.g., "/api/v1")
+API_BASE_PATH = get_api_base_path()
+
 # Initialize FastAPI app
 app = FastAPI(
     title="ONE GOAL API",
@@ -12,7 +18,7 @@ app = FastAPI(
     description="REST API for ONE GOAL job search application",
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/api/v1/openapi.json",
+    openapi_url=f"{API_BASE_PATH}/openapi.json",
 )
 
 # Configure CORS
@@ -33,7 +39,7 @@ async def root():
         "version": "1.0.0",
         "status": "running",
         "docs": "/docs",
-        "api": "/api/v1",
+        "api": API_BASE_PATH,
     }
 
 
@@ -46,12 +52,12 @@ async def health_check():
 # API routers
 from app.api.v1 import applications, companies, clients, contacts, notes, job_search_sites
 
-app.include_router(applications.router, prefix="/api/v1/applications", tags=["applications"])
-app.include_router(companies.router, prefix="/api/v1/companies", tags=["companies"])
-app.include_router(clients.router, prefix="/api/v1/clients", tags=["clients"])
-app.include_router(contacts.router, prefix="/api/v1/contacts", tags=["contacts"])
-app.include_router(notes.router, prefix="/api/v1/notes", tags=["notes"])
-app.include_router(job_search_sites.router, prefix="/api/v1/job-search-sites", tags=["job-search-sites"])
+app.include_router(applications.router, prefix=f"{API_BASE_PATH}/applications", tags=["applications"])
+app.include_router(companies.router, prefix=f"{API_BASE_PATH}/companies", tags=["companies"])
+app.include_router(clients.router, prefix=f"{API_BASE_PATH}/clients", tags=["clients"])
+app.include_router(contacts.router, prefix=f"{API_BASE_PATH}/contacts", tags=["contacts"])
+app.include_router(notes.router, prefix=f"{API_BASE_PATH}/notes", tags=["notes"])
+app.include_router(job_search_sites.router, prefix=f"{API_BASE_PATH}/job-search-sites", tags=["job-search-sites"])
 
 
 if __name__ == "__main__":

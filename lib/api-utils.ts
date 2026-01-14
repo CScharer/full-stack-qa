@@ -17,12 +17,36 @@
  *   const apiUtils = new PlaywrightApiRequestUtility(request, { environment: 'dev' });
  *   const counts = await apiUtils.getAllEntityCounts();
  */
-import { getBackendUrl } from '../config/port-config';
+import { getBackendUrl, getApiBasePath } from '../config/port-config';
 
 /**
- * Default API version
+ * Extract API version from base path (e.g., "/api/v1" -> "v1")
+ * @param basePath - API base path from config
+ * @returns API version string (e.g., "v1", "v2")
  */
-export const DEFAULT_API_VERSION = 'v1';
+function extractApiVersionFromBasePath(basePath: string): string {
+  const match = basePath.match(/\/v(\d+)$/);
+  return match ? `v${match[1]}` : 'v1'; // Default to v1 if pattern doesn't match
+}
+
+/**
+ * Get default API version from config
+ * Reads from config/environments.json and extracts version from basePath
+ */
+function getDefaultApiVersion(): string {
+  try {
+    const basePath = getApiBasePath();
+    return extractApiVersionFromBasePath(basePath);
+  } catch (error) {
+    console.warn('Could not read API base path from config, defaulting to v1:', error);
+    return 'v1';
+  }
+}
+
+/**
+ * Default API version (read from config/environments.json)
+ */
+export const DEFAULT_API_VERSION = getDefaultApiVersion();
 
 /**
  * API version mapping for each entity type

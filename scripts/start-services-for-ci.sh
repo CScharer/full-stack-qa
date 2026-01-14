@@ -446,12 +446,19 @@ else
     # Start frontend in background
     cd "$FRONTEND_DIR"
     export PORT="$FRONTEND_PORT"
+    
+    # Get API base path from config
+    API_BASE_PATH="/api/v1"  # Default fallback
+    if [ -f "${SCRIPT_DIR}/config/environments.json" ] && command -v jq &> /dev/null; then
+        API_BASE_PATH=$(jq -r '.api.basePath // "/api/v1"' "${SCRIPT_DIR}/config/environments.json" 2>/dev/null || echo "/api/v1")
+    fi
+    
     # Set NEXT_PUBLIC_API_URL based on environment
     if [ -n "$API_URL" ]; then
-        export NEXT_PUBLIC_API_URL="$API_URL/api/v1"
+        export NEXT_PUBLIC_API_URL="${API_URL}${API_BASE_PATH}"
     else
         # Fallback: construct from API_PORT
-        export NEXT_PUBLIC_API_URL="http://localhost:$API_PORT/api/v1"
+        export NEXT_PUBLIC_API_URL="http://localhost:${API_PORT}${API_BASE_PATH}"
     fi
     # Pass port via -p flag since package.json no longer has default port
     nohup npm run dev -- -p "$FRONTEND_PORT" \

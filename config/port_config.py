@@ -116,6 +116,17 @@ def get_api_config() -> Dict[str, Any]:
     return config.get('api', {})
 
 
+def get_api_base_path() -> str:
+    """
+    Get API base path from config (e.g., "/api/v1")
+    
+    Returns:
+        API base path string
+    """
+    api_config = get_api_config()
+    return api_config.get('basePath', '/api/v1')
+
+
 def get_timeout_config() -> Dict[str, Any]:
     """
     Get timeout configuration

@@ -163,6 +163,14 @@ export function getApiConfig(): ApiConfig {
 }
 
 /**
+ * Get API base path (e.g., "/api/v1")
+ * @returns API base path from config
+ */
+export function getApiBasePath(): string {
+  return getApiConfig().basePath;
+}
+
+/**
  * Get timeout configuration
  */
 export function getTimeoutConfig(): TimeoutConfig {

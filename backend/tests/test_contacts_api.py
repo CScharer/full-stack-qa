@@ -3,6 +3,9 @@ Tests for Contacts API endpoints.
 """
 import pytest
 from fastapi.testclient import TestClient
+from conftest import api_url
+
+ENDPOINT: str = "/contacts"
 
 
 def test_create_contact(client: TestClient):
@@ -22,7 +25,7 @@ def test_create_contact(client: TestClient):
         "modified_by": "test@example.com"
     }
     
-    response = client.post("/api/v1/contacts", json=contact_data)
+    response = client.post(api_url(ENDPOINT), json=contact_data)
     assert response.status_code == 201
     data = response.json()
     assert data["first_name"] == "John"
@@ -44,10 +47,10 @@ def test_get_contact(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/contacts", json=contact_data)
+    create_response = client.post(api_url(ENDPOINT), json=contact_data)
     contact_id = create_response.json()["id"]
     
-    response = client.get(f"/api/v1/contacts/{contact_id}")
+    response = client.get(api_url(f"{ENDPOINT}/{contact_id}"))
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == contact_id
@@ -67,9 +70,9 @@ def test_list_contacts(client: TestClient):
             "created_by": "test@example.com",
             "modified_by": "test@example.com"
         }
-        client.post("/api/v1/contacts", json=contact_data)
+        client.post(api_url(ENDPOINT), json=contact_data)
     
-    response = client.get("/api/v1/contacts")
+    response = client.get(api_url(ENDPOINT))
     assert response.status_code == 200
     data = response.json()
     assert "data" in data
@@ -85,7 +88,7 @@ def test_update_contact(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/contacts", json=contact_data)
+    create_response = client.post(api_url(ENDPOINT), json=contact_data)
     contact_id = create_response.json()["id"]
     
     update_data = {
@@ -93,7 +96,7 @@ def test_update_contact(client: TestClient):
         "last_name": "Name",
         "modified_by": "test@example.com"
     }
-    response = client.put(f"/api/v1/contacts/{contact_id}", json=update_data)
+    response = client.put(api_url(f"{ENDPOINT}/{contact_id}"), json=update_data)
     assert response.status_code == 200
     data = response.json()
     assert data["first_name"] == "Updated"
@@ -112,11 +115,11 @@ def test_delete_contact(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/contacts", json=contact_data)
+    create_response = client.post(api_url(ENDPOINT), json=contact_data)
     contact_id = create_response.json()["id"]
     
-    response = client.delete(f"/api/v1/contacts/{contact_id}")
+    response = client.delete(api_url(f"{ENDPOINT}/{contact_id}"))
     assert response.status_code == 204
     
-    get_response = client.get(f"/api/v1/contacts/{contact_id}")
+    get_response = client.get(api_url(f"{ENDPOINT}/{contact_id}"))
     assert get_response.status_code == 404

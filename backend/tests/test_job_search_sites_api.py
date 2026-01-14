@@ -3,6 +3,9 @@ Tests for Job Search Sites API endpoints.
 """
 import pytest
 from fastapi.testclient import TestClient
+from conftest import api_url
+
+ENDPOINT: str = "/job-search-sites"
 
 
 def test_create_job_search_site(client: TestClient):
@@ -16,7 +19,7 @@ def test_create_job_search_site(client: TestClient):
         "modified_by": "test@example.com"
     }
     
-    response = client.post("/api/v1/job-search-sites", json=site_data)
+    response = client.post(api_url(ENDPOINT), json=site_data)
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == unique_name
@@ -32,10 +35,10 @@ def test_get_job_search_site(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/job-search-sites", json=site_data)
+    create_response = client.post(api_url(ENDPOINT), json=site_data)
     site_id = create_response.json()["id"]
     
-    response = client.get(f"/api/v1/job-search-sites/{site_id}")
+    response = client.get(api_url(f"{ENDPOINT}/{site_id}"))
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == site_id
@@ -49,9 +52,9 @@ def test_list_job_search_sites(client: TestClient):
             "created_by": "test@example.com",
             "modified_by": "test@example.com"
         }
-        client.post("/api/v1/job-search-sites", json=site_data)
+        client.post(api_url(ENDPOINT), json=site_data)
     
-    response = client.get("/api/v1/job-search-sites")
+    response = client.get(api_url(ENDPOINT))
     assert response.status_code == 200
     data = response.json()
     assert "data" in data
@@ -65,14 +68,14 @@ def test_update_job_search_site(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/job-search-sites", json=site_data)
+    create_response = client.post(api_url(ENDPOINT), json=site_data)
     site_id = create_response.json()["id"]
     
     update_data = {
         "name": "Updated Name",
         "modified_by": "test@example.com"
     }
-    response = client.put(f"/api/v1/job-search-sites/{site_id}", json=update_data)
+    response = client.put(api_url(f"{ENDPOINT}/{site_id}"), json=update_data)
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Updated Name"
@@ -85,13 +88,13 @@ def test_delete_job_search_site(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/job-search-sites", json=site_data)
+    create_response = client.post(api_url(ENDPOINT), json=site_data)
     site_id = create_response.json()["id"]
     
-    response = client.delete(f"/api/v1/job-search-sites/{site_id}")
+    response = client.delete(api_url(f"{ENDPOINT}/{site_id}"))
     assert response.status_code == 204
     
-    get_response = client.get(f"/api/v1/job-search-sites/{site_id}")
+    get_response = client.get(api_url(f"{ENDPOINT}/{site_id}"))
     assert get_response.status_code == 404
 
 
@@ -102,8 +105,8 @@ def test_create_duplicate_job_search_site(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    client.post("/api/v1/job-search-sites", json=site_data)
+    client.post(api_url(ENDPOINT), json=site_data)
     
     # Try to create duplicate
-    response = client.post("/api/v1/job-search-sites", json=site_data)
+    response = client.post(api_url(ENDPOINT), json=site_data)
     assert response.status_code == 409

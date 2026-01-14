@@ -240,10 +240,16 @@ echo -e "${BLUE}   Port: $API_PORT${NC}"
 echo -e "${BLUE}   Reload: $API_RELOAD${NC}"
 echo -e "${BLUE}   CORS Origins: ${CORS_ORIGINS:-not set}${NC}"
 echo ""
+# Get API base path from config
+API_BASE_PATH="/api/v1"  # Default fallback
+if [ -f "${SCRIPT_DIR}/config/environments.json" ] && command -v jq &> /dev/null; then
+    API_BASE_PATH=$(jq -r '.api.basePath // "/api/v1"' "${SCRIPT_DIR}/config/environments.json" 2>/dev/null || echo "/api/v1")
+fi
+
 echo -e "${GREEN}📚 API Documentation:${NC}"
 echo -e "   Swagger UI: http://$API_HOST:$API_PORT/docs"
 echo -e "   ReDoc: http://$API_HOST:$API_PORT/redoc"
-echo -e "   API: http://$API_HOST:$API_PORT/api/v1"
+echo -e "   API: http://$API_HOST:$API_PORT${API_BASE_PATH}"
 echo ""
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo ""

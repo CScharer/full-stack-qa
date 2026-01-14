@@ -122,17 +122,17 @@ The API base path `/api/v1` is currently hardcoded in **33+ files** across the c
 
 ## 🔧 Implementation Strategy
 
-### Phase 1: Update Shared Utilities (Foundation)
+### Phase 1: Update Shared Utilities (Foundation) ✅ **COMPLETE**
 
 **Goal**: Ensure shared utilities can provide the API base path from config.
 
-#### Step 1.1: Update TypeScript Utilities
+#### Step 1.1: Update TypeScript Utilities ✅ **COMPLETE**
 
 **File**: `config/port-config.ts`
 
-**Current**: Has `getApiConfig()` function that returns the full API config object.
+**Status**: ✅ Added `getApiBasePath()` helper function
 
-**Action**: Add helper function to get base path:
+**Implementation**:
 ```typescript
 export function getApiBasePath(): string {
   return getApiConfig().basePath;
@@ -141,34 +141,26 @@ export function getApiBasePath(): string {
 
 **File**: `lib/api-utils.ts`
 
-**Current**: Uses `DEFAULT_API_VERSION = 'v1'` constant.
+**Status**: ✅ Updated to read version from config
 
-**Action**: Update to read from config:
-```typescript
-import { getApiBasePath } from '../config/port-config';
+**Implementation**:
+- Added `extractApiVersionFromBasePath()` function to extract version from base path
+- Added `getDefaultApiVersion()` function that reads from config
+- Updated `DEFAULT_API_VERSION` to use `getDefaultApiVersion()`
+- Falls back to 'v1' if config cannot be read
 
-// Extract version from basePath (e.g., "/api/v1" -> "v1")
-export function getDefaultApiVersion(): string {
-  const basePath = getApiBasePath();
-  const match = basePath.match(/\/v(\d+)$/);
-  return match ? `v${match[1]}` : 'v1'; // Default to v1 if pattern doesn't match
-}
-
-export const DEFAULT_API_VERSION = getDefaultApiVersion();
-```
-
-#### Step 1.2: Update Python Utilities
+#### Step 1.2: Update Python Utilities ✅ **COMPLETE**
 
 **File**: `config/port_config.py`
 
-**Current**: Has `get_api_config()` function.
+**Status**: ✅ Added `get_api_base_path()` helper function
 
-**Action**: Add helper function:
+**Implementation**:
 ```python
 def get_api_base_path() -> str:
-    """Get API base path from config."""
+    """Get API base path from config (e.g., "/api/v1")"""
     api_config = get_api_config()
-    return api_config.get("basePath", "/api/v1")
+    return api_config.get('basePath', '/api/v1')
 ```
 
 ---
@@ -177,76 +169,44 @@ def get_api_base_path() -> str:
 
 **Priority**: 🔴 **HIGH**
 
-#### Step 2.1: Update `backend/app/main.py`
+#### Step 2.1: Update `backend/app/main.py` ✅ **COMPLETE**
 
-**Current**:
-```python
-app = FastAPI(
-    openapi_url="/api/v1/openapi.json",
-)
+**Status**: ✅ Updated to use config
 
-app.include_router(applications.router, prefix="/api/v1/applications", tags=["applications"])
-# ... etc
-```
-
-**Proposed**:
-```python
-from app.config import settings
-from config.port_config import get_api_base_path
-
-API_BASE_PATH = get_api_base_path()  # "/api/v1"
-
-app = FastAPI(
-    openapi_url=f"{API_BASE_PATH}/openapi.json",
-)
-
-app.include_router(applications.router, prefix=f"{API_BASE_PATH}/applications", tags=["applications"])
-app.include_router(companies.router, prefix=f"{API_BASE_PATH}/companies", tags=["companies"])
-# ... etc
-```
+**Implementation**:
+- Added import: `from config.port_config import get_api_base_path`
+- Added constant: `API_BASE_PATH = get_api_base_path()`
+- Updated `openapi_url` to use `f"{API_BASE_PATH}/openapi.json"`
+- Updated root endpoint to return `API_BASE_PATH` instead of hardcoded `/api/v1`
+- Updated all router prefixes to use `f"{API_BASE_PATH}/..."` format
 
 **Benefits**:
-- Single source of truth
-- Easy to change API version
-- Consistent across all routers
+- ✅ Single source of truth
+- ✅ Easy to change API version
+- ✅ Consistent across all routers
 
-#### Step 2.2: Update Backend Test Files
+#### Step 2.2: Update Backend Test Files ✅ **COMPLETE**
 
-**Current**: Tests use hardcoded `/api/v1` in requests:
+**Status**: ✅ All test files updated to use `api_url()` helper
+
+**Implementation**:
+- Added `API_BASE_PATH` constant and `api_url()` helper function to `backend/tests/conftest.py`
+- Updated all test files to import and use `api_url()` helper:
+  - `test_applications_api.py` (12 references updated)
+  - `test_companies_api.py` (10 references updated)
+  - `test_contacts_api.py` (10 references updated)
+  - `test_clients_api.py` (9 references updated)
+  - `test_notes_api.py` (12 references updated, including `/api/v1/applications` references)
+  - `test_job_search_sites_api.py` (12 references updated)
+  - `test_main.py` (1 reference updated)
+
+**Usage Example**:
 ```python
-response = client.post("/api/v1/applications", json=application_data)
-```
+from conftest import api_url
 
-**Proposed**: Create a test utility or use a constant:
-```python
-# Option 1: Import from config
-from config.port_config import get_api_base_path
-API_BASE_PATH = get_api_base_path()
-
-# Option 2: Create test helper
-# backend/tests/conftest.py or backend/tests/test_helpers.py
-from config.port_config import get_api_base_path
-
-API_BASE_PATH = get_api_base_path()
-
-def api_url(endpoint: str) -> str:
-    """Build full API URL from endpoint."""
-    return f"{API_BASE_PATH}{endpoint}"
-
-# Usage in tests:
 response = client.post(api_url("/applications"), json=application_data)
+response = client.get(api_url(f"/applications/{application_id}"))
 ```
-
-**Files to Update**:
-- `backend/tests/test_applications_api.py` (12 references)
-- `backend/tests/test_companies_api.py` (10 references)
-- `backend/tests/test_contacts_api.py` (10 references)
-- `backend/tests/test_clients_api.py` (9 references)
-- `backend/tests/test_notes_api.py` (12 references)
-- `backend/tests/test_job_search_sites_api.py` (12 references)
-- `backend/tests/test_main.py` (1 reference)
-
-**Recommendation**: Create `backend/tests/conftest.py` with `API_BASE_PATH` constant and `api_url()` helper function.
 
 ---
 
@@ -452,39 +412,60 @@ src/test/
 
 ## 📝 Implementation Checklist
 
-### Phase 1: Foundation
-- [ ] Add `getApiBasePath()` to `config/port-config.ts`
-- [ ] Add `get_api_base_path()` to `config/port_config.py`
-- [ ] Update `lib/api-utils.ts` to read version from config
-- [ ] Test utilities work correctly
+### Phase 1: Foundation ✅ **COMPLETE**
+- [x] Add `getApiBasePath()` to `config/port-config.ts` ✅
+- [x] Add `get_api_base_path()` to `config/port_config.py` ✅
+- [x] Update `lib/api-utils.ts` to read version from config ✅
+- [x] Test utilities work correctly ✅ (TypeScript compilation verified)
 
-### Phase 2: Backend
-- [ ] Update `backend/app/main.py` to use config
-- [ ] Create `backend/tests/conftest.py` with `API_BASE_PATH` and `api_url()` helper
-- [ ] Update all backend test files to use helper
-- [ ] Test backend application starts correctly
-- [ ] Test all backend tests pass
+### Phase 2: Backend ✅ **COMPLETE**
+- [x] Update `backend/app/main.py` to use config ✅
+- [x] Create `backend/tests/conftest.py` with `API_BASE_PATH` and `api_url()` helper ✅
+- [x] Update all backend test files to use helper ✅
+  - Updated: `test_applications_api.py`, `test_companies_api.py`, `test_contacts_api.py`, `test_clients_api.py`, `test_notes_api.py`, `test_job_search_sites_api.py`, `test_main.py`
+- [ ] Test backend application starts correctly (pending verification)
+- [ ] Test all backend tests pass (pending verification)
 
-### Phase 3: Frontend
-- [ ] Update `frontend/lib/api/client.ts` to use config in fallback
-- [ ] Test frontend builds correctly
-- [ ] Test frontend API calls work
+### Phase 3: Frontend ✅ **COMPLETE**
+- [x] Update `frontend/lib/api/client.ts` to use config in fallback ✅
+- [ ] Test frontend builds correctly (pending verification)
+- [ ] Test frontend API calls work (pending verification)
 
-### Phase 4: Scripts
-- [ ] Update `scripts/start-fe.sh` to read from config
-- [ ] Update `scripts/start-be.sh` to read from config
-- [ ] Update `scripts/start-services-for-ci.sh` to read from config
-- [ ] Test scripts work correctly
+**Implementation**: Updated fallback to try to use `getApiBasePath()` from config utility when available (server-side), with graceful fallback to hardcoded value if config cannot be read.
 
-### Phase 5: Performance Tests
-- [ ] Update Locust tests to use config
-- [ ] Update JMeter test to use User Defined Variable
-- [ ] Test performance tests work correctly
+### Phase 4: Scripts ✅ **COMPLETE**
+- [x] Update `scripts/start-fe.sh` to read from config ✅
+- [x] Update `scripts/start-be.sh` to read from config ✅
+- [x] Update `scripts/start-services-for-ci.sh` to read from config ✅
+- [ ] Test scripts work correctly (pending verification)
 
-### Phase 6: Documentation
-- [ ] Update documentation to reference config
-- [ ] Update examples in README files
-- [ ] Document how to change API version
+**Implementation**: 
+- `start-fe.sh`: Updated fallback cases to read `api.basePath` from config using `jq`
+- `start-be.sh`: Updated display message to read `api.basePath` from config
+- `start-services-for-ci.sh`: Updated `NEXT_PUBLIC_API_URL` construction to use `api.basePath` from config
+
+### Phase 5: Performance Tests ✅ **COMPLETE**
+- [x] Update Locust tests to use config ✅
+  - Updated `comprehensive_load_test.py` to import and use `get_api_base_path()`
+  - Updated `api_load_test.py` to import and use `get_api_base_path()`
+- [x] Update JMeter test to use User Defined Variable ✅
+  - Added `API_BASE_PATH` User Defined Variable (defaults to `/api/v1`)
+  - Updated all API paths to use `${API_BASE_PATH}` variable
+- [ ] Test performance tests work correctly (pending verification)
+
+### Phase 6: Documentation ✅ **COMPLETE**
+- [x] Update documentation to reference config ✅
+  - Updated `config/README.md` with API version configuration section
+  - Updated `backend/README.md` to mention API version comes from config
+  - Updated `cypress/README.md` to show examples using shared config
+  - Updated `docs/guides/infrastructure/PORT_CONFIGURATION.md` to mention API version configuration
+- [x] Update examples in README files ✅
+  - Added `getApiBasePath()` examples in `config/README.md`
+  - Updated Cypress README with examples using shared API utility
+- [x] Document how to change API version ✅
+  - Added comprehensive "Changing API Version" section in `config/README.md`
+  - Documented in backend README
+  - Explained in port configuration guide
 
 ---
 
@@ -507,4 +488,45 @@ src/test/
 
 ---
 
-**Document Status**: 📋 **PLANNING** - Ready for implementation review
+**Document Status**: ✅ **COMPLETE** - All phases completed, including documentation
+
+## 🎉 Implementation Summary
+
+All phases of the API version centralization have been completed:
+
+✅ **Phase 1**: Shared utilities updated (TypeScript and Python)  
+✅ **Phase 2**: Backend application and all test files updated  
+✅ **Phase 3**: Frontend client updated  
+✅ **Phase 4**: All shell scripts updated  
+✅ **Phase 5**: Performance tests (Locust and JMeter) updated  
+✅ **Phase 6**: Documentation updated with examples and API version change instructions  
+
+## 📚 Documentation Updates
+
+The following documentation files were updated:
+
+1. **`config/README.md`**:
+   - Added `getApiBasePath()` function to usage examples
+   - Added comprehensive "Changing API Version" section with step-by-step instructions
+   - Updated API endpoints section to mention configurable base path
+
+2. **`backend/README.md`**:
+   - Updated technology stack to mention API version is configurable
+   - Added API version configuration section explaining how to change it
+   - Updated configuration section to reference centralized config
+
+3. **`cypress/README.md`**:
+   - Updated API calls examples to use shared config utilities
+   - Removed note about hardcoded backend URL (now uses shared config)
+   - Added examples showing how to use `getApiBasePath()` from config
+
+4. **`docs/guides/infrastructure/PORT_CONFIGURATION.md`**:
+   - Added note about API version configuration
+   - Referenced `config/README.md` for details
+
+**Next Steps** (Testing & Verification):
+1. Test backend application starts correctly
+2. Test all backend tests pass
+3. Test frontend builds and API calls work
+4. Test scripts work correctly
+5. Test performance tests work correctly

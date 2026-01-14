@@ -13,7 +13,21 @@ const environment = (process.env.NEXT_PUBLIC_ENVIRONMENT || process.env.ENVIRONM
 // Note: We read JSON directly here because Next.js/Turbopack can't access files outside the frontend root
 // The config is still the single source of truth (config/environments.json)
 let API_TIMEOUT = 10000; // Default fallback
-let API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003/api/v1'; // Default fallback
+
+// Try to get API base path from config utility (works in Node.js/server-side)
+let defaultApiBasePath = '/api/v1'; // Default fallback
+try {
+  // Only works server-side (Node.js), not in browser
+  if (typeof window === 'undefined') {
+    const { getApiBasePath } = require('../../../config/port-config');
+    defaultApiBasePath = getApiBasePath();
+  }
+} catch (error) {
+  // Config utility not available, use default
+  // This is expected in browser context
+}
+
+let API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:8003${defaultApiBasePath}`;
 
 // Try to read from shared config (works at runtime, but not during Next.js build)
 // For build-time, we'll use environment variables or defaults

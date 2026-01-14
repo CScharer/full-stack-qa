@@ -54,12 +54,14 @@ DB_NAME=$(jq -r '.environments.dev.database.name' config/environments.json)
 
 **Using `port-config.ts` utility (recommended - type-safe):**
 ```typescript
-import { getEnvironmentConfig, getApiConfig, getTimeoutConfig, getBackendUrl, getFrontendUrl } from '../config/port-config';
+import { getEnvironmentConfig, getApiConfig, getApiBasePath, getTimeoutConfig, getBackendUrl, getFrontendUrl } from '../config/port-config';
 const env = getEnvironmentConfig('dev');
 const api = getApiConfig();
+const apiBasePath = getApiBasePath(); // "/api/v1" (from config)
 console.log(env.frontend.port); // 3003
 console.log(env.backend.port); // 8003
 console.log(api.basePath); // "/api/v1"
+console.log(apiBasePath); // "/api/v1"
 console.log(env.database.name); // "full_stack_qa_dev.db"
 
 // Helper functions for common use cases
@@ -79,12 +81,13 @@ console.log(config.api.basePath); // "/api/v1"
 
 **Using `port_config.py` utility (recommended):**
 ```python
-from config.port_config import get_environment_config, get_backend_url, get_frontend_url, get_api_config
+from config.port_config import get_environment_config, get_backend_url, get_frontend_url, get_api_config, get_api_base_path
 
 env_config = get_environment_config('dev')
 backend_url = get_backend_url('dev')  # "http://localhost:8003"
 frontend_url = get_frontend_url('test')  # "http://localhost:3004"
 api_config = get_api_config()
+api_base_path = get_api_base_path()  # "/api/v1" (from config)
 ```
 
 **Robot Framework Usage:**
@@ -119,10 +122,12 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
 | prod | 3005 | 8005 |
 
 #### API Endpoints (from environments.json)
-- Base Path: `/api/v1`
+- Base Path: `/api/v1` (configurable in `api.basePath`)
 - Health Check: `/health`
 - API Docs: `/docs`
 - ReDoc: `/redoc`
+
+**Note**: The API base path is centralized in `config/environments.json` under `api.basePath`. All code (backend, frontend, tests, scripts) reads from this single source of truth. To change the API version, update `api.basePath` in `config/environments.json` (e.g., change `/api/v1` to `/api/v2`).
 
 #### Database Configuration (from environments.json)
 - Directory: `Data/Core`
@@ -151,6 +156,33 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
    - Python: Via `config/port_config.py` (used by Robot Framework, Backend)
    - Java: Via `src/test/java/com/cjs/qa/config/EnvironmentConfig.java` (optional, for newer tests)
 3. **All configuration values** (ports, database, API paths, timeouts, CORS) are in one place
+
+### Changing API Version
+
+**To change the API version (e.g., from v1 to v2):**
+
+1. **Edit `config/environments.json`**:
+   ```json
+   {
+     "api": {
+       "basePath": "/api/v2",  // Change from "/api/v1" to "/api/v2"
+       "healthEndpoint": "/health",
+       "docsEndpoint": "/docs",
+       "redocEndpoint": "/redoc"
+     }
+   }
+   ```
+
+2. **All code automatically uses the new version**:
+   - ✅ Backend (`backend/app/main.py`) - Router prefixes updated automatically
+   - ✅ Frontend (`frontend/lib/api/client.ts`) - API base URL updated automatically
+   - ✅ All test files (Cypress, Playwright, Backend tests) - Use shared utilities
+   - ✅ Shell scripts (`start-fe.sh`, `start-be.sh`, etc.) - Read from config
+   - ✅ Performance tests (Locust, JMeter) - Use config values
+
+3. **No code changes needed** - The API version is centralized and all code reads from `config/environments.json`
+
+**Example**: If you change `api.basePath` from `/api/v1` to `/api/v2`, all API endpoints will automatically use `/api/v2` instead of `/api/v1`.
 
 **Alternative: Update `ports.json` (ports only)**
 - If you only need to change ports, you can update `config/ports.json`

@@ -111,36 +111,48 @@ load_environment_config() {
         if [ -n "$API_URL" ] && [ -n "$API_BASE_PATH" ]; then
             export NEXT_PUBLIC_API_URL="${API_URL}${API_BASE_PATH}"
         else
-            # Fallback to default if config parsing fails
+            # Fallback to default if config parsing fails - read API base path from config
+            local config_json="${SCRIPT_DIR}/config/environments.json"
+            local api_base_path="/api/v1"  # Default fallback
+            if [ -f "$config_json" ] && command -v jq &> /dev/null; then
+                api_base_path=$(jq -r '.api.basePath // "/api/v1"' "$config_json" 2>/dev/null || echo "/api/v1")
+            fi
+            
             case "$env" in
                 dev)
-                    export NEXT_PUBLIC_API_URL="http://localhost:8003/api/v1"
+                    export NEXT_PUBLIC_API_URL="http://localhost:8003${api_base_path}"
                     export PORT=${PORT:-"3003"}
                     ;;
                 test)
-                    export NEXT_PUBLIC_API_URL="http://localhost:8004/api/v1"
+                    export NEXT_PUBLIC_API_URL="http://localhost:8004${api_base_path}"
                     export PORT=${PORT:-"3004"}
                     ;;
                 prod)
-                    export NEXT_PUBLIC_API_URL="http://localhost:8005/api/v1"
+                    export NEXT_PUBLIC_API_URL="http://localhost:8005${api_base_path}"
                     export PORT=${PORT:-"3005"}
                     ;;
             esac
         fi
     else
-        # Fallback if config script doesn't exist
+        # Fallback if config script doesn't exist - read API base path from config
         local env=$(echo "${ENVIRONMENT}" | tr '[:upper:]' '[:lower:]')
+        local config_json="${SCRIPT_DIR}/config/environments.json"
+        local api_base_path="/api/v1"  # Default fallback
+        if [ -f "$config_json" ] && command -v jq &> /dev/null; then
+            api_base_path=$(jq -r '.api.basePath // "/api/v1"' "$config_json" 2>/dev/null || echo "/api/v1")
+        fi
+        
         case "$env" in
             dev)
-                export NEXT_PUBLIC_API_URL="http://localhost:8003/api/v1"
+                export NEXT_PUBLIC_API_URL="http://localhost:8003${api_base_path}"
                 export PORT=${PORT:-"3003"}
                 ;;
             test)
-                export NEXT_PUBLIC_API_URL="http://localhost:8004/api/v1"
+                export NEXT_PUBLIC_API_URL="http://localhost:8004${api_base_path}"
                 export PORT=${PORT:-"3004"}
                 ;;
             prod)
-                export NEXT_PUBLIC_API_URL="http://localhost:8005/api/v1"
+                export NEXT_PUBLIC_API_URL="http://localhost:8005${api_base_path}"
                 export PORT=${PORT:-"3005"}
                 ;;
         esac

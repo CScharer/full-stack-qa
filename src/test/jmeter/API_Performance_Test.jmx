@@ -13,6 +13,11 @@
             <stringProp name="Argument.value">${__P(baseUrl,http://localhost:8003)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="API_BASE_PATH" elementType="Argument">
+            <stringProp name="Argument.name">API_BASE_PATH</stringProp>
+            <stringProp name="Argument.value">${__P(apiBasePath,/api/v1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </elementProp>
     </TestPlan>
@@ -51,7 +56,7 @@
         </hashTree>
 
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="API: Get Applications" enabled="true">
-          <stringProp name="HTTPSampler.path">/api/v1/applications</stringProp>
+          <stringProp name="HTTPSampler.path">${API_BASE_PATH}/applications</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
@@ -66,7 +71,7 @@
         </hashTree>
 
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="API: Get Companies" enabled="true">
-          <stringProp name="HTTPSampler.path">/api/v1/companies</stringProp>
+          <stringProp name="HTTPSampler.path">${API_BASE_PATH}/companies</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
         </HTTPSamplerProxy>
         <hashTree>

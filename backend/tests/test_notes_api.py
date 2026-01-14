@@ -3,6 +3,10 @@ Tests for Notes API endpoints.
 """
 import pytest
 from fastapi.testclient import TestClient
+from conftest import api_url
+
+ENDPOINT: str = "/notes"
+ENDPOINT_APPLICATIONS: str = "/applications"
 
 
 def test_create_note(client: TestClient):
@@ -14,7 +18,7 @@ def test_create_note(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    app_response = client.post("/api/v1/applications", json=application_data)
+    app_response = client.post(api_url(ENDPOINT_APPLICATIONS), json=application_data)
     application_id = app_response.json()["id"]
     
     # Then create a note
@@ -25,7 +29,7 @@ def test_create_note(client: TestClient):
         "modified_by": "test@example.com"
     }
     
-    response = client.post("/api/v1/notes", json=note_data)
+    response = client.post(api_url(ENDPOINT), json=note_data)
     assert response.status_code == 201
     data = response.json()
     assert data["note"] == "This is a test note"
@@ -42,7 +46,7 @@ def test_get_note(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    app_response = client.post("/api/v1/applications", json=application_data)
+    app_response = client.post(api_url(ENDPOINT_APPLICATIONS), json=application_data)
     application_id = app_response.json()["id"]
     
     note_data = {
@@ -51,10 +55,10 @@ def test_get_note(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/notes", json=note_data)
+    create_response = client.post(api_url(ENDPOINT), json=note_data)
     note_id = create_response.json()["id"]
     
-    response = client.get(f"/api/v1/notes/{note_id}")
+    response = client.get(api_url(f"{ENDPOINT}/{note_id}"))
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == note_id
@@ -69,7 +73,7 @@ def test_list_notes(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    app_response = client.post("/api/v1/applications", json=application_data)
+    app_response = client.post(api_url(ENDPOINT_APPLICATIONS), json=application_data)
     application_id = app_response.json()["id"]
     
     # Create multiple notes
@@ -80,9 +84,9 @@ def test_list_notes(client: TestClient):
             "created_by": "test@example.com",
             "modified_by": "test@example.com"
         }
-        client.post("/api/v1/notes", json=note_data)
+        client.post(api_url(ENDPOINT), json=note_data)
     
-    response = client.get(f"/api/v1/notes?application_id={application_id}")
+    response = client.get(api_url(f"{ENDPOINT}?application_id={application_id}"))
     assert response.status_code == 200
     data = response.json()
     assert "data" in data
@@ -98,7 +102,7 @@ def test_update_note(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    app_response = client.post("/api/v1/applications", json=application_data)
+    app_response = client.post(api_url(ENDPOINT_APPLICATIONS), json=application_data)
     application_id = app_response.json()["id"]
     
     note_data = {
@@ -107,14 +111,14 @@ def test_update_note(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/notes", json=note_data)
+    create_response = client.post(api_url(ENDPOINT), json=note_data)
     note_id = create_response.json()["id"]
     
     update_data = {
         "note": "Updated note",
         "modified_by": "test@example.com"
     }
-    response = client.put(f"/api/v1/notes/{note_id}", json=update_data)
+    response = client.put(api_url(f"{ENDPOINT}/{note_id}"), json=update_data)
     assert response.status_code == 200
     data = response.json()
     assert data["note"] == "Updated note"
@@ -129,7 +133,7 @@ def test_delete_note(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    app_response = client.post("/api/v1/applications", json=application_data)
+    app_response = client.post(api_url(ENDPOINT_APPLICATIONS), json=application_data)
     application_id = app_response.json()["id"]
     
     note_data = {
@@ -138,11 +142,11 @@ def test_delete_note(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/notes", json=note_data)
+    create_response = client.post(api_url(ENDPOINT), json=note_data)
     note_id = create_response.json()["id"]
     
-    response = client.delete(f"/api/v1/notes/{note_id}")
+    response = client.delete(api_url(f"{ENDPOINT}/{note_id}"))
     assert response.status_code == 204
     
-    get_response = client.get(f"/api/v1/notes/{note_id}")
+    get_response = client.get(api_url(f"{ENDPOINT}/{note_id}"))
     assert get_response.status_code == 404
