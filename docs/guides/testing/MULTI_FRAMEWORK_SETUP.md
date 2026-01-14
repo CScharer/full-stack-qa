@@ -19,7 +19,7 @@ This framework now supports **6 different UI testing tools**:
 
 ## 🔧 Shared Configuration
 
-All test frameworks use **`config/environments.json`** as the single source of truth for environment configuration (ports, URLs, database, timeouts, CORS). This ensures consistency across all frameworks and eliminates hardcoded values.
+All test frameworks use **`config/environments.json`** as the single source of truth for environment configuration (ports, URLs, database, timeouts, CORS, API version). This ensures consistency across all frameworks and eliminates hardcoded values.
 
 ### Configuration Files
 
@@ -27,6 +27,26 @@ All test frameworks use **`config/environments.json`** as the single source of t
 - **`config/port-config.ts`** - Shared TypeScript utility (used by Cypress, Playwright, Vibium, Frontend)
 - **`config/port_config.py`** - Shared Python utility (used by Robot Framework, Backend)
 - **`src/test/java/com/cjs/qa/config/EnvironmentConfig.java`** - Java utility (optional, for newer Selenium/Java tests)
+
+### API Version Configuration
+
+The API base path (e.g., `/api/v1`) is centralized in `config/environments.json` under `api.basePath`. All code (backend, frontend, tests, scripts, performance tests) automatically reads from this single source of truth. This means:
+
+- ✅ **Single source of truth**: Change API version in one place (`config/environments.json`)
+- ✅ **Automatic updates**: All frameworks and scripts use the configured value
+- ✅ **Easy migration**: To change from v1 to v2, just update `api.basePath` in the config file
+- ✅ **Consistency**: No risk of mismatched API paths across different parts of the codebase
+
+**To change the API version**, update `api.basePath` in `config/environments.json`:
+```json
+{
+  "api": {
+    "basePath": "/api/v2"  // Change from "/api/v1" to "/api/v2"
+  }
+}
+```
+
+All code will automatically use the new version. See `config/README.md` for detailed instructions.
 
 ### Standardized Environment Variables
 
@@ -40,12 +60,13 @@ All frameworks use consistent environment variable naming:
 
 **TypeScript Frameworks (Cypress, Playwright, Vibium):**
 ```typescript
-import { getBackendUrl, getFrontendUrl } from '../config/port-config';
+import { getBackendUrl, getFrontendUrl, getApiBasePath } from '../config/port-config';
 // or
-import { getBackendUrl, getFrontendUrl } from '../../config/port-config';
+import { getBackendUrl, getFrontendUrl, getApiBasePath } from '../../config/port-config';
 
 const backendUrl = getBackendUrl('dev'); // Uses config/environments.json
 const frontendUrl = getFrontendUrl('test'); // Uses config/environments.json
+const apiBasePath = getApiBasePath(); // "/api/v1" from config/environments.json
 ```
 
 **Robot Framework:**

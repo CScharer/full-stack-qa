@@ -363,7 +363,7 @@ describe('HomePage', () => {
 - Backend URL is determined from environment using `getBackendUrl()` helper
 - ✅ Uses shared `config/port_config.py` via `ConfigHelper.py`
 - See `config/environments.json` for environment port mappings
-- See [Shared Test Configuration](../work/20260111_SHARED_TEST_CONFIGURATION.md) for details
+- See [Multi-Framework Setup Guide](MULTI_FRAMEWORK_SETUP.md) and [Configuration Directory README](../../../config/README.md) for details
 
 ### Best Use Cases
 

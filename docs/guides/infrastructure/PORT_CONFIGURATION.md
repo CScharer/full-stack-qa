@@ -35,7 +35,7 @@ The `config/ports.json` file is maintained for backward compatibility (ports onl
 - Use `scripts/ci/env-config.sh` for comprehensive config (recommended)
 - Use `scripts/ci/port-config.sh` for ports only (backward compatibility)
 
-**TypeScript/JavaScript**: Use `playwright/config/port-config.ts` which imports from `config/environments.json`
+**TypeScript/JavaScript**: Use `config/port-config.ts` which reads from `config/environments.json`
 
 **See Also**: 
 - [Service Scripts Guide](./SERVICE_SCRIPTS.md) for information on how service management scripts use port configuration
@@ -64,7 +64,7 @@ Configuration values are determined in the following order (highest to lowest pr
 2. **`.env` files** (backend/.env, frontend/.env) - Can override defaults
 3. **Centralized Config** (`config/environments.json` or `config/ports.json`) - Single source of truth
    - Shell scripts: `scripts/ci/env-config.sh` (comprehensive) or `scripts/ci/port-config.sh` (ports only)
-   - TypeScript/JavaScript: `playwright/config/port-config.ts` (imports from `config/environments.json`)
+   - TypeScript/JavaScript: `config/port-config.ts` (reads from `config/environments.json`)
 4. **Hardcoded fallback** - Only used if config files are missing
 
 ## Why Centralized Configuration?
@@ -103,8 +103,10 @@ Centralized configuration ensures:
 
 1. **Always use the centralized config**: 
    - Shell scripts: Source `scripts/ci/env-config.sh` (comprehensive) or `scripts/ci/port-config.sh` (ports only)
-   - TypeScript/JavaScript: Import from `playwright/config/port-config.ts` (which imports from `config/environments.json`)
-   - Never hardcode configuration values (ports, timeouts, API paths, etc.)
+   - TypeScript/JavaScript: Import from `config/port-config.ts` (which reads from `config/environments.json`)
+   - Python: Import from `config/port_config.py` (which reads from `config/environments.json`)
+   - Never hardcode configuration values (ports, timeouts, API paths, API versions, etc.)
+   - All API paths should use `getApiBasePath()` or read from config, never hardcode `/api/v1`
 2. **Validate environment**: Ensure `ENVIRONMENT` is set correctly before starting services (defaults to `dev`)
 3. **Check port availability**: Scripts should verify ports are available before binding
 4. **Document changes**: If configuration needs to change, update `config/environments.json` (single source of truth) and `ONE_GOAL.md`
@@ -113,15 +115,17 @@ Centralized configuration ensures:
 ## Files Using Configuration
 
 **Shell Scripts** (via `scripts/ci/env-config.sh` or `scripts/ci/port-config.sh`):
-- `scripts/start-services-for-ci.sh` - Starts services, uses timeout from config
+- `scripts/start-services-for-ci.sh` - Starts services, uses timeout and API base path from config
 - `scripts/ci/determine-ports.sh` - Sets GitHub Actions outputs
 - `scripts/ci/verify-services.sh` - Verifies services, uses timeout from config
-- `scripts/start-be.sh`, `scripts/start-fe.sh`, `scripts/start-env.sh` - Service startup scripts
+- `scripts/start-be.sh`, `scripts/start-fe.sh`, `scripts/start-env.sh` - Service startup scripts (use API base path from config)
 
-**TypeScript/JavaScript** (via `playwright/config/port-config.ts`):
+**TypeScript/JavaScript** (via `config/port-config.ts`):
 - `playwright/playwright.integration.config.ts` - Integration test configuration (ports, timeouts, API paths, CORS)
-- `frontend/lib/api/client.ts` - API client timeout (should match config)
-- Other Playwright/TypeScript configs can import from `port-config.ts`
+- `frontend/lib/api/client.ts` - API client (timeout and base path from config)
+- `cypress/cypress/e2e/*.cy.ts` - Cypress tests (use shared API utilities)
+- `lib/api-utils.ts` - Shared API request utility (reads API version from config)
+- Other Playwright/TypeScript configs can import from `config/port-config.ts`
 
 **Workflows**:
 - `.github/workflows/env-fe.yml` - Verifies services on correct ports
@@ -130,9 +134,11 @@ Centralized configuration ensures:
 **Configuration Values Used**:
 - Ports: Frontend/backend ports per environment
 - Database: Database paths and naming patterns
-- API: Base path (`/api/v1`), health endpoint (`/health`), docs endpoints
+- API: Base path (configurable via `api.basePath`, default `/api/v1`), health endpoint (`/health`), docs endpoints
 - Timeouts: Service startup (120s), verification (30s), API client (10s), web server (120s)
 - CORS: Allowed origins per environment
+
+**API Version Centralization**: The API base path is fully centralized. All code (backend routes, frontend client, test frameworks, shell scripts, performance tests) reads from `config/environments.json`. This means changing the API version requires updating only one file. See `config/README.md` for details on changing the API version.
 
 ## Troubleshooting
 
