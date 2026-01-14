@@ -189,7 +189,9 @@ driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 ## Related Documentation
 
 - [UI Testing Frameworks Guide](./UI_TESTING_FRAMEWORKS.md)
-- [Shared Configuration Guide](../work/20260111_SHARED_TEST_CONFIGURATION.md)
+- [Multi-Framework Setup Guide](./MULTI_FRAMEWORK_SETUP.md) - Shared configuration across all frameworks
+- [Configuration Directory README](../../../config/README.md) - Centralized configuration details
+- [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) - Port and configuration management
 - Framework-specific READMEs:
   - [Cypress README](../../cypress/README.md)
   - [Playwright README](../../playwright/README.md)
