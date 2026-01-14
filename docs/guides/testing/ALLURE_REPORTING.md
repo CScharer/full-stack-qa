@@ -1431,6 +1431,21 @@ You can download Allure reports from GitHub Actions pipeline artifacts and view 
 - **Local Development**: Test report generation and view changes locally
 - **Debugging**: Investigate issues with report generation or display
 
+### Prerequisites
+
+**Note**: If you want to run tests locally before viewing reports, you'll need to start the frontend and backend services:
+
+```bash
+# Start both services together (recommended)
+./scripts/start-env.sh                   # Default: dev environment
+./scripts/start-env.sh --env test        # Test environment
+./scripts/start-env.sh -e prod           # Production environment
+```
+
+For more details on starting services, see [Local Development Guide](../setup/LOCAL_DEVELOPMENT.md) or [Quick Start Guide](../../../QUICK_START.md).
+
+**Note**: You don't need to start services just to view a downloaded report - reports are static HTML files that can be viewed with any HTTP server.
+
 ### Method 1: Download Generated Report (Recommended)
 
 This method downloads the already-generated HTML report, which you can view immediately.
@@ -1688,12 +1703,19 @@ lsof -ti:8080 | xargs kill -9
 ### Quick Reference Commands
 
 ```bash
+# Start both frontend and backend services (if running tests locally)
+./scripts/start-env.sh                   # Default: dev environment
+./scripts/start-env.sh --env test        # Test environment
+./scripts/start-env.sh -e prod           # Production environment
+
 # Download and extract report
 unzip allure-report-combined-all-environments.zip -d allure-report-combined
 cd allure-report-combined
 
 # Serve with Python (simplest)
 python3 -m http.server 8080
+# Or use a different port if needed
+python3 -m http.server 8081
 
 # Serve with Allure3 CLI
 allure serve . --port 8080
