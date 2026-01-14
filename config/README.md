@@ -54,13 +54,17 @@ DB_NAME=$(jq -r '.environments.dev.database.name' config/environments.json)
 
 **Using `port-config.ts` utility (recommended - type-safe):**
 ```typescript
-import { getEnvironmentConfig, getApiConfig, getTimeoutConfig } from './config/port-config';
+import { getEnvironmentConfig, getApiConfig, getTimeoutConfig, getBackendUrl, getFrontendUrl } from '../config/port-config';
 const env = getEnvironmentConfig('dev');
 const api = getApiConfig();
 console.log(env.frontend.port); // 3003
 console.log(env.backend.port); // 8003
 console.log(api.basePath); // "/api/v1"
 console.log(env.database.name); // "full_stack_qa_dev.db"
+
+// Helper functions for common use cases
+const backendUrl = getBackendUrl('dev'); // "http://localhost:8003"
+const frontendUrl = getFrontendUrl('test'); // "http://localhost:3004"
 ```
 
 **Importing directly:**
@@ -70,6 +74,39 @@ const env = config.environments.dev;
 console.log(env.frontend.port); // 3003
 console.log(config.api.basePath); // "/api/v1"
 ```
+
+#### Python - Comprehensive Configuration
+
+**Using `port_config.py` utility (recommended):**
+```python
+from config.port_config import get_environment_config, get_backend_url, get_frontend_url, get_api_config
+
+env_config = get_environment_config('dev')
+backend_url = get_backend_url('dev')  # "http://localhost:8003"
+frontend_url = get_frontend_url('test')  # "http://localhost:3004"
+api_config = get_api_config()
+```
+
+**Robot Framework Usage:**
+```robotframework
+Library    ${CURDIR}${/}ConfigHelper.py
+${base_url}=    Get Base Url From Shared Config
+```
+
+#### Java - Comprehensive Configuration
+
+**Using `EnvironmentConfig.java` utility (optional, for newer tests):**
+```java
+import com.cjs.qa.config.EnvironmentConfig;
+
+String baseUrl = EnvironmentConfig.getFrontendUrl(); // Uses config/environments.json
+String backendUrl = EnvironmentConfig.getBackendUrl(); // Uses config/environments.json
+int backendPort = EnvironmentConfig.getBackendPort("dev");
+```
+
+**Note**: Java tests can use either:
+- XML-based config (`Configurations/Environments.xml`) - For user-specific settings (browser, timeouts, logging)
+- JSON-based config (`EnvironmentConfig.java`) - For environment-specific URLs/ports (dev, test, prod)
 
 ### Configuration Values
 
@@ -108,9 +145,11 @@ console.log(config.api.basePath); // "/api/v1"
 **To update configuration values:**
 
 1. **Edit `config/environments.json`** (single source of truth for all config)
-2. **Scripts automatically use the new values**:
+2. **All frameworks automatically use the new values**:
    - Shell scripts: Via `scripts/ci/env-config.sh` or `scripts/ci/port-config.sh`
-   - TypeScript/JavaScript: Via `playwright/config/port-config.ts`
+   - TypeScript/JavaScript: Via `config/port-config.ts` (used by Cypress, Playwright, Vibium, Frontend)
+   - Python: Via `config/port_config.py` (used by Robot Framework, Backend)
+   - Java: Via `src/test/java/com/cjs/qa/config/EnvironmentConfig.java` (optional, for newer tests)
 3. **All configuration values** (ports, database, API paths, timeouts, CORS) are in one place
 
 **Alternative: Update `ports.json` (ports only)**
@@ -122,3 +161,84 @@ console.log(config.api.basePath); // "/api/v1"
 - Shell scripts require `jq` for JSON parsing (install with `brew install jq` on macOS or `apt-get install jq` on Linux)
 - If `jq` is not installed, scripts will fall back to hardcoded values
 
+---
+
+## Framework-Specific Configuration
+
+All test frameworks use `config/environments.json` as the single source of truth. Each framework has a utility that reads from this shared configuration:
+
+### TypeScript Frameworks (Cypress, Playwright, Vibium, Frontend)
+
+**Shared Utility**: `config/port-config.ts`
+
+All TypeScript frameworks import from the shared `config/port-config.ts` utility:
+
+```typescript
+// Cypress, Playwright, Vibium
+import { getBackendUrl, getFrontendUrl, getEnvironmentConfig } from '../config/port-config';
+// or
+import { getBackendUrl, getFrontendUrl, getEnvironmentConfig } from '../../config/port-config';
+
+const environment = process.env.ENVIRONMENT || 'dev';
+const backendUrl = getBackendUrl(environment);
+const frontendUrl = getFrontendUrl(environment);
+```
+
+**TypeScript Base Configuration**: All TypeScript frameworks extend `tsconfig.base.json` for common compiler options, reducing duplication.
+
+### Python Frameworks (Robot Framework, Backend)
+
+**Shared Utility**: `config/port_config.py`
+
+Python frameworks use the shared `config/port_config.py` utility:
+
+```python
+from config.port_config import get_backend_url, get_frontend_url, get_environment_config
+
+environment = os.getenv('ENVIRONMENT', 'dev')
+backend_url = get_backend_url(environment)
+frontend_url = get_frontend_url(environment)
+```
+
+**Robot Framework Helper**: `src/test/robot/resources/ConfigHelper.py` wraps the shared Python config for Robot Framework usage.
+
+### Java Frameworks (Selenium/Java)
+
+**Optional Utility**: `src/test/java/com/cjs/qa/config/EnvironmentConfig.java`
+
+Newer Java tests can use the optional `EnvironmentConfig.java` utility:
+
+```java
+import com.cjs.qa.config.EnvironmentConfig;
+
+String environment = EnvironmentConfig.getEnvironment(); // Reads from ENVIRONMENT env var
+String baseUrl = EnvironmentConfig.getFrontendUrl(environment);
+String backendUrl = EnvironmentConfig.getBackendUrl(environment);
+```
+
+**Note**: Java tests can use either:
+- **XML Config** (`Configurations/Environments.xml`) - For user-specific settings (browser preferences, timeouts, logging flags)
+- **JSON Config** (`EnvironmentConfig.java`) - For environment-specific URLs/ports (dev, test, prod)
+
+These serve different purposes and can coexist.
+
+### Framework Status
+
+| Framework | Language | Config Source | Status |
+|-----------|----------|---------------|--------|
+| **Cypress** | TypeScript | `config/port-config.ts` | ✅ Complete |
+| **Playwright** | TypeScript | `config/port-config.ts` | ✅ Complete |
+| **Vibium** | TypeScript | `config/port-config.ts` | ✅ Complete |
+| **Frontend** | TypeScript | `config/port-config.ts` | ✅ Complete |
+| **Robot Framework** | Python | `config/port_config.py` via `ConfigHelper.py` | ✅ Complete |
+| **Backend** | Python | `config/port_config.py` | ✅ Complete |
+| **Selenium/Java** | Java | Optional `EnvironmentConfig.java` | ✅ Complete (Optional) |
+
+### Benefits of Shared Configuration
+
+- ✅ **Single Source of Truth**: All configuration in `config/environments.json`
+- ✅ **No Hardcoded Values**: All frameworks read from shared config
+- ✅ **Consistent Behavior**: Same configuration across all frameworks
+- ✅ **Easy Maintenance**: Update config in one place
+- ✅ **Environment Support**: Automatic support for dev, test, prod environments
+- ✅ **Type Safety**: TypeScript utilities provide type-safe access
