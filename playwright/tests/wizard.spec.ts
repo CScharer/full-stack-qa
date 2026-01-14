@@ -10,7 +10,10 @@ import { ClientFormPage } from './pages/ClientFormPage';
 import { NotesPage } from './pages/NotesPage';
 import { JobSearchSitesPage } from './pages/JobSearchSitesPage';
 import { WizardStep1Page } from './pages/WizardStep1Page';
-import { getEnvironmentConfig } from '../config/port-config';
+import { PlaywrightApiRequestUtility } from '../helpers/api-utils';
+import { PlaywrightDbUtility } from '../helpers/db-utils';
+import type { EntityCounts } from '../../lib/api-utils';
+import type { JobSearchSite } from '../../lib/db-utils';
 
 /**
  * Wizard Test - Navigate through all pages and verify cancel functionality
@@ -69,7 +72,9 @@ test.describe('Wizard Tests', () => {
   let notesPage: NotesPage;
   let jobSearchSitesPage: JobSearchSitesPage;
   let wizardStep1Page: WizardStep1Page;
-  let backendBaseUrl: string;
+  let apiUtils: PlaywrightApiRequestUtility;
+  let dbUtils: PlaywrightDbUtility;
+  let initialCounts: EntityCounts;
   let initialApplicationCount: number;
   let initialCompanyCount: number;
   let initialContactCount: number;
@@ -93,68 +98,25 @@ test.describe('Wizard Tests', () => {
     jobSearchSitesPage = new JobSearchSitesPage(page);
     wizardStep1Page = new WizardStep1Page(page);
 
-    // Determine backend URL based on environment
-    // Get environment from env var, default to 'dev' to match other scripts
-    const environment = process.env.ENVIRONMENT || 'dev';
-    const envConfig = getEnvironmentConfig(environment, 'dev');
-    
-    // Use BACKEND_URL env var if provided, otherwise use environment config
-    // Note: API calls append /api/v1/ to this URL, so we only need the base backend URL
-    backendBaseUrl = process.env.BACKEND_URL || envConfig.backend.url;
+    // Initialize API request utility
+    // Environment and backend URL are automatically detected from process.env
+    // No need to manually extract - the utility handles it internally
+    apiUtils = new PlaywrightApiRequestUtility(request);
 
-    // Get initial counts for all entities via API
-    try {
-      const appResponse = await request.get(`${backendBaseUrl}/api/v1/applications?limit=1`);
-      if (appResponse.ok()) {
-        const appData = await appResponse.json();
-        initialApplicationCount = appData.total || 0;
-      }
-    } catch (error) {
-      initialApplicationCount = 0;
-    }
+    // Initialize database utility
+    // Environment is automatically detected from process.env
+    dbUtils = new PlaywrightDbUtility();
 
-    try {
-      const companyResponse = await request.get(`${backendBaseUrl}/api/v1/companies?limit=1`);
-      if (companyResponse.ok()) {
-        const companyData = await companyResponse.json();
-        initialCompanyCount = companyData.total || 0;
-      }
-    } catch (error) {
-      initialCompanyCount = 0;
-    }
-
-    try {
-      const contactResponse = await request.get(`${backendBaseUrl}/api/v1/contacts?limit=1`);
-      if (contactResponse.ok()) {
-        const contactData = await contactResponse.json();
-        initialContactCount = contactData.total || 0;
-      }
-    } catch (error) {
-      initialContactCount = 0;
-    }
-
-    try {
-      const clientResponse = await request.get(`${backendBaseUrl}/api/v1/clients?limit=1`);
-      if (clientResponse.ok()) {
-        const clientData = await clientResponse.json();
-        initialClientCount = clientData.total || 0;
-      }
-    } catch (error) {
-      initialClientCount = 0;
-    }
-
-    try {
-      const noteResponse = await request.get(`${backendBaseUrl}/api/v1/notes?limit=1`);
-      if (noteResponse.ok()) {
-        const noteData = await noteResponse.json();
-        initialNoteCount = noteData.total || 0;
-      }
-    } catch (error) {
-      initialNoteCount = 0;
-    }
+    // Get all initial counts at once using the utility
+    initialCounts = await apiUtils.getAllEntityCounts();
+    initialApplicationCount = initialCounts.applications;
+    initialCompanyCount = initialCounts.companies;
+    initialContactCount = initialCounts.contacts;
+    initialClientCount = initialCounts.clients;
+    initialNoteCount = initialCounts.notes;
   });
 
-  test('test_home - Click Home Navigation, Add Application button, then Cancel', async ({ page }) => {
+  test('test_home - Click Home Navigation, Add Application button, then Cancel', async ({ page, request }) => {
     // 1. Click the Home Navigation
     await homePage.navigate();
     await homePage.verifyPageLoaded();
@@ -170,9 +132,12 @@ test.describe('Wizard Tests', () => {
 
     // Verify we're back at applications page
     await applicationsPage.verifyPageLoaded();
+
+    // Verify no applications were created
+    await apiUtils.verifyEntityCount('applications', initialApplicationCount);
   });
 
-  test('test_application - Click Applications Navigation, Add button, then Cancel', async ({ page }) => {
+  test('test_application - Click Applications Navigation, Add button, then Cancel', async ({ page, request }) => {
     // 1. Click the Applications Navigation
     await applicationsPage.navigate();
     await applicationsPage.verifyPageLoaded();
@@ -184,9 +149,12 @@ test.describe('Wizard Tests', () => {
     await wizardStep1Page.cancel();
     // Verify we're back at applications page
     await applicationsPage.verifyPageLoaded();
+
+    // Verify no applications were created
+    await apiUtils.verifyEntityCount('applications', initialApplicationCount);
   });
 
-  test('test_companies - Click Companies Navigation, Add button, populate all fields, then Cancel', async ({ page }) => {
+  test('test_companies - Click Companies Navigation, Add button, populate all fields, then Cancel', async ({ page, request }) => {
     // 1. Click the Companies Navigation
     await companiesPage.navigate();
     await companiesPage.verifyPageLoaded();
@@ -211,9 +179,12 @@ test.describe('Wizard Tests', () => {
     await companyFormPage.cancel();
     // Verify we're back at companies page
     await companiesPage.verifyPageLoaded();
+
+    // Verify no companies were created
+    await apiUtils.verifyEntityCount('companies', initialCompanyCount);
   });
 
-  test('test_contacts - Click Contacts Navigation, Add button, populate all fields, then Cancel', async ({ page }) => {
+  test('test_contacts - Click Contacts Navigation, Add button, populate all fields, then Cancel', async ({ page, request }) => {
     // 1. Click the Contacts Navigation
     await contactsPage.navigate();
     await contactsPage.verifyPageLoaded();
@@ -237,9 +208,12 @@ test.describe('Wizard Tests', () => {
     await contactFormPage.cancel();
     // Verify we're back at contacts page
     await contactsPage.verifyPageLoaded();
+
+    // Verify no contacts were created
+    await apiUtils.verifyEntityCount('contacts', initialContactCount);
   });
 
-  test('test_clients - Click Clients Navigation, Add button, populate all fields, then Cancel', async ({ page }) => {
+  test('test_clients - Click Clients Navigation, Add button, populate all fields, then Cancel', async ({ page, request }) => {
     // 1. Click the Clients Navigation
     await clientsPage.navigate();
     await clientsPage.verifyPageLoaded();
@@ -258,9 +232,12 @@ test.describe('Wizard Tests', () => {
     await clientFormPage.cancel();
     // Verify we're back at clients page
     await clientsPage.verifyPageLoaded();
+
+    // Verify no clients were created
+    await apiUtils.verifyEntityCount('clients', initialClientCount);
   });
 
-  test('test_notes - Click Notes Navigation, verify there are no notes', async ({ page }) => {
+  test('test_notes - Click Notes Navigation, verify there are no notes', async ({ page, request }) => {
     // 1. Click the Notes Navigation
     await notesPage.navigate();
     await notesPage.verifyPageLoaded();
@@ -280,108 +257,110 @@ test.describe('Wizard Tests', () => {
       // If neither is visible, assume no notes
       expect(true).toBe(true);
     }
+
+    // Verify no notes were created
+    await apiUtils.verifyEntityCount('notes', initialNoteCount);
   });
 
-  test('test_job_search_sites - Click Job Search Sites Navigation, verify all Names and URLs', async ({ page }) => {
-    // 1. Click the Job Search Sites Navigation
+  test('test_job_search_sites_api - Click Job Search Sites Navigation, verify all Names and URLs against API', async ({ page, request }) => {
+    // 1. Get job search sites from API
+    const apiSites = await apiUtils.getJobSearchSites({ include_deleted: false });
+    
+    // 2. Click the Job Search Sites Navigation
     await jobSearchSitesPage.navigate();
     await jobSearchSitesPage.verifyPageLoaded();
-    // 2. Verify all of the Names and URLs
-    // Check if there are any sites
-    const hasSites = await jobSearchSitesPage.sitesTable.isVisible().catch(() => false);
-    const isEmpty = await jobSearchSitesPage.emptyState.isVisible().catch(() => false);
-
-    if (hasSites) {
-      // Get all site rows
+    
+    // 3. Verify page content matches API data
+    if (apiSites.data.length === 0) {
+      // If no sites in API, verify empty state is shown
+      await expect(jobSearchSitesPage.emptyState).toBeVisible();
+    } else {
+      // Verify table is visible
+      await expect(jobSearchSitesPage.sitesTable).toBeVisible();
+      
+      // Get all site rows from the page
       const siteRows = jobSearchSitesPage.sitesTable.locator('tbody tr');
       const rowCount = await siteRows.count();
-
-      // Verify each row has a name and URL (or N/A for URL)
+      
+      // Verify row count matches API data
+      expect(rowCount).toBe(apiSites.data.length);
+      
+      // Verify each row matches API data
       for (let i = 0; i < rowCount; i++) {
         const row = siteRows.nth(i);
+        const apiSite = apiSites.data[i];
         
-        // Verify name exists (should be in first column or link)
+        // Verify name matches
         const nameLink = row.locator('a').first();
         await expect(nameLink).toBeVisible();
         const nameText = await nameLink.textContent();
-        expect(nameText).toBeTruthy();
-        expect(nameText?.trim().length).toBeGreaterThan(0);
-
-        // Verify URL exists (either in second column for desktop or in mobile view)
-        // Check desktop view first
+        expect(nameText?.trim()).toBe(apiSite.name);
+        
+        // Verify URL matches (or "N/A" if no URL)
         const urlCell = row.locator('td').nth(1);
-        const urlLink = urlCell.locator('a');
         const urlText = await urlCell.textContent();
-
-        // URL should either be a link or "N/A"
-        expect(urlText).toBeTruthy();
-        if (urlText !== 'N/A') {
+        
+        if (apiSite.url) {
+          const urlLink = urlCell.locator('a');
           await expect(urlLink).toBeVisible();
           const href = await urlLink.getAttribute('href');
-          expect(href).toBeTruthy();
+          expect(href).toBe(apiSite.url);
+        } else {
+          expect(urlText?.trim()).toBe('N/A');
         }
       }
-    } else if (isEmpty) {
-      // If empty state is shown, that's also valid - just verify it
-      await expect(jobSearchSitesPage.emptyState).toBeVisible();
     }
   });
 
-  test('test_no_data - Verify no applications, companies, contacts, clients, or notes were created', async ({ request }) => {
-    // 1. Verify no applications were created
-    try {
-      const appResponse = await request.get(`${backendBaseUrl}/api/v1/applications?limit=1`);
-      if (appResponse.ok()) {
-        const appData = await appResponse.json();
-        const finalApplicationCount = appData.total || 0;
-        expect(finalApplicationCount).toBe(initialApplicationCount);
+  test('test_job_search_sites_db - Click Job Search Sites Navigation, verify all Names and URLs against database', async ({ page }) => {
+    // 1. Get job search sites directly from database using the utility
+    const dbSites = await dbUtils.getJobSearchSites(false);
+    
+    // 2. Click the Job Search Sites Navigation
+    await jobSearchSitesPage.navigate();
+    await jobSearchSitesPage.verifyPageLoaded();
+    
+    // 3. Verify page content matches database data
+    if (dbSites.length === 0) {
+      // If no sites in database, verify empty state is shown
+      await expect(jobSearchSitesPage.emptyState).toBeVisible();
+    } else {
+      // Verify table is visible
+      await expect(jobSearchSitesPage.sitesTable).toBeVisible();
+      
+      // Get all site rows from the page
+      const siteRows = jobSearchSitesPage.sitesTable.locator('tbody tr');
+      const rowCount = await siteRows.count();
+      
+      // Verify row count matches database data
+      expect(rowCount).toBe(dbSites.length);
+      
+      // Verify each row matches database data
+      for (let i = 0; i < rowCount; i++) {
+        const row = siteRows.nth(i);
+        const dbSite = dbSites[i];
+        
+        // Verify name matches
+        const nameLink = row.locator('a').first();
+        await expect(nameLink).toBeVisible();
+        const nameText = await nameLink.textContent();
+        expect(nameText?.trim()).toBe(dbSite.name);
+        
+        // Verify URL matches (or "N/A" if no URL)
+        const urlCell = row.locator('td').nth(1);
+        
+        if (dbSite.url) {
+          // The URL cell contains a link to the external URL
+          const urlLink = urlCell.locator('a');
+          await expect(urlLink).toBeVisible();
+          const href = await urlLink.getAttribute('href');
+          expect(href).toBe(dbSite.url);
+        } else {
+          // If no URL, should show 'N/A'
+          const urlText = await urlCell.textContent();
+          expect(urlText?.trim()).toBe('N/A');
+        }
       }
-    } catch (error) {
-      console.warn('Failed to verify application count:', error);
-    }
-    // 2. Verify no companies were created
-    try {
-      const companyResponse = await request.get(`${backendBaseUrl}/api/v1/companies?limit=1`);
-      if (companyResponse.ok()) {
-        const companyData = await companyResponse.json();
-        const finalCompanyCount = companyData.total || 0;
-        expect(finalCompanyCount).toBe(initialCompanyCount);
-      }
-    } catch (error) {
-      console.warn('Failed to verify company count:', error);
-    }
-    // 3. Verify no contacts were created
-    try {
-      const contactResponse = await request.get(`${backendBaseUrl}/api/v1/contacts?limit=1`);
-      if (contactResponse.ok()) {
-        const contactData = await contactResponse.json();
-        const finalContactCount = contactData.total || 0;
-        expect(finalContactCount).toBe(initialContactCount);
-      }
-    } catch (error) {
-      console.warn('Failed to verify contact count:', error);
-    }
-    // 4. Verify no clients were created
-    try {
-      const clientResponse = await request.get(`${backendBaseUrl}/api/v1/clients?limit=1`);
-      if (clientResponse.ok()) {
-        const clientData = await clientResponse.json();
-        const finalClientCount = clientData.total || 0;
-        expect(finalClientCount).toBe(initialClientCount);
-      }
-    } catch (error) {
-      console.warn('Failed to verify client count:', error);
-    }
-    // 5. Verify no notes were created
-    try {
-      const noteResponse = await request.get(`${backendBaseUrl}/api/v1/notes?limit=1`);
-      if (noteResponse.ok()) {
-        const noteData = await noteResponse.json();
-        const finalNoteCount = noteData.total || 0;
-        expect(finalNoteCount).toBe(initialNoteCount);
-      }
-    } catch (error) {
-      console.warn('Failed to verify note count:', error);
     }
   });
 });

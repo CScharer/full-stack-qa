@@ -10,7 +10,10 @@ import { ClientFormPage } from '../page-objects/ClientFormPage';
 import { NotesPage } from '../page-objects/NotesPage';
 import { JobSearchSitesPage } from '../page-objects/JobSearchSitesPage';
 import { WizardStep1Page } from '../page-objects/WizardStep1Page';
-import { getBackendUrl } from '../../../config/port-config';
+import { CypressApiRequestUtility } from '../support/api-utils';
+import { CypressDbUtility } from '../support/db-utils';
+import type { EntityCounts } from '../../../lib/api-utils';
+import type { JobSearchSite } from '../../../lib/db-utils';
 
 /**
  * Wizard Test - Navigate through all pages and verify cancel functionality
@@ -72,7 +75,9 @@ describe('Wizard Tests', () => {
   let notesPage: NotesPage;
   let jobSearchSitesPage: JobSearchSitesPage;
   let wizardStep1Page: WizardStep1Page;
-  let backendBaseUrl: string;
+  let apiUtils: CypressApiRequestUtility;
+  let dbUtils: CypressDbUtility;
+  let initialCounts: EntityCounts;
   let initialApplicationCount: number;
   let initialCompanyCount: number;
   let initialContactCount: number;
@@ -96,78 +101,23 @@ describe('Wizard Tests', () => {
     jobSearchSitesPage = new JobSearchSitesPage();
     wizardStep1Page = new WizardStep1Page();
 
-    // Determine backend URL based on environment
-    // Priority 1: Use BACKEND_URL env var if provided (allows CI/CD override)
-    // Priority 2: Use environment from Cypress.env (set in cypress.config.ts from process.env.ENVIRONMENT)
-    // Priority 3: Fallback to 'dev' to match other scripts
-    // Note: process.env is not available in browser context, so we use Cypress.env()
-    if (Cypress.env('BACKEND_URL')) {
-      backendBaseUrl = Cypress.env('BACKEND_URL') as string;
-    } else {
-      const environment = (Cypress.env('ENVIRONMENT') || 'dev') as string;
-      backendBaseUrl = getBackendUrl(environment);
-    }
+    // Initialize API request utility
+    // Environment and backend URL are automatically detected from Cypress.env()
+    // No need to manually extract - the utility handles it internally
+    apiUtils = new CypressApiRequestUtility();
 
-    // Get initial counts for all entities via API
-    // Use aliases to store the counts for later use
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/applications?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        initialApplicationCount = response.body.total || 0;
-      } else {
-        initialApplicationCount = 0;
-      }
-    });
+    // Initialize database utility
+    // Environment is automatically detected from Cypress.env()
+    dbUtils = new CypressDbUtility();
 
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/companies?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        initialCompanyCount = response.body.total || 0;
-      } else {
-        initialCompanyCount = 0;
-      }
-    });
-
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/contacts?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        initialContactCount = response.body.total || 0;
-      } else {
-        initialContactCount = 0;
-      }
-    });
-
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/clients?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        initialClientCount = response.body.total || 0;
-      } else {
-        initialClientCount = 0;
-      }
-    });
-
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/notes?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        initialNoteCount = response.body.total || 0;
-      } else {
-        initialNoteCount = 0;
-      }
+    // Get all initial counts at once using the utility
+    apiUtils.getAllEntityCounts().then((counts) => {
+      initialCounts = counts;
+      initialApplicationCount = counts.applications;
+      initialCompanyCount = counts.companies;
+      initialContactCount = counts.contacts;
+      initialClientCount = counts.clients;
+      initialNoteCount = counts.notes;
     });
   });
 
@@ -187,6 +137,9 @@ describe('Wizard Tests', () => {
 
     // Verify we're back at applications page
     applicationsPage.verifyPageLoaded();
+
+    // Verify no applications were created
+    apiUtils.verifyEntityCount('applications', initialApplicationCount);
   });
 
   it('test_application - Click Applications Navigation, Add button, then Cancel', () => {
@@ -201,6 +154,9 @@ describe('Wizard Tests', () => {
     wizardStep1Page.cancel();
     // Verify we're back at applications page
     applicationsPage.verifyPageLoaded();
+
+    // Verify no applications were created
+    apiUtils.verifyEntityCount('applications', initialApplicationCount);
   });
 
   it('test_companies - Click Companies Navigation, Add button, populate all fields, then Cancel', () => {
@@ -228,6 +184,9 @@ describe('Wizard Tests', () => {
     companyFormPage.cancel();
     // Verify we're back at companies page
     companiesPage.verifyPageLoaded();
+
+    // Verify no companies were created
+    apiUtils.verifyEntityCount('companies', initialCompanyCount);
   });
 
   it('test_contacts - Click Contacts Navigation, Add button, populate all fields, then Cancel', () => {
@@ -254,6 +213,9 @@ describe('Wizard Tests', () => {
     contactFormPage.cancel();
     // Verify we're back at contacts page
     contactsPage.verifyPageLoaded();
+
+    // Verify no contacts were created
+    apiUtils.verifyEntityCount('contacts', initialContactCount);
   });
 
   it('test_clients - Click Clients Navigation, Add button, populate all fields, then Cancel', () => {
@@ -275,6 +237,9 @@ describe('Wizard Tests', () => {
     clientFormPage.cancel();
     // Verify we're back at clients page
     clientsPage.verifyPageLoaded();
+
+    // Verify no clients were created
+    apiUtils.verifyEntityCount('clients', initialClientCount);
   });
 
   it('test_notes - Click Notes Navigation, verify there are no notes', () => {
@@ -297,114 +262,99 @@ describe('Wizard Tests', () => {
         cy.wrap(true).should('be.true');
       }
     });
+
+    // Verify no notes were created
+    apiUtils.verifyEntityCount('notes', initialNoteCount);
   });
 
-  it('test_job_search_sites - Click Job Search Sites Navigation, verify all Names and URLs', () => {
-    // 1. Click the Job Search Sites Navigation
-    jobSearchSitesPage.navigate();
-    jobSearchSitesPage.verifyPageLoaded();
-    // 2. Verify all of the Names and URLs
-    // Check if there are any sites
-    cy.get('body').then(($body) => {
-      const hasSites = $body.find('[data-qa="job-search-sites-table"]').length > 0;
-      const isEmpty = $body.find('[data-qa="job-search-sites-empty-state"]').length > 0;
-
-      if (hasSites) {
-        // Get all site rows
-        cy.get('[data-qa="job-search-sites-table"]').find('tbody tr').then(($rows) => {
-          const rowCount = $rows.length;
-
-          // Verify each row has a name and URL (or N/A for URL)
-          for (let i = 0; i < rowCount; i++) {
-            cy.get('[data-qa="job-search-sites-table"]').find('tbody tr').eq(i).within(() => {
-              // Verify name exists (should be in first column or link)
-              cy.get('a').first().should('be.visible').then(($link) => {
-                const nameText = $link.text();
-                expect(nameText).to.be.a('string');
-                expect(nameText.trim().length).to.be.greaterThan(0);
-              });
-
-              // Verify URL exists (either in second column for desktop or in mobile view)
-              // Check desktop view first
-              cy.get('td').eq(1).then(($cell) => {
-                const urlText = $cell.text();
-                expect(urlText).to.be.a('string');
-                if (urlText !== 'N/A') {
-                  cy.get('a').should('be.visible').then(($urlLink) => {
-                    const href = $urlLink.attr('href');
-                    expect(href).to.be.a('string');
-                    expect(href).to.not.be.empty;
-                  });
-                }
-              });
-            });
-          }
-        });
-      } else if (isEmpty) {
-        // If empty state is shown, that's also valid - just verify it
+  it('test_job_search_sites_api - Click Job Search Sites Navigation, verify all Names and URLs against API', () => {
+    // 1. Get job search sites from API
+    apiUtils.getJobSearchSites({ include_deleted: false }).then((apiSites) => {
+      // 2. Click the Job Search Sites Navigation
+      jobSearchSitesPage.navigate();
+      jobSearchSitesPage.verifyPageLoaded();
+      
+      // 3. Verify page content matches API data
+      if (apiSites.data.length === 0) {
+        // If no sites in API, verify empty state is shown
         cy.get('[data-qa="job-search-sites-empty-state"]').should('be.visible');
+      } else {
+        // Verify table is visible
+        cy.get('[data-qa="job-search-sites-table"]').should('be.visible');
+        
+        // Get all site rows from the page
+        cy.get('[data-qa="job-search-sites-table"]').find('tbody tr').should('have.length', apiSites.data.length);
+        
+        // Verify each row matches API data
+        apiSites.data.forEach((apiSite: any, index: number) => {
+          cy.get('[data-qa="job-search-sites-table"]').find('tbody tr').eq(index).within(() => {
+            // Verify name matches
+            cy.get('a').first().should('be.visible').then(($link) => {
+              const nameText = $link.text().trim();
+              expect(nameText).to.equal(apiSite.name);
+            });
+            
+            // Verify URL matches (or "N/A" if no URL)
+            cy.get('td').eq(1).then(($cell) => {
+              const urlText = $cell.text().trim();
+              
+              if (apiSite.url) {
+                cy.get('a').should('be.visible').then(($urlLink) => {
+                  const href = $urlLink.attr('href');
+                  expect(href).to.equal(apiSite.url);
+                });
+              } else {
+                expect(urlText).to.equal('N/A');
+              }
+            });
+          });
+        });
       }
     });
   });
 
-  it('test_no_data - Verify no applications, companies, contacts, clients, or notes were created', () => {
-    // 1. Verify no applications were created
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/applications?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        const finalApplicationCount = response.body.total || 0;
-        expect(finalApplicationCount).to.equal(initialApplicationCount);
-      }
-    });
-    
-    // 2. Verify no companies were created
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/companies?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        const finalCompanyCount = response.body.total || 0;
-        expect(finalCompanyCount).to.equal(initialCompanyCount);
-      }
-    });
-    
-    // 3. Verify no contacts were created
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/contacts?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        const finalContactCount = response.body.total || 0;
-        expect(finalContactCount).to.equal(initialContactCount);
-      }
-    });
-    
-    // 4. Verify no clients were created
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/clients?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        const finalClientCount = response.body.total || 0;
-        expect(finalClientCount).to.equal(initialClientCount);
-      }
-    });
-    
-    // 5. Verify no notes were created
-    cy.request({
-      method: 'GET',
-      url: `${backendBaseUrl}/api/v1/notes?limit=1`,
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200 && response.body) {
-        const finalNoteCount = response.body.total || 0;
-        expect(finalNoteCount).to.equal(initialNoteCount);
+  it('test_job_search_sites_db - Click Job Search Sites Navigation, verify all Names and URLs against database', () => {
+    // 1. Get job search sites directly from database using the utility
+    dbUtils.getJobSearchSites(false).then((dbSites: JobSearchSite[]) => {
+      // 2. Click the Job Search Sites Navigation
+      jobSearchSitesPage.navigate();
+      jobSearchSitesPage.verifyPageLoaded();
+      
+      // 3. Verify page content matches database data
+      if (dbSites.length === 0) {
+        // If no sites in database, verify empty state is shown
+        cy.get('[data-qa="job-search-sites-empty-state"]').should('be.visible');
+      } else {
+        // Verify table is visible
+        cy.get('[data-qa="job-search-sites-table"]').should('be.visible');
+        
+        // Get all site rows from the page
+        cy.get('[data-qa="job-search-sites-table"]').find('tbody tr').should('have.length', dbSites.length);
+        
+        // Verify each row matches database data
+        dbSites.forEach((dbSite: JobSearchSite, index: number) => {
+          cy.get('[data-qa="job-search-sites-table"]').find('tbody tr').eq(index).within(() => {
+            // Verify name matches
+            cy.get('a').first().should('be.visible').then(($link) => {
+              const nameText = $link.text().trim();
+              expect(nameText).to.equal(dbSite.name);
+            });
+            
+            // Verify URL matches (or "N/A" if no URL)
+            cy.get('td').eq(1).within(() => {
+              if (dbSite.url) {
+                // The URL cell contains a link to the external URL
+                cy.get('a').should('be.visible').then(($urlLink) => {
+                  const href = $urlLink.attr('href');
+                  expect(href).to.equal(dbSite.url);
+                });
+              } else {
+                // If no URL, should show 'N/A'
+                cy.contains('N/A');
+              }
+            });
+          });
+        });
       }
     });
   });
