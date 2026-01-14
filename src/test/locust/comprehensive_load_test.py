@@ -12,6 +12,19 @@ import json
 import random
 import logging
 import os
+import sys
+from pathlib import Path
+
+# Add project root to path to import shared config
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+try:
+    from config.port_config import get_api_base_path
+    API_BASE_PATH = get_api_base_path()
+except ImportError:
+    # Fallback if config not available
+    API_BASE_PATH = "/api/v1"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,22 +43,22 @@ class UserJourney(SequentialTaskSet):
     @task
     def step2_browse_applications(self):
         """Step 2: Browse all applications"""
-        self.client.get("/api/v1/applications", name="2. Browse Applications")
+        self.client.get(f"{API_BASE_PATH}/applications", name="2. Browse Applications")
 
     @task
     def step3_browse_companies(self):
         """Step 3: Browse all companies"""
-        self.client.get("/api/v1/companies", name="3. Browse Companies")
+        self.client.get(f"{API_BASE_PATH}/companies", name="3. Browse Companies")
 
     @task
     def step4_browse_contacts(self):
         """Step 4: Browse all contacts"""
-        self.client.get("/api/v1/contacts", name="4. Browse Contacts")
+        self.client.get(f"{API_BASE_PATH}/contacts", name="4. Browse Contacts")
 
     @task
     def step5_browse_notes(self):
         """Step 5: Browse all notes"""
-        self.client.get("/api/v1/notes", name="5. Browse Notes")
+        self.client.get(f"{API_BASE_PATH}/notes", name="5. Browse Notes")
 
 
 class ComprehensiveUser(HttpUser):

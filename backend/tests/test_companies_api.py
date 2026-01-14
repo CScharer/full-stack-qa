@@ -3,6 +3,9 @@ Tests for Companies API endpoints.
 """
 import pytest
 from fastapi.testclient import TestClient
+from conftest import api_url
+
+ENDPOINT: str = "/companies"
 
 
 def test_create_company(client: TestClient):
@@ -16,7 +19,7 @@ def test_create_company(client: TestClient):
         "modified_by": "test@example.com"
     }
     
-    response = client.post("/api/v1/companies", json=company_data)
+    response = client.post(api_url(ENDPOINT), json=company_data)
     assert response.status_code == 201
     data = response.json()
     assert data["name"] == "Test Company"
@@ -30,10 +33,10 @@ def test_get_company(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/companies", json=company_data)
+    create_response = client.post(api_url(ENDPOINT), json=company_data)
     company_id = create_response.json()["id"]
     
-    response = client.get(f"/api/v1/companies/{company_id}")
+    response = client.get(api_url(f"{ENDPOINT}/{company_id}"))
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == company_id
@@ -47,9 +50,9 @@ def test_list_companies(client: TestClient):
             "created_by": "test@example.com",
             "modified_by": "test@example.com"
         }
-        client.post("/api/v1/companies", json=company_data)
+        client.post(api_url(ENDPOINT), json=company_data)
     
-    response = client.get("/api/v1/companies")
+    response = client.get(api_url(ENDPOINT))
     assert response.status_code == 200
     data = response.json()
     assert "data" in data
@@ -63,14 +66,14 @@ def test_update_company(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/companies", json=company_data)
+    create_response = client.post(api_url(ENDPOINT), json=company_data)
     company_id = create_response.json()["id"]
     
     update_data = {
         "name": "Updated Name",
         "modified_by": "test@example.com"
     }
-    response = client.put(f"/api/v1/companies/{company_id}", json=update_data)
+    response = client.put(api_url(f"{ENDPOINT}/{company_id}"), json=update_data)
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Updated Name"
@@ -83,11 +86,11 @@ def test_delete_company(client: TestClient):
         "created_by": "test@example.com",
         "modified_by": "test@example.com"
     }
-    create_response = client.post("/api/v1/companies", json=company_data)
+    create_response = client.post(api_url(ENDPOINT), json=company_data)
     company_id = create_response.json()["id"]
     
-    response = client.delete(f"/api/v1/companies/{company_id}")
+    response = client.delete(api_url(f"{ENDPOINT}/{company_id}"))
     assert response.status_code == 204
     
-    get_response = client.get(f"/api/v1/companies/{company_id}")
+    get_response = client.get(api_url(f"{ENDPOINT}/{company_id}"))
     assert get_response.status_code == 404

@@ -10,6 +10,19 @@ Tests internal API performance under concurrent user load:
 from locust import HttpUser, task, between, events
 import json
 import logging
+import sys
+from pathlib import Path
+
+# Add project root to path to import shared config
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+try:
+    from config.port_config import get_api_base_path
+    API_BASE_PATH = get_api_base_path()
+except ImportError:
+    # Fallback if config not available
+    API_BASE_PATH = "/api/v1"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -36,7 +49,7 @@ class ApiUser(HttpUser):
     def get_applications(self):
         """GET /api/v1/applications - Retrieve all job applications"""
         with self.client.get(
-            "/api/v1/applications",
+            f"{API_BASE_PATH}/applications",
             catch_response=True,
             name="GET /applications"
         ) as response:
@@ -49,7 +62,7 @@ class ApiUser(HttpUser):
     def get_companies(self):
         """GET /api/v1/companies - Retrieve all companies"""
         with self.client.get(
-            "/api/v1/companies",
+            f"{API_BASE_PATH}/companies",
             catch_response=True,
             name="GET /companies"
         ) as response:
@@ -75,7 +88,7 @@ class ApiUser(HttpUser):
     def get_contacts(self):
         """GET /api/v1/contacts - Retrieve all contacts"""
         with self.client.get(
-            "/api/v1/contacts",
+            f"{API_BASE_PATH}/contacts",
             catch_response=True,
             name="GET /contacts"
         ) as response:

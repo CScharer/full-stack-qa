@@ -23,9 +23,11 @@ Port assignments are documented in `docs/new_app/ONE_GOAL.md` and enforced via `
 The `config/environments.json` file contains comprehensive configuration for all environments including:
 - Ports and URLs (frontend/backend)
 - Database paths and naming patterns
-- API endpoints (`/api/v1`, `/health`, etc.)
+- API endpoints (base path `/api/v1` is configurable via `api.basePath`)
 - CORS origins
 - Timeout values
+
+**API Version Configuration**: The API base path (e.g., `/api/v1`) is centralized in `config/environments.json` under `api.basePath`. All code (backend, frontend, tests, scripts) reads from this single source of truth. To change the API version, update `api.basePath` in the config file. See `config/README.md` for details.
 
 The `config/ports.json` file is maintained for backward compatibility (ports only).
 

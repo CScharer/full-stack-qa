@@ -3,6 +3,7 @@ Tests for main FastAPI application.
 """
 import pytest
 from fastapi.testclient import TestClient
+from conftest import api_url
 
 
 def test_root_endpoint(client: TestClient):
@@ -33,7 +34,7 @@ def test_openapi_docs_available(client: TestClient):
 
 def test_openapi_json_available(client: TestClient):
     """Test that OpenAPI JSON schema is accessible."""
-    response = client.get("/api/v1/openapi.json")
+    response = client.get(api_url("/openapi.json"))
     assert response.status_code == 200
     data = response.json()
     assert "openapi" in data

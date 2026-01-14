@@ -9,6 +9,34 @@ import tempfile
 import shutil
 from pathlib import Path
 
+# Import shared config to get API base path
+from config.port_config import get_api_base_path
+
+# Get API base path from config (e.g., "/api/v1")
+# This is the single source of truth for API paths in tests
+API_BASE_PATH = get_api_base_path()
+
+
+def api_url(endpoint: str) -> str:
+    """
+    Build full API URL from endpoint.
+    
+    Args:
+        endpoint: API endpoint path (e.g., "/applications", "/companies/1")
+    
+    Returns:
+        Full API URL (e.g., "/api/v1/applications", "/api/v1/companies/1")
+    
+    Examples:
+        api_url("/applications") -> "/api/v1/applications"
+        api_url("/companies/1") -> "/api/v1/companies/1"
+        api_url("/notes?application_id=1") -> "/api/v1/notes?application_id=1"
+    """
+    # Ensure endpoint starts with /
+    if not endpoint.startswith('/'):
+        endpoint = '/' + endpoint
+    return f"{API_BASE_PATH}{endpoint}"
+
 
 @pytest.fixture(scope="session")
 def test_db_path():
