@@ -17,6 +17,64 @@ This framework now supports **6 different UI testing tools**:
 
 ---
 
+## 🔧 Shared Configuration
+
+All test frameworks use **`config/environments.json`** as the single source of truth for environment configuration (ports, URLs, database, timeouts, CORS). This ensures consistency across all frameworks and eliminates hardcoded values.
+
+### Configuration Files
+
+- **`config/environments.json`** - Single source of truth for all environment configuration
+- **`config/port-config.ts`** - Shared TypeScript utility (used by Cypress, Playwright, Vibium, Frontend)
+- **`config/port_config.py`** - Shared Python utility (used by Robot Framework, Backend)
+- **`src/test/java/com/cjs/qa/config/EnvironmentConfig.java`** - Java utility (optional, for newer Selenium/Java tests)
+
+### Standardized Environment Variables
+
+All frameworks use consistent environment variable naming:
+
+- **`BASE_URL`** - Frontend/base URL (all frameworks)
+- **`BACKEND_URL`** - Backend API URL (for API calls)
+- **`ENVIRONMENT`** - Environment name (dev, test, prod)
+
+### Framework-Specific Usage
+
+**TypeScript Frameworks (Cypress, Playwright, Vibium):**
+```typescript
+import { getBackendUrl, getFrontendUrl } from '../config/port-config';
+// or
+import { getBackendUrl, getFrontendUrl } from '../../config/port-config';
+
+const backendUrl = getBackendUrl('dev'); // Uses config/environments.json
+const frontendUrl = getFrontendUrl('test'); // Uses config/environments.json
+```
+
+**Robot Framework:**
+```robotframework
+Library    ${CURDIR}${/}ConfigHelper.py
+${base_url}=    Get Base Url From Shared Config
+```
+
+**Selenium/Java (Optional):**
+```java
+import com.cjs.qa.config.EnvironmentConfig;
+
+String baseUrl = EnvironmentConfig.getFrontendUrl(); // Uses config/environments.json
+String backendUrl = EnvironmentConfig.getBackendUrl(); // Uses config/environments.json
+```
+
+### TypeScript Base Configuration
+
+All TypeScript frameworks (Cypress, Playwright, Vibium) extend a shared base configuration:
+
+- **`tsconfig.base.json`** - Common TypeScript compiler options
+- Each framework's `tsconfig.json` extends the base and adds framework-specific options
+
+This reduces duplication and ensures consistent TypeScript compilation across all frameworks.
+
+For more details, see [Configuration Directory README](../../../config/README.md).
+
+---
+
 ## Cypress
 
 ### Overview
