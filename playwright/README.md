@@ -63,6 +63,9 @@ npm run test:debug
 
 - `tests/` - Test files (.spec.ts)
 - `tests/pages/` - Page Object Model classes
+- `helpers/` - Helper utilities
+  - `api-utils.ts` - API request utility adapter
+  - `db-utils.ts` - Database query utility adapter
 - `playwright.config.ts` - Configuration
 
 ## Configuration
@@ -73,6 +76,24 @@ Edit `playwright.config.ts` to modify:
 - Screenshot/video settings
 - Browser projects
 - Parallel execution
+
+## Test Name Consistency
+
+Test suite and test case names are centralized in `lib/test-utils.json` to ensure consistency across frameworks. Playwright tests use `lib/test-utils.ts` which reads from this JSON file.
+
+**Usage:**
+```typescript
+import { getTestSuite } from '../../lib/test-utils';
+
+const wizard = getTestSuite('wizard');
+test.describe(wizard.suiteName, () => {
+  test(wizard.tests.test_home, async ({ page }) => {
+    // test implementation
+  });
+});
+```
+
+This ensures test names are consistent between Cypress and Playwright implementations.
 
 ## Reports
 

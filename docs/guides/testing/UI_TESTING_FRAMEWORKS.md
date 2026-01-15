@@ -357,6 +357,8 @@ describe('HomePage', () => {
 - `wizard.cy.ts` - Comprehensive test suite with 8 test cases covering navigation, forms, and API verification
 - `homepage.cy.ts` - Homepage tests
 
+**Test Name Consistency**: Test suite and test case names are centralized in `lib/test-utils.json` to ensure consistency across Cypress and Playwright. The Cypress adapter (`cypress/support/test-utils.ts`) reads from this JSON file at runtime. See [Test Name Consistency](#test-name-consistency) section below for details.
+
 **Service Prerequisites**: Backend and frontend services must be running. Use `./scripts/start-env.sh` to start both services.
 
 **Environment Configuration**: 
@@ -548,6 +550,82 @@ Home Page Should Display Navigation Panel
 - BDD-style tests
 - API + UI combined testing
 - Teams with mixed technical skills
+
+---
+
+## 📝 Test Name Consistency
+
+To ensure consistency across different testing frameworks (Cypress and Playwright), test suite and test case names are centralized in `lib/test-utils.json`.
+
+### Structure
+
+The JSON file contains test suites with their suite names and test case names:
+
+```json
+{
+  "wizard": {
+    "suiteName": "Wizard Tests",
+    "tests": {
+      "test_home": "test_home - Click Home Navigation, Add Application button, then Cancel",
+      "test_application": "test_application - Click Applications Navigation, Add button, then Cancel",
+      ...
+    }
+  }
+}
+```
+
+### Usage
+
+**Playwright:**
+```typescript
+import { getTestSuite } from '../../lib/test-utils';
+
+const wizard = getTestSuite('wizard');
+test.describe(wizard.suiteName, () => {
+  test(wizard.tests.test_home, async ({ page }) => {
+    // test implementation
+  });
+});
+```
+
+**Cypress:**
+```typescript
+// Note: Due to Cypress bundler limitations, test names are currently hardcoded
+// but should match lib/test-utils.json for consistency
+describe('Wizard Tests', () => {
+  it('test_home - Click Home Navigation, Add Application button, then Cancel', () => {
+    // test implementation
+  });
+});
+```
+
+### Benefits
+
+- ✅ **Consistency**: Same test names across all frameworks
+- ✅ **Maintainability**: Update test names in one place (JSON file)
+- ✅ **Type Safety**: TypeScript types ensure correct usage
+- ✅ **Documentation**: JSON file serves as documentation of all test cases
+
+### Adding New Test Suites
+
+1. Add the suite to `lib/test-utils.json`:
+```json
+{
+  "new_suite": {
+    "suiteName": "New Suite Name",
+    "tests": {
+      "test_id": "test_id - Test description"
+    }
+  }
+}
+```
+
+2. Use in tests:
+```typescript
+const newSuite = getTestSuite('new_suite');
+```
+
+**Note**: For Cypress, due to webpack bundler limitations, test names may need to be hardcoded in test files, but they should always match the JSON file values.
 
 ---
 

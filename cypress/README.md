@@ -93,6 +93,9 @@ npx cypress run --browser chrome --headed --spec cypress/e2e/wizard.cy.ts
   - `ApplicationDetailPage.ts` - Detail page object
   - `WizardStep1Page.ts` - Wizard step 1 page object
 - `cypress/support/` - Custom commands and configuration (`.ts`)
+  - `api-utils.ts` - API request utility adapter
+  - `db-utils.ts` - Database query utility adapter
+  - `test-utils.ts` - Test name utilities adapter (reads from `lib/test-utils.json`)
 - `cypress/fixtures/` - Test data files
 - `tsconfig.json` - TypeScript configuration
 
@@ -249,6 +252,12 @@ Comprehensive test suite covering:
 npx cypress run --browser chrome --spec cypress/e2e/wizard.cy.ts
 ```
 
+## Test Name Consistency
+
+Test suite and test case names are centralized in `lib/test-utils.json` to ensure consistency across frameworks. The Cypress adapter (`cypress/support/test-utils.ts`) reads from this JSON file at runtime using Cypress tasks.
+
+**Note**: Due to Cypress's webpack bundler limitations with JSON imports, test names are currently hardcoded in test files but should match the values in `lib/test-utils.json` for consistency. The JSON file serves as the source of truth for test naming conventions.
+
 ## Alignment with Playwright
 
 The Cypress implementation is designed to match the Playwright implementation:
@@ -256,8 +265,10 @@ The Cypress implementation is designed to match the Playwright implementation:
 - ✅ Same test structure and coverage
 - ✅ Same `data-qa` selectors
 - ✅ Same test scenarios (wizard.cy.ts matches wizard.spec.ts)
+- ✅ Same test names (from `lib/test-utils.json`)
 
 **Key Differences:**
 - Cypress uses chainable commands vs Playwright's async/await
 - Cypress runs tests serially by default
 - Cypress uses `cy.request()` vs Playwright's `request` context
+- Cypress uses a task-based adapter for reading test names from JSON (due to bundler limitations)

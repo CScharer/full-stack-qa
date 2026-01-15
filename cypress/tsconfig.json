@@ -8,6 +8,6 @@
       "@/*": ["./cypress/*"]
     }
   },
-  "include": ["cypress/**/*.ts", "cypress/**/*.js", "cypress.config.ts", "../config/port-config.ts"],
+  "include": ["cypress/**/*.ts", "cypress/**/*.js", "cypress.config.ts", "../config/port-config.ts", "../lib/test-utils.ts"],
   "exclude": ["node_modules"]
 }

@@ -14,6 +14,7 @@ import { CypressApiRequestUtility } from '../support/api-utils';
 import { CypressDbUtility } from '../support/db-utils';
 import type { EntityCounts } from '../../../lib/api-utils';
 import type { JobSearchSite } from '../../../lib/db-utils';
+import { getTestSuite } from '../support/test-utils';
 
 /**
  * Wizard Test - Navigate through all pages and verify cancel functionality
@@ -60,7 +61,15 @@ import type { JobSearchSite } from '../../../lib/db-utils';
  *   # Then select wizard.cy.ts from the test list
  */
 
+let wizard: ReturnType<typeof getTestSuite> | null = null;
+
 describe('Wizard Tests', () => {
+  // Load test names from JSON file before tests run
+  before(() => {
+    cy.task('readTestUtilsJson').then((data: any) => {
+      wizard = getTestSuite('wizard', data);
+    });
+  });
   // Cypress runs tests serially by default, but we can use .only() if needed
   // Note: Tests are already serial by default in Cypress
   
