@@ -965,7 +965,9 @@ jobs:
       !cancelled() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
-      needs.determine-test-execution.outputs.be_env_test == 'true'
+      needs.determine-test-execution.outputs.be_env_test == 'true' &&
+      needs.gate-setup.result == 'success' &&
+      needs.gate-dev.result == 'success'
     with:
       environment: 'test'
       be_test_type: ${{ needs.determine-test-execution.outputs.be_test_mode }}
@@ -1005,7 +1007,9 @@ jobs:
       !cancelled() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
       needs.determine-test-execution.outputs.run_fs_tests == 'true' &&
-      needs.determine-test-execution.outputs.be_env_test == 'true'
+      needs.determine-test-execution.outputs.be_env_test == 'true' &&
+      needs.gate-setup.result == 'success' &&
+      needs.gate-dev.result == 'success'
     with:
       environment: 'test'
       artillery_test_type: 'smoke'  # Quick smoke test for CI/CD
