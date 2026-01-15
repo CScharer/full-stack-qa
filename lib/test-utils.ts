@@ -4,7 +4,8 @@
  * This file provides shared test names and descriptions used across multiple
  * testing frameworks (Cypress, Playwright) to ensure consistency.
  * 
- * Test names are stored in test-utils.json and can be accessed by suite name.
+ * Test names are defined as a TypeScript constant for compatibility with all bundlers.
+ * The test-utils.json file serves as a reference but the code uses the inline constant.
  * 
  * Usage:
  *   // In Cypress
@@ -26,7 +27,23 @@
  *   });
  */
 
-import testNamesData from './test-utils.json';
+// Test names data - defined as TypeScript constant for better bundler compatibility
+// This ensures it works correctly with Cypress's webpack bundler
+const testNamesData = {
+  wizard: {
+    suiteName: 'Wizard Tests',
+    tests: {
+      test_home: 'test_home - Click Home Navigation, Add Application button, then Cancel',
+      test_application: 'test_application - Click Applications Navigation, Add button, then Cancel',
+      test_companies: 'test_companies - Click Companies Navigation, Add button, populate all fields, then Cancel',
+      test_contacts: 'test_contacts - Click Contacts Navigation, Add button, populate all fields, then Cancel',
+      test_clients: 'test_clients - Click Clients Navigation, Add button, populate all fields, then Cancel',
+      test_notes: 'test_notes - Click Notes Navigation, verify there are no notes',
+      test_job_search_sites_api: 'test_job_search_sites_api - Click Job Search Sites Navigation, verify all Names and URLs against API',
+      test_job_search_sites_db: 'test_job_search_sites_db - Click Job Search Sites Navigation, verify all Names and URLs against database',
+    },
+  },
+} as const;
 
 /**
  * Test suite configuration structure

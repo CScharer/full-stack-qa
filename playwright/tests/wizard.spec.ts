@@ -14,6 +14,7 @@ import { PlaywrightApiRequestUtility } from '../helpers/api-utils';
 import { PlaywrightDbUtility } from '../helpers/db-utils';
 import type { EntityCounts } from '../../lib/api-utils';
 import type { JobSearchSite } from '../../lib/db-utils';
+import { getTestSuite } from '../../lib/test-utils';
 
 /**
  * Wizard Test - Navigate through all pages and verify cancel functionality
@@ -57,7 +58,10 @@ import type { JobSearchSite } from '../../lib/db-utils';
  * Run in UI mode (interactive):
  *   npx playwright test wizard.spec.ts --project=chromium --ui
  */
-test.describe('Wizard Tests', () => {
+// Get test suite configuration
+const wizard = getTestSuite('wizard');
+
+test.describe(wizard.suiteName, () => {
   // Configure tests to run serially (in order) instead of in parallel
   test.describe.configure({ mode: 'serial' });
 
@@ -116,7 +120,7 @@ test.describe('Wizard Tests', () => {
     initialNoteCount = initialCounts.notes;
   });
 
-  test('test_home - Click Home Navigation, Add Application button, then Cancel', async ({ page, request }) => {
+  test(wizard.tests.test_home, async ({ page, request }) => {
     // 1. Click the Home Navigation
     await homePage.navigate();
     await homePage.verifyPageLoaded();
@@ -137,7 +141,7 @@ test.describe('Wizard Tests', () => {
     await apiUtils.verifyEntityCount('applications', initialApplicationCount);
   });
 
-  test('test_application - Click Applications Navigation, Add button, then Cancel', async ({ page, request }) => {
+  test(wizard.tests.test_application, async ({ page, request }) => {
     // 1. Click the Applications Navigation
     await applicationsPage.navigate();
     await applicationsPage.verifyPageLoaded();
@@ -154,7 +158,7 @@ test.describe('Wizard Tests', () => {
     await apiUtils.verifyEntityCount('applications', initialApplicationCount);
   });
 
-  test('test_companies - Click Companies Navigation, Add button, populate all fields, then Cancel', async ({ page, request }) => {
+  test(wizard.tests.test_companies, async ({ page, request }) => {
     // 1. Click the Companies Navigation
     await companiesPage.navigate();
     await companiesPage.verifyPageLoaded();
@@ -184,7 +188,7 @@ test.describe('Wizard Tests', () => {
     await apiUtils.verifyEntityCount('companies', initialCompanyCount);
   });
 
-  test('test_contacts - Click Contacts Navigation, Add button, populate all fields, then Cancel', async ({ page, request }) => {
+  test(wizard.tests.test_contacts, async ({ page, request }) => {
     // 1. Click the Contacts Navigation
     await contactsPage.navigate();
     await contactsPage.verifyPageLoaded();
@@ -213,7 +217,7 @@ test.describe('Wizard Tests', () => {
     await apiUtils.verifyEntityCount('contacts', initialContactCount);
   });
 
-  test('test_clients - Click Clients Navigation, Add button, populate all fields, then Cancel', async ({ page, request }) => {
+  test(wizard.tests.test_clients, async ({ page, request }) => {
     // 1. Click the Clients Navigation
     await clientsPage.navigate();
     await clientsPage.verifyPageLoaded();
@@ -237,7 +241,7 @@ test.describe('Wizard Tests', () => {
     await apiUtils.verifyEntityCount('clients', initialClientCount);
   });
 
-  test('test_notes - Click Notes Navigation, verify there are no notes', async ({ page, request }) => {
+  test(wizard.tests.test_notes, async ({ page, request }) => {
     // 1. Click the Notes Navigation
     await notesPage.navigate();
     await notesPage.verifyPageLoaded();
@@ -262,7 +266,7 @@ test.describe('Wizard Tests', () => {
     await apiUtils.verifyEntityCount('notes', initialNoteCount);
   });
 
-  test('test_job_search_sites_api - Click Job Search Sites Navigation, verify all Names and URLs against API', async ({ page, request }) => {
+  test(wizard.tests.test_job_search_sites_api, async ({ page, request }) => {
     // 1. Get job search sites from API
     const apiSites = await apiUtils.getJobSearchSites({ include_deleted: false });
     
@@ -312,7 +316,7 @@ test.describe('Wizard Tests', () => {
     }
   });
 
-  test('test_job_search_sites_db - Click Job Search Sites Navigation, verify all Names and URLs against database', async ({ page }) => {
+  test(wizard.tests.test_job_search_sites_db, async ({ page }) => {
     // 1. Get job search sites directly from database using the utility
     const dbSites = await dbUtils.getJobSearchSites(false);
     
