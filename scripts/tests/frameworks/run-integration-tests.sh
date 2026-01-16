@@ -42,11 +42,11 @@ echo "✅ Python: $(python3 --version)"
 # Check environment-specific database exists
 # Integration tests use full_stack_qa_{environment}.db based on ENVIRONMENT
 DB_NAME="full_stack_qa_${ENVIRONMENT}.db"
-DB_PATH="$PROJECT_ROOT/Data/Core/$DB_NAME"
+DB_PATH="$PROJECT_ROOT/data/Core/$DB_NAME"
 if [ ! -f "$DB_PATH" ]; then
     echo "⚠️  Environment database not found: $DB_NAME"
     echo "   Creating $ENVIRONMENT environment database from schema..."
-    mkdir -p "$PROJECT_ROOT/Data/Core"
+    mkdir -p "$PROJECT_ROOT/data/Core"
     if [ -f "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql" ]; then
         sqlite3 "$DB_PATH" < "$PROJECT_ROOT/docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql"
         if [ -f "$PROJECT_ROOT/docs/new_app/DELETE_TRIGGERS.sql" ]; then

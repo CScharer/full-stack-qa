@@ -16,7 +16,7 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 - ✅ Schema designed and documented (`ONE_GOAL_SCHEMA_CORRECTED.sql`)
 - ✅ Relationships documented (`ENTITY_RELATIONSHIPS.md`)
 - ✅ Source of truth established (`SCHEMA_SOURCE_OF_TRUTH.md`)
-- ✅ **Schema database created** (`Data/Core/full_stack_qa.db` - template only)
+- ✅ **Schema database created** (`data/Core/full_stack_qa.db` - template only)
 - ✅ **Environment databases created** (`full_stack_qa_dev.db`, `full_stack_qa_test.db`)
 - ✅ **Comprehensive test suite** (62 tests covering schema, FKs, constraints, relationships, triggers)
 - ✅ **Delete triggers implemented** (`DELETE_TRIGGERS.sql`)
@@ -55,7 +55,7 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 **Completed**: 2025-12-14
 
 **What Was Done**:
-1. ✅ Created schema database at `Data/Core/full_stack_qa.db` (template)
+1. ✅ Created schema database at `data/Core/full_stack_qa.db` (template)
 2. ✅ Created environment databases (`full_stack_qa_dev.db`, `full_stack_qa_test.db`)
 2. ✅ Applied schema from `ONE_GOAL_SCHEMA_CORRECTED.sql`
 3. ✅ Added `default_value` table for centralized defaults management
@@ -65,22 +65,22 @@ The database is the foundation of the ONE GOAL application. All backend and fron
 7. ✅ Verified foreign keys enabled
 
 **Database Location**:
-- **Schema Database Path**: `Data/Core/full_stack_qa.db` (template only)
-- **Development Database Path**: `Data/Core/full_stack_qa_dev.db` (default for runtime)
-- **Test Database Path**: `Data/Core/full_stack_qa_test.db` (for testing)
+- **Schema Database Path**: `data/Core/full_stack_qa.db` (template only)
+- **Development Database Path**: `data/Core/full_stack_qa_dev.db` (default for runtime)
+- **Test Database Path**: `data/Core/full_stack_qa_test.db` (for testing)
 - **Name**: Matches repository name (`full-stack-qa` → `full_stack_qa_{env}.db`)
 
 **Verification Commands**:
 ```bash
 # Check tables
-sqlite3 Data/Core/full_stack_qa.db ".tables"
+sqlite3 data/Core/full_stack_qa.db ".tables"
 
 # Check Foreign Keys
-sqlite3 Data/Core/full_stack_qa.db "PRAGMA foreign_keys;"
+sqlite3 data/Core/full_stack_qa.db "PRAGMA foreign_keys;"
 # Returns: 1
 
 # View schema
-sqlite3 Data/Core/full_stack_qa.db ".schema"
+sqlite3 data/Core/full_stack_qa.db ".schema"
 ```
 
 **Acceptance Criteria**:
@@ -92,10 +92,10 @@ sqlite3 Data/Core/full_stack_qa.db ".schema"
 - [x] Delete triggers applied
 
 **Files Created**:
-- ✅ `Data/Core/full_stack_qa.db` (Schema database - template only)
-- ✅ `Data/Core/full_stack_qa_dev.db` (Development database - default for runtime)
-- ✅ `Data/Core/full_stack_qa_test.db` (Test database - for integration testing)
-- ✅ `Data/Core/README.md` (Database documentation)
+- ✅ `data/Core/full_stack_qa.db` (Schema database - template only)
+- ✅ `data/Core/full_stack_qa_dev.db` (Development database - default for runtime)
+- ✅ `data/Core/full_stack_qa_test.db` (Test database - for integration testing)
+- ✅ `data/Core/README.md` (Database documentation)
 
 ---
 
@@ -147,7 +147,7 @@ sqlite3 Data/Core/full_stack_qa.db ".schema"
 **Files Created**:
 - ✅ `docs/new_app/DELETE_TRIGGERS.sql`
 - ✅ `docs/new_app/DELETE_BEHAVIOR.md`
-- ✅ `Data/Core/tests/test_delete_triggers.py`
+- ✅ `data/Core/tests/test_delete_triggers.py`
 
 ---
 
@@ -170,8 +170,8 @@ sqlite3 Data/Core/full_stack_qa.db ".schema"
 
 2. Copy schema to initial migration:
    ```bash
-   cp docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql Data/Core/migrations/20251214_000000_initial_schema.sql
-   cp docs/new_app/DELETE_TRIGGERS.sql Data/Core/migrations/20251214_000001_delete_triggers.sql
+   cp docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql data/Core/migrations/20251214_000000_initial_schema.sql
+   cp docs/new_app/DELETE_TRIGGERS.sql data/Core/migrations/20251214_000001_delete_triggers.sql
    ```
 
 3. Create `migrate.py` script:
@@ -198,11 +198,11 @@ sqlite3 Data/Core/full_stack_qa.db ".schema"
 - [ ] Migration script can be run multiple times safely (idempotent)
 
 **Files to Create**:
-- `Data/Core/migrations/20251214_000000_initial_schema.sql`
-- `Data/Core/migrations/20251214_000001_delete_triggers.sql`
-- `Data/Core/scripts/migrate.py`
-- `Data/Core/schema_version.txt`
-- `Data/Core/migrations/README.md`
+- `data/Core/migrations/20251214_000000_initial_schema.sql`
+- `data/Core/migrations/20251214_000001_delete_triggers.sql`
+- `data/Core/scripts/migrate.py`
+- `data/Core/schema_version.txt`
+- `data/Core/migrations/README.md`
 
 **Example `migrate.py` structure**:
 ```python
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     main()
 ```
 
-**Note**: The database is located at `Data/Core/full_stack_qa.db` (not `database/test-data.db`).
+**Note**: The database is located at `data/Core/full_stack_qa.db` (not `database/test-data.db`).
 
 ---
 
@@ -249,7 +249,7 @@ if __name__ == "__main__":
 **Completed**: 2025-12-14
 
 **What Was Done**:
-1. ✅ Created comprehensive test suite at `Data/Core/tests/`
+1. ✅ Created comprehensive test suite at `data/Core/tests/`
 2. ✅ 62 tests covering all aspects of the database
 3. ✅ All tests passing
 
@@ -316,13 +316,13 @@ if __name__ == "__main__":
 **Running Tests**:
 ```bash
 # Run all tests
-pytest Data/Core/tests/ -v
+pytest data/Core/tests/ -v
 
 # Run specific test file
-pytest Data/Core/tests/test_schema.py -v
+pytest data/Core/tests/test_schema.py -v
 
 # Run with coverage
-pytest Data/Core/tests/ --cov=Data/Core/tests --cov-report=html -v
+pytest data/Core/tests/ --cov=data/Core/tests --cov-report=html -v
 ```
 
 **Acceptance Criteria**:
@@ -336,18 +336,18 @@ pytest Data/Core/tests/ --cov=Data/Core/tests --cov-report=html -v
 - [x] Delete triggers tested and working
 
 **Files Created**:
-- ✅ `Data/Core/tests/__init__.py`
-- ✅ `Data/Core/tests/conftest.py`
-- ✅ `Data/Core/tests/test_schema.py`
-- ✅ `Data/Core/tests/test_foreign_keys.py`
-- ✅ `Data/Core/tests/test_cascade_deletes.py`
-- ✅ `Data/Core/tests/test_defaults.py`
-- ✅ `Data/Core/tests/test_constraints.py`
-- ✅ `Data/Core/tests/test_relationships.py`
-- ✅ `Data/Core/tests/test_default_value_table.py`
-- ✅ `Data/Core/tests/test_delete_triggers.py`
-- ✅ `Data/Core/tests/requirements.txt`
-- ✅ `Data/Core/tests/README.md`
+- ✅ `data/Core/tests/__init__.py`
+- ✅ `data/Core/tests/conftest.py`
+- ✅ `data/Core/tests/test_schema.py`
+- ✅ `data/Core/tests/test_foreign_keys.py`
+- ✅ `data/Core/tests/test_cascade_deletes.py`
+- ✅ `data/Core/tests/test_defaults.py`
+- ✅ `data/Core/tests/test_constraints.py`
+- ✅ `data/Core/tests/test_relationships.py`
+- ✅ `data/Core/tests/test_default_value_table.py`
+- ✅ `data/Core/tests/test_delete_triggers.py`
+- ✅ `data/Core/tests/requirements.txt`
+- ✅ `data/Core/tests/README.md`
 
 ---
 
@@ -361,7 +361,7 @@ pytest Data/Core/tests/ --cov=Data/Core/tests --cov-report=html -v
 **Steps**:
 1. Create seed data structure:
    ```
-   Data/Core/
+   data/Core/
    ├── seeds/
    │   ├── 01_default_values.sql (populate default_value table)
    │   ├── 02_companies.sql
@@ -407,16 +407,16 @@ VALUES
 - [ ] Seed script provides clear output
 
 **Files to Create**:
-- `Data/Core/seeds/01_default_values.sql` (populate default_value table - see `DATABASE_DEFAULTS_REFERENCE.md`)
-- `Data/Core/seeds/02_companies.sql`
-- `Data/Core/seeds/03_clients.sql`
-- `Data/Core/seeds/04_applications.sql`
-- `Data/Core/seeds/05_contacts.sql`
-- `Data/Core/seeds/06_contact_emails.sql`
-- `Data/Core/seeds/07_contact_phones.sql`
-- `Data/Core/seeds/08_notes.sql`
-- `Data/Core/seeds/09_job_search_sites.sql`
-- `Data/Core/seeds/seed_all.py`
+- `data/Core/seeds/01_default_values.sql` (populate default_value table - see `DATABASE_DEFAULTS_REFERENCE.md`)
+- `data/Core/seeds/02_companies.sql`
+- `data/Core/seeds/03_clients.sql`
+- `data/Core/seeds/04_applications.sql`
+- `data/Core/seeds/05_contacts.sql`
+- `data/Core/seeds/06_contact_emails.sql`
+- `data/Core/seeds/07_contact_phones.sql`
+- `data/Core/seeds/08_notes.sql`
+- `data/Core/seeds/09_job_search_sites.sql`
+- `data/Core/seeds/seed_all.py`
 
 ---
 
@@ -426,7 +426,7 @@ VALUES
 **Estimated Time**: 1 hour
 
 **Steps**:
-1. Create `Data/Core/scripts/reset_db.py`:
+1. Create `data/Core/scripts/reset_db.py`:
    - Drop all tables (in correct order to respect Foreign Keys)
    - Re-run migrations
    - Re-run seed data
@@ -446,9 +446,9 @@ VALUES
 - [ ] Script has safety confirmation
 
 **Files to Create**:
-- `Data/Core/scripts/reset_db.py`
+- `data/Core/scripts/reset_db.py`
 
-**Note**: Database file is at `Data/Core/full_stack_qa.db`
+**Note**: Database file is at `data/Core/full_stack_qa.db`
 
 ---
 
@@ -460,7 +460,7 @@ VALUES
 **Estimated Time**: 1-2 hours
 
 **Steps**:
-1. Create `Data/Core/scripts/db_connection.py`:
+1. Create `data/Core/scripts/db_connection.py`:
    - Database connection function
    - Connection context manager
    - Error handling
@@ -474,7 +474,7 @@ VALUES
 
 **Example**:
 ```python
-# Data/Core/scripts/db_connection.py
+# data/Core/scripts/db_connection.py
 import sqlite3
 from pathlib import Path
 from contextlib import contextmanager
@@ -506,7 +506,7 @@ def get_db_connection():
 - [ ] Row factory for dict-like access
 
 **Files to Create**:
-- `Data/Core/scripts/db_connection.py`
+- `data/Core/scripts/db_connection.py`
 
 ---
 
@@ -516,7 +516,7 @@ def get_db_connection():
 **Estimated Time**: 2-3 hours
 
 **Steps**:
-1. Create common query functions in `Data/Core/scripts/query_helpers.py`:
+1. Create common query functions in `data/Core/scripts/query_helpers.py`:
    - `get_application_by_id(id)`
    - `get_applications_by_status(status)`
    - `get_contact_with_emails_phones(contact_id)`
@@ -532,7 +532,7 @@ def get_db_connection():
 
 **Example**:
 ```python
-# Data/Core/scripts/query_helpers.py
+# data/Core/scripts/query_helpers.py
 from db_connection import get_db_connection
 
 def get_application_by_id(app_id):
@@ -556,7 +556,7 @@ def get_application_by_id(app_id):
 - [ ] Queries handle relationships correctly
 
 **Files to Create**:
-- `Data/Core/scripts/query_helpers.py`
+- `data/Core/scripts/query_helpers.py`
 
 ---
 
@@ -566,7 +566,7 @@ def get_application_by_id(app_id):
 **Estimated Time**: 1 hour
 
 **Steps**:
-1. Update `Data/Core/README.md` (already exists, add migration/seed info):
+1. Update `data/Core/README.md` (already exists, add migration/seed info):
    - Database structure overview
    - How to run migrations
    - How to seed data
@@ -587,7 +587,7 @@ def get_application_by_id(app_id):
 - [ ] Links to related documentation
 
 **Files to Update**:
-- `Data/Core/README.md` (add migration/seed/utility sections)
+- `data/Core/README.md` (add migration/seed/utility sections)
 
 ---
 
@@ -629,7 +629,7 @@ def get_application_by_id(app_id):
 ## 📁 Final Directory Structure
 
 ```
-Data/Core/
+data/Core/
 ├── full_stack_qa.db          ✅ Created
 ├── README.md                      ✅ Created
 ├── migrations/                    ⏭️ Pending
@@ -676,20 +676,20 @@ Data/Core/
 ### Quick Start Commands
 
 ```bash
-# 1. Database already created at Data/Core/full_stack_qa.db ✅
+# 1. Database already created at data/Core/full_stack_qa.db ✅
 
 # 2. Verify schema
-sqlite3 Data/Core/full_stack_qa.db ".schema"
+sqlite3 data/Core/full_stack_qa.db ".schema"
 
 # 3. Test Foreign Keys
-sqlite3 Data/Core/full_stack_qa.db "PRAGMA foreign_keys;"
+sqlite3 data/Core/full_stack_qa.db "PRAGMA foreign_keys;"
 # Should return: 1
 
 # 4. Run all tests
-pytest Data/Core/tests/ -v
+pytest data/Core/tests/ -v
 
 # 5. View tables
-sqlite3 Data/Core/full_stack_qa.db ".tables"
+sqlite3 data/Core/full_stack_qa.db ".tables"
 ```
 
 ---
@@ -704,8 +704,8 @@ sqlite3 Data/Core/full_stack_qa.db ".tables"
 - **API Contract**: `docs/new_app/API_CONTRACT.md`
 - **Defaults Design**: `docs/new_app/DATABASE_DEFAULTS_DESIGN.md`
 - **Defaults Reference**: `docs/new_app/DATABASE_DEFAULTS_REFERENCE.md`
-- **Database README**: `Data/Core/README.md`
-- **Test Documentation**: `Data/Core/tests/README.md`
+- **Database README**: `data/Core/README.md`
+- **Test Documentation**: `data/Core/tests/README.md`
 
 ---
 
@@ -713,7 +713,7 @@ sqlite3 Data/Core/full_stack_qa.db ".tables"
 
 The database work is complete when:
 
-1. ✅ **Database file created and schema applied** - `Data/Core/full_stack_qa.db`
+1. ✅ **Database file created and schema applied** - `data/Core/full_stack_qa.db`
 2. ✅ **Delete triggers implemented** - `DELETE_TRIGGERS.sql` with 4 triggers
 3. ✅ **Delete behavior documented** - `DELETE_BEHAVIOR.md` for frontend team
 4. ✅ **All schema tests pass** - 62/62 tests passing

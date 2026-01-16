@@ -240,7 +240,7 @@ All delete operations should:
 
 ### Backend Tests
 
-See `Data/Core/tests/test_delete_triggers.py` for trigger tests.
+See `data/Core/tests/test_delete_triggers.py` for trigger tests.
 
 ---
 
@@ -279,7 +279,7 @@ DELETE /api/v1/applications/123
 - `DELETE_TRIGGERS.sql` - Database trigger definitions
 - `ENTITY_RELATIONSHIPS.md` - Entity relationship documentation
 - `API_CONTRACT.md` - API endpoint specifications
-- `Data/Core/tests/test_delete_triggers.py` - Trigger tests
+- `data/Core/tests/test_delete_triggers.py` - Trigger tests
 
 ---
 

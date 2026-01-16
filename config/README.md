@@ -137,7 +137,7 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
 **Note**: The API base path is centralized in `config/environments.json` under `api.basePath`. All code (backend, frontend, tests, scripts) reads from this single source of truth. To change the API version, update `api.basePath` in `config/environments.json` (e.g., change `/api/v1` to `/api/v2`).
 
 #### Database Configuration (from environments.json)
-- Directory: `Data/Core`
+- Directory: `data/Core`
 - Schema Database: `full_stack_qa.db`
 - Naming Pattern: `full_stack_qa_{env}.db`
 - Examples:

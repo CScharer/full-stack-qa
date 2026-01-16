@@ -36,13 +36,13 @@ The development database should already exist. If it doesn't, create it from the
 cd /path/to/full-stack-qa
 
 # Create database directory if it doesn't exist
-mkdir -p Data/Core
+mkdir -p data/Core
 
 # Create development database from schema
-sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 
 # Apply delete triggers
-sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
 **Note**: The backend automatically uses `full_stack_qa_dev.db` by default (when `ENVIRONMENT=dev` or no environment is set).
@@ -51,7 +51,7 @@ sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 
 ```bash
 # Check if development database exists and has tables
-sqlite3 Data/Core/full_stack_qa_dev.db ".tables"
+sqlite3 data/Core/full_stack_qa_dev.db ".tables"
 
 # Should show: application, company, client, contact, contact_email, contact_phone, note, job_search_site, application_sync
 ```
@@ -99,7 +99,7 @@ Create a `.env` file in the `backend` directory (optional - defaults work for de
 ENVIRONMENT=dev  # Options: dev, test, prod
 # The scripts will automatically set DATABASE_PATH to the correct absolute path
 # You can override with an absolute path if needed:
-# DATABASE_PATH=/absolute/path/to/Data/Core/full_stack_qa_dev.db
+# DATABASE_PATH=/absolute/path/to/data/Core/full_stack_qa_dev.db
 
 API_HOST=0.0.0.0
 API_PORT=8003  # dev: 8003, test: 8004, prod: 8005
@@ -287,10 +287,10 @@ npm run test:ui
 
 **Issue: Database not found**
 ```bash
-# Solution: Ensure development database exists at Data/Core/full_stack_qa_dev.db
+# Solution: Ensure development database exists at data/Core/full_stack_qa_dev.db
 # Create it using the schema files if needed:
-sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
 **Issue: Port 8003 already in use**
@@ -420,7 +420,7 @@ full-stack-qa/
 
 Before starting development, verify:
 
-- [ ] Development database exists at `Data/Core/full_stack_qa_dev.db`
+- [ ] Development database exists at `data/Core/full_stack_qa_dev.db`
 - [ ] Backend virtual environment created and activated
 - [ ] Backend dependencies installed (`pip install -r requirements.txt`)
 - [ ] Backend `.env` file configured

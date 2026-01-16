@@ -702,7 +702,7 @@ full-stack-qa/
 │   ├── Companies.xml.template              # Company config template
 │   └── UserSettings.xml.template           # User settings template
 ├── Configurations/                         # Environment configs
-├── Data/                                   # Test data and SQL scripts
+├── data/                                   # Test data and SQL scripts
 ├── .github/                                # GitHub templates
 │   ├── ISSUE_TEMPLATE/                     # Issue templates
 │   ├── pull_request_template.md            # PR template

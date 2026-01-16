@@ -123,9 +123,9 @@ This document analyzes 17 folders to determine:
 
 ---
 
-### 4. `/Data` (Root Level)
+### 4. `/Data` → `data/` (Root Level)
 
-**Current Status**: ✅ **ACTIVE - Keep and Rename**
+**Current Status**: ✅ **COMPLETED - Renamed to `data/`**
 
 **Contents**:
 - `Core/` - Database files and scripts
@@ -141,21 +141,23 @@ This document analyzes 17 folders to determine:
 - Database configuration files
 
 **Usage**:
-- **Primary database location**: `Data/Core/` contains SQLite databases
+- **Primary database location**: `data/Core/` contains SQLite databases
 - Referenced in `backend/app/config.py` for database paths
 - Used by service startup scripts
 - Referenced in `config/environments.json` for database directory
 
 **Rename to `data/`**:
-- ✅ Update `backend/app/config.py` (database path logic)
-- ✅ Update `config/environments.json` (database.directory)
-- ✅ Update shell scripts (service start scripts)
-- ✅ Update documentation (27 files)
+- ✅ Updated `backend/app/config.py` (2 references: database_path, database_dir)
+- ✅ Updated `config/environments.json` (5 references: directory + 3 environment paths)
+- ✅ Updated shell scripts (5 files: start-be.sh, start-services-for-ci.sh, env-config.sh, run-integration-tests.sh, cleanup-disk-space.sh)
+- ✅ Updated documentation (10 files: README.md, backend/README.md, config/README.md, and 7 docs files)
+- ✅ Updated backend test file (`test_database_config.py`)
+- ✅ Folder renamed from `Data/` to `data/` using git mv
 - ⚠️ **Impact**: **HIGH** - Core database location, critical for application
 
 **Delete**: ❌ **NOT RECOMMENDED** - Contains databases and critical data
 
-**Recommendation**: ✅ **RENAME to `data/`** - **HIGH PRIORITY** - Update database path references
+**Recommendation**: ✅ **COMPLETED** - Renamed to `data/` with all references updated
 
 ---
 
@@ -476,7 +478,7 @@ This document analyzes 17 folders to determine:
 ### ✅ Keep and Rename to Lowercase
 
 2. **`/XML` → `xml/`** - ✅ **COMPLETED** - 28 references updated
-3. **`/Data` → `data/`** - **HIGH PRIORITY** - 27 references, database location
+3. **`/Data` → `data/`** - ✅ **COMPLETED** - 27 references updated, database location
 4. **`/Data/Core` → `data/core/`** - Part of `/Data` rename
 5. **`/src/test/resources/DataSets` → `datasets/`** - 19 references
 
@@ -510,11 +512,13 @@ This document analyzes 17 folders to determine:
 
 ### Phase 1: High Priority Renames
 
-1. **`/Data` → `data/`** (HIGH PRIORITY - Database location)
-   - Update `backend/app/config.py`
-   - Update `config/environments.json`
-   - Update shell scripts
-   - Update documentation
+1. **`/Data` → `data/`** - ✅ **COMPLETED** (HIGH PRIORITY - Database location)
+   - ✅ Updated `backend/app/config.py` (2 references)
+   - ✅ Updated `config/environments.json` (5 references)
+   - ✅ Updated shell scripts (5 files)
+   - ✅ Updated documentation (10 files)
+   - ✅ Updated backend test file
+   - ✅ Folder renamed from `Data/` to `data/` using git mv
 
 2. **`/Configurations` → Move contents to `/config/`**
    - Move `Environments.xml.template` to `config/`
