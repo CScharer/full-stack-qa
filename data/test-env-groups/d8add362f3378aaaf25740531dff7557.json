@@ -1,1 +1,1 @@
-{"id":"d8add362f3378aaaf25740531dff7557","fullName":"Cypress.['Wizard Tests', 'test_clients - Click Clients Navigation, Add button, populate all fields, then Cancel']","name":"Wizard Tests [DEV]","status":"passed","testResultsByEnv":{"default":"72237b4d0f73f885e815a39856dae5f3"}}
+{"id":"d8add362f3378aaaf25740531dff7557","fullName":"Cypress.['Wizard Tests', 'test_clients - Click Clients Navigation, Add button, populate all fields, then Cancel']","name":"Wizard Tests [PROD]","status":"passed","testResultsByEnv":{"default":"153858a03ec8eb7030d13af04ee3b652"}}
