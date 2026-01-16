@@ -79,15 +79,14 @@ public interface ISelenium {
     if (Environment.isLogAll()) {
       LOG.debug("{}", "webDriver:[" + webDriver.toString() + "]");
     }
-    try {
-      // Screenshot capture - commented out for future use
-      // final byte[] screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
-      // scenarioObject.attach(screenshot, "image/png");
-      @SuppressWarnings("unused")
-      final byte[] screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
-    } catch (final Exception e) {
-      LOG.error("Error Capturing Screenshot.");
-    }
+    // Screenshot capture - commented out for future use
+    // When needed, uncomment and use:
+    // try {
+    //   final byte[] screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+    //   scenarioObject.attach(screenshot, "image/png");
+    // } catch (final Exception e) {
+    //   LOG.error("Error Capturing Screenshot.");
+    // }
   }
 
   /**

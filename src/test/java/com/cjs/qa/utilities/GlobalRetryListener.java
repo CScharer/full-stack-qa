@@ -25,6 +25,8 @@ import org.testng.internal.annotations.DisabledRetryAnalyzer;
  */
 public class GlobalRetryListener implements IAnnotationTransformer {
 
+  // TestNG IAnnotationTransformer interface requires raw types for Class, Constructor, Method
+  // This is a limitation of the TestNG API, not our code
   @Override
   @SuppressWarnings("rawtypes")
   public void transform(

@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JavaHelpers;
 
+// PMD: DoNotExtendJavaLangThrowable is intentionally suppressed
+// This is a custom exception design that extends Throwable for specific QA framework requirements
 @SuppressWarnings("PMD.DoNotExtendJavaLangThrowable")
 public class QAException extends Throwable {
 

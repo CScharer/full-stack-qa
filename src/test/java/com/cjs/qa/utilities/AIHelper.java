@@ -155,7 +155,8 @@ public final class AIHelper {
 
     private double temperature;
 
-    // No-arg constructor for Gson deserialization
+    // No-arg constructor required for Gson deserialization
+    // Gson uses reflection to instantiate objects and requires a no-arg constructor
     @SuppressWarnings("unused")
     public ChatCompletionRequest() {
       // Empty constructor required for Gson deserialization
@@ -192,7 +193,8 @@ public final class AIHelper {
 
     // Other fields like id, object, created can be added if needed
 
-    // No-arg constructor for Gson deserialization
+    // No-arg constructor required for Gson deserialization
+    // Gson uses reflection to instantiate objects and requires a no-arg constructor
     @SuppressWarnings("unused")
     public ChatCompletionResponse() {
       // Empty constructor required for Gson deserialization
@@ -209,7 +211,8 @@ public final class AIHelper {
 
     // Other fields like index, logprobs, finish_reason can be added
 
-    // No-arg constructor for Gson deserialization
+    // No-arg constructor required for Gson deserialization
+    // Gson uses reflection to instantiate objects and requires a no-arg constructor
     @SuppressWarnings("unused")
     public Choice() {
       // Empty constructor required for Gson deserialization
@@ -225,7 +228,8 @@ public final class AIHelper {
     private String role;
     private String content;
 
-    // No-arg constructor for Gson deserialization
+    // No-arg constructor required for Gson deserialization
+    // Gson uses reflection to instantiate objects and requires a no-arg constructor
     @SuppressWarnings("unused")
     public Message() {
       // Empty constructor required for Gson deserialization

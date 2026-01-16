@@ -165,6 +165,8 @@ public class JavaHelpers {
     return StringUtils.difference(string1, string2);
   }
 
+  // CollectionUtils.disjunction() returns Collection<?>, must cast to Collection<String>
+  // Type safety is guaranteed by input parameters being List<String>
   @SuppressWarnings("unchecked")
   public static List<String> difference(List<String> list1, List<String> list2) {
     return new ArrayList<>((Collection<String>) CollectionUtils.disjunction(list1, list2));

@@ -80,6 +80,8 @@ public class XLS implements IExcel {
   public boolean addComment(int sheet, int column, int row, String sComment, boolean visible)
       throws QAException {
     setSheet(sheet);
+    // Apache POI Drawing.createDrawingPatriarch() returns raw Drawing type
+    // This is a limitation of the Apache POI API, not our code
     @SuppressWarnings("rawtypes")
     final Drawing drawing = getWorkCell().getSheet().createDrawingPatriarch();
     setCreationHelper(getWorkCell().getSheet().getWorkbook().getCreationHelper());
