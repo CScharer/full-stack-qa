@@ -118,6 +118,33 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
 - XML-based config (`config/Environments.xml`) - For user-specific settings (browser, timeouts, logging)
 - JSON-based config (`EnvironmentConfig.java`) - For environment-specific URLs/ports (dev, test, prod)
 
+### XML Configuration Files (Legacy for Java User-Specific Settings)
+
+**Purpose**: Contains XML configuration files for user-specific settings (e.g., browser preferences, timeouts, logging flags) for Java tests.
+
+**Important Note**: These files (`Environments.xml`, `Companies.xml`, `UserSettings.xml`) are **NOT committed to git** as they may contain sensitive data or user-specific settings. Templates (`.template` files) are provided for easy setup.
+
+**Setup Instructions**:
+
+1. **Copy template file**:
+   ```bash
+   cp config/Environments.xml.template config/Environments.xml
+   ```
+
+2. **Configure Google Cloud authentication**:
+   ```bash
+   gcloud auth application-default login
+   gcloud config set project cscharer
+   ```
+
+3. **Run your tests** - Passwords are automatically fetched from Google Cloud Secret Manager!
+
+**Security Notice**: All sensitive credentials are stored in **Google Cloud Secret Manager**, not in these configuration files. The application automatically retrieves passwords at runtime using the `SecureConfig.java` utility class.
+
+**See Also**: 
+- For XML company/user settings: See `xml/README.md`
+- For environment configuration (ports, URLs, database): See `environments.json` above
+
 ### Configuration Values
 
 #### Port Assignments
