@@ -1,7 +1,27 @@
 #!/usr/bin/env python3
 """
-Script to find and remove all unused imports in Java files.
-This is a more comprehensive version that checks for any unused imports.
+Find and remove all unused imports in Java files.
+
+Purpose: Identifies unused import statements in Java test files.
+         Helps maintain clean code by removing unnecessary imports.
+
+Usage:
+    python3 scripts/temp/find_all_unused_imports.py
+
+Output:
+    - Lists all files with unused imports
+    - Prompts for confirmation before removal
+    - Removes unused imports if confirmed
+
+Examples:
+    # Find and optionally remove unused imports
+    python3 scripts/temp/find_all_unused_imports.py
+
+Dependencies:
+    - Python 3.x
+    - Standard library only (re, sys, pathlib, collections)
+
+Last Updated: January 2026
 """
 
 import re

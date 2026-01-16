@@ -1,7 +1,23 @@
 #!/bin/bash
+# scripts/temp/test-trending-merge-tracker.sh
 # Test Trending Merge Tracker
-# This script is used to track merge iterations for test trending validation
-# Update the MERGE_NUMBER value for each merge to ensure pipeline runs
+#
+# Purpose: Track merge iterations for test trending validation in CI/CD pipeline.
+#          Updates MERGE_NUMBER to ensure pipeline runs and tracks validation goals.
+#
+# Usage:
+#   ./scripts/temp/test-trending-merge-tracker.sh
+#
+# Description:
+#   This script is used during Allure report trending validation to track
+#   which merge iteration is being validated. Update MERGE_NUMBER for each merge.
+#
+# Examples:
+#   # For merge 1: Set MERGE_NUMBER=1
+#   # For merge 2: Set MERGE_NUMBER=2
+#   # etc.
+#
+# Last Updated: January 2026
 
 MERGE_NUMBER=1
 
