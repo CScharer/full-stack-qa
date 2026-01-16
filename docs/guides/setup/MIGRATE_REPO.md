@@ -363,7 +363,7 @@ git status  # Review what's staged
 Before committing, verify no sensitive data is included:
 - Check for `.env` files
 - Check for `*-key.json` files
-- Check for `Configurations/Environments.xml` (should be in .gitignore)
+- Check for `config/Environments.xml` (should be in .gitignore)
 - Review `.gitignore` to ensure all sensitive patterns are covered
 
 ### Step 3.4: Make Any Other Necessary Changes

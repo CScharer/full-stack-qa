@@ -74,7 +74,7 @@ ANALYSIS_PASS.md
 *.secrets
 
 # Sensitive configuration files
-Configurations/Environments.xml
+config/Environments.xml
 
 # Google Cloud service account keys
 *-key.json

@@ -37,7 +37,7 @@ public class Constants {
   public static final String PATH_DRIVERS_REPOSITORY =
       PATH_ROOT + "src" + FS + "test" + FS + "resources" + FS + "Drivers" + FS;
   public static final String PATH_SCREENSHOTS = PATH_ROOT + "Screenshots" + FS;
-  public static final String PATH_FILES_CONFIGURATIONS = PATH_ROOT + "Configurations" + FS;
+  public static final String PATH_FILES_CONFIGURATIONS = PATH_ROOT + "config" + FS;
   public static final String DELIMETER_LIST = System.getProperty("path.separator");
   public static final String BACKSLASH = "\\";
   public static final String BACKSPACE = "\b";

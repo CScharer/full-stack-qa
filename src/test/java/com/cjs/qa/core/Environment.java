@@ -48,11 +48,7 @@ public class Environment {
       FSOTests.fileReadAll(Constants.PATH_OUTLOOK_SIGNATURES + "MSN" + IExtension.HTM);
   private static boolean environmentSet = false;
   public static final String FILE_CONFIG =
-      Constants.PATH_ROOT
-          + "Configurations"
-          + Constants.DELIMETER_PATH
-          + "Environments"
-          + IExtension.XML;
+      Constants.PATH_ROOT + "config" + Constants.DELIMETER_PATH + "Environments" + IExtension.XML;
   private static String folderData = Constants.PATH_FILES_DATA + COMPANY + Constants.DELIMETER_PATH;
   private static String fileLog = folderData + "Log_" + COMPANY + IExtension.LOG;
   private static Map<Integer, String> scenarioErrors = new HashMap<>();
@@ -141,7 +137,7 @@ public class Environment {
     if (overrideUser) {
       config = hostName;
     }
-    sysOut("Using Configurations for [" + config + "]");
+    sysOut("Using config for [" + config + "]");
     setBrowser("BROWSER", config);
     setCompany("COMPANY", config);
     setEnvironment("ENVIRONMENT", config);

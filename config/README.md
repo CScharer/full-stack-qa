@@ -115,7 +115,7 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
 ```
 
 **Note**: Java tests can use either:
-- XML-based config (`Configurations/Environments.xml`) - For user-specific settings (browser, timeouts, logging)
+- XML-based config (`config/Environments.xml`) - For user-specific settings (browser, timeouts, logging)
 - JSON-based config (`EnvironmentConfig.java`) - For environment-specific URLs/ports (dev, test, prod)
 
 ### Configuration Values
@@ -256,7 +256,7 @@ String backendUrl = EnvironmentConfig.getBackendUrl(environment);
 ```
 
 **Note**: Java tests can use either:
-- **XML Config** (`Configurations/Environments.xml`) - For user-specific settings (browser preferences, timeouts, logging flags)
+- **XML Config** (`config/Environments.xml`) - For user-specific settings (browser preferences, timeouts, logging flags)
 - **JSON Config** (`EnvironmentConfig.java`) - For environment-specific URLs/ports (dev, test, prod)
 
 These serve different purposes and can coexist.
