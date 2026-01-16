@@ -74,9 +74,9 @@ public class XML {
   // init();
   // }
   //
+  // Parameter reserved for future implementation - currently unused but kept for API compatibility
   @SuppressWarnings("unused")
   public XML(String xml) {
-    // Parameter reserved for future implementation
     LOG.debug("XPathConstants.NODESET: {}", XPathConstants.NODESET.toString());
     final String xpath = "";
     try {

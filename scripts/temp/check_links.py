@@ -1,5 +1,27 @@
 #!/usr/bin/env python3
-"""Check all markdown links in all documentation files."""
+"""
+Check all markdown links in all documentation files.
+
+Purpose: Validates that all markdown links in docs/ and scripts/ directories are valid.
+         Useful for maintaining documentation quality and catching broken links.
+
+Usage:
+    python3 scripts/temp/check_links.py
+
+Output:
+    - Lists all broken links found in markdown files
+    - Exits with success if all links are valid
+
+Examples:
+    # Check all links
+    python3 scripts/temp/check_links.py
+
+Dependencies:
+    - Python 3.x
+    - Standard library only (os, re, pathlib)
+
+Last Updated: January 2026
+"""
 import os
 import re
 from pathlib import Path

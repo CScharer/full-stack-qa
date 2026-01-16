@@ -1,13 +1,43 @@
 #!/bin/bash
-# Install Robot Framework Dependencies
-# Usage: ./scripts/ci/install-robot-framework.sh [python-exe]
+# scripts/ci/install-robot-framework.sh
+# Robot Framework Installer
 #
-# Arguments:
-#   python-exe     - Python executable path (optional, defaults to python3 or python)
+# Purpose: Install Robot Framework and dependencies for CI/CD testing
+#
+# Usage:
+#   ./scripts/ci/install-robot-framework.sh [PYTHON_EXE]
+#
+# Parameters:
+#   PYTHON_EXE   Python executable path (optional, defaults to python3 or python)
 #
 # Examples:
 #   ./scripts/ci/install-robot-framework.sh
 #   ./scripts/ci/install-robot-framework.sh /usr/bin/python3
+#   ./scripts/ci/install-robot-framework.sh python3.13
+#
+# Description:
+#   This script installs Robot Framework and required dependencies using pip.
+#   Robot Framework is a keyword-driven test automation framework for acceptance
+#   testing and acceptance test-driven development (ATDD).
+#
+# Dependencies:
+#   - Python 3.13+ (or specified Python executable)
+#   - pip (Python package manager)
+#   - Internet connection (for pip package download)
+#
+# Output:
+#   - Robot Framework installed
+#   - Required dependencies installed
+#   - Console output showing installation progress
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline to install Robot Framework
+#   - Installs Robot Framework and SeleniumLibrary
+#   - Verifies installation after completion
+#   - Fails if Python is not available
+#
+# Last Updated: January 2026
 
 set -e
 

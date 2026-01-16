@@ -1,13 +1,43 @@
 #!/bin/bash
-# Allure Metadata Utilities
-# Shared functions for adding verification metadata to Allure test results.
-# Source this file in other scripts: source "$(dirname "$0")/allure-metadata-utils.sh"
+# scripts/ci/allure-metadata-utils.sh
+# Allure Metadata Utilities Library
+#
+# Purpose: Provide shared functions for adding verification metadata to Allure test results
+#
+# Usage:
+#   # Source this file in other scripts:
+#   source scripts/ci/allure-metadata-utils.sh
+#   # Or with full path:
+#   source "$(dirname "$0")/allure-metadata-utils.sh"
 #
 # Functions:
 #   get_verification_metadata_json <env> [test_timestamp] [base_url_env_var]
 #     - Generate verification metadata as JSON string for bash-based converters
 #     - Returns JSON array of parameter objects
 #     - Usage: params_json=$(get_verification_metadata_json "dev")
+#
+# Description:
+#   This library provides shared functions for adding verification metadata to Allure
+#   test results. It's designed to be sourced by other scripts that convert test
+#   results to Allure format (e.g., convert-cypress-to-allure.sh, convert-playwright-to-allure.sh).
+#
+# Dependencies:
+#   - Bash shell
+#   - jq (JSON processor) for JSON manipulation
+#   - config/environments.json (for environment configuration)
+#
+# Examples:
+#   # In another script:
+#   source scripts/ci/allure-metadata-utils.sh
+#   params=$(get_verification_metadata_json "dev" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "FRONTEND_URL")
+#   echo "$params" | jq '.'
+#
+# Notes:
+#   - This script is designed to be SOURCED, not executed directly
+#   - Provides consistent metadata format across all Allure converters
+#   - Includes environment, timestamp, and base URL information
+#
+# Last Updated: January 2026
 
 # Function to generate verification metadata as JSON for bash-based converters
 get_verification_metadata_json() {

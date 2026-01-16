@@ -1,31 +1,55 @@
 #!/bin/bash
+# scripts/quality/format-code.sh
+# Code Formatting and Quality Checks
 #
-# Pre-Commit Code Formatting and Quality Checks Script
-# 
-# This script runs the required formatting and quality checks before committing code:
-# 1. Prettier: Formats code (sorts imports alphabetically - will be fixed by Spotless)
-# 1.5. Spotless: Reorders imports (java,javax,org,com) and removes unused/duplicate imports
-# 2. Google Java Format: Fixes line length issues
-# 3. Checkstyle: Verifies no violations remain
-# 4. Compilation: Ensures code still compiles
-# 5. PMD: Code analysis for potential issues
+# Purpose: Run formatting and quality checks before committing code
 #
 # Usage:
-#   ./scripts/format-code.sh                    # Full formatting (pre-commit)
-#   ./scripts/format-code.sh --ci-mode         # CI mode (verify only, no modifications)
-#   ./scripts/format-code.sh --verify-only     # Same as --ci-mode
-#   ./scripts/format-code.sh --skip-imports    # Skip import removal (if needed)
-#   ./scripts/format-code.sh --skip-formatting # Skip formatting, only run checks
-#   ./scripts/format-code.sh --skip-compilation # Skip compilation check (formatting only)
-#   ./scripts/format-code.sh --help            # Show help message
+#   ./scripts/quality/format-code.sh [OPTIONS]
 #
-# Flags:
-#   --ci-mode, --verify-only: Skip formatting, skip compilation, only verify
-#   --skip-imports: Skip unused import removal
-#   --skip-formatting: Skip Prettier and Google Java Format
-#   --skip-compilation: Skip compilation check (formatting only)
-#   --help: Show this help message
+# Options:
+#   --ci-mode, --verify-only     CI mode (verify only, no modifications)
+#   --skip-imports               Skip unused import removal
+#   --skip-formatting            Skip Prettier and Google Java Format
+#   --skip-compilation           Skip compilation check (formatting only)
+#   --help                       Show help message
 #
+# Examples:
+#   ./scripts/quality/format-code.sh                    # Full formatting (pre-commit)
+#   ./scripts/quality/format-code.sh --ci-mode         # CI mode (verify only)
+#   ./scripts/quality/format-code.sh --verify-only     # Same as --ci-mode
+#   ./scripts/quality/format-code.sh --skip-imports    # Skip import removal
+#   ./scripts/quality/format-code.sh --skip-formatting # Skip formatting, only checks
+#
+# Description:
+#   This script runs the required formatting and quality checks before committing code:
+#   1. Prettier: Formats code (sorts imports alphabetically - will be fixed by Spotless)
+#   1.5. Spotless: Reorders imports (java,javax,org,com) and removes unused/duplicate imports
+#   2. Google Java Format: Fixes line length issues
+#   3. Checkstyle: Verifies no violations remain
+#   4. Compilation: Ensures code still compiles
+#   5. PMD: Code analysis for potential issues
+#
+# Dependencies:
+#   - Maven Wrapper (./mvnw)
+#   - Prettier (for code formatting)
+#   - Spotless Maven Plugin (for import ordering)
+#   - Google Java Format (for Java formatting)
+#   - Checkstyle Maven Plugin
+#   - PMD Maven Plugin
+#
+# Output:
+#   - Formatted code (if not in CI mode)
+#   - Console output showing formatting and check results
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used by pre-commit hooks for automatic formatting
+#   - CI mode only verifies, doesn't modify files
+#   - Can skip individual steps for faster iteration
+#
+# Last Updated: January 2026
+
 # Exit codes:
 #   0 - Success (all steps passed)
 #   1 - Formatting step failed

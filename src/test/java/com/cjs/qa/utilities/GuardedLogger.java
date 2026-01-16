@@ -20,6 +20,8 @@ import org.apache.logging.log4j.Marker;
  * static analysis. The guards are present at runtime, ensuring no unnecessary string formatting
  * occurs when logging is disabled.
  */
+// PMD: GuardLogStatement is intentionally suppressed - this class IS the guard mechanism
+// The class itself provides runtime guards, so PMD warnings are not applicable here
 @SuppressWarnings("PMD.GuardLogStatement")
 public final class GuardedLogger {
 

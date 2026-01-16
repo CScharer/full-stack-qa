@@ -269,8 +269,11 @@ public final class SystemProcesses {
         mapHeadingsExpected.put(heading, "");
       }
       try (Reader reader = new FileReader(FILE_DATA_CSV)) {
-        // Note: .build() is deprecated in Commons CSV 1.14.1 but still required
-        // Using CSVParser.parse() is the recommended approach
+        // Note: .build() is deprecated in Commons CSV 1.14.1+ but still required by the library
+        // The Commons CSV library has not provided a non-deprecated alternative yet.
+        // Using CSVParser.parse() with the builder pattern is the recommended approach.
+        // See:
+        // https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.Builder.html
         @SuppressWarnings("deprecation")
         CSVFormat format = CSVFormat.RFC4180.builder().setHeader().build();
         Iterable<CSVRecord> records = CSVParser.parse(reader, format);

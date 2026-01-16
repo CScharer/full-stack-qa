@@ -1,11 +1,46 @@
 #!/bin/bash
-# Run Artillery Load Tests
-# Usage: ./scripts/ci/run-artillery-tests.sh <environment> <test_type> <base_url>
+# scripts/ci/run-artillery-tests.sh
+# Artillery Load Test Runner
 #
-# Arguments:
-#   environment    - Environment name (dev, test)
-#   test_type      - Test type (smoke, all, homepage-only, applications-only)
-#   base_url       - Base URL for the environment
+# Purpose: Run Artillery browser-level load tests with Playwright
+#
+# Usage:
+#   ./scripts/ci/run-artillery-tests.sh <ENVIRONMENT> <TEST_TYPE> <BASE_URL>
+#
+# Parameters:
+#   ENVIRONMENT   Environment name: dev, test (never prod)
+#   TEST_TYPE     Test type: smoke, all, homepage-only, applications-only
+#   BASE_URL      Base URL for the environment (e.g., http://localhost:3003)
+#
+# Examples:
+#   ./scripts/ci/run-artillery-tests.sh dev smoke http://localhost:3003
+#   ./scripts/ci/run-artillery-tests.sh test all http://localhost:3004
+#   ./scripts/ci/run-artillery-tests.sh dev homepage-only http://localhost:3003
+#
+# Description:
+#   This script runs Artillery browser-level load tests using Playwright.
+#   Artillery tests provide real browser rendering and Core Web Vitals tracking.
+#   Tests are located in playwright/artillery/ directory.
+#
+# Dependencies:
+#   - Node.js 20+
+#   - npm (installed in playwright/ directory)
+#   - Artillery CLI (installed via npm)
+#   - Playwright browsers (installed via npm)
+#   - Backend and Frontend services running
+#
+# Output:
+#   - Test results in playwright/artillery-results/
+#   - JSON results for conversion to Allure
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Browser-level testing (real rendering, not protocol-level)
+#   - Tracks Core Web Vitals (LCP, FCP, CLS, TTI)
+#   - 20% allocation of total performance testing
+#   - Never runs in production environment
+#
+# Last Updated: January 2026
 
 set -e
 

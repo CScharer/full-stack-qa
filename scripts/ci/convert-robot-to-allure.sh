@@ -1,11 +1,48 @@
 #!/bin/bash
-# Convert Robot Framework Test Results to Allure Format
-# Usage: ./scripts/ci/convert-robot-to-allure.sh <allure-results-dir> <robot-results-dir> [environment]
+# scripts/ci/convert-robot-to-allure.sh
+# Robot Framework to Allure Results Converter
 #
-# Arguments:
-#   allure-results-dir  - Directory where Allure results should be stored
-#   robot-results-dir   - Directory containing Robot Framework test results (output.xml)
-#   environment         - Optional environment name (dev, test, prod)
+# Purpose: Convert Robot Framework test results to Allure-compatible JSON format
+#
+# Usage:
+#   ./scripts/ci/convert-robot-to-allure.sh [ALLURE_RESULTS_DIR] [ROBOT_RESULTS_DIR] [ENVIRONMENT]
+#
+# Parameters:
+#   ALLURE_RESULTS_DIR  Directory where Allure results should be stored (default: "allure-results-combined")
+#   ROBOT_RESULTS_DIR   Directory containing Robot Framework test results (default: "target/robot-reports")
+#                       Must contain output.xml file
+#   ENVIRONMENT         Optional environment name for metadata: dev, test, prod (optional)
+#
+# Examples:
+#   ./scripts/ci/convert-robot-to-allure.sh
+#   ./scripts/ci/convert-robot-to-allure.sh allure-results target/robot-reports dev
+#   ./scripts/ci/convert-robot-to-allure.sh combined-results robot/output test
+#
+# Description:
+#   This script converts Robot Framework test results (XML format) into Allure-compatible JSON files.
+#   It reads Robot Framework output.xml and generates Allure result files (*-result.json) with
+#   test names, status, duration, logs, screenshots, and environment metadata.
+#
+# Dependencies:
+#   - Robot Framework test results (output.xml in ROBOT_RESULTS_DIR)
+#   - Python 3.x with xml.etree.ElementTree (standard library)
+#   - jq (JSON processor) for generating Allure JSON
+#   - Allure metadata utilities (scripts/ci/allure-metadata-utils.sh)
+#
+# Output:
+#   - Allure-compatible JSON files in ALLURE_RESULTS_DIR
+#   - Screenshots and logs attached to test results
+#   - Environment metadata included
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline to integrate Robot Framework results with Allure reports
+#   - Parses Robot Framework XML output format
+#   - Preserves screenshots and logs as attachments
+#   - Adds environment labels for filtering in Allure reports
+#   - Handles Robot Framework keyword structure and test organization
+#
+# Last Updated: January 2026
 
 set -e
 

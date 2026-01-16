@@ -1,21 +1,46 @@
 #!/bin/bash
-# Start ONE GOAL Backend API Server
-# This script starts the FastAPI backend server for the specified environment
+# scripts/services/start-be.sh
+# Backend Service Starter
 #
-# USAGE:
-#   ./scripts/start-be.sh [OPTIONS]
+# Purpose: Start the FastAPI backend server for the specified environment
 #
-# ENVIRONMENT OPTIONS:
+# Usage:
+#   ./scripts/services/start-be.sh [OPTIONS]
+#
+# Options:
 #   --env ENV    or  -e ENV     Environment: dev, test, or prod (default: dev)
 #   --env=ENV    or  -e=ENV     Same as above with equals sign
+#   --help                       Show full usage information
 #
-# EXAMPLES:
-#   ./scripts/start-be.sh                    # Default: dev environment
-#   ./scripts/start-be.sh --env test         # Test environment
-#   ./scripts/start-be.sh -e prod            # Production environment
-#   ./scripts/start-be.sh --env=dev          # Dev with equals syntax
+# Examples:
+#   ./scripts/services/start-be.sh                    # Default: dev environment
+#   ./scripts/services/start-be.sh --env test         # Test environment
+#   ./scripts/services/start-be.sh -e prod            # Production environment
+#   ./scripts/services/start-be.sh --env=dev          # Dev with equals syntax
 #
-# Run with --help for full usage information
+# Description:
+#   This script starts the FastAPI backend server for the ONE GOAL application.
+#   It reads configuration from config/environments.json and starts the server
+#   on the appropriate port for the specified environment.
+#
+# Dependencies:
+#   - Python 3.x
+#   - FastAPI and dependencies (installed in backend/venv or system)
+#   - config/environments.json (for port and database configuration)
+#   - data/core/ directory (for SQLite databases)
+#
+# Output:
+#   - Backend server running on configured port
+#   - Console output showing server status and logs
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Uses centralized configuration from config/environments.json
+#   - Automatically detects and uses correct database for environment
+#   - Supports hot-reload for development
+#   - Handles environment-specific CORS origins
+#
+# Last Updated: January 2026
 
 set -e
 

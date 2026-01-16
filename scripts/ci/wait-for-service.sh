@@ -1,17 +1,43 @@
 #!/bin/bash
-# Wait for a Service to Be Ready
-# Usage: ./scripts/ci/wait-for-service.sh <url> <service-name> [timeout-seconds] [check-interval]
+# scripts/ci/wait-for-service.sh
+# Service Waiter (Reusable Utility)
 #
-# Arguments:
-#   url            - Service URL to check (e.g., http://localhost:3003)
-#   service-name   - Human-readable service name (e.g., "Frontend", "Backend API", "Selenium Grid")
-#   timeout-seconds - Maximum time to wait in seconds (default: 5)
-#   check-interval - Interval between checks in seconds (default: 1)
+# Purpose: Wait for any HTTP service to be ready by checking its endpoint
+#
+# Usage:
+#   ./scripts/ci/wait-for-service.sh <URL> <SERVICE_NAME> [TIMEOUT_SECONDS] [CHECK_INTERVAL]
+#
+# Parameters:
+#   URL             Service URL to check (e.g., http://localhost:3003, http://localhost:8003/docs)
+#   SERVICE_NAME    Human-readable service name (e.g., "Frontend", "Backend API", "Selenium Grid")
+#   TIMEOUT_SECONDS Maximum time to wait in seconds (default: 5)
+#   CHECK_INTERVAL  Interval between checks in seconds (default: 1)
 #
 # Examples:
 #   ./scripts/ci/wait-for-service.sh http://localhost:3003 "Frontend" 5
 #   ./scripts/ci/wait-for-service.sh http://localhost:8003/docs "Backend API" 5 1
 #   ./scripts/ci/wait-for-service.sh http://localhost:4444/wd/hub/status "Selenium Grid" 5
+#
+# Description:
+#   This is a reusable utility script that waits for any HTTP service to become ready.
+#   It checks the service endpoint at regular intervals until it responds successfully
+#   or the timeout is reached. Used by wait-for-services.sh and wait-for-grid.sh.
+#
+# Dependencies:
+#   - curl (for HTTP health checks)
+#   - Service must be starting or already running
+#
+# Output:
+#   - Console output showing wait progress
+#   - Exit code: 0 if service ready, 1 if timeout
+#
+# Notes:
+#   - Reusable utility for waiting on any HTTP service
+#   - Used by other wait scripts (wait-for-services.sh, wait-for-grid.sh)
+#   - Aggressive timeout (5 seconds) for fast CI/CD execution
+#   - Provides clear error messages on timeout
+#
+# Last Updated: January 2026
 
 set -e
 

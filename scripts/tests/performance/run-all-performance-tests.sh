@@ -1,6 +1,44 @@
 #!/bin/bash
+# scripts/tests/performance/run-all-performance-tests.sh
 # Master Performance Test Runner
-# Runs all performance testing tools in sequence
+#
+# Purpose: Run all performance testing tools in sequence (Locust, Gatling, JMeter)
+#
+# Usage:
+#   ./scripts/tests/performance/run-all-performance-tests.sh
+#
+# Description:
+#   This script runs all protocol-level performance testing tools:
+#   - Locust: 30% allocation (Python-based, real-time UI)
+#   - Gatling: 25% allocation (Scala-based, detailed reports)
+#   - JMeter: 25% allocation (Java-based, industry standard)
+#
+#   Note: Artillery + Playwright (20% - Browser-level) runs separately
+#         See: cd playwright && npm run load:test:homepage
+#
+# Examples:
+#   ./scripts/tests/performance/run-all-performance-tests.sh
+#
+# Dependencies:
+#   - Python 3.13+ (for Locust)
+#   - Java 21+ (for Gatling, JMeter)
+#   - Maven wrapper (./mvnw)
+#   - Gatling Maven plugin
+#   - JMeter (installed or downloaded)
+#   - Locust Python package
+#
+# Output:
+#   - Locust results in target/locust/
+#   - Gatling results in target/gatling/
+#   - JMeter results in target/jmeter/
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Tests run in sequence (not parallel)
+#   - Each tool generates its own reports
+#   - Browser-level testing (Artillery) is separate
+#
+# Last Updated: January 2026
 
 set -e
 

@@ -1,9 +1,47 @@
 #!/bin/bash
 # scripts/lib/common.sh
-# Common functions and utilities for shell scripts
-# 
+# Common Shell Script Library
+#
+# Purpose: Provide common functions and utilities for shell scripts across the project
+#
 # Usage:
+#   # Source this file in other scripts:
+#   source scripts/lib/common.sh
+#   # Or with full path:
 #   source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts/lib/common.sh"
+#
+# Description:
+#   This library provides common functions used by multiple shell scripts:
+#   - Color output functions (print_error, print_warning, print_success, print_info)
+#   - Script directory calculation (get_script_dir)
+#   - Environment parameter parsing (parse_environment_param)
+#   - Environment validation (set_and_validate_environment)
+#   - Help text formatting (print_help_header, print_help_section, print_help_example)
+#
+# Functions Provided:
+#   - get_script_dir() - Get project root directory
+#   - parse_environment_param() - Parse --env or -e parameters
+#   - set_and_validate_environment() - Set and validate environment value
+#   - print_error(), print_warning(), print_success(), print_info() - Colored output
+#   - print_help_header(), print_help_section(), print_help_example() - Help formatting
+#
+# Examples:
+#   # In another script:
+#   source scripts/lib/common.sh
+#   SCRIPT_DIR=$(get_script_dir)
+#   print_success "Operation completed"
+#
+# Dependencies:
+#   - Bash shell
+#   - Standard Unix utilities
+#
+# Notes:
+#   - This script is designed to be SOURCED, not executed directly
+#   - Provides consistent behavior across all scripts
+#   - Reduces code duplication
+#   - Used by service scripts (start-be.sh, start-fe.sh, etc.)
+#
+# Last Updated: January 2026
 
 # Colors for output
 RED='\033[0;31m'

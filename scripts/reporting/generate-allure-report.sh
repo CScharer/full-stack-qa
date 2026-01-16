@@ -1,7 +1,44 @@
 #!/bin/bash
-
-# Generate Allure Report Script
-# This script runs tests and generates an Allure HTML report
+# scripts/reporting/generate-allure-report.sh
+# Allure Report Generator
+#
+# Purpose: Run tests and generate an Allure HTML report with screenshots
+#
+# Usage:
+#   ./scripts/reporting/generate-allure-report.sh
+#
+# Description:
+#   This script performs the following steps:
+#   1. Starts Selenium Grid (hub + Chrome + Firefox nodes)
+#   2. Waits for Grid to be ready
+#   3. Runs test suite (SimpleGridTest, EnhancedGridTests)
+#   4. Generates Allure HTML report
+#   5. Opens report in default browser
+#   6. Stops Grid services
+#
+# Examples:
+#   ./scripts/reporting/generate-allure-report.sh
+#
+# Dependencies:
+#   - Docker and Docker Compose
+#   - Selenium Grid services (selenium-hub, chrome-node-1, firefox-node)
+#   - Maven wrapper (./mvnw)
+#   - Java 21+
+#   - Allure CLI (installed via npm or standalone)
+#
+# Output:
+#   - Test results in target/allure-results/
+#   - Allure HTML report in target/allure-report/
+#   - Report automatically opened in default browser
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Grid is automatically started and stopped by this script
+#   - Uses docker-compose.yml for Grid configuration
+#   - Screenshots are automatically captured on test failures
+#   - Report includes graphs, trends, and historical data
+#
+# Last Updated: January 2026
 
 set -e
 

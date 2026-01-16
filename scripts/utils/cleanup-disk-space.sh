@@ -1,6 +1,50 @@
 #!/bin/bash
-# scripts/cleanup-disk-space.sh
-# Cleanup script to free up disk space by removing build artifacts, caches, and temporary files
+# scripts/utils/cleanup-disk-space.sh
+# Disk Space Cleanup Utility
+#
+# Purpose: Free up disk space by removing build artifacts, caches, and temporary files
+#
+# Usage:
+#   ./scripts/utils/cleanup-disk-space.sh [OPTIONS]
+#
+# Options:
+#   --dry-run     Show what would be deleted without actually deleting (default behavior)
+#   --confirm     Actually delete files (requires explicit confirmation)
+#   --all         Clean all categories (build artifacts, caches, test results, etc.)
+#
+# Examples:
+#   ./scripts/utils/cleanup-disk-space.sh                    # Dry run (shows what would be deleted)
+#   ./scripts/utils/cleanup-disk-space.sh --confirm           # Actually delete files
+#   ./scripts/utils/cleanup-disk-space.sh --all --confirm    # Clean everything
+#
+# Description:
+#   This script helps free up disk space by removing:
+#   - Build artifacts (target/, node_modules/, dist/, build/)
+#   - Test results (test-results/, allure-results/, playwright-report/)
+#   - Cache directories (.cache/, .npm/, .m2/repository/)
+#   - Temporary files and logs
+#
+#   By default, runs in dry-run mode showing what would be deleted.
+#   Requires --confirm flag to actually delete files.
+#
+# Dependencies:
+#   - Standard Unix utilities (du, rm, find)
+#   - Sufficient permissions to delete files
+#
+# Output:
+#   - Directory sizes before cleanup
+#   - List of directories/files to be deleted
+#   - Space freed (if --confirm used)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Safe by default (dry-run mode)
+#   - Shows disk space usage before cleanup
+#   - Calculates space that would be freed
+#   - Requires explicit --confirm to actually delete
+#   - Useful for CI/CD environments and local development
+#
+# Last Updated: January 2026
 
 set -e
 

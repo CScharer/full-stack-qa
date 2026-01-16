@@ -41,14 +41,17 @@ public class XlsReader {
   private POIFSFileSystem poifsFileSystem = null;
   private XSSFWorkbook workbook = null;
 
+  // PMD: SingularField is intentionally suppressed - these fields are reused across multiple
+  // methods
+  // as temporary variables to avoid repeated lookups, improving performance
   @SuppressWarnings("PMD.SingularField")
-  private XSSFSheet sheet = null; // reused across multiple methods as temporary variable
+  private XSSFSheet sheet = null;
 
   @SuppressWarnings("PMD.SingularField")
-  private XSSFRow row = null; // reused across multiple methods as temporary variable
+  private XSSFRow row = null;
 
   @SuppressWarnings("PMD.SingularField")
-  private XSSFCell cell = null; // reused across multiple methods as temporary variable
+  private XSSFCell cell = null;
 
   public XlsReader(String path) {
     this.path = path;

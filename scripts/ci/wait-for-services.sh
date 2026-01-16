@@ -1,7 +1,43 @@
 #!/bin/bash
 # scripts/ci/wait-for-services.sh
-# Waits for Backend and Frontend services to be ready
-# This script is a wrapper around wait-for-service.sh for application services
+# Application Services Waiter
+#
+# Purpose: Wait for Backend and Frontend services to be ready before running tests
+#
+# Usage:
+#   ./scripts/ci/wait-for-services.sh <FRONTEND_URL> <BACKEND_URL> [MAX_ATTEMPTS] [ENVIRONMENT]
+#
+# Parameters:
+#   FRONTEND_URL  Frontend service URL (e.g., http://localhost:3003)
+#   BACKEND_URL   Backend API URL (e.g., http://localhost:8003)
+#   MAX_ATTEMPTS  Maximum number of connection attempts (default: 5)
+#   ENVIRONMENT   Environment name for logging (default: "unknown")
+#
+# Examples:
+#   ./scripts/ci/wait-for-services.sh http://localhost:3003 http://localhost:8003
+#   ./scripts/ci/wait-for-services.sh http://localhost:3004 http://localhost:8004 10 test
+#
+# Description:
+#   This script waits for both Backend and Frontend services to be ready by checking
+#   their HTTP endpoints. It uses the centralized wait-for-service.sh utility with
+#   aggressive timeouts (5 seconds) for fast CI/CD pipeline execution.
+#
+# Dependencies:
+#   - scripts/ci/wait-for-service.sh (centralized wait utility)
+#   - curl (for HTTP health checks)
+#   - Services must be starting or already running
+#
+# Output:
+#   - Console output showing wait progress
+#   - Exit code: 0 if both services ready, 1 if timeout
+#
+# Notes:
+#   - Uses aggressive 5-second timeout for fast CI/CD execution
+#   - Wrapper around wait-for-service.sh for convenience
+#   - Fails fast if either service doesn't become ready
+#   - Used in CI/CD pipeline before test execution
+#
+# Last Updated: January 2026
 
 set -e
 

@@ -1,6 +1,42 @@
 #!/bin/bash
-# Run tests locally without Docker
-# This script runs all test frameworks that don't require Docker
+# scripts/tests/run-tests-local.sh
+# Local Test Runner (No Docker Required)
+#
+# Purpose: Run all test frameworks locally without Docker to save disk space
+#          Executes Cypress, Playwright, Robot Framework, and Vibium tests
+#
+# Usage:
+#   ./scripts/tests/run-tests-local.sh
+#
+# Description:
+#   This script runs test frameworks that don't require Docker:
+#   - Cypress tests (TypeScript)
+#   - Playwright tests (TypeScript)
+#   - Robot Framework tests (Python)
+#   - Vibium tests (TypeScript)
+#
+#   Selenium tests are skipped as they require Docker/Selenium Grid.
+#
+# Examples:
+#   ./scripts/tests/run-tests-local.sh
+#
+# Dependencies:
+#   - Node.js 20+ (for Cypress, Playwright, Vibium)
+#   - Python 3.13+ (for Robot Framework)
+#   - npm dependencies installed in respective project directories
+#   - Maven wrapper (./mvnw) for Robot Framework Maven plugin
+#
+# Output:
+#   - Test results for each framework in their respective directories
+#   - Summary of passed/failed tests
+#   - Exit code: 0 if all tests pass, non-zero if any fail
+#
+# Notes:
+#   - Saves disk space by not using Docker
+#   - Faster startup (no container initialization)
+#   - Requires local installation of Node.js and Python
+#
+# Last Updated: January 2026
 
 set -e
 

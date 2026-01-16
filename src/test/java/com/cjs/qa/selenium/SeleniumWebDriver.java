@@ -384,6 +384,8 @@ public class SeleniumWebDriver {
         String executableVersion = getExecutableVersion(capabilities);
         LOG.debug("Executable version: [{}]", executableVersion);
         if (Browser.CHROME.equalsIgnoreCase(getBrowser())) {
+          // Capabilities.getCapability() returns Object, must cast to Map - type safety verified at
+          // runtime
           @SuppressWarnings("unchecked")
           Map<String, Object> chromeCapabilities =
               (Map<String, Object>) capabilities.getCapability(Browser.CHROME);

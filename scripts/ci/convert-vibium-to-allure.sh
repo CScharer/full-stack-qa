@@ -1,11 +1,46 @@
 #!/bin/bash
-# Convert Vibium Test Results to Allure Format
-# Usage: ./scripts/ci/convert-vibium-to-allure.sh <allure-results-dir> <vibium-results-dir> [environment]
+# scripts/ci/convert-vibium-to-allure.sh
+# Vibium to Allure Results Converter
 #
-# Arguments:
-#   allure-results-dir  - Directory where Allure results should be stored
-#   vibium-results-dir  - Directory containing Vibium test results
-#   environment         - Optional environment name (dev, test, prod)
+# Purpose: Convert Vibium test results to Allure-compatible JSON format
+#
+# Usage:
+#   ./scripts/ci/convert-vibium-to-allure.sh [ALLURE_RESULTS_DIR] [VIBIUM_RESULTS_DIR] [ENVIRONMENT]
+#
+# Parameters:
+#   ALLURE_RESULTS_DIR  Directory where Allure results should be stored (default: "allure-results-combined")
+#   VIBIUM_RESULTS_DIR  Directory containing Vibium test results (default: "vibium/test-results")
+#   ENVIRONMENT         Optional environment name for metadata: dev, test, prod (optional)
+#
+# Examples:
+#   ./scripts/ci/convert-vibium-to-allure.sh
+#   ./scripts/ci/convert-vibium-to-allure.sh allure-results vibium/test-results dev
+#   ./scripts/ci/convert-vibium-to-allure.sh combined-results vibium/results test
+#
+# Description:
+#   This script converts Vibium test results (JSON format) into Allure-compatible JSON files.
+#   It reads Vibium result files and generates Allure result files (*-result.json) with
+#   test names, status, duration, attachments, and environment metadata.
+#
+# Dependencies:
+#   - Vibium test results (JSON files in VIBIUM_RESULTS_DIR)
+#   - jq (JSON processor) for parsing Vibium results
+#   - Allure metadata utilities (scripts/ci/allure-metadata-utils.sh)
+#   - Python 3.x (for some conversion utilities, optional)
+#
+# Output:
+#   - Allure-compatible JSON files in ALLURE_RESULTS_DIR
+#   - Screenshots and attachments included
+#   - Environment metadata included
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline to integrate Vibium results with Allure reports
+#   - Handles Vibium result file structure and naming
+#   - Preserves screenshots and attachments
+#   - Adds environment labels for filtering in Allure reports
+#
+# Last Updated: January 2026
 
 set -e
 

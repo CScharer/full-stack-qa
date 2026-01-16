@@ -1,9 +1,50 @@
 #!/bin/bash
-# scripts/validate-dependency-versions.sh
-# Validates that dependency versions are aligned across the project
-# Supports report generation for monitoring/alerting
+# scripts/quality/validate-dependency-versions.sh
+# Dependency Version Validator
+#
+# Purpose: Validate that dependency versions are aligned across the project
+#
+# Usage:
+#   ./scripts/quality/validate-dependency-versions.sh [--report FORMAT]
+#
+# Parameters:
+#   --report FORMAT   Generate report in specified format: json, yaml, text (optional)
+#
+# Examples:
+#   ./scripts/quality/validate-dependency-versions.sh
+#   ./scripts/quality/validate-dependency-versions.sh --report json
+#   ./scripts/quality/validate-dependency-versions.sh --report yaml
+#
+# Description:
+#   This script validates dependency version alignment across the project:
+#   - Selenium version (pom.xml vs GitHub Actions workflows)
+#   - TypeScript version (across all Node.js projects)
+#   - @types/node version (across all Node.js projects)
+#   - Docker Compose image versions
+#   - Python dependency versions
+#
+#   Supports report generation for monitoring and alerting systems.
+#
+# Dependencies:
+#   - jq (JSON processor) for parsing JSON files
+#   - yq (YAML processor) for parsing YAML files (optional)
+#   - Standard Unix utilities (grep, awk, etc.)
+#
+# Output:
+#   - Version validation results
+#   - Mismatch warnings
+#   - Optional report file (if --report specified)
+#   - Exit code: 0 if all versions aligned, non-zero if mismatches found
+#
+# Notes:
+#   - Used in CI/CD pipeline for version validation
+#   - Prevents version drift across projects
+#   - Supports automated monitoring and alerting
+#   - Report formats: JSON, YAML, or plain text
+#
+# Last Updated: January 2026
 
-set -e # Exit immediately if a command exits with a non-zero status
+set -e
 
 # Colors for output
 RED='\033[0;31m'

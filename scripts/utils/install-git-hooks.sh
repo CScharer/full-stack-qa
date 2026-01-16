@@ -1,6 +1,40 @@
 #!/bin/bash
-# scripts/install-git-hooks.sh
-# Installs Git pre-commit hooks for validation
+# scripts/utils/install-git-hooks.sh
+# Git Hooks Installer
+#
+# Purpose: Install Git pre-commit and pre-push hooks for automated validation
+#
+# Usage:
+#   ./scripts/utils/install-git-hooks.sh
+#
+# Description:
+#   This script installs Git hooks for automated code quality validation:
+#   - Pre-commit hook: Formats code automatically (Prettier, Spotless, Google Java Format)
+#   - Pre-push hook: Validates code quality (formatting, compilation, Checkstyle, PMD)
+#   - Post-checkout hook: Ensures hooks are installed and up-to-date
+#
+#   Hooks are automatically maintained via post-checkout hook after initial installation.
+#
+# Examples:
+#   ./scripts/utils/install-git-hooks.sh
+#
+# Dependencies:
+#   - Git repository (.git directory)
+#   - Hook scripts in scripts/ directory
+#   - Standard Unix utilities
+#
+# Output:
+#   - Git hooks installed in .git/hooks/
+#   - Console output showing installation status
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - One-time setup required after cloning repository
+#   - Post-checkout hook maintains hooks automatically after initial install
+#   - Hooks prevent committing/pushing code that would fail in CI/CD
+#   - Can be bypassed with --no-verify (not recommended)
+#
+# Last Updated: January 2026
 
 set -e
 

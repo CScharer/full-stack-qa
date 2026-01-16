@@ -1,9 +1,38 @@
 #!/bin/bash
-
-# Run Cypress tests (TypeScript)
-# Usage: ./scripts/run-cypress-tests.sh [mode] [browser]
-# Example: ./scripts/run-cypress-tests.sh run chrome
-#          ./scripts/run-cypress-tests.sh open
+# scripts/tests/frameworks/run-cypress-tests.sh
+# Cypress Test Runner
+#
+# Purpose: Run Cypress end-to-end tests (TypeScript) in interactive or headless mode
+#
+# Usage:
+#   ./scripts/tests/frameworks/run-cypress-tests.sh [MODE] [BROWSER]
+#
+# Parameters:
+#   MODE          Test execution mode: "run" (headless) or "open" (interactive) (default: "run")
+#   BROWSER       Browser to use: chrome, firefox, edge, electron (default: "chrome")
+#
+# Examples:
+#   ./scripts/tests/frameworks/run-cypress-tests.sh run chrome    # Headless Chrome
+#   ./scripts/tests/frameworks/run-cypress-tests.sh run firefox  # Headless Firefox
+#   ./scripts/tests/frameworks/run-cypress-tests.sh open         # Interactive mode (Cypress UI)
+#
+# Dependencies:
+#   - Node.js 20+
+#   - npm (installed in cypress/ directory)
+#   - Cypress dependencies (auto-installed if missing)
+#
+# Output:
+#   - Test results in cypress/cypress/results/
+#   - Screenshots on failure in cypress/cypress/screenshots/
+#   - Videos in cypress/cypress/videos/ (if enabled)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Automatically installs dependencies if node_modules/ is missing
+#   - Interactive mode ("open") opens Cypress Test Runner UI
+#   - Headless mode ("run") executes tests without UI
+#
+# Last Updated: January 2026
 
 set -e
 

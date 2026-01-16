@@ -1,6 +1,38 @@
 #!/bin/bash
-# Run ONE GOAL Backend API Tests
-# This script runs the backend test suite
+# scripts/tests/frameworks/run-backend-tests.sh
+# Backend API Test Runner
+#
+# Purpose: Run backend API tests for the ONE GOAL application
+#
+# Usage:
+#   ./scripts/tests/frameworks/run-backend-tests.sh
+#
+# Description:
+#   This script runs the FastAPI backend test suite using pytest.
+#   Tests are located in backend/tests/ and cover API endpoints,
+#   database operations, and business logic.
+#
+# Examples:
+#   ./scripts/tests/frameworks/run-backend-tests.sh
+#
+# Dependencies:
+#   - Python 3.13+
+#   - Backend virtual environment (backend/venv/)
+#   - Backend dependencies (installed in venv)
+#   - Backend service running (optional, some tests may require it)
+#
+# Output:
+#   - Test results in backend/test-results/
+#   - Coverage reports (if configured)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Activates backend virtual environment automatically
+#   - Installs dependencies if venv is missing
+#   - Uses pytest for test execution
+#   - May require backend service to be running for integration tests
+#
+# Last Updated: January 2026
 
 set -e
 

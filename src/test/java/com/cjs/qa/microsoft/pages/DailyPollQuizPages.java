@@ -34,8 +34,9 @@ public class DailyPollQuizPages extends RewardsPage {
 
   private String pointsAvailable;
 
+  // Reserved for future use - currently unused but kept for API compatibility
   @SuppressWarnings("unused")
-  private int answersNeeded; // Reserved for future use
+  private int answersNeeded;
 
   /**
    * @param webDriver

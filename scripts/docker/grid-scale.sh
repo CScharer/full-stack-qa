@@ -1,5 +1,43 @@
 #!/bin/bash
-# Scale Selenium Grid nodes
+# scripts/docker/grid-scale.sh
+# Selenium Grid Node Scaler
+#
+# Purpose: Scale Selenium Grid browser nodes up or down
+#
+# Usage:
+#   ./scripts/docker/grid-scale.sh [BROWSER] [REPLICAS]
+#
+# Parameters:
+#   BROWSER    Browser type to scale: chrome, chromium, firefox, edge, or all (default: "chrome")
+#   REPLICAS   Number of node instances to run (default: 3)
+#
+# Examples:
+#   ./scripts/docker/grid-scale.sh                      # Scale Chrome to 3 nodes
+#   ./scripts/docker/grid-scale.sh chrome 5             # Scale Chrome to 5 nodes
+#   ./scripts/docker/grid-scale.sh firefox 2            # Scale Firefox to 2 nodes
+#   ./scripts/docker/grid-scale.sh edge 4               # Scale Edge to 4 nodes
+#
+# Description:
+#   This script scales Selenium Grid browser nodes using Docker Compose's --scale flag.
+#   It allows dynamic scaling of browser nodes to handle varying test loads.
+#
+# Dependencies:
+#   - Docker and Docker Compose
+#   - docker-compose.yml with node service definitions
+#   - Selenium Grid Hub must be running
+#
+# Output:
+#   - Scaled browser nodes started
+#   - Console output showing scaling progress
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Uses Docker Compose --scale flag
+#   - Nodes automatically register with Hub
+#   - Useful for load testing and parallel execution
+#   - Can scale multiple browser types independently
+#
+# Last Updated: January 2026
 
 set -e
 

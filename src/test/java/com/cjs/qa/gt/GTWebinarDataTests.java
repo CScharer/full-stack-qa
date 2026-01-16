@@ -61,9 +61,9 @@ public class GTWebinarDataTests extends Environment {
     sysOut(Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName() + "]");
   }
 
+  // Parameter reserved for future implementation - currently unused but kept for API compatibility
   @SuppressWarnings("unused")
   private static void pullFromGTWebinar(String dateTimeFrom) {
-    // Parameter reserved for future implementation
     sysOut(Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName() + "]");
   }
 

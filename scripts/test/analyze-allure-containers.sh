@@ -1,12 +1,42 @@
 #!/bin/bash
 # scripts/test/analyze-allure-containers.sh
-# Analyzes Allure results to diagnose Suites tab issues
-# Can work with downloaded artifacts or local allure-results directories
+# Allure Containers Analyzer
+#
+# Purpose: Analyze Allure results to diagnose Suites tab issues
 #
 # Usage:
-#   ./scripts/test/analyze-allure-containers.sh [results-dir]
+#   ./scripts/test/analyze-allure-containers.sh [RESULTS_DIR]
+#
+# Parameters:
+#   RESULTS_DIR  Directory containing Allure results (default: "allure-results-combined")
+#                Can be a local directory or downloaded artifact path
+#
+# Examples:
+#   ./scripts/test/analyze-allure-containers.sh
 #   ./scripts/test/analyze-allure-containers.sh allure-results-combined
 #   ./scripts/test/analyze-allure-containers.sh /path/to/downloaded/artifact
+#
+# Description:
+#   This script analyzes Allure test results to diagnose issues with the Suites tab.
+#   It can work with downloaded artifacts or local allure-results directories.
+#   It examines container structure, test grouping, and suite organization.
+#
+# Dependencies:
+#   - jq (JSON processor) for parsing Allure result files
+#   - Allure result files (*-result.json, *-container.json) in RESULTS_DIR
+#
+# Output:
+#   - Analysis report showing container structure
+#   - Suite organization details
+#   - Potential issues and recommendations
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used for debugging Allure report generation issues
+#   - Helps identify problems with test suite organization
+#   - Can analyze both local and downloaded artifact results
+#
+# Last Updated: January 2026
 
 set -e
 

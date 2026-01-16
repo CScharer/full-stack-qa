@@ -41,7 +41,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<!-- Jar Dependencies-->
 		<activation.version>1.1.1</activation.version>
 		<asm.version>9.9.1</asm.version>
-		<byte-buddy.version>1.18.3</byte-buddy.version>
+		<byte-buddy.version>1.18.4</byte-buddy.version>
 		<byte-buddy-agent.version>${byte-buddy.version}</byte-buddy-agent.version>
 		<commons-collections.version>3.2.2</commons-collections.version>
 		<commons-csv.version>1.14.1</commons-csv.version>
@@ -58,7 +58,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<cucumber-jvm.version>${cucumber.version}</cucumber-jvm.version>
 		<cucumber-jvm-deps.version>1.0.6</cucumber-jvm-deps.version>
 		<cucumber-picocontainer.version>${cucumber.version}</cucumber-picocontainer.version>
-		<cucumber-reporting.version>5.10.1</cucumber-reporting.version>
+		<cucumber-reporting.version>5.10.2</cucumber-reporting.version>
 		<cucumber-runner.version>1.3</cucumber-runner.version>
 		<db2jcc4.version>11.5.9.0</db2jcc4.version>
 		<dbunit.version>2.8.0</dbunit.version>
@@ -85,7 +85,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<eclipse-jface.version>3.5.2</eclipse-jface.version>
 		<jfreechart.version>1.5.6</jfreechart.version>
 		<json.version>20251224</json.version>
-		<jsoup.version>1.21.2</jsoup.version>
+		<jsoup.version>1.22.1</jsoup.version>
 		<junit.version>4.13.2</junit.version>
 		<jxl.version>2.6.12</jxl.version>
 		<lazy.version>1.0.1</lazy.version>
@@ -99,7 +99,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<poi-ooxml-schemas.version>${poi.version}</poi-ooxml-schemas.version>
 		<sauce_junit.version>2.1.25</sauce_junit.version>
 		<saucerest.version>2.5.3</saucerest.version>
-        <secretmanager.version>2.81.0</secretmanager.version>
+        <secretmanager.version>2.82.0</secretmanager.version>
 		<selenide.version>7.13.0</selenide.version>
 		<selenium.version>4.39.0</selenium.version>
 		<webdrivermanager.version>6.3.3</webdrivermanager.version>
@@ -108,7 +108,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<aspectj.version>1.9.25.1</aspectj.version>
 
 		<!-- Code Quality Tools -->
-		<checkstyle.version>12.3.0</checkstyle.version>
+		<checkstyle.version>13.0.0</checkstyle.version>
 		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
 		<spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
 		<spotbugs.version>4.9.8</spotbugs.version>
@@ -263,11 +263,11 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- Explicitly add postgresql 42.7.8 to override vulnerable 42.3.1 from transitive dependencies -->
+		<!-- Explicitly add postgresql 42.7.9 to override vulnerable 42.3.1 from transitive dependencies -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.8</version>
+			<version>42.7.9</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>

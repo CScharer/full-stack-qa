@@ -12,9 +12,9 @@ import io.cucumber.datatable.DataTable;
 
 public class Processes {
 
+  // Reserved for future logging - currently unused but kept for API compatibility
   @SuppressWarnings("unused")
-  private static final GuardedLogger LOG =
-      new GuardedLogger(LogManager.getLogger(Processes.class)); // Reserved for future logging
+  private static final GuardedLogger LOG = new GuardedLogger(LogManager.getLogger(Processes.class));
 
   public static final String NO_RESULTS =
       "INFO: No tasks are running which match the specified criteria.";

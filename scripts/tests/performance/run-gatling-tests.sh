@@ -1,6 +1,38 @@
 #!/bin/bash
+# scripts/tests/performance/run-gatling-tests.sh
 # Gatling Performance Test Runner
-# 30% of performance testing allocation
+#
+# Purpose: Run Gatling performance tests (25% of performance testing allocation)
+#
+# Usage:
+#   ./scripts/tests/performance/run-gatling-tests.sh
+#
+# Description:
+#   This script runs Gatling load tests using Scala-based simulations.
+#   Gatling provides beautiful HTML reports with detailed metrics and graphs.
+#   Tests are located in src/test/scala/ and use Gatling DSL.
+#
+# Examples:
+#   ./scripts/tests/performance/run-gatling-tests.sh
+#
+# Dependencies:
+#   - Java 21+
+#   - Maven wrapper (./mvnw)
+#   - Gatling Maven plugin (configured in pom.xml)
+#   - Scala (managed by Maven plugin)
+#
+# Output:
+#   - Test results in target/gatling/
+#   - HTML reports with graphs and metrics
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Uses Gatling Maven plugin for execution
+#   - Generates comprehensive HTML reports
+#   - Supports ramp-up scenarios and user simulation
+#   - 25% allocation of total performance testing
+#
+# Last Updated: January 2026
 
 set -e
 

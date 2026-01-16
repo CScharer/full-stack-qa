@@ -1,7 +1,47 @@
 #!/bin/bash
 # scripts/ci/determine-ports.sh
-# Determines ports and URLs based on environment
-# Uses centralized port-config.sh as single source of truth
+# Port and URL Determination
+#
+# Purpose: Determine ports and URLs for an environment and output them for GitHub Actions
+#
+# Usage:
+#   ./scripts/ci/determine-ports.sh <ENVIRONMENT>
+#
+# Parameters:
+#   ENVIRONMENT   Environment name: dev, test, or prod
+#
+# Examples:
+#   ./scripts/ci/determine-ports.sh dev
+#   ./scripts/ci/determine-ports.sh test
+#   ./scripts/ci/determine-ports.sh prod
+#
+# Description:
+#   This script determines ports and URLs for a given environment using the centralized
+#   port-config.sh configuration. It outputs the values to GitHub Actions output variables
+#   for use in workflow steps.
+#
+#   Output variables:
+#   - frontend_port: Frontend service port
+#   - api_port: Backend API port
+#   - backend_url: Backend API base URL
+#   - frontend_url: Frontend application URL
+#
+# Dependencies:
+#   - scripts/ci/port-config.sh (centralized port configuration)
+#   - config/environments.json (configuration source)
+#   - jq (JSON processor, optional but recommended)
+#   - GitHub Actions environment (for $GITHUB_OUTPUT)
+#
+# Output:
+#   - GitHub Actions output variables (via $GITHUB_OUTPUT)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in GitHub Actions workflows to set environment-specific values
+#   - Falls back to hardcoded values if port-config.sh is unavailable
+#   - Single source of truth: config/environments.json
+#
+# Last Updated: January 2026
 
 set -e
 

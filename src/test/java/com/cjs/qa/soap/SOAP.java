@@ -122,8 +122,8 @@ public class SOAP {
     final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     try {
       soapMessage.writeTo(byteArrayOutputStream);
-      @SuppressWarnings("unused")
-      final String soapMessageString = byteArrayOutputStream.toString();
+      // Note: byteArrayOutputStream.toString() is available if needed for debugging
+      // final String soapMessageString = byteArrayOutputStream.toString();
       String soapMessageValue = getSOAPMessageValue(soapMessage, true);
       soapMessageValue =
           soapMessageValue.replaceAll(Constants.NEWLINE + Constants.NEWLINE, Constants.NEWLINE);

@@ -1,7 +1,42 @@
 #!/bin/bash
-# Stop Backend and Frontend services
-# This script stops services started by start-services-for-ci.sh
-# It can also stop services running on the configured ports
+# scripts/services/stop-services.sh
+# Service Stopper
+#
+# Purpose: Stop Backend and Frontend services gracefully
+#
+# Usage:
+#   ./scripts/services/stop-services.sh [ENVIRONMENT]
+#
+# Parameters:
+#   ENVIRONMENT   Environment to stop services for: dev, test, prod (default: "dev" or from ENVIRONMENT env var)
+#
+# Examples:
+#   ./scripts/services/stop-services.sh
+#   ./scripts/services/stop-services.sh test
+#   ENVIRONMENT=prod ./scripts/services/stop-services.sh
+#
+# Description:
+#   This script stops Backend and Frontend services that were started by start-services-for-ci.sh
+#   or start-env.sh. It can also stop services running on configured ports if PID files are missing.
+#   Gracefully terminates processes and cleans up PID files.
+#
+# Dependencies:
+#   - Services must be running (started by start scripts)
+#   - scripts/ci/env-config.sh (for port configuration)
+#   - Standard Unix utilities (ps, kill, etc.)
+#
+# Output:
+#   - Service shutdown status
+#   - PID file cleanup
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Gracefully stops services using stored PIDs
+#   - Falls back to port-based process detection if PID file missing
+#   - Cleans up PID files after stopping
+#   - Safe to run multiple times (idempotent)
+#
+# Last Updated: January 2026
 
 set -e
 

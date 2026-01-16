@@ -1,8 +1,41 @@
 #!/bin/bash
-# CI Code Quality Verification (Read-Only)
-# - Checkstyle: Verify code style
-# - PMD: Verify code quality
-# Note: Formatting and compilation are handled elsewhere
+# scripts/ci/verify-code-quality.sh
+# Code Quality Verification (Read-Only)
+#
+# Purpose: Verify code quality using Checkstyle and PMD (read-only, no modifications)
+#
+# Usage:
+#   ./scripts/ci/verify-code-quality.sh
+#
+# Description:
+#   This script runs read-only code quality checks:
+#   - Checkstyle: Verifies code style compliance (Google Java Style, 120-char line length)
+#   - PMD: Analyzes code for potential bugs, code smells, and best practices
+#
+#   This is a verification-only script - it does not modify code or format files.
+#   Formatting and compilation are handled by other scripts.
+#
+# Examples:
+#   ./scripts/ci/verify-code-quality.sh
+#
+# Dependencies:
+#   - Maven wrapper (./mvnw)
+#   - Java 21+
+#   - Checkstyle Maven plugin (configured in pom.xml)
+#   - PMD Maven plugin (configured in pom.xml)
+#
+# Output:
+#   - Checkstyle violation count (0 violations expected)
+#   - PMD violation count (0 violations expected)
+#   - Exit code: 0 if both pass, non-zero if violations found
+#
+# Notes:
+#   - Used in CI/CD pipeline for code quality validation
+#   - Suppresses Maven progress output for cleaner logs
+#   - Read-only verification (no code modifications)
+#   - Project maintains 0 Checkstyle and 0 PMD violations
+#
+# Last Updated: January 2026
 
 set -e
 

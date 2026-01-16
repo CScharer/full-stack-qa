@@ -1,5 +1,41 @@
 #!/bin/bash
-# Selenium Grid Health Check Script
+# scripts/docker/grid-health.sh
+# Selenium Grid Health Check
+#
+# Purpose: Check the health status of Selenium Grid services
+#
+# Usage:
+#   ./scripts/docker/grid-health.sh
+#
+# Description:
+#   This script performs a comprehensive health check of Selenium Grid:
+#   - Checks if Selenium Hub is running and ready
+#   - Checks if browser nodes are registered
+#   - Displays node status and capabilities
+#   - Provides overall Grid health status
+#
+# Examples:
+#   ./scripts/docker/grid-health.sh
+#
+# Dependencies:
+#   - Selenium Grid running (Hub at http://localhost:4444)
+#   - curl (for HTTP health checks)
+#   - jq (for JSON parsing, optional but recommended)
+#
+# Output:
+#   - Hub status (ready/not ready)
+#   - Node registration status
+#   - Node details (browser, version, platform)
+#   - Overall health status
+#   - Exit code: 0 if healthy, non-zero if unhealthy
+#
+# Notes:
+#   - Checks Grid status endpoint (/wd/hub/status)
+#   - Validates node registration
+#   - Provides color-coded output for quick status assessment
+#   - Useful for troubleshooting Grid issues
+#
+# Last Updated: January 2026
 
 set -e
 

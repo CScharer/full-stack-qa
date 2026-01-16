@@ -1,7 +1,37 @@
 #!/bin/bash
+# scripts/tests/performance/run-jmeter-tests.sh
 # JMeter Performance Test Runner
-# 30% of performance testing allocation
-# Uses JMeter CLI directly (not Maven plugin)
+#
+# Purpose: Run Apache JMeter performance tests (25% of performance testing allocation)
+#
+# Usage:
+#   ./scripts/tests/performance/run-jmeter-tests.sh
+#
+# Description:
+#   This script runs JMeter load tests using JMeter CLI directly (not Maven plugin).
+#   JMeter is an industry-standard performance testing tool supporting multiple protocols.
+#   Test plans are located in src/test/jmeter/.
+#
+# Examples:
+#   ./scripts/tests/performance/run-jmeter-tests.sh
+#
+# Dependencies:
+#   - Java 21+
+#   - Apache JMeter (downloaded automatically if missing)
+#   - JMeter test plans in src/test/jmeter/
+#
+# Output:
+#   - Test results in target/jmeter/
+#   - HTML reports and CSV results
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Downloads JMeter automatically if not present
+#   - Uses JMeter CLI (not Maven plugin)
+#   - Supports HTTP, HTTPS, and other protocols
+#   - 25% allocation of total performance testing
+#
+# Last Updated: January 2026
 
 set -e
 

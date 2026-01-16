@@ -1,22 +1,52 @@
 #!/bin/bash
-# Start Backend and Frontend services for specified environment
-# This script starts both services with reload enabled and handles cleanup on exit
+# scripts/services/start-env.sh
+# Full Stack Environment Starter
 #
-# USAGE:
-#   ./scripts/start-env.sh [--env ENV|-e ENV] [OPTIONS] [be=PORT] [fe=PORT]
+# Purpose: Start both Backend and Frontend services for the specified environment
 #
-# ENVIRONMENT OPTIONS:
+# Usage:
+#   ./scripts/services/start-env.sh [--env ENV|-e ENV] [OPTIONS] [be=PORT] [fe=PORT]
+#
+# Options:
 #   --env ENV    or  -e ENV     Environment: dev, test, or prod (default: dev)
 #   --env=ENV    or  -e=ENV     Same as above with equals sign
+#   --background                 Run services in background
+#   --help                       Show full usage information
 #
-# EXAMPLES:
-#   ./scripts/start-env.sh                           # Default: dev environment
-#   ./scripts/start-env.sh --env test                # Test environment
-#   ./scripts/start-env.sh -e prod                   # Production environment
-#   ./scripts/start-env.sh --env dev be=3000         # Dev with custom backend port
-#   ./scripts/start-env.sh -e test --background      # Test environment in background
+# Port Overrides:
+#   be=PORT                      Override backend port (e.g., be=3000)
+#   fe=PORT                      Override frontend port (e.g., fe=4000)
 #
-# Run with --help for full usage information
+# Examples:
+#   ./scripts/services/start-env.sh                           # Default: dev environment
+#   ./scripts/services/start-env.sh --env test                # Test environment
+#   ./scripts/services/start-env.sh -e prod                   # Production environment
+#   ./scripts/services/start-env.sh --env dev be=3000         # Dev with custom backend port
+#   ./scripts/services/start-env.sh -e test --background      # Test environment in background
+#
+# Description:
+#   This script starts both the FastAPI backend and Next.js frontend servers
+#   for the specified environment. It handles cleanup on exit and supports
+#   running services in the background or foreground.
+#
+# Dependencies:
+#   - Python 3.x (for backend)
+#   - Node.js 20+ (for frontend)
+#   - config/environments.json (for port and configuration)
+#   - data/core/ directory (for SQLite databases)
+#
+# Output:
+#   - Both services running on configured ports
+#   - Console output showing service status and logs
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Uses centralized configuration from config/environments.json
+#   - Handles cleanup on script exit (SIGINT, SIGTERM)
+#   - Supports hot-reload for development
+#   - Can run services in background mode
+#
+# Last Updated: January 2026
 
 set -e
 
