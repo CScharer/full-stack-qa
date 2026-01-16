@@ -118,14 +118,14 @@ npm install
 
 ```bash
 # Interactive mode (Test Runner) - Recommended for development
-./scripts/run-cypress-tests.sh open
+./scripts/tests/frameworks/run-cypress-tests.sh open
 
 # Headless mode
-./scripts/run-cypress-tests.sh run chrome
+./scripts/tests/frameworks/run-cypress-tests.sh run chrome
 
 # Specific browser
-./scripts/run-cypress-tests.sh run firefox
-./scripts/run-cypress-tests.sh run edge
+./scripts/tests/frameworks/run-cypress-tests.sh run firefox
+./scripts/tests/frameworks/run-cypress-tests.sh run edge
 
 # Direct npm commands
 cd cypress
@@ -244,7 +244,7 @@ npx playwright install
 
 ```bash
 # Using helper script
-./scripts/run-playwright-tests.sh chromium
+./scripts/tests/frameworks/run-playwright-tests.sh chromium
 
 # All browsers
 cd playwright && npm test
@@ -377,10 +377,10 @@ pip install robotframework-requests
 
 ```bash
 # All tests
-./scripts/run-robot-tests.sh
+./scripts/tests/frameworks/run-robot-tests.sh
 
 # Specific test file
-./scripts/run-robot-tests.sh GoogleSearchTests.robot
+./scripts/tests/frameworks/run-robot-tests.sh GoogleSearchTests.robot
 
 # Via Maven
 ./mvnw test -Probot
@@ -596,7 +596,7 @@ Already configured in `pom.xml`. No additional setup needed!
 
 ```bash
 # Default test suite
-./scripts/run-tests.sh Scenarios chrome
+./scripts/tests/run-tests.sh Scenarios chrome
 
 # Specific test class
 ./mvnw test -Dtest=Scenarios#Google
@@ -608,7 +608,7 @@ Already configured in `pom.xml`. No additional setup needed!
 ./mvnw test -DsuiteXmlFile=testng-ci-suite.xml
 
 # Smoke tests only
-./scripts/run-smoke-tests.sh
+./scripts/tests/run-smoke-tests.sh
 ```
 
 ### Test Structure
@@ -703,12 +703,12 @@ This installs:
 
 ```bash
 # Using the test script (recommended)
-./scripts/run-vibium-tests.sh
+./scripts/tests/frameworks/run-vibium-tests.sh
 
 # With options
-./scripts/run-vibium-tests.sh --watch    # Watch mode
-./scripts/run-vibium-tests.sh --ui       # UI mode
-./scripts/run-vibium-tests.sh --coverage # Coverage report
+./scripts/tests/frameworks/run-vibium-tests.sh --watch    # Watch mode
+./scripts/tests/frameworks/run-vibium-tests.sh --ui       # UI mode
+./scripts/tests/frameworks/run-vibium-tests.sh --coverage # Coverage report
 
 # Or directly
 cd vibium && npm test
@@ -832,7 +832,7 @@ Use Maven profiles to run specific frameworks:
 
 | Framework | Language | Maven Profile | Script | Best For |
 |-----------|----------|---------------|--------|----------|
-| Selenium | Java | `selenium` (default) | `run-tests.sh` | Legacy, Grid |
+| Selenium | Java | `selenium` (default) | `scripts/tests/run-tests.sh` | Legacy, Grid |
 | Playwright | TypeScript | N/A | `run-playwright-tests.sh` | Modern apps |
 | Cypress | TypeScript | N/A | `run-cypress-tests.sh` | Frontend-heavy |
 | Robot Framework | Python | `robot` | `run-robot-tests.sh` | Non-technical |

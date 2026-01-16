@@ -36,7 +36,7 @@ jobs:
           if mvn spotless:check 2>&1 | grep -vE "^Progress"; then
             echo "✅ Code formatting verified"
           else
-            echo "::error::Code formatting required. Please run: ./scripts/format-code.sh"
+            echo "::error::Code formatting required. Please run: ./scripts/quality/format-code.sh"
             echo ""
             echo "To fix locally, run:"
             echo "  ./scripts/format-code.sh"
@@ -55,17 +55,17 @@ jobs:
           if mvn checkstyle:check 2>&1 | grep -vE "^Progress" > /tmp/checkstyle-output.log 2>&1; then
             # Checkstyle passed, but check specifically for unused imports
             if grep -q "UnusedImports" /tmp/checkstyle-output.log; then
-              echo "::error::Unused imports detected. Please run: ./scripts/format-code.sh"
+              echo "::error::Unused imports detected. Please run: ./scripts/quality/format-code.sh"
               echo ""
               echo "To fix locally, run:"
-              echo "  ./scripts/format-code.sh"
+              echo "  ./scripts/quality/format-code.sh"
               exit 1
             else
               echo "✅ No unused imports found"
             fi
           else
             # Checkstyle failed - show summary
-            echo "::error::Code quality issues detected. Please run: ./scripts/format-code.sh"
+            echo "::error::Code quality issues detected. Please run: ./scripts/quality/format-code.sh"
             echo ""
             echo "Summary:"
             grep -E "(You have|violation)" /tmp/checkstyle-output.log | head -10 || true

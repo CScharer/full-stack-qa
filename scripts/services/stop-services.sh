@@ -5,7 +5,8 @@
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Since this script is in scripts/services/, we need to go up two levels
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PID_FILE="$SCRIPT_DIR/.service-pids"
 
 # Determine environment and ports

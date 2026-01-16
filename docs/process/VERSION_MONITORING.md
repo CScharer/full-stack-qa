@@ -27,13 +27,13 @@ This document describes the automated version monitoring and alerting system imp
 **Usage**:
 ```bash
 # Standard validation (console output only)
-./scripts/validate-dependency-versions.sh
+./scripts/quality/validate-dependency-versions.sh
 
 # Generate JSON report
-./scripts/validate-dependency-versions.sh --report-json --report-file results/report.json
+./scripts/quality/validate-dependency-versions.sh --report-json --report-file results/report.json
 
 # Generate CSV report
-./scripts/validate-dependency-versions.sh --report-csv --report-file results/report.csv
+./scripts/quality/validate-dependency-versions.sh --report-csv --report-file results/report.csv
 ```
 
 **Report Format**:
@@ -91,7 +91,7 @@ This document describes the automated version monitoring and alerting system imp
 
 **Installation**:
 ```bash
-./scripts/install-git-hooks.sh
+./scripts/utils/install-git-hooks.sh
 ```
 
 **Uninstallation**:
@@ -123,7 +123,7 @@ You can manually trigger the monitoring workflow:
 
 Or run locally:
 ```bash
-./scripts/validate-dependency-versions.sh --report-json --report-file results/report.json
+./scripts/quality/validate-dependency-versions.sh --report-json --report-file results/report.json
 ```
 
 ---

@@ -485,8 +485,8 @@ jobs:
 
       - name: Validate Dependency Versions
         run: |
-          chmod +x scripts/validate-dependency-versions.sh
-          ./scripts/validate-dependency-versions.sh
+          chmod +x scripts/quality/validate-dependency-versions.sh
+          ./scripts/quality/validate-dependency-versions.sh
 
   validate-test-data-json:
     name: Validate Test Data (JSON)

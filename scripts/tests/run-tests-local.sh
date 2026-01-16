@@ -82,11 +82,12 @@ fi
 echo ""
 echo -e "${YELLOW}⚠️  Note: Selenium/Java tests require Selenium Grid.${NC}"
 echo -e "${YELLOW}   They will be skipped in this local run.${NC}"
-echo -e "${YELLOW}   To run them, use: ./scripts/run-smoke-tests.sh${NC}"
+    echo -e "${YELLOW}   To run them, use: ./scripts/tests/run-smoke-tests.sh${NC}"
 echo ""
 
 # Get the script directory (project root)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Since this script is in scripts/tests/, we need to go up two levels
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$SCRIPT_DIR"
 
 # 1. Cypress Tests
@@ -166,7 +167,7 @@ if [ $TESTS_FAILED -eq 0 ]; then
     echo -e "${GREEN}🎉 All local tests passed!${NC}"
     echo ""
     echo -e "${YELLOW}Note: Selenium/Java tests were not run (require Selenium Grid).${NC}"
-    echo -e "${YELLOW}To run them, use: ./scripts/run-smoke-tests.sh${NC}"
+    echo -e "${YELLOW}To run them, use: ./scripts/tests/run-smoke-tests.sh${NC}"
     exit 0
 else
     echo -e "${RED}💥 Some tests failed. Check the output above for details.${NC}"

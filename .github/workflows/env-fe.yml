@@ -236,7 +236,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -285,7 +285,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Smoke Test Results
         if: always()
@@ -365,7 +365,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -428,7 +428,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Grid Test Results
         if: always()
@@ -483,7 +483,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -544,7 +544,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Mobile Test Results
         if: always()
@@ -599,7 +599,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -660,7 +660,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Responsive Test Results
         if: always()
@@ -702,7 +702,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -766,7 +766,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Cypress Test Results
         if: always()
@@ -809,7 +809,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -872,7 +872,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Playwright Test Results
         if: always()
@@ -929,7 +929,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -1023,7 +1023,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Robot Framework Test Results
         if: always()
@@ -1079,7 +1079,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -1138,7 +1138,7 @@ jobs:
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Selenide Test Results
         if: always()
@@ -1180,7 +1180,7 @@ jobs:
         run: |
           echo "🚀 Starting backend and frontend services..."
           echo "📋 Environment: ${{ inputs.environment }}"
-          ./scripts/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
 
       - name: Verify Services Are Running
         if: inputs.base_url == 'http://localhost:3003' || inputs.base_url == 'http://localhost:3004' || inputs.base_url == 'http://localhost:3005' || startsWith(inputs.base_url, 'http://localhost')
@@ -1218,12 +1218,12 @@ jobs:
           echo "Environment: ${{ inputs.environment }}"
           echo "URL: ${{ inputs.base_url }}"
           echo ""
-          ./scripts/run-vibium-tests.sh
+          ./scripts/tests/frameworks/run-vibium-tests.sh
 
       - name: Stop Backend and Frontend Services
         if: inputs.enable_stop_services == true
         run: |
-          ./scripts/stop-services.sh || true
+          ./scripts/services/stop-services.sh || true
 
       - name: Upload Vibium Test Results
         if: always()

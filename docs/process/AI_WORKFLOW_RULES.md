@@ -26,7 +26,7 @@ docker-compose run --rm tests compile test-compile
 docker-compose run --rm tests test -Dtest=SmokeTests -Dcheckstyle.skip=true
 
 # 2. Format code (REQUIRED before every commit)
-./scripts/format-code.sh
+./scripts/quality/format-code.sh
 # OR manually:
 # mvn prettier:write && mvn fmt:format && mvn checkstyle:check && mvn clean compile test-compile
 
@@ -132,7 +132,7 @@ git push origin feature/your-branch-name  # Push to FEATURE BRANCH, NOT main!
 |------|---------|----------|------|
 | **Pre-flight check** | `docker-compose run --rm tests compile test-compile` | 1-2 min | Before any work |
 | **Smoke tests** | `docker-compose run --rm tests test -Dtest=SmokeTests -Dcheckstyle.skip=true` | 2-3 min | Before every batch |
-| **Format code** | `./scripts/format-code.sh` | 1-2 min | **REQUIRED before every commit** |
+| **Format code** | `./scripts/quality/format-code.sh` | 1-2 min | **REQUIRED before every commit** |
 | **Checkstyle** | `docker-compose run --rm tests checkstyle:checkstyle -DskipTests` | 20-30 sec | Optional, monitor progress |
 | **Verify changes** | `git status --short` | 5 sec | After any edits |
 | **Check docs-only** | `git status --short | grep -v -E '\.(md|log|txt|rst|adoc)$'` | 5 sec | Before commit |
@@ -645,7 +645,7 @@ After making **code changes**, you MUST verify in this order:
 #### **Step 0: Code Formatting (REQUIRED - MUST RUN BEFORE EVERY COMMIT)**
 ```bash
 # ⚠️ REQUIRED: Run the automated formatting script before every commit
-./scripts/format-code.sh
+./scripts/quality/format-code.sh
 
 # This script automatically:
 # 1. Formats code and sorts imports (Prettier)
@@ -757,7 +757,7 @@ docker-compose run --rm tests test -Dcheckstyle.skip=true
 
 ### **Rule 4: Commit & Push Process (OPTIMIZED - Single Commit)**
 
-⚠️ **REQUIRED BEFORE COMMIT**: Always run `./scripts/format-code.sh` before committing to ensure code is properly formatted, imports are sorted, and checkstyle violations are minimized.
+⚠️ **REQUIRED BEFORE COMMIT**: Always run `./scripts/quality/format-code.sh` before committing to ensure code is properly formatted, imports are sorted, and checkstyle violations are minimized.
 
 > **CRITICAL:** See [Rule 0: NEVER Commit Directly to Main/Master](#rule-0-never-commit-directly-to-mainmaster--critical) - ALWAYS use feature branch!
 
@@ -2145,7 +2145,7 @@ fix: replace deprecated URL(String) constructor with URI.create()
 **1. Run API Tests:**
 ```bash
 # Option 1: Using script (recommended)
-./scripts/run-api-tests.sh
+./scripts/tests/frameworks/run-api-tests.sh
 
 # Option 2: Using Maven directly
 ./mvnw test -DsuiteXmlFile=testng-api-suite.xml
@@ -2348,7 +2348,7 @@ cd src/test/scala
 **2. JMeter (Java-based Performance Testing)**
 ```bash
 # Run JMeter tests
-./scripts/run-jmeter-tests.sh
+./scripts/tests/performance/run-jmeter-tests.sh
 
 # Or manually
 jmeter -n -t src/test/jmeter/test-plan.jmx -l results.jtl
@@ -2361,7 +2361,7 @@ jmeter -n -t src/test/jmeter/test-plan.jmx -l results.jtl
 **3. Locust (Python-based Load Testing)**
 ```bash
 # Run Locust tests
-./scripts/run-locust-tests.sh
+./scripts/tests/performance/run-locust-tests.sh
 
 # Or manually
 cd src/test/locust
@@ -2386,8 +2386,8 @@ locust -f load_test.py --host=https://target-url.com
 ```bash
 # Choose appropriate tool based on requirements
 ./scripts/run-gatling-tests.sh    # For Scala-based load testing
-./scripts/run-jmeter-tests.sh     # For Java-based performance testing
-./scripts/run-locust-tests.sh     # For Python-based HTTP load testing
+./scripts/tests/performance/run-jmeter-tests.sh     # For Java-based performance testing
+./scripts/tests/performance/run-locust-tests.sh     # For Python-based HTTP load testing
 ```
 
 **3. Monitor During Execution:**

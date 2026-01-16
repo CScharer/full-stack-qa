@@ -146,7 +146,7 @@ Scripts should set the `ENVIRONMENT` variable before running:
 # Or: ENVIRONMENT=dev ./scripts/start-be.sh (backward compatible)
 
 # Testing
-ENVIRONMENT=test ./scripts/run-integration-tests.sh
+ENVIRONMENT=test ./scripts/tests/frameworks/run-integration-tests.sh
 ```
 
 ### Testing

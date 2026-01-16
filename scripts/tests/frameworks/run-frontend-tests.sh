@@ -5,7 +5,8 @@
 set -e
 
 # Get the script directory (project root)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Since this script is in scripts/tests/frameworks/, we need to go up three levels
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$SCRIPT_DIR"
 
 # Colors for output

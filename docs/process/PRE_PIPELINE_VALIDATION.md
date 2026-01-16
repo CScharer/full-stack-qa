@@ -30,7 +30,7 @@
 > - **Fast Path** (minimum required): ~50 seconds - 2 minutes
 > - **Full Path** (comprehensive): ~15-30 minutes
 > 
-> **💡 Tip**: Use the automated script for fast path: `./scripts/validate-pre-commit.sh`
+> **💡 Tip**: Use the automated script for fast path: `./scripts/quality/validate-pre-commit.sh`
 
 ### Phase 1: Git Workflow Verification
 
@@ -76,7 +76,7 @@
 
 - `[ ]` **Run Automated Formatting Script** (MANDATORY)
   ```bash
-  ./scripts/format-code.sh
+  ./scripts/quality/format-code.sh
   ```
   **Required**: All steps pass (formatting, import sorting, line length fixes, checkstyle verification, compilation)
   
@@ -207,7 +207,7 @@ For each Node.js project (`cypress/`, `playwright/`, `vibium/`, `frontend/`) **t
   ```
   **Required**: No critical violations
 
-**Note**: The formatting script (`./scripts/format-code.sh`) automatically runs checkstyle verification as part of the required pre-commit workflow. You can run checkstyle separately if needed, but the script is the recommended approach.
+**Note**: The formatting script (`./scripts/quality/format-code.sh`) automatically runs checkstyle verification as part of the required pre-commit workflow. You can run checkstyle separately if needed, but the script is the recommended approach.
 
 #### 3.2 JavaScript/TypeScript Linting
 
@@ -476,7 +476,7 @@ Git hooks are automatically installed via `scripts/install-git-hooks.sh` and pro
 
 **Installation**:
 ```bash
-./scripts/install-git-hooks.sh
+./scripts/utils/install-git-hooks.sh
 ```
 
 ### Pre-Push Hook
@@ -516,7 +516,7 @@ An automated validation script is available to streamline the pre-commit validat
 ### Usage
 
 ```bash
-./scripts/validate-pre-commit.sh
+./scripts/quality/validate-pre-commit.sh
 ```
 
 ### What It Checks

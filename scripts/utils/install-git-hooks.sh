@@ -9,8 +9,9 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# Since this script is in scripts/utils/, we need to go up two levels to get project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 cd "$PROJECT_ROOT"
 
@@ -70,9 +71,9 @@ fi
 if [ -n "$CODE_FILES" ]; then
     echo -e "${BLUE}📝 Code files changed - formatting code...${NC}"
     
-    if [ -f "scripts/format-code.sh" ]; then
-        chmod +x scripts/format-code.sh
-        if ./scripts/format-code.sh --skip-compilation --skip-quality-checks; then
+    if [ -f "scripts/quality/format-code.sh" ]; then
+        chmod +x scripts/quality/format-code.sh
+        if ./scripts/quality/format-code.sh --skip-compilation --skip-quality-checks; then
             # Stage any auto-fixed files
             git add -u
             echo -e "${GREEN}✅ Code formatting completed${NC}"
@@ -82,7 +83,7 @@ if [ -n "$CODE_FILES" ]; then
             exit 1
         fi
     else
-        echo -e "${YELLOW}⚠️  format-code.sh not found: scripts/format-code.sh${NC}"
+        echo -e "${YELLOW}⚠️  format-code.sh not found: scripts/quality/format-code.sh${NC}"
         echo -e "${YELLOW}   Skipping code formatting${NC}"
     fi
 fi
@@ -169,11 +170,11 @@ if [ -n "$CODE_FILES" ]; then
     
     # Step 1: Run code quality checks (Checkstyle and PMD)
     # Note: Formatting is skipped since it was already done in pre-commit
-    if [ -f "scripts/format-code.sh" ]; then
+    if [ -f "scripts/quality/format-code.sh" ]; then
         echo -e "${BLUE}🔍 Running code quality checks (Checkstyle & PMD)...${NC}"
-        chmod +x scripts/format-code.sh
+        chmod +x scripts/quality/format-code.sh
         # Use --ci-mode to verify code quality without formatting or compilation
-        if ./scripts/format-code.sh --ci-mode; then
+        if ./scripts/quality/format-code.sh --ci-mode; then
             echo -e "${GREEN}✅ Code quality checks passed${NC}"
             echo ""
         else
@@ -182,17 +183,17 @@ if [ -n "$CODE_FILES" ]; then
             exit 1
         fi
     else
-        echo -e "${YELLOW}⚠️  format-code.sh not found: scripts/format-code.sh${NC}"
+        echo -e "${YELLOW}⚠️  format-code.sh not found: scripts/quality/format-code.sh${NC}"
         echo -e "${YELLOW}   Skipping code quality checks${NC}"
     fi
     
     # Step 2: Run comprehensive validation checks
-    if [ -f "scripts/validate-pre-commit.sh" ]; then
+    if [ -f "scripts/quality/validate-pre-commit.sh" ]; then
         echo -e "${BLUE}🔍 Running comprehensive validation checks...${NC}"
-        chmod +x scripts/validate-pre-commit.sh
+        chmod +x scripts/quality/validate-pre-commit.sh
         # Pass changed files to validation script so it checks the files being pushed, not just staged files
         export VALIDATE_FILES="$CHANGED_FILES"
-        if ./scripts/validate-pre-commit.sh; then
+        if ./scripts/quality/validate-pre-commit.sh; then
             echo -e "${GREEN}✅ Validation checks passed${NC}"
             echo ""
         else
@@ -206,10 +207,10 @@ if [ -n "$CODE_FILES" ]; then
     fi
     
     # Step 3: Run dependency version validation
-    if [ -f "scripts/validate-dependency-versions.sh" ]; then
+    if [ -f "scripts/quality/validate-dependency-versions.sh" ]; then
         echo -e "${BLUE}🔍 Validating dependency versions...${NC}"
-        chmod +x scripts/validate-dependency-versions.sh
-        if ./scripts/validate-dependency-versions.sh; then
+        chmod +x scripts/quality/validate-dependency-versions.sh
+        if ./scripts/quality/validate-dependency-versions.sh; then
             echo -e "${GREEN}✅ Version validation passed${NC}"
             echo ""
         else

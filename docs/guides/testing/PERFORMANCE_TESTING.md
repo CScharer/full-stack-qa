@@ -158,7 +158,7 @@ pip install locust==2.20.0
 
 **Interactive Mode (Recommended):**
 ```bash
-./scripts/run-locust-tests.sh
+./scripts/tests/performance/run-locust-tests.sh
 # Then open: http://localhost:8089
 # Configure users and spawn rate in web UI
 ```
@@ -230,7 +230,7 @@ locust -f src/test/locust/api_load_test.py --worker --master-host=<master-ip>
 
 **All Simulations:**
 ```bash
-./scripts/run-gatling-tests.sh
+./scripts/tests/performance/run-gatling-tests.sh
 ```
 
 **With Maven (requires -Pgatling profile):**
@@ -314,7 +314,7 @@ locust -f src/test/locust/api_load_test.py --worker --master-host=<master-ip>
 
 **Via Maven:**
 ```bash
-./scripts/run-jmeter-tests.sh
+./scripts/tests/performance/run-jmeter-tests.sh
 ```
 
 **Direct Maven:**
@@ -476,20 +476,20 @@ jmeter -t src/test/jmeter/API_Performance_Test.jmx
 
 ```bash
 # Locust (Interactive)
-./scripts/run-locust-tests.sh
+./scripts/tests/performance/run-locust-tests.sh
 
 # Gatling
-./scripts/run-gatling-tests.sh
+./scripts/tests/performance/run-gatling-tests.sh
 
 # JMeter
-./scripts/run-jmeter-tests.sh
+./scripts/tests/performance/run-jmeter-tests.sh
 ```
 
 ### Run All Tools
 
 ```bash
 # Sequential execution (Protocol-level tools only)
-./scripts/run-all-performance-tests.sh
+./scripts/tests/performance/run-all-performance-tests.sh
 
 # Artillery + Playwright (Browser-level)
 cd playwright
@@ -772,7 +772,7 @@ locust -f src/test/locust/api_load_test.py \
 
 ```bash
 # Run all three tools
-./scripts/run-all-performance-tests.sh
+./scripts/tests/performance/run-all-performance-tests.sh
 ```
 
 **Compares:**
@@ -867,7 +867,7 @@ locust -f api_load_test.py --headless --users 10 --run-time 1m
 
 **Level 2: Load Test (5 min)**
 ```bash
-./scripts/run-locust-tests.sh  # 100 users, 3 min
+./scripts/tests/performance/run-locust-tests.sh  # 100 users, 3 min
 ```
 - Expected production load
 - Sustained performance
@@ -875,7 +875,7 @@ locust -f api_load_test.py --headless --users 10 --run-time 1m
 
 **Level 3: Stress Test (15 min)**
 ```bash
-./scripts/run-all-performance-tests.sh
+./scripts/tests/performance/run-all-performance-tests.sh
 ```
 - All three tools
 - High load scenarios
@@ -1042,11 +1042,11 @@ This provides flexibility to run performance tests:
 
 | Task | Command |
 |------|---------|
-| **Run Locust (Interactive)** | `./scripts/run-locust-tests.sh` |
+| **Run Locust (Interactive)** | `./scripts/tests/performance/run-locust-tests.sh` |
 | **Run Locust (Headless)** | `locust -f src/test/locust/api_load_test.py --headless --users 100 --run-time 2m` |
-| **Run Gatling** | `./scripts/run-gatling-tests.sh` |
-| **Run JMeter** | `./scripts/run-jmeter-tests.sh` |
-| **Run All** | `./scripts/run-all-performance-tests.sh` |
+| **Run Gatling** | `./scripts/tests/performance/run-gatling-tests.sh` |
+| **Run JMeter** | `./scripts/tests/performance/run-jmeter-tests.sh` |
+| **Run All** | `./scripts/tests/performance/run-all-performance-tests.sh` |
 | **Install Locust** | `pip install -r requirements.txt` |
 | **View Locust UI** | http://localhost:8089 |
 | **Gatling Reports** | `target/gatling/*/index.html` |

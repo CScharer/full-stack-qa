@@ -23,7 +23,7 @@ This framework supports **5 different UI testing tools**, each with unique stren
 ### Selenium (Java)
 ```bash
 # Run Selenium tests
-./scripts/run-tests.sh Scenarios chrome
+./scripts/tests/run-tests.sh Scenarios chrome
 
 # Or with Maven
 ./mvnw test -DsuiteXmlFile=testng-ci-suite.xml
@@ -32,7 +32,7 @@ This framework supports **5 different UI testing tools**, each with unique stren
 ### Playwright (TypeScript)
 ```bash
 # Run Playwright tests
-./scripts/run-playwright-tests.sh chromium
+./scripts/tests/frameworks/run-playwright-tests.sh chromium
 
 # Or directly
 cd playwright && npm test
@@ -41,21 +41,21 @@ cd playwright && npm test
 ### Cypress (TypeScript)
 ```bash
 # Run Cypress tests
-./scripts/run-cypress-tests.sh run chrome
+./scripts/tests/frameworks/run-cypress-tests.sh run chrome
 
 # Interactive mode
-./scripts/run-cypress-tests.sh open
+./scripts/tests/frameworks/run-cypress-tests.sh open
 ```
 
 ### Vibium (TypeScript)
 ```bash
 # Run Vibium tests
-./scripts/run-vibium-tests.sh
+./scripts/tests/frameworks/run-vibium-tests.sh
 
 # With options
-./scripts/run-vibium-tests.sh --watch    # Watch mode
-./scripts/run-vibium-tests.sh --ui       # UI mode
-./scripts/run-vibium-tests.sh --coverage # Coverage
+./scripts/tests/frameworks/run-vibium-tests.sh --watch    # Watch mode
+./scripts/tests/frameworks/run-vibium-tests.sh --ui       # UI mode
+./scripts/tests/frameworks/run-vibium-tests.sh --coverage # Coverage
 
 # Or directly
 cd vibium && npm test
@@ -64,7 +64,7 @@ cd vibium && npm test
 ### Robot Framework (Python)
 ```bash
 # Run Robot Framework tests
-./scripts/run-robot-tests.sh
+./scripts/tests/frameworks/run-robot-tests.sh
 
 # Or with Maven
 ./mvnw test -Probot
@@ -84,7 +84,7 @@ Already configured in `pom.xml`. No additional setup needed!
 
 ```bash
 # Default test suite
-./scripts/run-tests.sh Scenarios chrome
+./scripts/tests/run-tests.sh Scenarios chrome
 
 # Specific test class
 ./mvnw test -Dtest=Scenarios#Google
@@ -255,16 +255,16 @@ npm install
 ⚠️ **Prerequisites**: Services must be running before executing tests.
 ```bash
 # Start services (from project root)
-./scripts/start-env.sh                    # Default: dev environment
+./scripts/services/start-env.sh                    # Default: dev environment
 ```
 
 ```bash
 # Interactive mode (Test Runner)
-./scripts/run-cypress-tests.sh open
+./scripts/tests/frameworks/run-cypress-tests.sh open
 # Or: cd cypress && npm run cypress:open
 
 # Headless mode
-./scripts/run-cypress-tests.sh run chrome
+./scripts/tests/frameworks/run-cypress-tests.sh run chrome
 # Or: cd cypress && npm run cypress:run
 
 # Run specific test file
@@ -272,8 +272,8 @@ cd cypress
 npx cypress run --browser chrome --spec cypress/e2e/wizard.cy.ts
 
 # Specific browser
-./scripts/run-cypress-tests.sh run firefox
-./scripts/run-cypress-tests.sh run edge
+./scripts/tests/frameworks/run-cypress-tests.sh run firefox
+./scripts/tests/frameworks/run-cypress-tests.sh run edge
 ```
 
 ### Test Structure
@@ -359,7 +359,7 @@ describe('HomePage', () => {
 
 **Test Name Consistency**: Test suite and test case names are centralized in `lib/test-utils.json` to ensure consistency across Cypress and Playwright. The Cypress adapter (`cypress/support/test-utils.ts`) reads from this JSON file at runtime. See [Test Name Consistency](#test-name-consistency) section below for details.
 
-**Service Prerequisites**: Backend and frontend services must be running. Use `./scripts/start-env.sh` to start both services.
+**Service Prerequisites**: Backend and frontend services must be running. Use `./scripts/services/start-env.sh` to start both services.
 
 **Environment Configuration**: 
 - Backend URL is determined from environment using `getBackendUrl()` helper
@@ -398,12 +398,12 @@ This installs:
 
 ```bash
 # Using the test script (recommended)
-./scripts/run-vibium-tests.sh
+./scripts/tests/frameworks/run-vibium-tests.sh
 
 # With options
-./scripts/run-vibium-tests.sh --watch    # Watch mode
-./scripts/run-vibium-tests.sh --ui       # UI mode
-./scripts/run-vibium-tests.sh --coverage # Coverage report
+./scripts/tests/frameworks/run-vibium-tests.sh --watch    # Watch mode
+./scripts/tests/frameworks/run-vibium-tests.sh --ui       # UI mode
+./scripts/tests/frameworks/run-vibium-tests.sh --coverage # Coverage report
 
 # Or directly
 cd vibium && npm test
@@ -484,10 +484,10 @@ pip install robotframework-requests
 
 ```bash
 # All tests
-./scripts/run-robot-tests.sh
+./scripts/tests/frameworks/run-robot-tests.sh
 
 # Specific test file
-./scripts/run-robot-tests.sh GoogleSearchTests.robot
+./scripts/tests/frameworks/run-robot-tests.sh GoogleSearchTests.robot
 
 # Via Maven
 ./mvnw test -Probot

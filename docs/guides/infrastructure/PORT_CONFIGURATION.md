@@ -80,13 +80,13 @@ Configuration values are resolved using a consistent priority order across all f
 **Example:**
 ```bash
 # Command-line argument takes precedence
-./scripts/start-fe.sh --env test
+./scripts/services/start-fe.sh --env test
 
 # Environment variable takes precedence over config
-ENVIRONMENT=test ./scripts/start-fe.sh
+ENVIRONMENT=test ./scripts/services/start-fe.sh
 
 # Falls back to config/environments.json (defaults to 'dev')
-./scripts/start-fe.sh
+./scripts/services/start-fe.sh
 ```
 
 **Implementation Details:**
@@ -234,7 +234,7 @@ Different frameworks detect the environment using different methods, but all fol
 **Example 1: Override Port via Environment Variable**
 ```bash
 # Shell script
-API_PORT=9000 ./scripts/start-be.sh --env test
+API_PORT=9000 ./scripts/services/start-be.sh --env test
 # Result: Backend starts on port 9000 (env var overrides config)
 
 # Python
@@ -245,11 +245,11 @@ API_PORT=9000 python -m backend.app.main
 **Example 2: Override Environment via Command-Line**
 ```bash
 # Shell script
-./scripts/start-fe.sh --env prod
+./scripts/services/start-fe.sh --env prod
 # Result: Uses 'prod' environment config (CLI arg overrides ENVIRONMENT env var)
 
 # Even if ENVIRONMENT=test is set
-ENVIRONMENT=test ./scripts/start-fe.sh --env prod
+ENVIRONMENT=test ./scripts/services/start-fe.sh --env prod
 # Result: Uses 'prod' (CLI arg has highest priority)
 ```
 
@@ -381,7 +381,7 @@ Centralized configuration ensures:
 
 If a port is already in use:
 - Check what process is using it: `lsof -i :PORT`
-- Stop conflicting services: `./scripts/stop-services.sh`
+- Stop conflicting services: `./scripts/services/stop-services.sh`
 - Use `FORCE_STOP=true` to force stop existing services
 
 ## Future Improvements

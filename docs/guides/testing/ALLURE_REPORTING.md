@@ -46,7 +46,7 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 
 ```bash
 # One command does everything:
-./scripts/generate-allure-report.sh
+./scripts/reporting/generate-allure-report.sh
 
 # This will:
 # 1. Start Selenium Grid
@@ -418,7 +418,7 @@ brew install allure
 
 ### 2. Run Tests and Generate Report
 ```bash
-./scripts/generate-allure-report.sh
+./scripts/reporting/generate-allure-report.sh
 ```
 
 ### 3. View Report
@@ -821,7 +821,7 @@ Your browser will automatically open showing:
 ---
 
 **Status**: ✅ Ready to use!
-**Next Step**: Run `./scripts/generate-allure-report.sh` or install Allure CLI
+**Next Step**: Run `./scripts/reporting/generate-allure-report.sh` or install Allure CLI
 
 ---
 
@@ -936,7 +936,7 @@ Backend test results are converted to Allure format:
 - **Gatling**: Simulation results converted to Allure format
 - **JMeter**: Test results converted to Allure format
 
-**Script**: `scripts/convert-performance-to-allure.sh`
+**Script**: `scripts/reporting/convert-performance-to-allure.sh`
   - Uses shared utility `scripts/ci/allure-metadata-utils.sh` for verification metadata
 
 ### Known Limitations
@@ -1437,9 +1437,9 @@ You can download Allure reports from GitHub Actions pipeline artifacts and view 
 
 ```bash
 # Start both services together (recommended)
-./scripts/start-env.sh                   # Default: dev environment
-./scripts/start-env.sh --env test        # Test environment
-./scripts/start-env.sh -e prod           # Production environment
+./scripts/services/start-env.sh                   # Default: dev environment
+./scripts/services/start-env.sh --env test        # Test environment
+./scripts/services/start-env.sh -e prod           # Production environment
 ```
 
 For more details on starting services, see [Local Development Guide](../setup/LOCAL_DEVELOPMENT.md) or [Quick Start Guide](../../../QUICK_START.md).
@@ -1704,9 +1704,9 @@ lsof -ti:8080 | xargs kill -9
 
 ```bash
 # Start both frontend and backend services (if running tests locally)
-./scripts/start-env.sh                   # Default: dev environment
-./scripts/start-env.sh --env test        # Test environment
-./scripts/start-env.sh -e prod           # Production environment
+./scripts/services/start-env.sh                   # Default: dev environment
+./scripts/services/start-env.sh --env test        # Test environment
+./scripts/services/start-env.sh -e prod           # Production environment
 
 # Download and extract report
 unzip allure-report-combined-all-environments.zip -d allure-report-combined

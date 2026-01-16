@@ -68,7 +68,7 @@ An automated validation script is available: `scripts/validate-pre-commit.sh`
 
 **Usage:**
 ```bash
-./scripts/validate-pre-commit.sh
+./scripts/quality/validate-pre-commit.sh
 ```
 
 The script automates the Fast Path checks above. See the script for details.
@@ -115,7 +115,7 @@ The script automates the Fast Path checks above. See the script for details.
 4. **✅ Test Locally First**
    - ✅ Run validation checks locally before committing
    - ✅ Fix issues locally before pushing
-   - ✅ Use `./scripts/validate-pre-commit.sh` to catch issues early
+   - ✅ Use `./scripts/quality/validate-pre-commit.sh` to catch issues early
 
 5. **✅ Document Changes**
    - ✅ Update relevant documentation when making changes
