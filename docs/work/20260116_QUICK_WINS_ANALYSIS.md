@@ -123,72 +123,40 @@ This document identifies **quick win** improvements across the repository that c
 
 ### 2. Code Quality Improvements
 
-#### 2.1 Fix Deprecated API Usage
+#### 2.1 Fix Deprecated API Usage ✅ **COMPLETED**
 
 **Priority**: High  
-**Effort**: Medium (2-4 hours)  
-**Risk**: Low (with proper testing)  
-**Impact**: Future-proofs code, removes compiler warnings
+**Effort**: Low (Mostly already fixed)  
+**Risk**: Low  
+**Impact**: Future-proofs code, improves documentation
 
-**Deprecated APIs to Fix**:
+**Deprecated APIs Status**:
 
-1. **`Runtime.exec(String)` → `ProcessBuilder`** (6 instances)
-   - **Files**: `CommandLineTests.java` (6 instances)
-   - **Fix Pattern**:
-     ```java
-     // ❌ OLD (deprecated):
-     Runtime.getRuntime().exec("command");
-     
-     // ✅ NEW (ProcessBuilder):
-     ProcessBuilder pb = new ProcessBuilder("command");
-     Process process = pb.start();
-     ```
-   - **Steps**:
-     1. Find all instances: `grep -r "Runtime.getRuntime().exec" src/`
-     2. Replace with ProcessBuilder pattern
-     3. Test command execution still works
-     4. Run tests: `mvn test -Dtest=CommandLineTests`
+1. **`Runtime.exec(String)` → `ProcessBuilder`** ✅ **ALREADY FIXED**
+   - **Files**: `CommandLineTests.java`
+   - **Status**: Already uses `ProcessBuilder` throughout - no changes needed
+   - **Verification**: All process execution methods use `ProcessBuilder` API
 
-2. **`Cell.setCellType()` → Modern API** (2 instances)
+2. **`Cell.setCellType()` → Modern API** ✅ **NOT USED**
    - **Files**: `XLS.java`, `XLSX.java`
-   - **Fix Pattern**:
-     ```java
-     // ❌ OLD (deprecated in Apache POI 5.x):
-     cell.setCellType(CellType.STRING);
-     
-     // ✅ NEW:
-     cell.setBlank();  // or appropriate setter
-     // Or use: cell.setCellValue("value");
-     ```
-   - **Steps**:
-     1. Review usage context in both files
-     2. Replace with appropriate modern API
-     3. Test Excel file operations
-     4. Run tests: `mvn test -Dtest=*XLS*`
+   - **Status**: Only mentioned in comments - code already uses `setCellFormula()` which is correct
+   - **Verification**: No deprecated `setCellType()` calls found in code
 
-3. **`CSVFormat.withHeader()` → Builder Pattern** (2 instances)
-   - **Files**: `SystemProcesses.java`, `YMDataTests.java`
-   - **Fix Pattern**:
-     ```java
-     // ❌ OLD (deprecated in Commons CSV 1.9+):
-     CSVFormat format = CSVFormat.DEFAULT.withHeader("col1", "col2");
-     
-     // ✅ NEW (Builder pattern):
-     CSVFormat format = CSVFormat.Builder.create()
-         .setHeader("col1", "col2")
-         .build();
-     ```
-   - **Steps**:
-     1. Review CSV parsing logic
-     2. Replace with Builder pattern
-     3. Test CSV operations
-     4. Run tests: `mvn test -Dtest=SystemProcesses,YMDataTests`
+3. **`CSVFormat.withHeader()` → Builder Pattern** ✅ **ALREADY USING BUILDER**
+   - **Files**: `SystemProcesses.java`, `YMDataTests.java`, `CSVDataProvider.java`
+   - **Status**: Already using builder pattern correctly
+   - **Note**: `.build()` method is deprecated in Commons CSV 1.14.1+ but still required by library
+   - **Action Taken**: Improved documentation comments to explain why deprecation warnings are suppressed
+   - **Files Updated**:
+     - `src/test/java/com/cjs/qa/utilities/SystemProcesses.java` - Enhanced comment
+     - `src/test/java/com/cjs/qa/utilities/CSVDataProvider.java` - Enhanced comment
+     - `src/test/java/com/cjs/qa/ym/YMDataTests.java` - Enhanced comment
 
 **Verification**:
-- [ ] All deprecated API calls replaced
-- [ ] No compiler warnings for deprecation
-- [ ] Tests pass for affected files
-- [ ] Functionality verified
+- [x] All deprecated API calls reviewed
+- [x] Documentation enhanced for remaining deprecation suppressions
+- [x] Code already uses modern APIs where possible
+- [x] Functionality verified
 
 ---
 
@@ -520,5 +488,92 @@ This document identifies **quick win** improvements across the repository that c
 
 ---
 
+---
+
+## Implementation Status
+
+### ✅ Completed Items
+
+#### Item 1.1: Remove Legacy/Unused Files ✅ **COMPLETED**
+- **Date Completed**: January 16, 2026
+- **Changes**: Removed 4 legacy files (`__ini__.py`, `travis.yml`, `extract-useless-parens.sh`, `useless-parens-batch4.txt`)
+- **Commit**: `bd8ee8d9e` - "chore: Remove legacy and unused files (Item 1.1)"
+
+#### Item 1.2: Review and Clean Up `scripts/temp/` Directory ✅ **COMPLETED**
+- **Date Completed**: January 16, 2026
+- **Changes**: 
+  - Archived 13 one-off migration/fix scripts to `docs/archive/scripts/`
+  - Deleted duplicate `check_all_links.py`
+  - Added proper headers to 3 kept scripts
+  - Created `docs/archive/scripts/README.md`
+- **Commit**: `7205edf51` - "chore: Clean up scripts/temp/ directory (Item 1.2)"
+
+#### Item 2.1: Fix Deprecated API Usage ✅ **COMPLETED** (Mostly Already Fixed)
+- **Date Completed**: January 16, 2026
+- **Findings**:
+  - `Runtime.exec()` → Already using `ProcessBuilder` ✅
+  - `Cell.setCellType()` → Not used (only in comments) ✅
+  - `CSVFormat.withHeader()` → Already using builder pattern ✅
+- **Changes**: Enhanced documentation comments in 3 files to explain deprecation suppressions
+- **Files Updated**:
+  - `src/test/java/com/cjs/qa/utilities/SystemProcesses.java`
+  - `src/test/java/com/cjs/qa/utilities/CSVDataProvider.java`
+  - `src/test/java/com/cjs/qa/ym/YMDataTests.java`
+- **Status**: Awaiting approval to commit
+
+---
+
+### ⏳ Pending Items
+
+#### Item 2.2: Review and Reduce @SuppressWarnings Annotations
+- **Status**: Pending
+- **Priority**: Medium
+- **Estimated Effort**: 3-5 hours
+- **Next Steps**: Review 31 @SuppressWarnings across 23 files
+
+#### Item 2.3: Fix PMD UselessParentheses Violations
+- **Status**: Pending
+- **Priority**: Low
+- **Estimated Effort**: 30-60 minutes
+- **Next Steps**: Run PMD, extract violations, fix by removing unnecessary parentheses
+
+#### Item 3.1: Update Documentation Dates and Versions
+- **Status**: Pending
+- **Priority**: Low
+- **Estimated Effort**: 30 minutes
+- **Next Steps**: Update "Last Updated" dates in documentation files
+
+#### Item 3.2: Add Missing Documentation Links
+- **Status**: Pending
+- **Priority**: Low
+- **Estimated Effort**: 30 minutes
+- **Next Steps**: Run link validation, fix any broken links found
+
+#### Item 4.1: Document Legacy `ports.json` Deprecation Plan
+- **Status**: Pending
+- **Priority**: Low
+- **Estimated Effort**: 30 minutes
+- **Next Steps**: Review all references, create migration plan in `config/README.md`
+
+#### Item 5.1: Fix Maven Project Configuration Warning
+- **Status**: Pending
+- **Priority**: Low
+- **Estimated Effort**: 5 minutes
+- **Next Steps**: Re-import Maven project or run `mvn clean install`
+
+#### Item 5.2: Review and Update Dependency Versions
+- **Status**: Pending
+- **Priority**: Medium
+- **Estimated Effort**: 1-2 hours
+- **Next Steps**: Check for outdated dependencies, update non-breaking versions
+
+#### Item 6.1: Add Script Headers and Documentation
+- **Status**: Pending
+- **Priority**: Low
+- **Estimated Effort**: 2-3 hours
+- **Next Steps**: Review scripts, add standard headers with purpose, usage, examples
+
+---
+
 **Last Updated**: January 16, 2026  
-**Next Steps**: Review and prioritize items, then implement Phase 1 items
+**Next Steps**: Continue with Item 2.2 after Item 2.1 is approved and committed
