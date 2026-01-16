@@ -420,15 +420,26 @@ This document outlines areas for improvement in the full-stack-qa repository, wi
 
 ### Low Priority
 
-7. **Consider shared test specification format**
+7. **Consider shared test specification format** ⚠️ **DEFERRED**
    - Impact: Reduces test duplication
    - Effort: High
    - Risk: High (major architectural change)
+   - **Status**: Analysis complete - Decision: Defer (see `docs/work/20260116_SHARED_TEST_SPECIFICATION_ANALYSIS.md`)
+   - **Rationale**: Current test data centralization approach is sufficient; high effort (6-12 months) for incremental benefits
 
 8. **Organize scripts into subdirectories**
    - Impact: Better organization
-   - Effort: Low
-   - Risk: Low (need to update references)
+   - Effort: **Medium** (200+ references to update)
+   - Risk: **Medium** (need to update references in workflows, docs, and other scripts)
+   - **Status**: Plan created - see `docs/work/20260116_SCRIPT_ORGANIZATION_PLAN.md`
+   - **Recommendation**: 
+     - Option A: Full reorganization (move all scripts, update all references) - More work but cleaner
+     - Option B: Partial reorganization (keep common scripts in root, organize others) - Less work, mixed structure
+     - Option C: Improve documentation only (keep current structure, better docs) - Minimal work, no structural change
+   - **References Found**: 
+     - 33 references in GitHub Actions workflows
+     - 178+ references in documentation files
+     - Additional references in other scripts
 
 ---
 
@@ -492,7 +503,18 @@ For each improvement:
 
 - None
 
+### Deferred Items
+
+- ✅ **Item #7** (Low Priority): Consider shared test specification format - **DEFERRED** 2026-01-16
+  - **Status**: Analysis complete - see `docs/work/20260116_SHARED_TEST_SPECIFICATION_ANALYSIS.md`
+  - **Decision**: **Defer implementation** - Current test data centralization approach is sufficient
+  - **Rationale**: 
+    - High implementation effort (6-12 months) for incremental benefits
+    - Current approach already provides most value through test data centralization (`/test-data/`) and configuration centralization (`config/environments.json`)
+    - Framework diversity is valuable - different frameworks serve different purposes
+    - Risk outweighs benefit - major refactoring could break existing test suites
+  - **Alternative**: Continue enhancing current test data centralization approach
+  - **Future Review**: When test duplication becomes a significant problem or team size grows significantly
+
 ### Pending Items
-- Item #6: Review and consolidate duplicate configuration files
-- Item #7: Consider shared test specification format
-- Item #8: Organize scripts into subdirectories
+- Item #8: Organize scripts into subdirectories (Low Priority, Medium Effort - plan created in `docs/work/20260116_SCRIPT_ORGANIZATION_PLAN.md`, needs decision on approach)
