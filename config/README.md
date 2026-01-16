@@ -18,18 +18,37 @@ This is the **primary configuration file** for all environment settings. Both sh
 
 **Java Tests**: This file is automatically copied to `src/test/resources/config/environments.json` during Maven build (see `pom.xml` maven-resources-plugin configuration). Java tests load it from the classpath. **Do not edit the copy in `src/test/resources/config/`** - always edit `config/environments.json` (the source of truth).
 
-### `ports.json` (Ports Only - Legacy)
+### `ports.json` (Ports Only - Legacy) ⚠️ **DEPRECATED**
 
 **Purpose**: Port assignments and URLs for all environments.
 
-**Status**: ⚠️ **Legacy file** - Maintained for backward compatibility only.
+**Status**: ⚠️ **DEPRECATED** - Maintained for backward compatibility only. **Will be removed in a future release.**
 
-**Use Case**: Use this file if you only need port configuration. For comprehensive configuration, use `environments.json`.
+**Deprecation Timeline**:
+- **Current (January 2026)**: Legacy file maintained as fallback
+- **Future**: Will be removed once all references are migrated to `environments.json`
+- **Migration Target**: All code should use `environments.json` directly
+
+**Use Case**: ~~Use this file if you only need port configuration.~~ **Do not use this file for new code.** For all configuration needs, use `environments.json`.
+
+**Migration Status**:
+- ✅ **Primary Source**: All scripts and code read from `environments.json` first
+- ✅ **Fallback Only**: `ports.json` is only used as a fallback if `environments.json` is unavailable
+- ✅ **No Direct Usage**: No code directly reads from `ports.json` - it's only used via fallback logic
+
+**Files Using `ports.json` (as fallback only)**:
+- `scripts/ci/port-config.sh` - Falls back to `ports.json` if `environments.json` unavailable
+- `config/port_config.py` - Falls back to `ports.json` if `environments.json` unavailable
+
+**Migration Plan**:
+1. ✅ **Phase 1 (Complete)**: All code migrated to use `environments.json` as primary source
+2. ⏳ **Phase 2 (Current)**: `ports.json` maintained as fallback for backward compatibility
+3. 🔜 **Phase 3 (Future)**: Remove fallback logic and `ports.json` file once stability is confirmed
 
 **Note**: 
-- Scripts automatically read from `environments.json` first, then fall back to `ports.json` if needed
-- **New code should use `environments.json`** - `ports.json` is only kept for legacy scripts that haven't been updated yet
 - All port information in `ports.json` is also available in `environments.json` under each environment's `frontend` and `backend` sections
+- **New code must use `environments.json`** - `ports.json` is deprecated and will be removed
+- The fallback to `ports.json` is only for edge cases where `environments.json` might be unavailable (should not happen in normal operation)
 
 ## Usage
 
@@ -218,10 +237,11 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
 
 **Example**: If you change `api.basePath` from `/api/v1` to `/api/v2`, all API endpoints will automatically use `/api/v2` instead of `/api/v1`.
 
-**Alternative: Update `ports.json` (ports only)**
-- If you only need to change ports, you can update `config/ports.json`
-- Scripts will automatically use the new values
-- Note: For other config values (database, API paths, timeouts), use `environments.json`
+**⚠️ Deprecated: Update `ports.json` (ports only)**
+- ~~If you only need to change ports, you can update `config/ports.json`~~ **DEPRECATED**
+- **Do not update `ports.json`** - This file is deprecated and will be removed
+- **Always update `config/environments.json`** instead - it contains all port information and more
+- Scripts automatically read from `environments.json` first, then fall back to `ports.json` only if `environments.json` is unavailable
 
 **Requirements**: 
 - Shell scripts require `jq` for JSON parsing (install with `brew install jq` on macOS or `apt-get install jq` on Linux)

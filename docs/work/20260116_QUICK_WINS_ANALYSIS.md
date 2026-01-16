@@ -282,28 +282,40 @@ This document identifies **quick win** improvements across the repository that c
 
 ### 4. Configuration Improvements
 
-#### 4.1 Document Legacy `ports.json` Deprecation Plan
+#### 4.1 Document Legacy `ports.json` Deprecation Plan ✅ **COMPLETED**
 
 **Priority**: Low  
 **Effort**: Low (30 minutes)  
 **Risk**: Very Low  
 **Impact**: Clarifies migration path
 
-**Current State**: `config/ports.json` is marked as legacy, but still maintained
+**Status**: ✅ **COMPLETED** - Comprehensive deprecation plan documented
 
-**Steps**:
-1. Review all references to `ports.json`:
-   ```bash
-   grep -r "ports.json" . --exclude-dir=node_modules --exclude-dir=target
-   ```
-2. Document which scripts/files still use it
-3. Create migration plan in `config/README.md`
-4. Add deprecation notice with timeline
+**Findings**:
+- Reviewed all references to `ports.json`
+- **Current State**: `ports.json` is only used as a fallback in 2 files:
+  - `scripts/ci/port-config.sh` - Falls back to `ports.json` if `environments.json` unavailable
+  - `config/port_config.py` - Falls back to `ports.json` if `environments.json` unavailable
+- **Primary Source**: All code reads from `environments.json` first
+- **No Direct Usage**: No code directly reads from `ports.json` - it's only used via fallback logic
+
+**Documentation Added**:
+- ✅ Updated `config/README.md` with comprehensive deprecation notice
+- ✅ Added deprecation timeline (Current → Future removal)
+- ✅ Documented migration status (Phase 1 complete, Phase 2 current, Phase 3 future)
+- ✅ Listed all files using `ports.json` (as fallback only)
+- ✅ Updated "Alternative" section to mark `ports.json` as deprecated
+- ✅ Clear guidance: "Do not use this file for new code"
+
+**Migration Plan**:
+1. ✅ **Phase 1 (Complete)**: All code migrated to use `environments.json` as primary source
+2. ⏳ **Phase 2 (Current)**: `ports.json` maintained as fallback for backward compatibility
+3. 🔜 **Phase 3 (Future)**: Remove fallback logic and `ports.json` file once stability is confirmed
 
 **Verification**:
-- [ ] All references documented
-- [ ] Migration plan created
-- [ ] Deprecation notice added
+- [x] All references documented
+- [x] Migration plan created
+- [x] Deprecation notice added
 
 ---
 
@@ -541,21 +553,23 @@ This document identifies **quick win** improvements across the repository that c
 - **Verification**: Ran `python3 scripts/temp/check_links.py` - checked 79 markdown files, all links valid
 - **Status**: No work needed - links were previously validated and fixed during folder cleanup work
 
+#### Item 4.1: Document Legacy `ports.json` Deprecation Plan ✅ **COMPLETED**
+- **Date Completed**: January 16, 2026
+- **Findings**: 
+  - `ports.json` is only used as fallback in 2 files (`port-config.sh`, `port_config.py`)
+  - All code reads from `environments.json` first
+  - No direct usage of `ports.json` - only fallback logic
+- **Documentation Added**:
+  - Updated `config/README.md` with comprehensive deprecation notice
+  - Added deprecation timeline and migration plan (3 phases)
+  - Documented all files using `ports.json` (as fallback only)
+  - Updated "Alternative" section to mark as deprecated
+- **Files Updated**: `config/README.md`
+- **Status**: Awaiting approval to commit
+
 ---
 
 ### ⏳ Pending Items
-
-#### Item 3.2: Add Missing Documentation Links
-- **Status**: Pending
-- **Priority**: Low
-- **Estimated Effort**: 30 minutes
-- **Next Steps**: Run link validation, fix any broken links found
-
-#### Item 4.1: Document Legacy `ports.json` Deprecation Plan
-- **Status**: Pending
-- **Priority**: Low
-- **Estimated Effort**: 30 minutes
-- **Next Steps**: Review all references, create migration plan in `config/README.md`
 
 #### Item 5.1: Fix Maven Project Configuration Warning
 - **Status**: Pending
