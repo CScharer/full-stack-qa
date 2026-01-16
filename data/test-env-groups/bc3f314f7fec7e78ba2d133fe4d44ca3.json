@@ -1,1 +1,1 @@
-{"id":"bc3f314f7fec7e78ba2d133fe4d44ca3","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileViewportConfiguration","name":"testMobileViewportConfiguration [TEST]","status":"passed","testResultsByEnv":{"default":"99a66bc1e12c509a3395f0e18f83df0d"}}
+{"id":"bc3f314f7fec7e78ba2d133fe4d44ca3","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileViewportConfiguration","name":"testMobileViewportConfiguration [PROD]","status":"passed","testResultsByEnv":{"default":"0f7c4556cd23a971e5693329ac68de3c"}}
