@@ -18,8 +18,8 @@ This guide explains the database architecture for the full-stack-qa project, inc
 
 | Type | Purpose | Location | Usage |
 |------|---------|----------|-------|
-| **Schema Database** | Single source of truth for database structure | `Data/Core/full_stack_qa.db` | Reference template only - **NEVER used for runtime** |
-| **Environment Databases** | Runtime databases for specific environments | `Data/Core/full_stack_qa_{env}.db` | Used for actual application data (dev/test/prod) |
+| **Schema Database** | Single source of truth for database structure | `data/core/full_stack_qa.db` | Reference template only - **NEVER used for runtime** |
+| **Environment Databases** | Runtime databases for specific environments | `data/core/full_stack_qa_{env}.db` | Used for actual application data (dev/test/prod) |
 
 ### Important Rules
 
@@ -45,7 +45,7 @@ This guide explains the database architecture for the full-stack-qa project, inc
 | Database File | Type | Status | Purpose | Used By |
 |---------------|------|--------|---------|---------|
 | `full_stack_qa.db` | 📐 Schema | ✅ Exists | Schema template (read-only) | Schema reference only |
-| `pytest_temp_full_stack_qa_{env}.db` | 🧪 Test | 🗑️ Temporary | Auto-created during pytest (environment-aware) | `backend/tests/conftest.py`, `Data/Core/tests/conftest.py` |
+| `pytest_temp_full_stack_qa_{env}.db` | 🧪 Test | 🗑️ Temporary | Auto-created during pytest (environment-aware) | `backend/tests/conftest.py`, `data/core/tests/conftest.py` |
 | `full_stack_qa_dev.db` | 🔧 Environment | ✅ Exists | Development runtime data | Backend API (dev), Local scripts |
 | `full_stack_qa_test.db` | 🔧 Environment | ✅ Exists | Test runtime data | Integration tests, CI/CD |
 | `full_stack_qa_prod.db` | 🔧 Environment | ⏭️ Planned | Production runtime data | Production deployments |
@@ -79,7 +79,7 @@ The database path is resolved using the following priority order:
 
 2. **`DATABASE_NAME`** + **`DATABASE_DIR`**
    - Database filename and directory
-   - Example: `DATABASE_NAME=custom.db DATABASE_DIR=Data/Core`
+   - Example: `DATABASE_NAME=custom.db DATABASE_DIR=data/core`
 
 3. **`ENVIRONMENT`**
    - Environment name (dev/test/prod)
@@ -88,22 +88,22 @@ The database path is resolved using the following priority order:
 
 4. **Default**
    - Falls back to: `full_stack_qa_dev.db`
-   - Location: `Data/Core/full_stack_qa_dev.db`
+   - Location: `data/core/full_stack_qa_dev.db`
 
 ### Configuration Examples
 
 ```bash
 # Development (default)
-# Uses: Data/Core/full_stack_qa_dev.db
+# Uses: data/core/full_stack_qa_dev.db
 # No environment variables needed
 
 # Test environment
 ENVIRONMENT=test
-# Uses: Data/Core/full_stack_qa_test.db
+# Uses: data/core/full_stack_qa_test.db
 
 # Production environment
 ENVIRONMENT=prod
-# Uses: Data/Core/full_stack_qa_prod.db
+# Uses: data/core/full_stack_qa_prod.db
 
 # Custom path (highest priority)
 DATABASE_PATH=/custom/path/my_database.db
@@ -111,7 +111,7 @@ DATABASE_PATH=/custom/path/my_database.db
 
 # Custom name in default directory
 DATABASE_NAME=my_custom.db
-# Uses: Data/Core/my_custom.db
+# Uses: data/core/my_custom.db
 ```
 
 ---
@@ -168,7 +168,7 @@ The system automatically prevents using the schema database for runtime:
 
 ```python
 # This will raise ValueError
-DATABASE_PATH=Data/Core/full_stack_qa.db python app.py
+DATABASE_PATH=data/core/full_stack_qa.db python app.py
 # Error: Cannot use schema database 'full_stack_qa.db' for runtime
 ```
 
@@ -191,13 +191,13 @@ Environment databases should be created from the schema database:
 
 ```bash
 # Create dev database
-sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 
 # Create test database
-sqlite3 Data/Core/full_stack_qa_test.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa_test.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 
 # Create prod database (if needed)
-sqlite3 Data/Core/full_stack_qa_prod.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa_prod.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 ```
 
 ### Verify Schema
@@ -205,8 +205,8 @@ sqlite3 Data/Core/full_stack_qa_prod.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED
 After creating, verify the schema matches:
 
 ```bash
-sqlite3 Data/Core/full_stack_qa_dev.db ".schema" > dev_schema.sql
-sqlite3 Data/Core/full_stack_qa.db ".schema" > schema.sql
+sqlite3 data/core/full_stack_qa_dev.db ".schema" > dev_schema.sql
+sqlite3 data/core/full_stack_qa.db ".schema" > schema.sql
 diff schema.sql dev_schema.sql
 ```
 
@@ -246,7 +246,7 @@ This verifies:
 
 **Solution**: Create the environment database from the schema database:
 ```bash
-sqlite3 Data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
 ```
 
 ### Issue: "Cannot use schema database for runtime"

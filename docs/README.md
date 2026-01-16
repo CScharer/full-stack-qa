@@ -166,8 +166,8 @@ When adding new documentation:
 ## 🔗 Related Files
 
 ### Configuration Docs
-- [XML/README.md](../XML/README.md) - XML configuration guide
-- [Configurations/README.md](../Configurations/README.md) - Environment setup
+- [xml/README.md](../xml/README.md) - XML configuration guide
+- [config/README.md](../config/README.md) - Environment setup (includes XML configuration)
 - [scripts/README.md](../scripts/README.md) - Helper scripts guide
 
 ### Root Files

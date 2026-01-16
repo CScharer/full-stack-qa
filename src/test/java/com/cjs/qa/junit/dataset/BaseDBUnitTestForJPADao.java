@@ -97,7 +97,7 @@ public class BaseDBUnitTestForJPADao {
         // The try-with-resources will only close it if an exception occurs before
         // DatabaseConnection takes ownership
         String dbLocation = Constants.PATH_PROJECT + "b2csite.dll" + IExtension.SQL;
-        dbLocation = "src/test/resources/TableDef/b2csite.dll" + IExtension.SQL;
+        dbLocation = "src/test/resources/tabledef/b2csite.dll" + IExtension.SQL;
         // FileReader is closed automatically by try-with-resources
         try (FileReader fileReader = new FileReader(dbLocation)) {
           RunScript.execute(iDatabaseConnection.getConnection(), fileReader);

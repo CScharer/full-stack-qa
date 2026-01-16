@@ -28,16 +28,17 @@ public class Constants {
   public static final String PATH_FILES_WORKSPACE = PATH_LOCAL + "Workspace" + FS;
   public static final String PATH_FILES_DATA = PATH_FILES_WORKSPACE + "Data" + FS;
   public static final String PATH_FILES_DATA_DATABASES = PATH_FILES_DATA + "Databases" + FS;
-  public static final String PATH_FILES_XML = PATH_FILES_DATA + "XML" + FS;
+  public static final String PATH_FILES_XML = PATH_FILES_DATA + "xml" + FS;
   public static final String PATH_FILES_SOAPUI_RESULTS = PATH_FILES_DATA + "SoapUI" + FS;
   public static final String PATH_PROJECT = System.getProperty("user.dir") + FS;
   public static final String PATH_ROOT = PATH_PROJECT;
   public static final String PATH_DRIVERS_LOCAL =
       "C:" + FS + "Selenium" + FS + "Grid2" + FS + "Drivers" + FS;
-  public static final String PATH_DRIVERS_REPOSITORY =
-      PATH_ROOT + "src" + FS + "test" + FS + "resources" + FS + "Drivers" + FS;
+  // PATH_DRIVERS_REPOSITORY removed - legacy constant, WebDriverManager handles drivers now
+  // public static final String PATH_DRIVERS_REPOSITORY =
+  //     PATH_ROOT + "src" + FS + "test" + FS + "resources" + FS + "Drivers" + FS;
   public static final String PATH_SCREENSHOTS = PATH_ROOT + "Screenshots" + FS;
-  public static final String PATH_FILES_CONFIGURATIONS = PATH_ROOT + "Configurations" + FS;
+  public static final String PATH_FILES_CONFIGURATIONS = PATH_ROOT + "config" + FS;
   public static final String DELIMETER_LIST = System.getProperty("path.separator");
   public static final String BACKSLASH = "\\";
   public static final String BACKSPACE = "\b";

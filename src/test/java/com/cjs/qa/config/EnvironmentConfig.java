@@ -18,8 +18,8 @@ import com.google.gson.JsonParser;
  *
  * <p>This utility reads environment-specific URLs and ports from the shared {@code
  * config/environments.json} file. This complements the existing XML-based configuration system
- * ({@code Configurations/Environments.xml}) which handles user-specific settings (browser,
- * timeouts, logging flags).
+ * ({@code config/Environments.xml}) which handles user-specific settings (browser, timeouts,
+ * logging flags).
  *
  * <p><strong>Key Differences:</strong>
  *

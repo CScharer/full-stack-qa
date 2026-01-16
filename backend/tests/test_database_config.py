@@ -105,7 +105,7 @@ def test_schema_database_validation():
     print("\n=== Test 5: Schema Database Validation ===")
     
     # Try to use schema database - should raise ValueError
-    schema_path = Path(__file__).parent.parent.parent / "Data" / "Core" / "full_stack_qa.db"
+    schema_path = Path(__file__).parent.parent.parent / "data" / "core" / "full_stack_qa.db"
     os.environ["DATABASE_PATH"] = str(schema_path)
     
     try:

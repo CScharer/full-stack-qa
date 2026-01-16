@@ -79,8 +79,8 @@ docs/
 ```
 Project Structure:
 ├── README.md                            📖 Main project README (GitHub landing page)
-├── XML/README.md                        ⚙️ XML configuration guide
-├── Configurations/README.md             ⚙️ Environment setup guide
+├── xml/README.md                        ⚙️ XML configuration guide
+├── config/README.md                     ⚙️ Environment setup guide (includes XML configuration)
 ├── scripts/README.md                    🔧 Script usage guide
 └── .github/
     ├── pull_request_template.md         📋 PR template (GitHub UI)

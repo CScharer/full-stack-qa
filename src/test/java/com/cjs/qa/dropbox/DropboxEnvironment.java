@@ -13,11 +13,7 @@ public class DropboxEnvironment extends Environment {
   public static final String FOLDER_DATA =
       Constants.PATH_FILES_DATA + COMPANY + Constants.DELIMETER_PATH;
   public static final String FILE_CONFIG =
-      Constants.PATH_ROOT
-          + "Configurations"
-          + Constants.DELIMETER_PATH
-          + "Environments"
-          + IExtension.XML;
+      Constants.PATH_ROOT + "config" + Constants.DELIMETER_PATH + "Environments" + IExtension.XML;
   public static final String FILE_LOG = FOLDER_DATA + "Log_" + COMPANY + IExtension.LOG;
   public static final String URL_LOGIN = "https://www." + COMPANY + IExtension.COM + "/";
   private final List<String> classExlusionList =

@@ -30,7 +30,7 @@ public class DataSetUtilDemoTests extends BaseDBUnitTestForJPADao {
 
   private static final class DataFiles {
 
-    private static final String PATH_DATA_FILES = "src/test/resources/DataSets/";
+    private static final String PATH_DATA_FILES = "src/test/resources/datasets/";
     private static final String XML_DATA_SET = PATH_DATA_FILES + "XML_DataSet" + IExtension.XML;
     private static final String FLAT_XML_DATA_SET =
         PATH_DATA_FILES + "FlatXML_DataSet" + IExtension.XML;

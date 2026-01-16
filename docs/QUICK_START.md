@@ -96,7 +96,7 @@ npm run dev  # ✅ This works
 ENVIRONMENT=dev  # Options: dev, test, prod
 # The scripts automatically set DATABASE_PATH to the correct absolute path
 # You can override with an absolute path if needed:
-# DATABASE_PATH=/absolute/path/to/Data/Core/full_stack_qa_dev.db
+# DATABASE_PATH=/absolute/path/to/data/core/full_stack_qa_dev.db
 
 API_HOST=0.0.0.0
 API_PORT=8003  # dev: 8003, test: 8004, prod: 8005
@@ -131,7 +131,7 @@ Open browser: http://127.0.0.1:3003
 
 ### Backend won't start
 - Check if port 8003 is in use: `lsof -ti:8003 | xargs kill -9` (dev: 8003, test: 8004, prod: 8005)
-- Verify development database exists: `ls -la Data/Core/full_stack_qa_dev.db`
+- Verify development database exists: `ls -la data/core/full_stack_qa_dev.db`
 - Check virtual environment: `source backend/venv/bin/activate`
 
 ### Frontend won't start

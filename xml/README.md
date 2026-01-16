@@ -10,7 +10,7 @@
 
 1. **Copy template files to create working configuration files**:
    ```bash
-   cd XML/
+   cd xml/
    cp Companies.xml.template Companies.xml
    cp UserSettings.xml.template UserSettings.xml
    ```
@@ -113,7 +113,7 @@ gcloud secrets list | grep AUTO
 ### "Configuration file not found"
 ```bash
 # Make sure you copied the template files
-cd XML/
+cd xml/
 cp Companies.xml.template Companies.xml
 cp UserSettings.xml.template UserSettings.xml
 ```

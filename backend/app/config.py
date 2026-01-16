@@ -41,9 +41,9 @@ class Settings(BaseSettings):
     # 2. DATABASE_NAME env var + DATABASE_DIR (or default dir)
     # 3. ENVIRONMENT env var → full_stack_qa_{env}.db
     # 4. Default → full_stack_qa_dev.db
-    database_path: str = "../Data/Core/full_stack_qa_dev.db"  # Default (dev environment)
+    database_path: str = "../data/core/full_stack_qa_dev.db"  # Default (dev environment)
     database_name: Optional[str] = None  # Optional: database filename only
-    database_dir: str = "../Data/Core"  # Database directory path
+    database_dir: str = "../data/core"  # Database directory path
     environment: str = "dev"  # Environment name (dev/test/prod) - used for database selection
     
     # API Configuration

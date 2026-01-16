@@ -16,11 +16,7 @@ public class BTSEnvironment extends Environment {
   public static final String FOLDER_DATA =
       Constants.PATH_FILES_DATA + COMPANY + Constants.DELIMETER_PATH;
   public static final String FILE_CONFIG =
-      Constants.PATH_ROOT
-          + "Configurations"
-          + Constants.DELIMETER_PATH
-          + "Environments"
-          + IExtension.XML;
+      Constants.PATH_ROOT + "config" + Constants.DELIMETER_PATH + "Environments" + IExtension.XML;
   public static final String FILE_LOG = FOLDER_DATA + "Log_" + COMPANY + IExtension.LOG;
   private static Map<Integer, String> scenarioErrors = new HashMap<>();
   protected static final List<String> CLASS_EXCLUSIONS = Arrays.asList("");

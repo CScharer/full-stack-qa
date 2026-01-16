@@ -175,8 +175,8 @@ gcloud auth application-default login
 gcloud config set project cscharer
 
 # 3. Copy configuration templates
-cp XML/Companies.xml.template XML/Companies.xml
-cp XML/UserSettings.xml.template XML/UserSettings.xml
+cp xml/Companies.xml.template xml/Companies.xml
+cp xml/UserSettings.xml.template xml/UserSettings.xml
 
 # 4. Run tests (Maven wrapper included - no Maven install needed!)
 ./mvnw clean test
@@ -231,8 +231,8 @@ gcloud secrets versions access latest --secret="AUTO_BTSQA_PASSWORD"
 ### 3. Copy Configuration Templates
 ```bash
 # Copy template files to create working configurations
-cp XML/Companies.xml.template XML/Companies.xml
-cp XML/UserSettings.xml.template XML/UserSettings.xml
+cp xml/Companies.xml.template xml/Companies.xml
+cp xml/UserSettings.xml.template xml/UserSettings.xml
 cp Configurations/Environments.xml.template Configurations/Environments.xml
 ```
 
@@ -698,11 +698,11 @@ full-stack-qa/
 │   └── (Analysis documents archived)
 │   └── (INTEGRATION_COMPLETE.md moved to PRIVATE/ folder)
 │   └── NEXT_STEPS.md                       # Quick action guide
-├── XML/                                    # Configuration files
+├── xml/                                    # Configuration files
 │   ├── Companies.xml.template              # Company config template
 │   └── UserSettings.xml.template           # User settings template
 ├── Configurations/                         # Environment configs
-├── Data/                                   # Test data and SQL scripts
+├── data/                                   # Test data and SQL scripts
 ├── .github/                                # GitHub templates
 │   ├── ISSUE_TEMPLATE/                     # Issue templates
 │   ├── pull_request_template.md            # PR template
@@ -804,8 +804,8 @@ String apiKey = EAPIKeys.VIVIT_GT_WEBINAR_CONSUMER_KEY.getValue();
 ### Protected Files
 
 All sensitive configuration files are **protected by .gitignore** and never committed:
-- `XML/Companies.xml` - Company credentials
-- `XML/UserSettings.xml` - Test credentials
+- `xml/Companies.xml` - Company credentials
+- `xml/UserSettings.xml` - Test credentials
 - `Configurations/Environments.xml` - Environment configurations
 - Any `*-key.json` - Service account keys
 
@@ -1070,7 +1070,7 @@ Comprehensive documentation available in `/docs`:
 - **QUICK_WINS_COMPLETE.md** - Quick wins summary (archived)
 
 ### Configuration
-- **[XML/README.md](XML/README.md)** - XML configuration setup
+- **[xml/README.md](xml/README.md)** - XML configuration setup
 - **[Configurations/README.md](Configurations/README.md)** - Environment configuration
 - **[scripts/README.md](scripts/README.md)** - Script usage guide
 
@@ -1117,8 +1117,8 @@ gcloud auth application-default login
 gcloud config set project cscharer
 
 # 3. Copy templates
-cp XML/Companies.xml.template XML/Companies.xml
-cp XML/UserSettings.xml.template XML/UserSettings.xml
+cp xml/Companies.xml.template xml/Companies.xml
+cp xml/UserSettings.xml.template xml/UserSettings.xml
 
 # 4. Run tests!
 ./mvnw clean test

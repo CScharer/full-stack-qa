@@ -427,8 +427,8 @@ Content starts here...
 
 **Project & Configuration READMEs** (Feature-Local Documentation):
 - ✅ `README.md` (project root - GitHub landing page)
-- ✅ `XML/README.md` (XML configuration guide)
-- ✅ `Configurations/README.md` (environment setup guide)
+- ✅ `xml/README.md` (XML configuration guide)
+- ✅ `config/README.md` (environment setup guide, includes XML configuration)
 - ✅ `scripts/README.md` (script usage guide)
 
 **Reason**: These document specific features/directories and should live with those features.
@@ -445,8 +445,8 @@ find . -name "*.md" \
   -not -path "./.github/ISSUE_TEMPLATE/*" \
   -not -path "./.github/pull_request_template.md" \
   -not -path "./README.md" \
-  -not -path "./XML/README.md" \
-  -not -path "./Configurations/README.md" \
+  -not -path "./xml/README.md" \
+  -not -path "./config/README.md" \
   -not -path "./scripts/README.md" \
   -not -path "./node_modules/*" \
   -not -path "./target/*"
@@ -466,8 +466,8 @@ docs/**/*.md                              ✅ Primary location
 
 # Feature-local documentation:
 README.md                                  ✅ Exception (Project root)
-XML/README.md                              ✅ Exception (Config guide)
-Configurations/README.md                   ✅ Exception (Config guide)
+xml/README.md                              ✅ Exception (Config guide)
+config/README.md                           ✅ Exception (Config guide)
 scripts/README.md                          ✅ Exception (Script guide)
 
 # Everything else:
@@ -2276,7 +2276,7 @@ docker-compose -f docker-compose.prod.yml run --rm tests test -Dtest=SmokeTests
 - `docker-compose.dev.yml` - Development configuration
 - `docker-compose.test.yml` - Test environment configuration
 - `docker-compose.prod.yml` - Production configuration
-- `Configurations/Environments.xml` - Environment-specific test settings
+- `config/Environments.xml` - Environment-specific test settings
 
 #### **GitHub Actions Integration:**
 The CI/CD pipeline supports multi-environment testing:

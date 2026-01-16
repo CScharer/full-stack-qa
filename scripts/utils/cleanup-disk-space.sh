@@ -194,7 +194,7 @@ if [ "$CLEANUP_LEVEL" = "standard" ] || [ "$CLEANUP_LEVEL" = "aggressive" ]; the
     find . -type f -name "*.csv" \
         -not -path "*/src/test/resources/*" \
         -not -path "*/test-data/*" \
-        -not -path "*/Data/*" \
+        -not -path "*/data/*" \
         -not -path "*/.git/*" \
         -delete 2>/dev/null && echo -e "${GREEN}    ✅ Removed JMeter CSV results (preserved test data files)${NC}" || echo -e "${BLUE}  Skipping: CSV files (none found or all are test data)${NC}"
     
