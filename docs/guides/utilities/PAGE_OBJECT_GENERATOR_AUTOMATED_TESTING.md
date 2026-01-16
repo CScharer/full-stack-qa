@@ -27,7 +27,7 @@ I've created **automated browser tests** that can run without your manual interv
 
 ```bash
 # Run all browser-based tests
-./scripts/test-page-object-generator.sh
+./scripts/utils/test-page-object-generator.sh
 ```
 
 This script will:
@@ -195,5 +195,5 @@ brew install chromedriver  # macOS
 
 ---
 
-**Ready to test!** Run `./scripts/test-page-object-generator.sh` and I'll validate the generator automatically! 🚀
+**Ready to test!** Run `./scripts/utils/test-page-object-generator.sh` and I'll validate the generator automatically! 🚀
 

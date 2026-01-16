@@ -181,8 +181,9 @@ generate_csv_report() {
 }
 
 # Get script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+# Since this script is in scripts/quality/, we need to go up two levels to get project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR"
 
 cd "$PROJECT_ROOT"
 

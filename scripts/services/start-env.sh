@@ -21,7 +21,8 @@
 set -e
 
 # Get the script directory (project root)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Since this script is in scripts/services/, we need to go up two levels
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$SCRIPT_DIR"
 
 # Parse command line arguments
@@ -233,10 +234,10 @@ if [ "$BACKGROUND" = "true" ]; then
     echo -e "${BLUE}📦 Starting services in background...${NC}"
     echo ""
     # Start backend in background (API_PORT is already exported)
-    bash "$SCRIPT_DIR/scripts/start-be.sh" --env "$ENVIRONMENT" > "$SCRIPT_DIR/dev-backend.log" 2>&1 &
+    bash "$SCRIPT_DIR/scripts/services/start-be.sh" --env "$ENVIRONMENT" > "$SCRIPT_DIR/dev-backend.log" 2>&1 &
     BACKEND_PID=$!
     # Start frontend in background (PORT is already exported)
-    bash "$SCRIPT_DIR/scripts/start-fe.sh" --env "$ENVIRONMENT" > "$SCRIPT_DIR/dev-frontend.log" 2>&1 &
+    bash "$SCRIPT_DIR/scripts/services/start-fe.sh" --env "$ENVIRONMENT" > "$SCRIPT_DIR/dev-frontend.log" 2>&1 &
     FRONTEND_PID=$!
     echo -e "${GREEN}✅ Services starting in background${NC}"
     echo -e "${BLUE}   Backend PID: $BACKEND_PID${NC}"
@@ -244,7 +245,7 @@ if [ "$BACKGROUND" = "true" ]; then
     echo -e "${BLUE}   Backend logs: $SCRIPT_DIR/dev-backend.log${NC}"
     echo -e "${BLUE}   Frontend logs: $SCRIPT_DIR/dev-frontend.log${NC}"
     echo ""
-    echo -e "${YELLOW}   To stop services, run: ./scripts/stop-services.sh${NC}"
+    echo -e "${YELLOW}   To stop services, run: ./scripts/services/stop-services.sh${NC}"
     echo -e "${YELLOW}   Or: kill $BACKEND_PID $FRONTEND_PID${NC}"
     echo ""
     # Wait for both processes
@@ -254,10 +255,10 @@ else
     echo -e "${YELLOW}   Press Ctrl+C to stop both services${NC}"
     echo ""
     # Start backend in background (API_PORT is already exported)
-    bash "$SCRIPT_DIR/scripts/start-be.sh" --env "$ENVIRONMENT" &
+    bash "$SCRIPT_DIR/scripts/services/start-be.sh" --env "$ENVIRONMENT" &
     BACKEND_PID=$!
     # Start frontend in background (PORT is already exported)
-    bash "$SCRIPT_DIR/scripts/start-fe.sh" --env "$ENVIRONMENT" &
+    bash "$SCRIPT_DIR/scripts/services/start-fe.sh" --env "$ENVIRONMENT" &
     FRONTEND_PID=$!
     
     # Enable cleanup on exit

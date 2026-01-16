@@ -28,13 +28,13 @@ This guide covers all scripts used for managing application services (Backend an
 **Usage**:
 ```bash
 # Start services with default environment (dev)
-./scripts/start-services-for-ci.sh
+./scripts/services/start-services-for-ci.sh
 
 # Start services for specific environment
-ENVIRONMENT=test ./scripts/start-services-for-ci.sh
+ENVIRONMENT=test ./scripts/services/start-services-for-ci.sh
 
 # Force stop existing services on ports
-FORCE_STOP=true ./scripts/start-services-for-ci.sh
+FORCE_STOP=true ./scripts/services/start-services-for-ci.sh
 ```
 
 **Features**:
@@ -63,10 +63,10 @@ FORCE_STOP=true ./scripts/start-services-for-ci.sh
 **Usage**:
 ```bash
 # Stop services (uses default ports)
-./scripts/stop-services.sh
+./scripts/services/stop-services.sh
 
 # Stop services for specific environment
-ENVIRONMENT=test ./scripts/stop-services.sh
+ENVIRONMENT=test ./scripts/services/stop-services.sh
 ```
 
 **Features**:
@@ -339,16 +339,16 @@ eval "$PORT_VARS"
 
 | Scenario | Script | Example |
 |----------|--------|---------|
-| **CI/CD Pipeline** | `start-services-for-ci.sh` | `ENVIRONMENT=test ./scripts/start-services-for-ci.sh` |
-| **Local Development** | `start-be.sh`, `start-fe.sh` | `./scripts/start-be.sh --env dev` |
-| **Both Services Together** | `start-env.sh` | `./scripts/start-env.sh --env test` |
+| **CI/CD Pipeline** | `start-services-for-ci.sh` | `ENVIRONMENT=test ./scripts/services/start-services-for-ci.sh` |
+| **Local Development** | `start-be.sh`, `start-fe.sh` | `./scripts/services/start-be.sh --env dev` |
+| **Both Services Together** | `start-env.sh` | `./scripts/services/start-env.sh --env test` |
 
 ### Stopping Services
 
 | Scenario | Script | Example |
 |----------|--------|---------|
-| **Stop All Services** | `stop-services.sh` | `./scripts/stop-services.sh` |
-| **Stop by Environment** | `stop-services.sh` | `ENVIRONMENT=test ./scripts/stop-services.sh` |
+| **Stop All Services** | `stop-services.sh` | `./scripts/services/stop-services.sh` |
+| **Stop by Environment** | `stop-services.sh` | `ENVIRONMENT=test ./scripts/services/stop-services.sh` |
 
 ### Verifying Services
 
@@ -366,7 +366,7 @@ eval "$PORT_VARS"
 
 ```bash
 # 1. Start services for test environment
-ENVIRONMENT=test ./scripts/start-services-for-ci.sh
+ENVIRONMENT=test ./scripts/services/start-services-for-ci.sh
 
 # 2. Verify services are ready
 ./scripts/ci/verify-services.sh http://localhost:3004 60
@@ -375,14 +375,14 @@ ENVIRONMENT=test ./scripts/start-services-for-ci.sh
 # ... (your test commands)
 
 # 4. Stop services
-ENVIRONMENT=test ./scripts/stop-services.sh
+ENVIRONMENT=test ./scripts/services/stop-services.sh
 ```
 
 ### Local Development: Start and Verify
 
 ```bash
 # 1. Start services
-./scripts/start-env.sh --env dev
+./scripts/services/start-env.sh --env dev
 
 # 2. Verify services (optional)
 ./scripts/ci/verify-services.sh http://localhost:3003
@@ -391,7 +391,7 @@ ENVIRONMENT=test ./scripts/stop-services.sh
 # ... (your development work)
 
 # 4. Stop services when done
-./scripts/stop-services.sh
+./scripts/services/stop-services.sh
 ```
 
 ### Frontend Test Workflow: Wait for Grid
@@ -458,7 +458,7 @@ docker-compose up -d selenium-hub selenium-chrome selenium-firefox
 
 2. **Force stop existing services**:
    ```bash
-   FORCE_STOP=true ./scripts/start-services-for-ci.sh
+   FORCE_STOP=true ./scripts/services/start-services-for-ci.sh
    ```
 
 3. **Check service logs**:

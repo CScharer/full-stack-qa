@@ -10,6 +10,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.cjs.qa.config.EnvironmentConfig;
 import com.cjs.qa.junit.pages.HomePage;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.codeborne.selenide.Configuration;
@@ -36,10 +37,11 @@ public class HomePageTests {
     // Maximize browser window (set to large size to ensure sidebar is visible)
     Configuration.browserSize = "1920x1080";
 
-    // Set base URL (defaults to localhost:3003 for Next.js app DEV port per ONE_GOAL.md)
+    // Set base URL - use EnvironmentConfig for centralized configuration
     String baseUrl = System.getProperty("baseUrl", System.getenv("BASE_URL"));
     if (baseUrl == null || baseUrl.isEmpty()) {
-      baseUrl = "http://localhost:3003";
+      // Use centralized config instead of hardcoded value
+      baseUrl = EnvironmentConfig.getFrontendUrl();
     }
     Configuration.baseUrl = baseUrl;
 

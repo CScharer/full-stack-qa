@@ -20,9 +20,9 @@ jobs:
       - name: Validate Dependency Versions
         id: validate
         run: |
-          chmod +x scripts/validate-dependency-versions.sh
+          chmod +x scripts/quality/validate-dependency-versions.sh
           mkdir -p results
-          ./scripts/validate-dependency-versions.sh --report-json --report-file results/version-validation-report.json || true
+          ./scripts/quality/validate-dependency-versions.sh --report-json --report-file results/version-validation-report.json || true
           
       - name: Upload Version Validation Report
         if: always()

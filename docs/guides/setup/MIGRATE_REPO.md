@@ -161,7 +161,7 @@ git branch -M main
 ```bash
 cd <parent_directory>/<migrate_repo_to>
 chmod +x scripts/install-git-hooks.sh
-./scripts/install-git-hooks.sh
+./scripts/utils/install-git-hooks.sh
 ```
 
 **What gets installed**:

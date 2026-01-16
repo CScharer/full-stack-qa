@@ -1,5 +1,9 @@
 # Artillery Configuration for Test Environment
 # Target: http://localhost:3004
+# 
+# Note: URLs should match config/environments.json
+# This file is environment-specific, so hardcoded URLs are acceptable here.
+# For consistency, ensure these match the test environment in config/environments.json
 
 config:
   target: "http://localhost:3004"

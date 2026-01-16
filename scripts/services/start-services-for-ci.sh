@@ -6,7 +6,8 @@
 set -e
 
 # Get the script directory (project root)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Since this script is in scripts/services/, we need to go up two levels
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$SCRIPT_DIR"
 
 # Configuration
@@ -15,7 +16,7 @@ FRONTEND_DIR="${SCRIPT_DIR}/frontend"
 ENVIRONMENT=${ENVIRONMENT:-"dev"}  # dev, test, or prod
 API_RELOAD=${API_RELOAD:-"false"}  # Disable reload for CI
 # Load timeout from centralized config if available
-SCRIPT_DIR_FULL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR_FULL="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_CONFIG="${SCRIPT_DIR_FULL}/config/environments.json"
 if [ -f "$ENV_CONFIG" ] && command -v jq &> /dev/null; then
     MAX_WAIT=${MAX_WAIT:-$(jq -r '.timeouts.serviceStartup' "$ENV_CONFIG" 2>/dev/null || echo "120")}
@@ -528,7 +529,7 @@ if [ -n "$BACKEND_PID" ] && [ -n "$FRONTEND_PID" ]; then
     echo "   Frontend PID: $FRONTEND_PID"
     echo ""
     echo "   To stop services, run:"
-    echo "   ./scripts/stop-services.sh"
+    echo "   ./scripts/services/stop-services.sh"
     echo "   or: kill $BACKEND_PID $FRONTEND_PID"
     
     # Save PIDs to file for cleanup (only if we started them)

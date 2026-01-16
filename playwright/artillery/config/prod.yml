@@ -1,6 +1,10 @@
 # Artillery Configuration for Production Environment
 # ⚠️ WARNING: Use with extreme caution! Only run with explicit approval.
-# Target: Production URL (to be configured)
+# Target: http://localhost:3005 (local testing)
+# 
+# Note: URLs should match config/environments.json
+# This file is environment-specific, so hardcoded URLs are acceptable here.
+# For consistency, ensure these match the prod environment in config/environments.json
 
 config:
   target: "http://localhost:3005"  # Production environment (local testing)

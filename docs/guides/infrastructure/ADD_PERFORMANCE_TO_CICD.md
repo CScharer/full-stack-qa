@@ -184,9 +184,9 @@ jobs:
 
 ```bash
 # Developers run locally as needed
-./scripts/run-locust-tests.sh
-./scripts/run-gatling-tests.sh
-./scripts/run-jmeter-tests.sh
+./scripts/tests/performance/run-locust-tests.sh
+./scripts/tests/performance/run-gatling-tests.sh
+./scripts/tests/performance/run-jmeter-tests.sh
 ```
 
 **Benefits:**

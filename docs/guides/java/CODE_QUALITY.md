@@ -53,7 +53,7 @@ This project maintains high code quality standards through automated tools and b
 
 ```bash
 # Run the automated formatting script
-./scripts/format-code.sh
+./scripts/quality/format-code.sh
 ```
 
 This script automatically runs all required steps:

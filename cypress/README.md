@@ -95,7 +95,7 @@ npx cypress run --browser chrome --headed --spec cypress/e2e/wizard.cy.ts
 - `cypress/support/` - Custom commands and configuration (`.ts`)
   - `api-utils.ts` - API request utility adapter
   - `db-utils.ts` - Database query utility adapter
-  - `test-utils.ts` - Test name utilities adapter (reads from `lib/test-utils.json`)
+  - `test-utils.ts` - Test utilities adapter (re-exports from `lib/test-utils.ts`)
 - `cypress/fixtures/` - Test data files
 - `tsconfig.json` - TypeScript configuration
 
@@ -254,9 +254,20 @@ npx cypress run --browser chrome --spec cypress/e2e/wizard.cy.ts
 
 ## Test Name Consistency
 
-Test suite and test case names are centralized in `lib/test-utils.json` to ensure consistency across frameworks. The Cypress adapter (`cypress/support/test-utils.ts`) reads from this JSON file at runtime using Cypress tasks.
+Test suite and test case names are centralized in `lib/test-utils.ts` to ensure consistency across frameworks. Cypress imports directly from the shared TypeScript utility, which provides type-safe access to test names.
 
-**Note**: Due to Cypress's webpack bundler limitations with JSON imports, test names are currently hardcoded in test files but should match the values in `lib/test-utils.json` for consistency. The JSON file serves as the source of truth for test naming conventions.
+**Usage**:
+```typescript
+import { getTestSuite } from '../support/test-utils';
+const wizard = getTestSuite('wizard');
+describe(wizard.suiteName, () => {
+  it(wizard.tests.test_home, () => {
+    // test implementation
+  });
+});
+```
+
+The Cypress adapter (`cypress/support/test-utils.ts`) contains a copy of the test data due to Cypress's webpack bundler limitations with cross-project imports. **The data must be kept in sync with `lib/test-utils.ts`**, which is the primary source of truth. When updating test names, update both files to maintain consistency across frameworks.
 
 ## Alignment with Playwright
 
@@ -265,7 +276,7 @@ The Cypress implementation is designed to match the Playwright implementation:
 - ✅ Same test structure and coverage
 - ✅ Same `data-qa` selectors
 - ✅ Same test scenarios (wizard.cy.ts matches wizard.spec.ts)
-- ✅ Same test names (from `lib/test-utils.json`)
+- ✅ Same test names (from `lib/test-utils.ts`)
 
 **Key Differences:**
 - Cypress uses chainable commands vs Playwright's async/await

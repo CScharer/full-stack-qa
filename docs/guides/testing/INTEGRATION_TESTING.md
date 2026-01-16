@@ -38,7 +38,7 @@ These tests use **Playwright** to simulate real user interactions with the appli
 ### Run All Integration Tests
 
 ```bash
-./scripts/run-integration-tests.sh
+./scripts/tests/frameworks/run-integration-tests.sh
 ```
 
 This script will:
@@ -53,8 +53,8 @@ This script will:
 - **Default**: `dev` environment (ports 8003/3003, database: `full_stack_qa_dev.db`)
 - **Override**: Set `ENVIRONMENT` env var to use `test` or `prod`
   ```bash
-  ENVIRONMENT=test ./scripts/run-integration-tests.sh  # Uses test environment
-  ENVIRONMENT=prod ./scripts/run-integration-tests.sh  # Uses prod environment
+  ENVIRONMENT=test ./scripts/tests/frameworks/run-integration-tests.sh  # Uses test environment
+  ENVIRONMENT=prod ./scripts/tests/frameworks/run-integration-tests.sh  # Uses prod environment
   ```
 
 **Note**: See [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) for all port assignments.
@@ -105,13 +105,13 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT:-8003}
 **OR using the helper script** (recommended):
 ```bash
 # Default (dev environment)
-./scripts/start-be.sh
+./scripts/services/start-be.sh
 
 # Test environment
-./scripts/start-be.sh --env test
+./scripts/services/start-be.sh --env test
 
 # Prod environment
-./scripts/start-be.sh --env prod
+./scripts/services/start-be.sh --env prod
 ```
 
 **Note**: Setting `ENVIRONMENT` automatically makes the backend use the correct database and port. See [Service Scripts Guide](../infrastructure/SERVICE_SCRIPTS.md) for more options.
@@ -128,13 +128,13 @@ PORT=${FRONTEND_PORT:-3003} npm run dev
 **OR using the helper script** (recommended):
 ```bash
 # Default (dev environment)
-./scripts/start-fe.sh
+./scripts/services/start-fe.sh
 
 # Test environment
-./scripts/start-fe.sh --env test
+./scripts/services/start-fe.sh --env test
 
 # Prod environment
-./scripts/start-fe.sh --env prod
+./scripts/services/start-fe.sh --env prod
 ```
 
 **Note**: Ports are automatically selected based on environment. See [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) for all port assignments.

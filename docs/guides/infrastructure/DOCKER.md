@@ -58,7 +58,7 @@ curl http://localhost:4444/wd/hub/status
 
 ```bash
 # Run ALL test frameworks (matching CI/CD pipeline)
-./scripts/run-all-tests-docker.sh
+./scripts/tests/run-all-tests-docker.sh
 
 # Run only Selenium/Java tests
 docker-compose up tests
@@ -721,7 +721,7 @@ If you encounter "no space left on device" errors:
 **Option 1: Run Tests Locally (No Docker)**
 ```bash
 # Run Cypress, Playwright, and Robot Framework tests without Docker
-./scripts/run-tests-local.sh
+./scripts/tests/run-tests-local.sh
 ```
 See [Local Testing Guide](../testing/LOCAL_TESTING.md) for details.
 

@@ -1,8 +1,21 @@
 import { defineConfig } from 'cypress'
+import { getFrontendUrl } from '../config/port-config'
+
+// Get default frontend URL from centralized config
+const getDefaultBaseUrl = (): string => {
+  try {
+    const env = (process.env.ENVIRONMENT || 'dev').toLowerCase()
+    return getFrontendUrl(env)
+  } catch (error) {
+    // Fallback if config can't be read (shouldn't happen, but safe fallback)
+    console.warn('Could not read frontend URL from config, using default:', error)
+    return 'http://localhost:3003'
+  }
+}
 
 export default defineConfig({
   e2e: {
-    baseUrl: process.env.BASE_URL || 'http://localhost:3003', // Default to DEV port per ONE_GOAL.md
+    baseUrl: process.env.BASE_URL || getDefaultBaseUrl(),
     viewportWidth: 1920,
     viewportHeight: 1080,
     video: false,
@@ -33,16 +46,8 @@ export default defineConfig({
         config.env.ENVIRONMENT = process.env.ENVIRONMENT
       }
       
-      // Task to read test-utils.json from Node.js context
-      const fs = require('fs')
-      const path = require('path')
-      on('task', {
-        readTestUtilsJson() {
-          const jsonPath = path.join(__dirname, '../lib/test-utils.json')
-          const jsonContent = fs.readFileSync(jsonPath, 'utf-8')
-          return JSON.parse(jsonContent)
-        }
-      })
+      // Note: Test utilities are now imported directly from lib/test-utils.ts
+      // No need for readTestUtilsJson task anymore
       
       // Generate JSON results for Allure conversion
       on('after:run', (results) => {

@@ -1,115 +1,274 @@
 # Helper Scripts
 
-This directory contains helper scripts for common development tasks.
+This directory contains helper scripts for common development tasks, organized by purpose.
+
+## 📁 Directory Structure
+
+```
+scripts/
+├── services/          # Service management (start/stop services)
+├── tests/             # Test execution scripts
+│   ├── frameworks/    # Framework-specific test runners
+│   └── performance/   # Performance test runners
+├── build/             # Build and compilation
+├── quality/           # Code quality and validation
+├── reporting/         # Report generation
+├── utils/             # General utilities
+├── ci/                # CI/CD scripts (existing)
+├── docker/            # Docker scripts (existing)
+├── lib/               # Common library functions (existing)
+├── test/              # Test utilities (existing)
+└── temp/              # Temporary scripts (existing)
+```
 
 ## Available Scripts
 
 ### Service Management Scripts
 
+**Location**: `scripts/services/`
+
 For starting, stopping, and verifying application services (Backend and Frontend):
 
-- **`start-be.sh`** - Start backend service
-- **`start-fe.sh`** - Start frontend service
-- **`start-env.sh`** - Start both services together
-- **`start-services-for-ci.sh`** - Start services for CI/CD (idempotent)
-- **`stop-services.sh`** - Stop all services
+- **`services/start-be.sh`** - Start backend service
+- **`services/start-fe.sh`** - Start frontend service
+- **`services/start-env.sh`** - Start both services together
+- **`services/start-services-for-ci.sh`** - Start services for CI/CD (idempotent)
+- **`services/stop-services.sh`** - Stop all services
 
-**See**: [Service Scripts Guide](../docs/guides/infrastructure/SERVICE_SCRIPTS.md) for complete documentation.
+**Usage**:
+```bash
+# Start both services (dev environment)
+./scripts/services/start-env.sh
 
-### CI/CD Utility Scripts
+# Start backend only
+./scripts/services/start-be.sh --env test
 
-Located in `scripts/ci/` directory:
-
-- **`verify-services.sh`** - Verify services are running and responding
-- **`wait-for-services.sh`** - Wait for Backend and Frontend to be ready
-- **`wait-for-grid.sh`** - Wait for Selenium Grid to be ready
-- **`wait-for-service.sh`** - Reusable utility for waiting for any service
-- **`port-utils.sh`** - Port management utilities
-- **`port-config.sh`** - Centralized port configuration
+# Stop all services
+./scripts/services/stop-services.sh
+```
 
 **See**: [Service Scripts Guide](../docs/guides/infrastructure/SERVICE_SCRIPTS.md) for complete documentation.
 
 ---
 
-### `run-tests.sh`
-Run test suite with optional parameters.
+### Test Execution Scripts
 
+#### Common Test Scripts
+
+**Location**: `scripts/tests/`
+
+- **`tests/run-tests.sh`** - Run test suite with optional parameters
+- **`tests/run-specific-test.sh`** - Run a specific test method
+- **`tests/run-tests-local.sh`** - Run all test frameworks locally without Docker
+- **`tests/run-smoke-tests.sh`** - Run smoke test suite
+- **`tests/run-all-tests-docker.sh`** - Run all test frameworks in Docker
+
+#### Framework-Specific Test Runners
+
+**Location**: `scripts/tests/frameworks/`
+
+- **`tests/frameworks/run-cypress-tests.sh`** - Run Cypress tests
+- **`tests/frameworks/run-playwright-tests.sh`** - Run Playwright tests
+- **`tests/frameworks/run-robot-tests.sh`** - Run Robot Framework tests
+- **`tests/frameworks/run-vibium-tests.sh`** - Run Vibium tests
+- **`tests/frameworks/run-backend-tests.sh`** - Run backend API tests
+- **`tests/frameworks/run-frontend-tests.sh`** - Run frontend tests
+- **`tests/frameworks/run-api-tests.sh`** - Run API integration tests
+- **`tests/frameworks/run-integration-tests.sh`** - Run integration tests
+
+#### Performance Test Runners
+
+**Location**: `scripts/tests/performance/`
+
+- **`tests/performance/run-all-performance-tests.sh`** - Run all performance tests
+- **`tests/performance/run-gatling-tests.sh`** - Run Gatling performance tests
+- **`tests/performance/run-jmeter-tests.sh`** - Run JMeter performance tests
+- **`tests/performance/run-locust-tests.sh`** - Run Locust performance tests
+
+**Usage Examples**:
 ```bash
-# Run default test suite (Scenarios) with chrome
-./scripts/run-tests.sh
+# Run Cypress tests
+./scripts/tests/frameworks/run-cypress-tests.sh run chrome
 
-# Run specific suite with specific browser
-./scripts/run-tests.sh Scenarios firefox
+# Run Playwright tests
+./scripts/tests/frameworks/run-playwright-tests.sh chromium
 
-# Run Google tests
-./scripts/run-tests.sh Scenarios chrome
+# Run all performance tests
+./scripts/tests/performance/run-all-performance-tests.sh
+
+# Run smoke tests
+./scripts/tests/run-smoke-tests.sh
 ```
 
-### `run-specific-test.sh`
-Run a specific test method.
+---
 
+### Build Scripts
+
+**Location**: `scripts/build/`
+
+- **`build/compile.sh`** - Compile the project without running tests
+
+**Usage**:
 ```bash
-# Run a specific test
-./scripts/run-specific-test.sh Scenarios Google
-
-# Run Microsoft test
-./scripts/run-specific-test.sh Scenarios Microsoft
+./scripts/build/compile.sh
 ```
 
-### `compile.sh`
-Compile the project without running tests.
+---
 
+### Code Quality Scripts
+
+**Location**: `scripts/quality/`
+
+- **`quality/format-code.sh`** - Format code (Prettier, Spotless, Google Java Format)
+- **`quality/validate-pre-commit.sh`** - Validate code before commit
+- **`quality/validate-dependency-versions.sh`** - Validate dependency versions
+- **`quality/check_unused_imports.py`** - Check for unused imports
+
+**Usage**:
 ```bash
-./scripts/compile.sh
+# Format code (required before commit)
+./scripts/quality/format-code.sh
+
+# Validate before commit
+./scripts/quality/validate-pre-commit.sh
+
+# Check dependency versions
+./scripts/quality/validate-dependency-versions.sh
 ```
 
-### `run-tests-local.sh`
-Run all test frameworks locally without Docker (Cypress, Playwright, Robot Framework).
+---
 
+### Reporting Scripts
+
+**Location**: `scripts/reporting/`
+
+- **`reporting/generate-allure-report.sh`** - Generate Allure test reports
+- **`reporting/convert-performance-to-allure.sh`** - Convert performance test results to Allure format
+
+**Usage**:
 ```bash
-# Run all local tests (no Docker required)
-./scripts/run-tests-local.sh
+# Generate Allure report
+./scripts/reporting/generate-allure-report.sh
+
+# Convert performance results
+./scripts/reporting/convert-performance-to-allure.sh
 ```
 
-This script runs:
-- ✅ Cypress tests
-- ✅ Playwright tests
-- ✅ Robot Framework tests (API tests only)
-- ⚠️ Selenium/Java tests are skipped (require Selenium Grid)
+---
 
-**See**: [docs/LOCAL_TESTING_GUIDE.md](../docs/LOCAL_TESTING_GUIDE.md) for complete guide.
+### Utility Scripts
 
-### `run-vibium-tests.sh`
-Run Vibium browser automation tests using Vitest.
+**Location**: `scripts/utils/`
 
+- **`utils/install-git-hooks.sh`** - Install Git pre-commit hooks
+- **`utils/cleanup-disk-space.sh`** - Clean up disk space (remove old test results, etc.)
+- **`utils/test-page-object-generator.sh`** - Generate page objects for tests
+
+**Usage**:
 ```bash
-# Run tests normally
-./scripts/run-vibium-tests.sh
+# Install Git hooks
+./scripts/utils/install-git-hooks.sh
 
-# Run in watch mode
-./scripts/run-vibium-tests.sh --watch
-
-# Run with UI
-./scripts/run-vibium-tests.sh --ui
-
-# Run with coverage
-./scripts/run-vibium-tests.sh --coverage
+# Clean up disk space
+./scripts/utils/cleanup-disk-space.sh
 ```
 
-This script:
-- ✅ Automatically installs dependencies if needed
-- ✅ Runs Vitest test suite
-- ✅ Supports watch mode and UI mode
-- ✅ Generates coverage reports
+---
+
+### CI/CD Utility Scripts
+
+**Location**: `scripts/ci/` (existing directory)
+
+CI/CD specific scripts for GitHub Actions workflows:
+
+- **`ci/verify-services.sh`** - Verify services are running and responding
+- **`ci/wait-for-services.sh`** - Wait for Backend and Frontend to be ready
+- **`ci/wait-for-grid.sh`** - Wait for Selenium Grid to be ready
+- **`ci/wait-for-service.sh`** - Reusable utility for waiting for any service
+- **`ci/port-utils.sh`** - Port management utilities
+- **`ci/env-config.sh`** - Centralized environment configuration
+- **`ci/port-config.sh`** - Centralized port configuration (legacy)
+
+**See**: [Service Scripts Guide](../docs/guides/infrastructure/SERVICE_SCRIPTS.md) for complete documentation.
+
+---
+
+### Other Directories
+
+- **`scripts/docker/`** - Docker-related scripts (grid management, etc.)
+- **`scripts/lib/`** - Common library functions (shared utilities)
+- **`scripts/test/`** - Test utilities and helpers
+- **`scripts/temp/`** - Temporary scripts (for cleanup)
+
+---
+
+## Common Test Scripts
+
+**Location**: `scripts/tests/`
+
+- **`tests/run-tests.sh`** - Run test suite (most commonly used)
+- **`tests/run-specific-test.sh`** - Run specific test method
+
+**Usage**:
+```bash
+# Run test suite
+./scripts/tests/run-tests.sh Scenarios chrome
+
+# Run specific test
+./scripts/tests/run-specific-test.sh Scenarios Google
+```
+
+---
 
 ## Making Scripts Executable
 
 If you need to make scripts executable:
 
 ```bash
-chmod +x scripts/*.sh
+# Make all scripts executable
+chmod +x scripts/**/*.sh
+
+# Or specific script
+chmod +x scripts/services/start-env.sh
 ```
+
+---
 
 ## Using Maven Wrapper
 
 All scripts use `./mvnw` (Maven wrapper) instead of `mvn`. This ensures everyone uses the same Maven version without needing to install Maven separately.
+
+---
+
+## Organization Benefits
+
+This organization provides:
+
+- ✅ **Better discoverability** - Scripts grouped by purpose
+- ✅ **Clearer structure** - Logical grouping makes maintenance easier
+- ✅ **Scalability** - Easy to add new scripts in appropriate categories
+- ✅ **Reduced clutter** - Root directory is cleaner
+- ✅ **Backward compatibility** - Common scripts remain in root
+
+---
+
+## Migration Notes
+
+**Scripts moved from root to subdirectories** (2026-01-16):
+
+- Service scripts → `scripts/services/`
+- Framework test runners → `scripts/tests/frameworks/`
+- Performance test runners → `scripts/tests/performance/`
+- Build scripts → `scripts/build/`
+- Quality scripts → `scripts/quality/`
+- Reporting scripts → `scripts/reporting/`
+- Utility scripts → `scripts/utils/`
+
+**References updated**:
+- ✅ GitHub Actions workflows
+- ✅ Documentation files
+- ✅ Script cross-references
+
+**Scripts kept in root** (for backward compatibility):
+- `run-tests.sh`
+- `run-specific-test.sh`

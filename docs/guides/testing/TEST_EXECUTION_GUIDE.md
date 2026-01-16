@@ -78,7 +78,7 @@ Allure Report Generation
 ### **Smoke Tests Only (Fastest - 2 min)**
 
 ```bash
-./scripts/run-smoke-tests.sh
+./scripts/tests/run-smoke-tests.sh
 ```
 
 **Runs:**
@@ -127,7 +127,7 @@ docker-compose down
 ### **API Tests Only (Super Fast - 30-40 sec)**
 
 ```bash
-./scripts/run-api-tests.sh
+./scripts/tests/frameworks/run-api-tests.sh
 ```
 
 **Runs:**
@@ -179,10 +179,10 @@ docker-compose down
 ### **Before Committing:**
 ```bash
 # Step 1: Quick API check (40 seconds)
-./scripts/run-api-tests.sh
+./scripts/tests/frameworks/run-api-tests.sh
 
 # Step 2: Quick UI smoke test (2 minutes)
-./scripts/run-smoke-tests.sh
+./scripts/tests/run-smoke-tests.sh
 
 # If both pass → commit!
 ```
@@ -265,13 +265,13 @@ curl http://localhost:4444/wd/hub/status | jq '.'
 
 **Fast Feedback (< 3 min):**
 ```bash
-./scripts/run-api-tests.sh        # 40 sec
-./scripts/run-smoke-tests.sh      # 2 min
+./scripts/tests/frameworks/run-api-tests.sh        # 40 sec
+./scripts/tests/run-smoke-tests.sh      # 2 min
 ```
 
 **Standard Testing (< 10 min):**
 ```bash
-./scripts/run-api-tests.sh
+./scripts/tests/frameworks/run-api-tests.sh
 docker-compose run --rm tests -DsuiteXmlFile=testng-ci-suite.xml
 ```
 

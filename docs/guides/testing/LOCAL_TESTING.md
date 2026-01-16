@@ -44,7 +44,7 @@ This guide explains how to run and debug tests locally without Docker, which is 
 
 ```bash
 # Run Cypress, Playwright, and Robot Framework API tests
-./scripts/run-tests-local.sh
+./scripts/tests/run-tests-local.sh
 ```
 
 This script will:
@@ -139,7 +139,7 @@ npm test
 #### Vibium Tests
 ```bash
 # Using the test script (recommended)
-./scripts/run-vibium-tests.sh
+./scripts/tests/frameworks/run-vibium-tests.sh
 
 # Or directly
 cd vibium
@@ -167,7 +167,7 @@ This section helps you debug test failures in the CI/CD pipeline by running test
 
 #### 1. Local Test Runner Script
 
-**File**: `./scripts/run-tests-local.sh`
+**File**: `./scripts/tests/run-tests-local.sh`
 
 This script runs all test frameworks that don't require Docker:
 - ✅ Frontend Unit Tests (Vitest - functional + snapshot)
@@ -178,7 +178,7 @@ This script runs all test frameworks that don't require Docker:
 
 **Usage:**
 ```bash
-./scripts/run-tests-local.sh
+./scripts/tests/run-tests-local.sh
 ```
 
 #### 2. Documentation
@@ -194,7 +194,7 @@ First, identify which tests are failing:
 
 ```bash
 # Run all local tests
-./scripts/run-tests-local.sh
+./scripts/tests/run-tests-local.sh
 
 # Or run individual frameworks
 cd cypress && npm run cypress:run
@@ -377,7 +377,7 @@ npm test
 **Solutions:**
 1. Ensure backend and frontend are running:
    ```bash
-   ./scripts/start-env.sh
+   ./scripts/services/start-env.sh
    ```
 2. Check ports match environment:
    - Dev: 8003 (backend), 3003 (frontend)

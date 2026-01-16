@@ -11,14 +11,14 @@
 
 ```bash
 cd /path/to/full-stack-qa
-./scripts/start-env.sh                   # Default: dev environment
-./scripts/start-env.sh --env test        # Test environment
-./scripts/start-env.sh -e prod           # Production environment
+./scripts/services/start-env.sh                   # Default: dev environment
+./scripts/services/start-env.sh --env test        # Test environment
+./scripts/services/start-env.sh -e prod           # Production environment
 ```
 
 **OR with custom ports:**
 ```bash
-./scripts/start-env.sh --env dev be=8004 fe=3004
+./scripts/services/start-env.sh --env dev be=8004 fe=3004
 ```
 
 ---
@@ -29,10 +29,10 @@ cd /path/to/full-stack-qa
 
 ```bash
 cd /path/to/full-stack-qa
-./scripts/start-be.sh                    # Default: dev environment
-./scripts/start-be.sh --env dev          # Explicit dev
-./scripts/start-be.sh -e test            # Test environment
-./scripts/start-be.sh --env=prod         # Production environment
+./scripts/services/start-be.sh                    # Default: dev environment
+./scripts/services/start-be.sh --env dev          # Explicit dev
+./scripts/services/start-be.sh -e test            # Test environment
+./scripts/services/start-be.sh --env=prod         # Production environment
 ```
 
 **OR manually:**
@@ -52,10 +52,10 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8003
 
 ```bash
 cd /path/to/full-stack-qa
-./scripts/start-fe.sh                    # Default: dev environment
-./scripts/start-fe.sh --env dev          # Explicit dev
-./scripts/start-fe.sh -e test            # Test environment
-./scripts/start-fe.sh --env=prod         # Production environment
+./scripts/services/start-fe.sh                    # Default: dev environment
+./scripts/services/start-fe.sh --env dev          # Explicit dev
+./scripts/services/start-fe.sh -e test            # Test environment
+./scripts/services/start-fe.sh --env=prod         # Production environment
 ```
 
 **OR manually:**

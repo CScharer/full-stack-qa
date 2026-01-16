@@ -53,8 +53,8 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
           echo "🚀 Starting services for FS (Full-Stack) tests (${{ inputs.environment }})..."
-          chmod +x scripts/start-services-for-ci.sh
-          ./scripts/start-services-for-ci.sh
+          chmod +x scripts/services/start-services-for-ci.sh
+          ./scripts/services/start-services-for-ci.sh
           # No sleep needed - start-services-for-ci.sh waits for services to be ready
 
       - name: Verify Services Are Running

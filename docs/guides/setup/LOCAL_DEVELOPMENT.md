@@ -115,9 +115,9 @@ API_PORT=8003  # dev: 8003, test: 8004, prod: 8005
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8003
 
 # Or using the helper script (recommended)
-../scripts/start-be.sh                  # Default: dev environment
-../scripts/start-be.sh --env dev         # Explicit dev
-../scripts/start-be.sh -e test          # Test environment
+../scripts/services/start-be.sh                  # Default: dev environment
+../scripts/services/start-be.sh --env dev         # Explicit dev
+../scripts/services/start-be.sh -e test          # Test environment
 ```
 
 **Note**: The default dev port is **8003** (not 8008). See [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) for all port assignments.
@@ -177,9 +177,9 @@ NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1  # dev: 8003, test: 8004, prod:
 npm run dev
 
 # Or using the helper script (if available)
-../scripts/start-fe.sh                  # Default: dev environment
-../scripts/start-fe.sh --env dev         # Explicit dev
-../scripts/start-fe.sh -e test          # Test environment
+../scripts/services/start-fe.sh                  # Default: dev environment
+../scripts/services/start-fe.sh --env dev         # Explicit dev
+../scripts/services/start-fe.sh -e test          # Test environment
 ```
 
 ### 5. Verify Frontend is Running
@@ -216,30 +216,30 @@ PORT=3003 npm run dev
 
 ```bash
 # Terminal 1 - Backend
-./scripts/start-be.sh                    # Default: dev environment
-./scripts/start-be.sh --env dev          # Explicit dev
-./scripts/start-be.sh -e test            # Test environment
-./scripts/start-be.sh --env=prod         # Production environment
+./scripts/services/start-be.sh                    # Default: dev environment
+./scripts/services/start-be.sh --env dev          # Explicit dev
+./scripts/services/start-be.sh -e test            # Test environment
+./scripts/services/start-be.sh --env=prod         # Production environment
 
 # Terminal 2 - Frontend
-./scripts/start-fe.sh                    # Default: dev environment
-./scripts/start-fe.sh --env dev          # Explicit dev
-./scripts/start-fe.sh -e test            # Test environment
-./scripts/start-fe.sh --env=prod         # Production environment
+./scripts/services/start-fe.sh                    # Default: dev environment
+./scripts/services/start-fe.sh --env dev          # Explicit dev
+./scripts/services/start-fe.sh -e test            # Test environment
+./scripts/services/start-fe.sh --env=prod         # Production environment
 ```
 
 ### Option 3: Start Both Services Together
 
 ```bash
 # Start both backend and frontend in one command
-./scripts/start-env.sh                   # Default: dev environment
-./scripts/start-env.sh --env test        # Test environment
-./scripts/start-env.sh -e prod           # Production environment
-./scripts/start-env.sh --env dev be=8004 fe=3004  # Custom ports
-./scripts/start-env.sh -e test --background  # Run in background
+./scripts/services/start-env.sh                   # Default: dev environment
+./scripts/services/start-env.sh --env test        # Test environment
+./scripts/services/start-env.sh -e prod           # Production environment
+./scripts/services/start-env.sh --env dev be=8004 fe=3004  # Custom ports
+./scripts/services/start-env.sh -e test --background  # Run in background
 ```
 
-**Note**: Run `./scripts/start-env.sh --help` for full usage information.
+**Note**: Run `./scripts/services/start-env.sh --help` for full usage information.
 
 ---
 

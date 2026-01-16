@@ -246,7 +246,7 @@ docker-compose run --rm tests -DsuiteXmlFile=testng-smoke-suite.xml
 ./mvnw test -Dgroups=smoke
 
 # Quick script
-./scripts/run-smoke-tests.sh
+./scripts/tests/run-smoke-tests.sh
 ```
 
 ### **In CI/CD:**
@@ -421,7 +421,7 @@ If Pass → Deploy/Merge
 **Pre-Push Hook:**
 ```bash
 # .git/hooks/pre-push
-./scripts/run-smoke-tests.sh || exit 1
+./scripts/tests/run-smoke-tests.sh || exit 1
 ```
 
 **VS Code Task:**
@@ -429,7 +429,7 @@ If Pass → Deploy/Merge
 {
     "label": "Run Smoke Tests",
     "type": "shell",
-    "command": "./scripts/run-smoke-tests.sh"
+    "command": "./scripts/tests/run-smoke-tests.sh"
 }
 ```
 
@@ -485,7 +485,7 @@ If Pass → Deploy/Merge
 **After Implementation:**
 
 ```bash
-$ ./scripts/run-smoke-tests.sh
+$ ./scripts/tests/run-smoke-tests.sh
 
 🔥 Running Smoke Tests...
 ========================================
@@ -720,7 +720,7 @@ After implementing smoke tests:
 **Developer Experience:**
 ```bash
 # Before committing large changes:
-$ ./scripts/run-smoke-tests.sh
+$ ./scripts/tests/run-smoke-tests.sh
 
 # 2 minutes later:
 ✅ All critical paths working!
