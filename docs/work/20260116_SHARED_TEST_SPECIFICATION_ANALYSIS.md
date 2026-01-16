@@ -459,7 +459,7 @@ A shared test specification format would allow defining test scenarios **once** 
 - **Data-Driven Testing**: `docs/guides/testing/DATA_DRIVEN_TESTING.md`
 - **Multi-Framework Setup**: `docs/guides/testing/MULTI_FRAMEWORK_SETUP.md`
 - **Cucumber/Gherkin**: `src/test/resources/*.feature`
-- **Repository Improvements**: `docs/work/20260116_REPOSITORY_IMPROVEMENTS.md`
+- **Repository Improvements**: See `docs/README.md` for recent improvements summary
 
 ---
 

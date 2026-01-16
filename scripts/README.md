@@ -269,6 +269,42 @@ This organization provides:
 - ✅ Documentation files
 - ✅ Script cross-references
 
-**Scripts kept in root** (for backward compatibility):
-- `run-tests.sh`
-- `run-specific-test.sh`
+---
+
+## Script Organization History
+
+**Reorganized**: January 16, 2026
+
+All scripts were organized into logical subdirectories for better maintainability and discoverability. This reorganization:
+
+- **Moved 32 scripts** to appropriate subdirectories
+- **Updated 60+ references** across workflows, documentation, and internal script calls
+- **Fixed 11 path calculation issues** discovered during testing
+- **Fully organized** - no scripts remain in root (all moved to subdirectories)
+
+### Key Lessons Learned
+
+1. **Path Calculations**: When moving scripts to subdirectories, always update `SCRIPT_DIR` calculations to account for the new depth:
+   - `scripts/services/` → go up 2 levels (`../..`)
+   - `scripts/tests/frameworks/` → go up 3 levels (`../../..`)
+
+2. **PROJECT_ROOT**: If `SCRIPT_DIR` already points to project root, use it directly rather than calculating `PROJECT_ROOT` separately.
+
+3. **Testing**: Comprehensive testing revealed path calculation issues that weren't obvious from code review alone.
+
+4. **Git History**: Using `git mv` preserved file history, making it easy to track changes.
+
+### Migration Statistics
+
+- **Scripts Moved**: 32
+- **Workflow Files Updated**: 6
+- **Documentation Files Updated**: 27+
+- **Internal References Updated**: 10+
+- **Issues Found & Fixed**: 11
+- **Total Files Modified**: 60+
+
+### Maintenance Notes
+
+- When adding new scripts, place them in appropriate subdirectories
+- Test `SCRIPT_DIR` calculations when moving scripts
+- Update this README when adding new scripts

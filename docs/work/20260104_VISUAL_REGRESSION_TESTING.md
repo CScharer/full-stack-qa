@@ -330,7 +330,7 @@ While Vibium provides visual regression capabilities, Percy/Applitools offer add
 ## 🔗 Related Documentation
 
 - [Vibium Tests](../../vibium/README.md)
-- [UI Testing Frameworks Guide](../../guides/testing/UI_TESTING_FRAMEWORKS.md)
+- [UI Testing Frameworks Guide](../guides/testing/UI_TESTING_FRAMEWORKS.md)
 - [CI/CD Workflows](../../.github/workflows/)
 - [Playwright Configuration](../../playwright/playwright.config.ts)
 - [Cypress Configuration](../../cypress/cypress.config.ts)

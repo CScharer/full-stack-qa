@@ -193,6 +193,6 @@ driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 - [Configuration Directory README](../../../config/README.md) - Centralized configuration details
 - [Port Configuration Guide](../infrastructure/PORT_CONFIGURATION.md) - Port and configuration management
 - Framework-specific READMEs:
-  - [Cypress README](../../cypress/README.md)
-  - [Playwright README](../../playwright/README.md)
-  - [Robot Framework README](../../src/test/robot/README.md)
+  - [Cypress README](../../../cypress/README.md)
+  - [Playwright README](../../../playwright/README.md)
+  - [Robot Framework README](../../../src/test/robot/README.md)
