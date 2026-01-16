@@ -469,14 +469,18 @@ For each improvement:
 - ✅ **Item #2** (High Priority): Consolidate test utility implementations - Completed 2026-01-16
 - ✅ **Item #3** (High Priority): Extract common functions from service start scripts - Completed 2026-01-16
 - ✅ **Item #4** (Medium Priority): Audit and remove hardcoded URLs/ports from test files - Completed 2026-01-16
+- ✅ **Item #5** (Medium Priority): Document configuration priority order - Completed 2026-01-16
+  - Expanded `docs/guides/infrastructure/PORT_CONFIGURATION.md` with comprehensive configuration priority documentation
+  - Documented priority order for all frameworks (Shell scripts, Backend Python, TypeScript/JavaScript, Python tests, Java tests)
+  - Added framework-specific implementation details, examples, and troubleshooting guide
+  - Documented environment detection methods across all frameworks
+  - Added best practices and override examples
 
 ### In Progress
 
 - None
 
 ### Pending Items
-
-- Item #5: Document configuration priority order
 - Item #6: Review and consolidate duplicate configuration files
 - Item #7: Consider shared test specification format
 - Item #8: Organize scripts into subdirectories
