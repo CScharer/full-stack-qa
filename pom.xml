@@ -824,13 +824,35 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					</dependency>
 				</dependencies>
 			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${maven-resources-plugin.version}</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
+		<plugin>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>${maven-resources-plugin.version}</version>
+			<configuration>
+				<encoding>UTF-8</encoding>
+			</configuration>
+			<executions>
+				<!-- Copy config/environments.json to src/test/resources/config/ for Java tests -->
+				<!-- This ensures Java tests use the same config as other frameworks -->
+				<execution>
+					<id>copy-environments-config</id>
+					<phase>process-test-resources</phase>
+					<goals>
+						<goal>copy-resources</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>${project.basedir}/src/test/resources/config</outputDirectory>
+						<resources>
+							<resource>
+								<directory>${project.basedir}/config</directory>
+								<includes>
+									<include>environments.json</include>
+								</includes>
+							</resource>
+						</resources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
 			<plugin>
 				<groupId>io.qameta.allure</groupId>
 				<artifactId>allure-maven</artifactId>

@@ -16,13 +16,20 @@ This directory contains centralized configuration files used across the project.
 
 This is the **primary configuration file** for all environment settings. Both shell scripts and TypeScript/JavaScript code read from this file.
 
-### `ports.json` (Ports Only)
+**Java Tests**: This file is automatically copied to `src/test/resources/config/environments.json` during Maven build (see `pom.xml` maven-resources-plugin configuration). Java tests load it from the classpath. **Do not edit the copy in `src/test/resources/config/`** - always edit `config/environments.json` (the source of truth).
+
+### `ports.json` (Ports Only - Legacy)
 
 **Purpose**: Port assignments and URLs for all environments.
 
+**Status**: ⚠️ **Legacy file** - Maintained for backward compatibility only.
+
 **Use Case**: Use this file if you only need port configuration. For comprehensive configuration, use `environments.json`.
 
-**Note**: Scripts automatically read from `environments.json` first, then fall back to `ports.json` if needed.
+**Note**: 
+- Scripts automatically read from `environments.json` first, then fall back to `ports.json` if needed
+- **New code should use `environments.json`** - `ports.json` is only kept for legacy scripts that haven't been updated yet
+- All port information in `ports.json` is also available in `environments.json` under each environment's `frontend` and `backend` sections
 
 ## Usage
 
