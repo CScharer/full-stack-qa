@@ -1,1 +1,1 @@
-{"id":"a77ad5f68eddb53a351c087fe8cf42f4","fullName":"com.cjs.qa.junit.tests.NegativeTests.testElementWaitTimeout","name":"testElementWaitTimeout [PROD]","status":"passed","testResultsByEnv":{"default":"aa9a6796cb8c10066ad39f7fe837f174"}}
+{"id":"a77ad5f68eddb53a351c087fe8cf42f4","fullName":"com.cjs.qa.junit.tests.NegativeTests.testElementWaitTimeout","name":"testElementWaitTimeout [TEST]","status":"passed","testResultsByEnv":{"default":"996c2c6f906af83abe01d6fce424db74"}}
