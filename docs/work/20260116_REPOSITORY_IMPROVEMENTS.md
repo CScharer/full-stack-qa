@@ -353,10 +353,19 @@ This document outlines areas for improvement in the full-stack-qa repository, wi
    - **Status**: Completed on 2026-01-16
    - **Changes**: Removed all hardcoded fallback values from `get_ports_for_environment()`, `get_database_for_environment()`, `get_api_endpoints()`, `get_timeouts()`, and `get_cors_origins()` functions. Added proper error handling that requires `config/environments.json` and `jq` to be available, with clear error messages if configuration cannot be read.
 
-2. **Consolidate test utility implementations**
+2. **Consolidate test utility implementations** ✅ **COMPLETED**
    - Impact: Reduces maintenance overhead
    - Effort: Medium
    - Risk: Medium (need to test all frameworks)
+   - **Status**: Completed on 2026-01-16
+   - **Changes**: 
+     - Consolidated Cypress test utilities to use inline data (due to webpack bundler limitations)
+     - Updated Cypress adapter (`cypress/cypress/support/test-utils.ts`) to contain test data inline with clear sync documentation
+     - Removed `readTestUtilsJson` task from `cypress.config.ts`
+     - Updated Cypress test file (`wizard.cy.ts`) to use the adapter
+     - Updated Cypress README to document the sync requirement
+     - Fixed frontend build error by removing problematic `require()` call in `frontend/lib/api/client.ts`
+     - **Note**: Due to Cypress webpack bundler limitations with cross-project imports, the Cypress adapter contains a copy of the data that must be kept in sync with `lib/test-utils.ts` (the primary source of truth)
 
 3. **Extract common functions from service start scripts**
    - Impact: Reduces duplication, easier maintenance
@@ -435,6 +444,7 @@ For each improvement:
 ### Completed Items
 
 - ✅ **Item #1** (High Priority): Remove hardcoded fallback values from `scripts/ci/env-config.sh` - Completed 2026-01-16
+- ✅ **Item #2** (High Priority): Consolidate test utility implementations - Completed 2026-01-16
 
 ### In Progress
 
@@ -442,7 +452,6 @@ For each improvement:
 
 ### Pending Items
 
-- Item #2: Consolidate test utility implementations
 - Item #3: Extract common functions from service start scripts
 - Item #4: Audit and remove hardcoded URLs/ports from test files
 - Item #5: Document configuration priority order

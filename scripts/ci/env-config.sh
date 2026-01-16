@@ -8,7 +8,8 @@
 # and we want to handle errors gracefully rather than exiting the parent script
 
 # Get script directory to find config JSON
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# env-config.sh is in scripts/ci/, so we need to go up two levels to get to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_CONFIG_JSON="${SCRIPT_DIR}/config/environments.json"
 
 # Check if jq is available

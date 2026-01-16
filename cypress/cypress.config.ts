@@ -33,16 +33,8 @@ export default defineConfig({
         config.env.ENVIRONMENT = process.env.ENVIRONMENT
       }
       
-      // Task to read test-utils.json from Node.js context
-      const fs = require('fs')
-      const path = require('path')
-      on('task', {
-        readTestUtilsJson() {
-          const jsonPath = path.join(__dirname, '../lib/test-utils.json')
-          const jsonContent = fs.readFileSync(jsonPath, 'utf-8')
-          return JSON.parse(jsonContent)
-        }
-      })
+      // Note: Test utilities are now imported directly from lib/test-utils.ts
+      // No need for readTestUtilsJson task anymore
       
       // Generate JSON results for Allure conversion
       on('after:run', (results) => {

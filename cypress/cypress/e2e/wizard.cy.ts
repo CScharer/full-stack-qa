@@ -61,15 +61,10 @@ import { getTestSuite } from '../support/test-utils';
  *   # Then select wizard.cy.ts from the test list
  */
 
-let wizard: ReturnType<typeof getTestSuite> | null = null;
+// Get test suite configuration - uses shared utility from lib/test-utils.ts
+const wizard = getTestSuite('wizard');
 
 describe('Wizard Tests', () => {
-  // Load test names from JSON file before tests run
-  before(() => {
-    cy.task('readTestUtilsJson').then((data: any) => {
-      wizard = getTestSuite('wizard', data);
-    });
-  });
   // Cypress runs tests serially by default, but we can use .only() if needed
   // Note: Tests are already serial by default in Cypress
   
