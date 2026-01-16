@@ -161,9 +161,9 @@ This document analyzes 17 folders to determine:
 
 ---
 
-### 5. `/Data/Core`
+### 5. `/Data/Core` → `data/core/`
 
-**Current Status**: ✅ **ACTIVE - Keep (Parent will be renamed)**
+**Current Status**: ✅ **COMPLETED - Renamed to lowercase**
 
 **Contents**:
 - SQLite database files (`full_stack_qa_*.db`)
@@ -179,13 +179,15 @@ This document analyzes 17 folders to determine:
 - Referenced in `config/environments.json`
 
 **Rename to `data/core/`**:
+- ✅ Folder renamed from `Core/` to `core/` using git mv
+- ✅ Updated all references in code, scripts, and documentation (172+ references)
 - ✅ Will be handled when parent `/Data` is renamed to `data/`
 - ✅ Update database path references
 - ⚠️ **Impact**: **HIGH** - Database location
 
 **Delete**: ❌ **NOT RECOMMENDED** - Contains databases
 
-**Recommendation**: ✅ **RENAME to `data/core/`** - Part of `/Data` rename
+**Recommendation**: ✅ **COMPLETED** - Renamed to `data/core/` with all references updated
 
 ---
 
@@ -215,9 +217,9 @@ This document analyzes 17 folders to determine:
 
 ---
 
-### 7. `/Data/Templates`
+### 7. `/Data/Templates` → `data/templates/`
 
-**Current Status**: ⚠️ **UNCERTAIN - Review Usage**
+**Current Status**: ✅ **COMPLETED - Renamed to lowercase**
 
 **Contents**:
 - HTML templates (`AutomationReport*.htm`)
@@ -232,18 +234,18 @@ This document analyzes 17 folders to determine:
 - Need to verify active usage
 
 **Rename to `data/templates/`**:
-- ✅ Will be handled when parent `/Data` is renamed
+- ✅ Folder renamed from `Templates/` to `templates/` using git mv
 - ⚠️ **Impact**: Low - Check for specific references
 
-**Delete**: ⚠️ **REVIEW** - Verify if templates are actively used
+**Delete**: ⚠️ **REVIEW** - Verify if templates are actively used (deferred)
 
-**Recommendation**: ⚠️ **REVIEW USAGE** - If unused, can be deleted; otherwise rename to `data/templates/`
+**Recommendation**: ✅ **RENAMED** - Now lowercase, usage review deferred
 
 ---
 
-### 8. `/Data/SQL`
+### 8. `/Data/SQL` → `data/sql/`
 
-**Current Status**: ⚠️ **UNCERTAIN - Review Usage**
+**Current Status**: ✅ **COMPLETED - Renamed to lowercase**
 
 **Contents**:
 - Vivit SQL scripts (9 files)
@@ -257,12 +259,12 @@ This document analyzes 17 folders to determine:
 - Need to verify active usage
 
 **Rename to `data/sql/`**:
-- ✅ Will be handled when parent `/Data` is renamed
+- ✅ Folder renamed from `SQL/` to `sql/` using git mv
 - ⚠️ **Impact**: Low - Check for specific references
 
-**Delete**: ⚠️ **REVIEW** - Verify if Vivit scripts are still needed
+**Delete**: ⚠️ **REVIEW** - Verify if Vivit scripts are still needed (deferred)
 
-**Recommendation**: ⚠️ **REVIEW USAGE** - If unused, can be deleted; otherwise rename to `data/sql/`
+**Recommendation**: ✅ **RENAMED** - Now lowercase, usage review deferred
 
 ---
 
@@ -326,9 +328,9 @@ This document analyzes 17 folders to determine:
 
 ---
 
-### 11. `/src/test/resources/TableDef`
+### 11. `/src/test/resources/TableDef` → `tabledef/`
 
-**Current Status**: ⚠️ **DEFERRED - Keep for Later Review**
+**Current Status**: ✅ **COMPLETED - Renamed to lowercase**
 
 **Contents**:
 - `b2csite.dll.sql` (empty file, 0 bytes)
@@ -342,11 +344,12 @@ This document analyzes 17 folders to determine:
 - May be legacy or placeholder
 
 **Rename to `src/test/resources/tabledef/`**:
-- ⚠️ **DEFERRED** - Will review later
+- ✅ Folder renamed from `TableDef/` to `tabledef/` using git mv
+- ✅ Updated Java references (2 files)
 
 **Delete**: ⚠️ **DEFERRED** - Will review later
 
-**Recommendation**: ⚠️ **DEFERRED** - Keep for now, review deletion/rename at later time
+**Recommendation**: ✅ **RENAMED** - Now lowercase, deletion review deferred
 
 ---
 
@@ -481,15 +484,12 @@ This document analyzes 17 folders to determine:
 
 2. **`/XML` → `xml/`** - ✅ **COMPLETED** - 28 references updated
 3. **`/Data` → `data/`** - ✅ **COMPLETED** - 27 references updated, database location
-4. **`/Data/Core` → `data/core/`** - Part of `/Data` rename
+4. **`/Data/Core` → `data/core/`** - ✅ **COMPLETED** - Renamed to lowercase (172+ references updated)
 5. **`/src/test/resources/DataSets` → `datasets/`** - ✅ **COMPLETED** - 19 references updated
-
-### ⚠️ Review Usage Before Action
-
-7. **`/Data/Scripts` → `data/scripts/`** - Review if legacy
-8. **`/Data/Templates` → `data/templates/`** - Review if legacy
-9. **`/Data/SQL` → `data/sql/`** - Review if legacy
-10. **`/src/test/resources/TableDef` → `tabledef/`** - Empty file, review usage
+6. **`/Data/Scripts` → `data/scripts/`** - ✅ **COMPLETED** - Renamed to lowercase
+7. **`/Data/Templates` → `data/templates/`** - ✅ **COMPLETED** - Renamed to lowercase
+8. **`/Data/SQL` → `data/sql/`** - ✅ **COMPLETED** - Renamed to lowercase
+9. **`/src/test/resources/TableDef` → `tabledef/`** - ✅ **COMPLETED** - Renamed to lowercase (2 Java files updated)
 
 ### ✅ Delete (Not Needed)
 
@@ -549,8 +549,8 @@ This document analyzes 17 folders to determine:
 
 ### Phase 3: Review and Cleanup
 
-5. Review usage of `/Data/Scripts`, `/Data/Templates`, `/Data/SQL`
-6. Review usage of `/src/test/resources/TableDef`
+5. Rename `/Data/Core` → `data/core/`, `/Data/Scripts` → `data/scripts/`, `/Data/Templates` → `data/templates/`, `/Data/SQL` → `data/sql/` - ✅ **COMPLETED** - All renamed to lowercase
+6. Rename `/src/test/resources/TableDef` → `tabledef/` - ✅ **COMPLETED** - Renamed to lowercase
 7. Delete `/src/test/resources/Drivers` (legacy) - ✅ **COMPLETED**
 8. Rename `/scripts/tests/Data` → `scripts/tests/data/` and `/scripts/tests/Data/Core` → `scripts/tests/data/core/` - ✅ **COMPLETED** - Renamed to lowercase (empty directories, if recreated should use lowercase names)
 9. Delete `/scripts/tests/data` and `/scripts/tests/data/core` (empty) - ⚠️ **DEFERRED** - Keep for later review

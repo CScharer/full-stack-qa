@@ -67,7 +67,7 @@ if [ -f "$ENV_CONFIG_SCRIPT" ]; then
         fi
     else
         # Fallback: construct from environment
-        export DATABASE_PATH="${SCRIPT_DIR}/data/Core/full_stack_qa_${env}.db"
+        export DATABASE_PATH="${SCRIPT_DIR}/data/core/full_stack_qa_${env}.db"
     fi
     
     # Ensure DATABASE_PATH is absolute and doesn't include scripts/ (same as start-be.sh)

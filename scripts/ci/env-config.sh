@@ -94,7 +94,7 @@ get_database_for_environment() {
     
     local db_name=$(get_config_value "$env" ".environments[\"$env\"].database.name")
     local db_path=$(get_config_value "$env" ".environments[\"$env\"].database.path")
-    local db_dir=$(get_config_value "$env" ".database.directory" "data/Core")
+    local db_dir=$(get_config_value "$env" ".database.directory" "data/core")
     
     if [ -z "$db_name" ]; then
         echo "❌ Error: Could not read database configuration for environment: $env" >&2

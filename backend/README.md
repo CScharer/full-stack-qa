@@ -19,7 +19,7 @@ This backend provides REST endpoints for managing job applications, companies, c
 ### Prerequisites
 
 - Python 3.12+
-- Database file: `data/Core/full_stack_qa_dev.db` (development database - already created)
+- Database file: `data/core/full_stack_qa_dev.db` (development database - already created)
   - The backend automatically uses `full_stack_qa_dev.db` by default
   - Use `ENVIRONMENT` env var to select different databases (dev/test/prod)
 

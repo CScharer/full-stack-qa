@@ -753,9 +753,9 @@ git push origin disable-automatic-workflows
 
 **✅ Already Completed:**
 - Database file renamed: `full_stack_testing.db` → `full_stack_qa.db`
-- `data/Core/README.md` - All references updated (location path, all sqlite3 commands)
-- `data/Core/tests/conftest.py` - Test database name updated (`test_full_stack_qa.db`)
-- `data/Core/scripts/seed_job_search_sites.py` - Database path updated
+- `data/core/README.md` - All references updated (location path, all sqlite3 commands)
+- `data/core/tests/conftest.py` - Test database name updated (`test_full_stack_qa.db`)
+- `data/core/scripts/seed_job_search_sites.py` - Database path updated
 - ✅ **Backend Code Updated** (Fixed BE Test Failures):
   - `backend/app/config.py` - Default `database_path` updated from `full_stack_testing.db` to `full_stack_qa.db`
   - `backend/tests/conftest.py` - Test database name updated from `test_full_stack_testing.db` to `test_full_stack_qa.db`
@@ -883,7 +883,7 @@ Use the status legend symbols to track progress:
   - [✅] Step 3.1: Replace all instances of `<migrate_repo_from>` with `<migrate_repo_to>` (updated all text files, kept MIGRATE_REPO.md unchanged)
   - [✅] Step 3.2: Cleaned up test results and build artifacts that shouldn't have been copied
   - [✅] Step 3.3: Review what will be committed and verify no sensitive files (55 files ready, sensitive files properly ignored)
-  - [✅] Step 3.4: Fixed remaining references in data/Core/README.md and src/test/robot/README.md, renamed database file (full_stack_testing.db → full_stack_qa.db), updated seed script and conftest.py
+  - [✅] Step 3.4: Fixed remaining references in data/core/README.md and src/test/robot/README.md, renamed database file (full_stack_testing.db → full_stack_qa.db), updated seed script and conftest.py
   - [✅] Step 3.5: Migration document copied to new repo and kept in sync
 - [ ] [✅] Phase 4: First commit and push to new repo
   - [✅] Step 4.1: Files staged for commit

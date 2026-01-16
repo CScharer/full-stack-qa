@@ -6,7 +6,7 @@
     "redocEndpoint": "/redoc"
   },
   "database": {
-    "directory": "data/Core",
+    "directory": "data/core",
     "schemaDatabase": "full_stack_qa.db",
     "namingPattern": "full_stack_qa_{env}.db"
   },
@@ -36,7 +36,7 @@
       },
       "database": {
         "name": "full_stack_qa_dev.db",
-        "path": "data/Core/full_stack_qa_dev.db"
+        "path": "data/core/full_stack_qa_dev.db"
       },
       "corsOrigins": [
         "http://127.0.0.1:3003",
@@ -55,7 +55,7 @@
       },
       "database": {
         "name": "full_stack_qa_test.db",
-        "path": "data/Core/full_stack_qa_test.db"
+        "path": "data/core/full_stack_qa_test.db"
       },
       "corsOrigins": [
         "http://127.0.0.1:3004",
@@ -74,7 +74,7 @@
       },
       "database": {
         "name": "full_stack_qa_prod.db",
-        "path": "data/Core/full_stack_qa_prod.db"
+        "path": "data/core/full_stack_qa_prod.db"
       },
       "corsOrigins": [
         "http://127.0.0.1:3005",

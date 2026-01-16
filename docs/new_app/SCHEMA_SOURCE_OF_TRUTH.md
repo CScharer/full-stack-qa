@@ -77,20 +77,20 @@ The following files are **NOT** the source of truth and should **NOT** be used f
 cd /path/to/full-stack-qa
 
 # Create schema database (template/reference only)
-sqlite3 data/Core/full_stack_qa.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 data/Core/full_stack_qa.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 data/core/full_stack_qa.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa.db < docs/new_app/DELETE_TRIGGERS.sql
 
 # Verify schema
-sqlite3 data/Core/full_stack_qa.db ".schema"
+sqlite3 data/core/full_stack_qa.db ".schema"
 
 # Create environment databases from schema (for runtime use)
 # Development database
-sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 data/core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 
 # Test database
-sqlite3 data/Core/full_stack_qa_test.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 data/Core/full_stack_qa_test.db < docs/new_app/DELETE_TRIGGERS.sql
+sqlite3 data/core/full_stack_qa_test.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa_test.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
 **Important**: The schema database (`full_stack_qa.db`) is a **template only** and should **NEVER be used for runtime**. Always create environment databases (`full_stack_qa_dev.db`, `full_stack_qa_test.db`, etc.) from the schema for actual use.

@@ -47,7 +47,7 @@ def test_db_path():
 @pytest.fixture(scope="session")
 def schema_file_path():
     """Get the path to the schema SQL file."""
-    # Get the project root (go up from Data/Core/tests to project root)
+    # Get the project root (go up from data/core/tests to project root)
     project_root = Path(__file__).parent.parent.parent.parent
     schema_path = project_root / "docs" / "new_app" / "ONE_GOAL_SCHEMA_CORRECTED.sql"
     
@@ -86,7 +86,7 @@ def default_value_schema():
 @pytest.fixture(scope="session")
 def delete_triggers_schema():
     """Get the SQL for creating delete triggers."""
-    # Get the project root (go up from Data/Core/tests to project root)
+    # Get the project root (go up from data/core/tests to project root)
     project_root = Path(__file__).parent.parent.parent.parent
     triggers_path = project_root / "docs" / "new_app" / "DELETE_TRIGGERS.sql"
     

@@ -14,9 +14,9 @@ The backend API provides REST endpoints for the ONE GOAL application. It uses Fa
 
 **Prerequisites**:
 - ✅ **Database completed** - Environment databases created and tested (62 tests passing)
-  - Development database: `data/Core/full_stack_qa_dev.db` (default)
-  - Test database: `data/Core/full_stack_qa_test.db`
-  - Schema database: `data/Core/full_stack_qa.db` (template only, not used for runtime)
+  - Development database: `data/core/full_stack_qa_dev.db` (default)
+  - Test database: `data/core/full_stack_qa_test.db`
+  - Schema database: `data/core/full_stack_qa.db` (template only, not used for runtime)
 - ✅ API contract defined (`API_CONTRACT.md`)
 - ✅ API versioning guide available (`API_VERSIONING_GUIDE.md`)
 - ✅ Delete behavior documented (`DELETE_BEHAVIOR.md`)

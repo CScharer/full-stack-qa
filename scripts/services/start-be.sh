@@ -118,7 +118,7 @@ load_environment_config() {
             fi
         else
             # Fallback: construct from environment
-            export DATABASE_PATH="${SCRIPT_DIR}/data/Core/full_stack_qa_${env}.db"
+            export DATABASE_PATH="${SCRIPT_DIR}/data/core/full_stack_qa_${env}.db"
         fi
         
         # Get CORS_ORIGINS and set it directly (preserve JSON format)
@@ -202,7 +202,7 @@ pip install -q -r "$BACKEND_DIR/requirements.txt"
 
 # Check if environment database exists
 # Backend config will use: full_stack_qa_{ENVIRONMENT}.db
-ENV_DB_PATH="${SCRIPT_DIR}/data/Core/full_stack_qa_${ENVIRONMENT}.db"
+ENV_DB_PATH="${SCRIPT_DIR}/data/core/full_stack_qa_${ENVIRONMENT}.db"
 if [ ! -f "$ENV_DB_PATH" ]; then
     echo -e "${YELLOW}⚠️  Environment database not found: $ENV_DB_PATH${NC}"
     echo -e "${YELLOW}   The backend will start but database operations may fail${NC}"

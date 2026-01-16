@@ -74,18 +74,18 @@ Integration tests use the **environment-specific database** based on `ENVIRONMEN
 
 ```bash
 # For dev environment (default):
-data/Core/full_stack_qa_dev.db
+data/core/full_stack_qa_dev.db
 
 # For test environment:
-data/Core/full_stack_qa_test.db
+data/core/full_stack_qa_test.db
 
 # For prod environment:
-data/Core/full_stack_qa_prod.db
+data/core/full_stack_qa_prod.db
 
 # Create database from schema if needed:
-mkdir -p data/Core
-sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
-sqlite3 data/Core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
+mkdir -p data/core
+sqlite3 data/core/full_stack_qa_dev.db < docs/new_app/ONE_GOAL_SCHEMA_CORRECTED.sql
+sqlite3 data/core/full_stack_qa_dev.db < docs/new_app/DELETE_TRIGGERS.sql
 ```
 
 **Note**: The integration test script defaults to `dev` environment but can be overridden with `ENVIRONMENT` env var.
@@ -244,7 +244,7 @@ lsof -ti:8003 | xargs kill -9  # dev environment
 lsof -ti:8004 | xargs kill -9  # test environment
 
 # Verify test database exists
-ls -la data/Core/full_stack_qa_test.db
+ls -la data/core/full_stack_qa_test.db
 
 # Check backend dependencies
 cd backend
