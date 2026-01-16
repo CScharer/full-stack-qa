@@ -62,8 +62,8 @@ String apiKey = EAPIKeys.VIVIT_GT_WEBINAR_CONSUMER_KEY.getValue();
 
 #### Protected Files
 All sensitive configuration files are protected by `.gitignore`:
-- `XML/Companies.xml` - Company credentials
-- `XML/UserSettings.xml` - Test credentials  
+- `xml/Companies.xml` - Company credentials
+- `xml/UserSettings.xml` - Test credentials  
 - `config/Environments.xml` - Environment configurations
 - `*-key.json` - Service account keys
 

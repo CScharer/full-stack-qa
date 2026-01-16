@@ -427,7 +427,7 @@ Content starts here...
 
 **Project & Configuration READMEs** (Feature-Local Documentation):
 - ✅ `README.md` (project root - GitHub landing page)
-- ✅ `XML/README.md` (XML configuration guide)
+- ✅ `xml/README.md` (XML configuration guide)
 - ✅ `config/README.md` (environment setup guide, includes XML configuration)
 - ✅ `scripts/README.md` (script usage guide)
 
@@ -445,7 +445,7 @@ find . -name "*.md" \
   -not -path "./.github/ISSUE_TEMPLATE/*" \
   -not -path "./.github/pull_request_template.md" \
   -not -path "./README.md" \
-  -not -path "./XML/README.md" \
+  -not -path "./xml/README.md" \
   -not -path "./config/README.md" \
   -not -path "./scripts/README.md" \
   -not -path "./node_modules/*" \
@@ -466,7 +466,7 @@ docs/**/*.md                              ✅ Primary location
 
 # Feature-local documentation:
 README.md                                  ✅ Exception (Project root)
-XML/README.md                              ✅ Exception (Config guide)
+xml/README.md                              ✅ Exception (Config guide)
 config/README.md                           ✅ Exception (Config guide)
 scripts/README.md                          ✅ Exception (Script guide)
 

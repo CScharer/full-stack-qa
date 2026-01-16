@@ -26,7 +26,7 @@ RUN mvn -ntp dependency:go-offline -B || echo "Some dependencies could not be re
 COPY src ./src
 COPY Configurations ./Configurations
 COPY Data ./Data
-COPY XML ./XML
+COPY xml ./xml
 
 # Copy configuration files
 COPY checkstyle-custom.xml checkstyle-suppressions.xml ./
@@ -88,7 +88,7 @@ COPY --from=build /app/target ./target
 COPY --from=build /app/src ./src
 COPY --from=build /app/Configurations ./Configurations
 COPY --from=build /app/Data ./Data
-COPY --from=build /app/XML ./XML
+COPY --from=build /app/xml ./xml
 COPY --from=build /app/pom.xml ./
 
 # Copy Maven wrapper for test execution

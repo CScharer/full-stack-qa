@@ -10,7 +10,7 @@
 
 1. **Copy template files to create working configuration files**:
    ```bash
-   cd XML/
+   cd xml/
    cp Companies.xml.template Companies.xml
    cp UserSettings.xml.template UserSettings.xml
    ```

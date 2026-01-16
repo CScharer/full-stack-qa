@@ -28,7 +28,7 @@ public class Constants {
   public static final String PATH_FILES_WORKSPACE = PATH_LOCAL + "Workspace" + FS;
   public static final String PATH_FILES_DATA = PATH_FILES_WORKSPACE + "Data" + FS;
   public static final String PATH_FILES_DATA_DATABASES = PATH_FILES_DATA + "Databases" + FS;
-  public static final String PATH_FILES_XML = PATH_FILES_DATA + "XML" + FS;
+  public static final String PATH_FILES_XML = PATH_FILES_DATA + "xml" + FS;
   public static final String PATH_FILES_SOAPUI_RESULTS = PATH_FILES_DATA + "SoapUI" + FS;
   public static final String PATH_PROJECT = System.getProperty("user.dir") + FS;
   public static final String PATH_ROOT = PATH_PROJECT;
