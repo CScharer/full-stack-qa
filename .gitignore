@@ -99,16 +99,7 @@ PRIVATE/
 # WebDriver Binaries
 # =========================
 
-# Driver executables (use WebDriverManager instead)
-src/test/resources/Drivers/*.exe
-src/test/resources/Drivers/chromedriver
-src/test/resources/Drivers/geckodriver
-src/test/resources/Drivers/msedgedriver
-src/test/resources/Drivers/operadriver
-
-# Keep README for drivers
-!src/test/resources/Drivers/ReadMe.txt
-!src/test/resources/Drivers/README.md
+# src/test/resources/Drivers/ removed - legacy directory, WebDriverManager handles drivers now
 
 # =========================
 # Test Data & Results

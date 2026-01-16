@@ -34,8 +34,9 @@ public class Constants {
   public static final String PATH_ROOT = PATH_PROJECT;
   public static final String PATH_DRIVERS_LOCAL =
       "C:" + FS + "Selenium" + FS + "Grid2" + FS + "Drivers" + FS;
-  public static final String PATH_DRIVERS_REPOSITORY =
-      PATH_ROOT + "src" + FS + "test" + FS + "resources" + FS + "Drivers" + FS;
+  // PATH_DRIVERS_REPOSITORY removed - legacy constant, WebDriverManager handles drivers now
+  // public static final String PATH_DRIVERS_REPOSITORY =
+  //     PATH_ROOT + "src" + FS + "test" + FS + "resources" + FS + "Drivers" + FS;
   public static final String PATH_SCREENSHOTS = PATH_ROOT + "Screenshots" + FS;
   public static final String PATH_FILES_CONFIGURATIONS = PATH_ROOT + "config" + FS;
   public static final String DELIMETER_LIST = System.getProperty("path.separator");
