@@ -561,6 +561,23 @@ If you're updating scripts to use the new utilities:
 
 ---
 
-**Last Updated**: 2025-12-27  
-**Status**: ✅ Complete - All service scripts documented
+---
+
+## Script Organization (January 2026)
+
+All service management scripts have been organized into `scripts/services/` for better maintainability:
+
+- **Location**: All service scripts are now in `scripts/services/`
+- **References Updated**: All workflows and documentation updated to use new paths
+- **Path Calculations**: All scripts fixed to correctly calculate project root from subdirectories
+- **Testing**: All scripts verified working after reorganization
+
+**Migration**: 5 service scripts moved from `scripts/` root to `scripts/services/` on 2026-01-16.
+
+See `scripts/README.md` for complete script organization details.
+
+---
+
+**Last Updated**: 2026-01-16  
+**Status**: ✅ Complete - All service scripts documented and organized
 

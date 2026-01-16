@@ -384,6 +384,28 @@ If a port is already in use:
 - Stop conflicting services: `./scripts/services/stop-services.sh`
 - Use `FORCE_STOP=true` to force stop existing services
 
+## Recent Improvements (January 2026)
+
+### Configuration Centralization
+
+All hardcoded fallback values have been removed from configuration scripts. The system now:
+
+- ✅ **Requires** `config/environments.json` - No silent fallbacks to hardcoded values
+- ✅ **Auto-syncs** for Java tests - Maven automatically copies config during build
+- ✅ **Validates** configuration availability - Clear error messages if config is missing
+- ✅ **Documents** priority order - Comprehensive guide for all frameworks
+
+### Script Organization
+
+Service management scripts have been organized into `scripts/services/`:
+- `scripts/services/start-env.sh` - Start both services
+- `scripts/services/start-be.sh` - Start backend only
+- `scripts/services/start-fe.sh` - Start frontend only
+- `scripts/services/stop-services.sh` - Stop all services
+- `scripts/services/start-services-for-ci.sh` - CI/CD service startup
+
+All scripts use centralized configuration from `config/environments.json` via `scripts/ci/env-config.sh`.
+
 ## Future Improvements
 
 - [ ] Add port validation script to check all scripts use centralized config

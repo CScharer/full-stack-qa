@@ -1442,7 +1442,7 @@ You can download Allure reports from GitHub Actions pipeline artifacts and view 
 ./scripts/services/start-env.sh -e prod           # Production environment
 ```
 
-For more details on starting services, see [Local Development Guide](../setup/LOCAL_DEVELOPMENT.md) or [Quick Start Guide](../../../QUICK_START.md).
+For more details on starting services, see [Local Development Guide](../setup/LOCAL_DEVELOPMENT.md) or [Quick Start Guide](../../QUICK_START.md).
 
 **Note**: You don't need to start services just to view a downloaded report - reports are static HTML files that can be viewed with any HTTP server.
 
