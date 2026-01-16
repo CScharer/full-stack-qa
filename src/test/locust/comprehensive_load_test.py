@@ -20,11 +20,13 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 try:
-    from config.port_config import get_api_base_path
+    from config.port_config import get_api_base_path, get_backend_url
     API_BASE_PATH = get_api_base_path()
+    DEFAULT_BACKEND_URL = get_backend_url('dev')  # Default to dev environment
 except ImportError:
     # Fallback if config not available
     API_BASE_PATH = "/api/v1"
+    DEFAULT_BACKEND_URL = "http://127.0.0.1:8003"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -70,8 +72,8 @@ class ComprehensiveUser(HttpUser):
     wait_time = between(1, 5)
     
     # Note: host will be provided via command line --host argument
-    # or defaults to local dev port if run manually
-    host = "http://127.0.0.1:8003"
+    # or defaults to dev backend URL from centralized config
+    host = DEFAULT_BACKEND_URL
 
     @task(10)
     def fast_health_check(self):

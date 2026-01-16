@@ -1,5 +1,9 @@
 # Artillery Configuration for Development Environment
 # Target: http://localhost:3003
+# 
+# Note: URLs should match config/environments.json
+# This file is environment-specific, so hardcoded URLs are acceptable here.
+# For consistency, ensure these match the dev environment in config/environments.json
 
 config:
   target: "http://localhost:3003"

@@ -386,10 +386,20 @@ This document outlines areas for improvement in the full-stack-qa repository, wi
 
 ### Medium Priority
 
-4. **Audit and remove hardcoded URLs/ports from test files**
+4. **Audit and remove hardcoded URLs/ports from test files** ✅ **COMPLETED**
    - Impact: Ensures consistency across environments
    - Effort: Medium
    - Risk: Low
+   - **Status**: Completed on 2026-01-16
+   - **Changes**: 
+     - Updated `cypress/cypress.config.ts` to use `getFrontendUrl()` from centralized config
+     - Updated `playwright/playwright.config.ts` to use `getFrontendUrl()` from centralized config
+     - Updated `src/test/java/com/cjs/qa/junit/tests/HomePageTests.java` to use `EnvironmentConfig.getFrontendUrl()` instead of hardcoded URL
+     - Updated `src/test/locust/api_load_test.py` to use `get_backend_url()` from centralized config
+     - Updated `src/test/locust/comprehensive_load_test.py` to use `get_backend_url()` from centralized config
+     - Added documentation comments to Artillery config files pointing to centralized config
+     - Improved Robot Framework ConfigHelper fallback warnings to indicate configuration issues
+     - **Note**: Artillery YAML config files retain hardcoded URLs as they are environment-specific config files, but now include documentation pointing to centralized config
 
 5. **Document configuration priority order**
    - Impact: Prevents confusion, ensures consistency
@@ -458,6 +468,7 @@ For each improvement:
 - ✅ **Item #1** (High Priority): Remove hardcoded fallback values from `scripts/ci/env-config.sh` - Completed 2026-01-16
 - ✅ **Item #2** (High Priority): Consolidate test utility implementations - Completed 2026-01-16
 - ✅ **Item #3** (High Priority): Extract common functions from service start scripts - Completed 2026-01-16
+- ✅ **Item #4** (Medium Priority): Audit and remove hardcoded URLs/ports from test files - Completed 2026-01-16
 
 ### In Progress
 
@@ -465,7 +476,6 @@ For each improvement:
 
 ### Pending Items
 
-- Item #4: Audit and remove hardcoded URLs/ports from test files
 - Item #5: Document configuration priority order
 - Item #6: Review and consolidate duplicate configuration files
 - Item #7: Consider shared test specification format

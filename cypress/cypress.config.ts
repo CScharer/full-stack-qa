@@ -1,8 +1,21 @@
 import { defineConfig } from 'cypress'
+import { getFrontendUrl } from '../config/port-config'
+
+// Get default frontend URL from centralized config
+const getDefaultBaseUrl = (): string => {
+  try {
+    const env = (process.env.ENVIRONMENT || 'dev').toLowerCase()
+    return getFrontendUrl(env)
+  } catch (error) {
+    // Fallback if config can't be read (shouldn't happen, but safe fallback)
+    console.warn('Could not read frontend URL from config, using default:', error)
+    return 'http://localhost:3003'
+  }
+}
 
 export default defineConfig({
   e2e: {
-    baseUrl: process.env.BASE_URL || 'http://localhost:3003', // Default to DEV port per ONE_GOAL.md
+    baseUrl: process.env.BASE_URL || getDefaultBaseUrl(),
     viewportWidth: 1920,
     viewportHeight: 1080,
     video: false,

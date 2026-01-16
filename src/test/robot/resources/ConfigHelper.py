@@ -37,13 +37,16 @@ def get_backend_url_for_robot(environment: str = None) -> str:
         Backend URL string
     """
     if not SHARED_CONFIG_AVAILABLE:
-        # Fallback to hardcoded defaults
+        # Fallback to hardcoded defaults (should not happen in normal operation)
+        # These values should match config/environments.json
+        # If this fallback is used, it indicates a configuration issue
         env = (environment or os.getenv("ENVIRONMENT", "dev")).lower()
         defaults = {
-            "dev": "http://localhost:8003",
-            "test": "http://localhost:8004",
-            "prod": "http://localhost:8005",
+            "dev": "http://localhost:8003",  # Should match config/environments.json
+            "test": "http://localhost:8004",  # Should match config/environments.json
+            "prod": "http://localhost:8005",  # Should match config/environments.json
         }
+        print(f"⚠️  Warning: Using fallback backend URL for {env}. Shared config not available.")
         return defaults.get(env, defaults["dev"])
     
     env = environment or os.getenv("ENVIRONMENT", "dev")
@@ -61,13 +64,16 @@ def get_frontend_url_for_robot(environment: str = None) -> str:
         Frontend URL string
     """
     if not SHARED_CONFIG_AVAILABLE:
-        # Fallback to hardcoded defaults
+        # Fallback to hardcoded defaults (should not happen in normal operation)
+        # These values should match config/environments.json
+        # If this fallback is used, it indicates a configuration issue
         env = (environment or os.getenv("ENVIRONMENT", "dev")).lower()
         defaults = {
-            "dev": "http://localhost:3003",
-            "test": "http://localhost:3004",
-            "prod": "http://localhost:3005",
+            "dev": "http://localhost:3003",  # Should match config/environments.json
+            "test": "http://localhost:3004",  # Should match config/environments.json
+            "prod": "http://localhost:3005",  # Should match config/environments.json
         }
+        print(f"⚠️  Warning: Using fallback frontend URL for {env}. Shared config not available.")
         return defaults.get(env, defaults["dev"])
     
     env = environment or os.getenv("ENVIRONMENT", "dev")

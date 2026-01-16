@@ -1,10 +1,25 @@
 import { defineConfig, devices } from '@playwright/test'
+import { getFrontendUrl } from '../config/port-config'
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
 // require('dotenv').config();
+
+/**
+ * Get default frontend URL from centralized config
+ */
+const getDefaultBaseUrl = (): string => {
+  try {
+    const env = (process.env.ENVIRONMENT || 'dev').toLowerCase()
+    return getFrontendUrl(env)
+  } catch (error) {
+    // Fallback if config can't be read (shouldn't happen, but safe fallback)
+    console.warn('Could not read frontend URL from config, using default:', error)
+    return 'http://localhost:3003'
+  }
+}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -28,7 +43,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.BASE_URL || 'http://localhost:3003', // Default to DEV port per ONE_GOAL.md
+    baseURL: process.env.BASE_URL || getDefaultBaseUrl(),
     /* Maximize viewport to full screen */
     viewport: null, // null means use full screen size
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
