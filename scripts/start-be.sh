@@ -23,19 +23,14 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Source common functions
+source "${SCRIPT_DIR}/scripts/lib/common.sh"
 
 # Configuration
 BACKEND_DIR="${SCRIPT_DIR}/backend"
 API_RELOAD=${API_RELOAD:-"true"}
 
-# Parse command-line arguments for environment
-ENVIRONMENT_PARAM=""
+# Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         --env|-e)
@@ -47,47 +42,33 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --help|-h)
-            echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
-            echo -e "${BLUE}Usage: ./scripts/start-be.sh [OPTIONS]${NC}"
-            echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+            print_help_header "Usage: ./scripts/start-be.sh [OPTIONS]"
+            print_help_section "ENVIRONMENT OPTIONS"
+            print_help_example "  --env ENV       Environment: dev, test, or prod (default: dev)"
+            print_help_example "  -e ENV          Short form of --env"
+            print_help_example "  --env=ENV       Environment with equals sign"
+            print_help_example "  -e=ENV          Short form with equals sign"
             echo ""
-            echo -e "${YELLOW}ENVIRONMENT OPTIONS:${NC}"
-            echo "  --env ENV       Environment: dev, test, or prod (default: dev)"
-            echo "  -e ENV          Short form of --env"
-            echo "  --env=ENV       Environment with equals sign"
-            echo "  -e=ENV          Short form with equals sign"
+            print_help_section "OTHER OPTIONS"
+            print_help_example "  --help, -h      Show this help message"
             echo ""
-            echo -e "${YELLOW}OTHER OPTIONS:${NC}"
-            echo "  --help, -h      Show this help message"
-            echo ""
-            echo -e "${YELLOW}EXAMPLES:${NC}"
-            echo "  ./scripts/start-be.sh                    # Default: dev environment"
-            echo "  ./scripts/start-be.sh --env test         # Test environment"
-            echo "  ./scripts/start-be.sh -e prod            # Production environment"
-            echo "  ./scripts/start-be.sh --env=dev          # Dev with equals syntax"
+            print_help_section "EXAMPLES"
+            print_help_example "  ./scripts/start-be.sh                    # Default: dev environment"
+            print_help_example "  ./scripts/start-be.sh --env test         # Test environment"
+            print_help_example "  ./scripts/start-be.sh -e prod            # Production environment"
+            print_help_example "  ./scripts/start-be.sh --env=dev          # Dev with equals syntax"
             exit 0
             ;;
         *)
-            echo "Unknown option: $1"
+            print_error "Unknown option: $1"
             echo "Use --help for usage information"
             exit 1
             ;;
     esac
 done
 
-# Set environment with priority: command-line param > env var > default
-if [ -n "$ENVIRONMENT_PARAM" ]; then
-    ENVIRONMENT=$(echo "$ENVIRONMENT_PARAM" | tr '[:upper:]' '[:lower:]')
-elif [ -n "$ENVIRONMENT" ]; then
-    ENVIRONMENT=$(echo "$ENVIRONMENT" | tr '[:upper:]' '[:lower:]')
-else
-    ENVIRONMENT="dev"
-fi
-
-# Validate environment value
-if [[ ! "$ENVIRONMENT" =~ ^(dev|test|prod)$ ]]; then
-    echo -e "${RED}❌ Invalid environment: '$ENVIRONMENT'${NC}"
-    echo -e "${YELLOW}   Must be one of: dev, test, prod${NC}"
+# Set and validate environment
+if ! set_and_validate_environment "dev"; then
     exit 1
 fi
 

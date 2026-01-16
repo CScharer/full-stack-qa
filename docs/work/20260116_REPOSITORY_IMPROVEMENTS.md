@@ -367,10 +367,22 @@ This document outlines areas for improvement in the full-stack-qa repository, wi
      - Fixed frontend build error by removing problematic `require()` call in `frontend/lib/api/client.ts`
      - **Note**: Due to Cypress webpack bundler limitations with cross-project imports, the Cypress adapter contains a copy of the data that must be kept in sync with `lib/test-utils.ts` (the primary source of truth)
 
-3. **Extract common functions from service start scripts**
+3. **Extract common functions from service start scripts** ✅ **COMPLETED**
    - Impact: Reduces duplication, easier maintenance
    - Effort: Medium
    - Risk: Low
+   - **Status**: Completed on 2026-01-16
+   - **Changes**: 
+     - Created `scripts/lib/common.sh` with shared functions:
+       - Color definitions (RED, GREEN, YELLOW, BLUE, NC)
+       - `get_script_dir()` - Get project root directory
+       - `parse_environment_param()` - Parse --env parameter from arguments
+       - `set_and_validate_environment()` - Set and validate environment value
+       - `print_help_header()`, `print_help_section()`, `print_help_example()` - Help text formatting
+       - `print_error()`, `print_warning()`, `print_success()`, `print_info()` - Message printing functions
+     - Updated `scripts/start-fe.sh` to use common library
+     - Updated `scripts/start-be.sh` to use common library
+     - Removed duplicate color definitions, environment parsing, and validation logic
 
 ### Medium Priority
 
@@ -445,6 +457,7 @@ For each improvement:
 
 - ✅ **Item #1** (High Priority): Remove hardcoded fallback values from `scripts/ci/env-config.sh` - Completed 2026-01-16
 - ✅ **Item #2** (High Priority): Consolidate test utility implementations - Completed 2026-01-16
+- ✅ **Item #3** (High Priority): Extract common functions from service start scripts - Completed 2026-01-16
 
 ### In Progress
 
@@ -452,7 +465,6 @@ For each improvement:
 
 ### Pending Items
 
-- Item #3: Extract common functions from service start scripts
 - Item #4: Audit and remove hardcoded URLs/ports from test files
 - Item #5: Document configuration priority order
 - Item #6: Review and consolidate duplicate configuration files
