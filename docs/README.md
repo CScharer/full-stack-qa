@@ -99,6 +99,24 @@ This directory contains all project documentation and analysis reports for the C
   - Removed hardcoded fallback values from configuration scripts
   - Consolidated test utility implementations
   - Extracted common functions from service start scripts
+  - Audited and removed hardcoded URLs/ports from test files
+  - Documented configuration priority order
+  - Reviewed and consolidated duplicate configuration files
+  - Organized scripts into subdirectories (32 scripts moved)
+- ✅ Folder cleanup completed
+  - Moved `/Configurations` contents to `/config/` (41+ references updated)
+  - Renamed `/XML` → `xml/` (28 references updated)
+  - Renamed `/Data` → `data/` and subdirectories to lowercase (27+ references updated)
+  - Renamed `/src/test/resources/DataSets` → `datasets/` (19 references updated)
+  - Renamed `/src/test/resources/TableDef` → `tabledef/` (2 references updated)
+  - Deleted `/src/test/resources/Drivers` (legacy, WebDriverManager used now)
+  - All directories now use lowercase naming convention
+- ✅ Docker pull timeout fix implemented
+  - Added pre-pull step with retry logic for grid-tests job
+  - 3 retry attempts with exponential backoff (2s, 4s)
+  - 2-minute timeout for fast failure
+  - Addresses Docker Hub timeout errors in Chrome Grid Tests
+  - Extracted common functions from service start scripts
   - Removed hardcoded URLs/ports from test files
   - Documented configuration priority order
   - Consolidated duplicate configuration files

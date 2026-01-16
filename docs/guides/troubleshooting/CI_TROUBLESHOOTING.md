@@ -15,6 +15,7 @@
 | Tests don't run | Check Surefire config | [Link](#tests-not-running) |
 | Grid connection fails | Wait for health checks | [Link](#grid-connection-timeout) |
 | Artifacts not uploading | Check paths exist | [Link](#artifacts-not-found) |
+| Docker Hub timeout | Pre-pull images with retry | [Link](#docker-hub-timeout) |
 
 ---
 
@@ -210,7 +211,79 @@ retention-days: 3  # Check if expired
 
 ---
 
-### **6. Service Container Issues**
+### **6. Docker Hub Timeout (Service Container Image Pull)**
+
+**Error:**
+```
+Error response from daemon: Head "https://registry-1.docker.io/v2/selenium/hub/manifests/4.39.0": 
+Get "https://auth.docker.io/token?account=githubactions&scope=repository%3Aselenium%2Fhub%3Apull&service=registry.docker.io": 
+net/http: request canceled (Client.Timeout exceeded while awaiting headers)
+```
+
+**Cause:**
+- Docker Hub authentication/network timeouts occur intermittently
+- Service containers attempt to pull images automatically with no retry logic
+- Network congestion when multiple containers pull simultaneously
+
+**Solution:**
+Pre-pull images with retry logic before service containers start:
+
+```yaml
+- name: Pre-pull Selenium Docker images with retry
+  continue-on-error: true
+  timeout-minutes: 2
+  run: |
+    echo "🐳 Pre-pulling Selenium Docker images with retry logic..."
+    SELENIUM_VERSION="${{ inputs.selenium_version || '4.39.0' }}"
+    
+    # Function to pull with retry
+    pull_with_retry() {
+      local image=$1
+      local max_attempts=3
+      local attempt=1
+      local backoff=2
+      
+      while [ $attempt -le $max_attempts ]; do
+        echo "Attempt $attempt/$max_attempts: Pulling $image..."
+        if docker pull "$image" --quiet; then
+          echo "✅ Successfully pulled $image"
+          return 0
+        else
+          echo "⚠️  Failed to pull $image (attempt $attempt/$max_attempts)"
+          if [ $attempt -lt $max_attempts ]; then
+            echo "⏳ Waiting ${backoff}s before retry..."
+            sleep $backoff
+            backoff=$((backoff * 2))  # Exponential backoff
+          fi
+          attempt=$((attempt + 1))
+        fi
+      done
+      
+      echo "❌ Failed to pull $image after $max_attempts attempts"
+      return 1
+    }
+    
+    # Pull all required images
+    pull_with_retry "selenium/hub:${SELENIUM_VERSION}" || true
+    pull_with_retry "selenium/node-chrome:${SELENIUM_VERSION}" || true
+    pull_with_retry "selenium/node-firefox:${SELENIUM_VERSION}" || true
+    pull_with_retry "selenium/node-edge:${SELENIUM_VERSION}" || true
+    
+    echo "✅ Pre-pull step completed (images may be cached for service containers)"
+```
+
+**Key Features:**
+- ✅ 3 retry attempts with exponential backoff (2s, 4s)
+- ✅ 2-minute timeout for fast failure
+- ✅ `continue-on-error: true` - job continues even if pre-pull fails
+- ✅ Caches images locally before service containers need them
+- ✅ Service containers can still pull if pre-pull fails
+
+**Status:** ✅ Implemented in `grid-tests` job (January 2026)
+
+---
+
+### **7. Service Container Issues**
 
 **Error:**
 ```
@@ -238,7 +311,7 @@ services:
 
 ---
 
-### **7. Build Timeout**
+### **8. Build Timeout**
 
 **Error:**
 ```
@@ -265,7 +338,7 @@ Job hanging or taking too long
 
 ---
 
-### **8. Maven Dependency Download Issues**
+### **9. Maven Dependency Download Issues**
 
 **Error:**
 ```
@@ -299,7 +372,7 @@ Failed to collect dependencies
 
 ---
 
-### **9. Screenshot Capture Failing**
+### **10. Screenshot Capture Failing**
 
 **Error:**
 ```
@@ -321,7 +394,7 @@ if (driver instanceof TakesScreenshot) {
 
 ---
 
-### **10. GitHub Pages Deployment Fails**
+### **11. GitHub Pages Deployment Fails**
 
 **Error:**
 ```
