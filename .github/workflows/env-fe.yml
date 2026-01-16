@@ -348,6 +348,48 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Pre-pull Selenium Docker images with retry
+        continue-on-error: true
+        timeout-minutes: 2
+        run: |
+          echo "🐳 Pre-pulling Selenium Docker images with retry logic..."
+          SELENIUM_VERSION="${{ inputs.selenium_version || '4.39.0' }}"
+          
+          # Function to pull with retry
+          pull_with_retry() {
+            local image=$1
+            local max_attempts=3
+            local attempt=1
+            local backoff=2
+            
+            while [ $attempt -le $max_attempts ]; do
+              echo "Attempt $attempt/$max_attempts: Pulling $image..."
+              if docker pull "$image" --quiet; then
+                echo "✅ Successfully pulled $image"
+                return 0
+              else
+                echo "⚠️  Failed to pull $image (attempt $attempt/$max_attempts)"
+                if [ $attempt -lt $max_attempts ]; then
+                  echo "⏳ Waiting ${backoff}s before retry..."
+                  sleep $backoff
+                  backoff=$((backoff * 2))  # Exponential backoff
+                fi
+                attempt=$((attempt + 1))
+              fi
+            done
+            
+            echo "❌ Failed to pull $image after $max_attempts attempts"
+            return 1
+          }
+          
+          # Pull all required images
+          pull_with_retry "selenium/hub:${SELENIUM_VERSION}" || true
+          pull_with_retry "selenium/node-chrome:${SELENIUM_VERSION}" || true
+          pull_with_retry "selenium/node-firefox:${SELENIUM_VERSION}" || true
+          pull_with_retry "selenium/node-edge:${SELENIUM_VERSION}" || true
+          
+          echo "✅ Pre-pull step completed (images may be cached for service containers)"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
