@@ -328,25 +328,25 @@ This document analyzes 17 folders to determine:
 
 ### 11. `/src/test/resources/TableDef`
 
-**Current Status**: ⚠️ **UNCERTAIN - Review Usage**
+**Current Status**: ⚠️ **DEFERRED - Keep for Later Review**
 
 **Contents**:
 - `b2csite.dll.sql` (empty file, 0 bytes)
 
-**References Found**: Included in general "TableDef" searches
+**References Found**: 2 Java files
+- `BaseDBUnitTestForJPADao.java` (2 locations)
 
 **Usage**:
-- Contains empty SQL file
+- Contains empty SQL file (0 bytes)
+- Referenced in Java test files
 - May be legacy or placeholder
-- Need to verify if referenced in code
 
 **Rename to `src/test/resources/tabledef/`**:
-- ✅ Update any references
-- ⚠️ **Impact**: Low - Empty file, likely unused
+- ⚠️ **DEFERRED** - Will review later
 
-**Delete**: ⚠️ **REVIEW** - Empty file, likely safe to delete if unused
+**Delete**: ⚠️ **DEFERRED** - Will review later
 
-**Recommendation**: ⚠️ **REVIEW USAGE** - If empty and unused, delete; otherwise rename to `tabledef/`
+**Recommendation**: ⚠️ **DEFERRED** - Keep for now, review deletion/rename at later time
 
 ---
 
@@ -407,28 +407,29 @@ This document analyzes 17 folders to determine:
 
 ---
 
-### 15. `/scripts/tests/Data`
+### 15. `/scripts/tests/Data` → `scripts/tests/data/`
 
-**Current Status**: ⚠️ **EMPTY - Review**
+**Current Status**: ✅ **COMPLETED - Renamed to lowercase**
 
-**Contents**: Empty directory (only contains `Core/` subdirectory)
+**Contents**: Empty directory (only contains `core/` subdirectory)
 
 **Usage**:
 - Empty parent directory
-- Only contains `Core/` subdirectory (also empty)
+- Only contains `core/` subdirectory (also empty)
 
 **Rename to `scripts/tests/data/`**:
-- ⚠️ **Impact**: None - Empty directory
+- ✅ Folder renamed from `Data/` to `data/` using git mv
+- ✅ Subdirectory `Core/` renamed to `core/` for consistency
 
-**Delete**: ✅ **RECOMMENDED** - Empty directory, no content
+**Delete**: ⚠️ **DEFERRED** - Will review later
 
-**Recommendation**: ✅ **DELETE** - Empty directory
+**Recommendation**: ✅ **RENAMED** - Now lowercase, deletion review deferred
 
 ---
 
-### 16. `/scripts/tests/Data/Core`
+### 16. `/scripts/tests/Data/Core` → `scripts/tests/data/core/`
 
-**Current Status**: ⚠️ **EMPTY - Review**
+**Current Status**: ✅ **COMPLETED - Renamed to lowercase**
 
 **Contents**: Empty directory
 
@@ -436,11 +437,12 @@ This document analyzes 17 folders to determine:
 - Empty directory
 - No files or subdirectories
 
-**Rename**: ❌ **NOT APPLICABLE** - Empty
+**Rename to `scripts/tests/data/core/`**:
+- ✅ Renamed as part of parent directory rename (`Data/` → `data/`, `Core/` → `core/`)
 
-**Delete**: ✅ **RECOMMENDED** - Empty directory
+**Delete**: ⚠️ **DEFERRED** - Will review later
 
-**Recommendation**: ✅ **DELETE** - Empty directory (part of `/scripts/tests/Data`)
+**Recommendation**: ✅ **RENAMED** - Now lowercase, deletion review deferred (part of `/scripts/tests/data/`)
 
 ---
 
@@ -492,8 +494,11 @@ This document analyzes 17 folders to determine:
 ### ✅ Delete (Not Needed)
 
 11. **`/src/test/resources/Drivers`** - ✅ **DELETED** - Legacy, WebDriverManager used now
-12. **`/scripts/tests/Data`** - Empty directory
-13. **`/scripts/tests/Data/Core`** - Empty directory
+
+### ✅ Keep and Rename to Lowercase (Completed)
+
+12. **`/scripts/tests/Data` → `scripts/tests/data/`** - ✅ **COMPLETED** - Renamed to lowercase (empty directory)
+13. **`/scripts/tests/Data/Core` → `scripts/tests/data/core/`** - ✅ **COMPLETED** - Renamed to lowercase (empty directory)
 
 ### ❌ Ignore (Build Output)
 
@@ -547,7 +552,11 @@ This document analyzes 17 folders to determine:
 5. Review usage of `/Data/Scripts`, `/Data/Templates`, `/Data/SQL`
 6. Review usage of `/src/test/resources/TableDef`
 7. Delete `/src/test/resources/Drivers` (legacy) - ✅ **COMPLETED**
-8. Delete `/scripts/tests/Data` and `/scripts/tests/Data/Core` (empty)
+8. Rename `/scripts/tests/Data` → `scripts/tests/data/` and `/scripts/tests/Data/Core` → `scripts/tests/data/core/` - ✅ **COMPLETED** - Renamed to lowercase (empty directories, if recreated should use lowercase names)
+9. Delete `/scripts/tests/data` and `/scripts/tests/data/core` (empty) - ⚠️ **DEFERRED** - Keep for later review
+10. Review `/src/test/resources/TableDef` (empty file, referenced in code) - ⚠️ **DEFERRED** - Keep for later review
+9. Review `/src/test/resources/TableDef` (empty file, referenced in code) - ⚠️ **DEFERRED** - Keep for later review - ⚠️ **DEFERRED** - Keep for later review
+9. Review `/src/test/resources/TableDef` (empty file, referenced in code) - ⚠️ **DEFERRED** - Keep for later review
 
 ---
 
