@@ -41,117 +41,128 @@ get_config_value() {
 get_ports_for_environment() {
     local env=$(echo "${1:-dev}" | tr '[:upper:]' '[:lower:]')
     
-    if [ -f "$ENV_CONFIG_JSON" ] && command -v jq &> /dev/null; then
-        local frontend_port=$(get_config_value "$env" ".environments[\"$env\"].frontend.port")
-        local backend_port=$(get_config_value "$env" ".environments[\"$env\"].backend.port")
-        local frontend_url=$(get_config_value "$env" ".environments[\"$env\"].frontend.url")
-        local backend_url=$(get_config_value "$env" ".environments[\"$env\"].backend.url")
-        
-        if [ -n "$frontend_port" ] && [ -n "$backend_port" ]; then
-            echo "FRONTEND_PORT=$frontend_port"
-            echo "API_PORT=$backend_port"
-            echo "FRONTEND_URL=$frontend_url"
-            echo "API_URL=$backend_url"
-            return 0
-        fi
+    if [ ! -f "$ENV_CONFIG_JSON" ]; then
+        echo "❌ Error: Configuration file not found: $ENV_CONFIG_JSON" >&2
+        echo "   Please ensure config/environments.json exists in the project root." >&2
+        return 1
     fi
     
-    # Fallback to hardcoded values
-    case "$env" in
-        dev)
-            echo "FRONTEND_PORT=3003"
-            echo "API_PORT=8003"
-            echo "FRONTEND_URL=http://localhost:3003"
-            echo "API_URL=http://localhost:8003"
-            ;;
-        test)
-            echo "FRONTEND_PORT=3004"
-            echo "API_PORT=8004"
-            echo "FRONTEND_URL=http://localhost:3004"
-            echo "API_URL=http://localhost:8004"
-            ;;
-        prod)
-            echo "FRONTEND_PORT=3005"
-            echo "API_PORT=8005"
-            echo "FRONTEND_URL=http://localhost:3005"
-            echo "API_URL=http://localhost:8005"
-            ;;
-        *)
-            echo "❌ Unknown environment: $env" >&2
-            return 1
-            ;;
-    esac
+    if ! command -v jq &> /dev/null; then
+        echo "❌ Error: jq is required but not installed." >&2
+        echo "   Install jq to use centralized configuration:" >&2
+        echo "   macOS: brew install jq" >&2
+        echo "   Linux: apt-get install jq or yum install jq" >&2
+        return 1
+    fi
+    
+    local frontend_port=$(get_config_value "$env" ".environments[\"$env\"].frontend.port")
+    local backend_port=$(get_config_value "$env" ".environments[\"$env\"].backend.port")
+    local frontend_url=$(get_config_value "$env" ".environments[\"$env\"].frontend.url")
+    local backend_url=$(get_config_value "$env" ".environments[\"$env\"].backend.url")
+    
+    if [ -z "$frontend_port" ] || [ -z "$backend_port" ]; then
+        echo "❌ Error: Could not read port configuration for environment: $env" >&2
+        echo "   Please check that config/environments.json contains valid configuration for '$env'." >&2
+        return 1
+    fi
+    
+    echo "FRONTEND_PORT=$frontend_port"
+    echo "API_PORT=$backend_port"
+    echo "FRONTEND_URL=$frontend_url"
+    echo "API_URL=$backend_url"
+    return 0
 }
 
 # Get database configuration for an environment
 get_database_for_environment() {
     local env=$(echo "${1:-dev}" | tr '[:upper:]' '[:lower:]')
     
-    if [ -f "$ENV_CONFIG_JSON" ] && command -v jq &> /dev/null; then
-        local db_name=$(get_config_value "$env" ".environments[\"$env\"].database.name")
-        local db_path=$(get_config_value "$env" ".environments[\"$env\"].database.path")
-        local db_dir=$(get_config_value "$env" ".database.directory" "Data/Core")
-        
-        if [ -n "$db_name" ]; then
-            echo "DATABASE_NAME=$db_name"
-            echo "DATABASE_PATH=$db_path"
-            echo "DATABASE_DIR=$db_dir"
-            return 0
-        fi
+    if [ ! -f "$ENV_CONFIG_JSON" ]; then
+        echo "❌ Error: Configuration file not found: $ENV_CONFIG_JSON" >&2
+        echo "   Please ensure config/environments.json exists in the project root." >&2
+        return 1
     fi
     
-    # Fallback
-    local db_name="full_stack_qa_${env}.db"
+    if ! command -v jq &> /dev/null; then
+        echo "❌ Error: jq is required but not installed." >&2
+        echo "   Install jq to use centralized configuration:" >&2
+        echo "   macOS: brew install jq" >&2
+        echo "   Linux: apt-get install jq or yum install jq" >&2
+        return 1
+    fi
+    
+    local db_name=$(get_config_value "$env" ".environments[\"$env\"].database.name")
+    local db_path=$(get_config_value "$env" ".environments[\"$env\"].database.path")
+    local db_dir=$(get_config_value "$env" ".database.directory" "Data/Core")
+    
+    if [ -z "$db_name" ]; then
+        echo "❌ Error: Could not read database configuration for environment: $env" >&2
+        echo "   Please check that config/environments.json contains valid database configuration for '$env'." >&2
+        return 1
+    fi
+    
     echo "DATABASE_NAME=$db_name"
-    echo "DATABASE_PATH=Data/Core/$db_name"
-    echo "DATABASE_DIR=Data/Core"
+    echo "DATABASE_PATH=$db_path"
+    echo "DATABASE_DIR=$db_dir"
+    return 0
 }
 
 # Get API endpoints
 get_api_endpoints() {
-    if [ -f "$ENV_CONFIG_JSON" ] && command -v jq &> /dev/null; then
-        local base_path=$(get_config_value "" ".api.basePath" "/api/v1")
-        local health=$(get_config_value "" ".api.healthEndpoint" "/health")
-        local docs=$(get_config_value "" ".api.docsEndpoint" "/docs")
-        local redoc=$(get_config_value "" ".api.redocEndpoint" "/redoc")
-        
-        echo "API_BASE_PATH=$base_path"
-        echo "API_HEALTH_ENDPOINT=$health"
-        echo "API_DOCS_ENDPOINT=$docs"
-        echo "API_REDOC_ENDPOINT=$redoc"
-        return 0
+    if [ ! -f "$ENV_CONFIG_JSON" ]; then
+        echo "❌ Error: Configuration file not found: $ENV_CONFIG_JSON" >&2
+        echo "   Please ensure config/environments.json exists in the project root." >&2
+        return 1
     fi
     
-    # Fallback
-    echo "API_BASE_PATH=/api/v1"
-    echo "API_HEALTH_ENDPOINT=/health"
-    echo "API_DOCS_ENDPOINT=/docs"
-    echo "API_REDOC_ENDPOINT=/redoc"
+    if ! command -v jq &> /dev/null; then
+        echo "❌ Error: jq is required but not installed." >&2
+        echo "   Install jq to use centralized configuration:" >&2
+        echo "   macOS: brew install jq" >&2
+        echo "   Linux: apt-get install jq or yum install jq" >&2
+        return 1
+    fi
+    
+    local base_path=$(get_config_value "" ".api.basePath" "/api/v1")
+    local health=$(get_config_value "" ".api.healthEndpoint" "/health")
+    local docs=$(get_config_value "" ".api.docsEndpoint" "/docs")
+    local redoc=$(get_config_value "" ".api.redocEndpoint" "/redoc")
+    
+    echo "API_BASE_PATH=$base_path"
+    echo "API_HEALTH_ENDPOINT=$health"
+    echo "API_DOCS_ENDPOINT=$docs"
+    echo "API_REDOC_ENDPOINT=$redoc"
+    return 0
 }
 
 # Get timeout values
 get_timeouts() {
-    if [ -f "$ENV_CONFIG_JSON" ] && command -v jq &> /dev/null; then
-        local startup=$(get_config_value "" ".timeouts.serviceStartup" "120")
-        local verification=$(get_config_value "" ".timeouts.serviceVerification" "30")
-        local api_client=$(get_config_value "" ".timeouts.apiClient" "10000")
-        local web_server=$(get_config_value "" ".timeouts.webServer" "120000")
-        local check_interval=$(get_config_value "" ".timeouts.checkInterval" "2")
-        
-        echo "SERVICE_STARTUP_TIMEOUT=$startup"
-        echo "SERVICE_VERIFICATION_TIMEOUT=$verification"
-        echo "API_CLIENT_TIMEOUT=$api_client"
-        echo "WEB_SERVER_TIMEOUT=$web_server"
-        echo "CHECK_INTERVAL=$check_interval"
-        return 0
+    if [ ! -f "$ENV_CONFIG_JSON" ]; then
+        echo "❌ Error: Configuration file not found: $ENV_CONFIG_JSON" >&2
+        echo "   Please ensure config/environments.json exists in the project root." >&2
+        return 1
     fi
     
-    # Fallback
-    echo "SERVICE_STARTUP_TIMEOUT=120"
-    echo "SERVICE_VERIFICATION_TIMEOUT=30"
-    echo "API_CLIENT_TIMEOUT=10000"
-    echo "WEB_SERVER_TIMEOUT=120000"
-    echo "CHECK_INTERVAL=2"
+    if ! command -v jq &> /dev/null; then
+        echo "❌ Error: jq is required but not installed." >&2
+        echo "   Install jq to use centralized configuration:" >&2
+        echo "   macOS: brew install jq" >&2
+        echo "   Linux: apt-get install jq or yum install jq" >&2
+        return 1
+    fi
+    
+    local startup=$(get_config_value "" ".timeouts.serviceStartup" "120")
+    local verification=$(get_config_value "" ".timeouts.serviceVerification" "30")
+    local api_client=$(get_config_value "" ".timeouts.apiClient" "10000")
+    local web_server=$(get_config_value "" ".timeouts.webServer" "120000")
+    local check_interval=$(get_config_value "" ".timeouts.checkInterval" "2")
+    
+    echo "SERVICE_STARTUP_TIMEOUT=$startup"
+    echo "SERVICE_VERIFICATION_TIMEOUT=$verification"
+    echo "API_CLIENT_TIMEOUT=$api_client"
+    echo "WEB_SERVER_TIMEOUT=$web_server"
+    echo "CHECK_INTERVAL=$check_interval"
+    return 0
 }
 
 # Get CORS origins for an environment
@@ -159,30 +170,30 @@ get_timeouts() {
 get_cors_origins() {
     local env=$(echo "${1:-dev}" | tr '[:upper:]' '[:lower:]')
     
-    if [ -f "$ENV_CONFIG_JSON" ] && command -v jq &> /dev/null; then
-        # Get as JSON array (Pydantic Settings expects JSON format for List fields)
-        local origins=$(jq -c ".environments[\"$env\"].corsOrigins" "$ENV_CONFIG_JSON" 2>/dev/null)
-        if [ -n "$origins" ] && [ "$origins" != "null" ]; then
-            echo "CORS_ORIGINS=$origins"
-            return 0
-        fi
+    if [ ! -f "$ENV_CONFIG_JSON" ]; then
+        echo "❌ Error: Configuration file not found: $ENV_CONFIG_JSON" >&2
+        echo "   Please ensure config/environments.json exists in the project root." >&2
+        return 1
     fi
     
-    # Fallback - return as JSON array
-    case "$env" in
-        dev)
-            echo 'CORS_ORIGINS=["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
-            ;;
-        test)
-            echo 'CORS_ORIGINS=["http://127.0.0.1:3004","http://localhost:3004","http://0.0.0.0:3004"]'
-            ;;
-        prod)
-            echo 'CORS_ORIGINS=["http://127.0.0.1:3005","http://localhost:3005","http://0.0.0.0:3005"]'
-            ;;
-        *)
-            echo 'CORS_ORIGINS=["http://127.0.0.1:3003","http://localhost:3003","http://0.0.0.0:3003"]'
-            ;;
-    esac
+    if ! command -v jq &> /dev/null; then
+        echo "❌ Error: jq is required but not installed." >&2
+        echo "   Install jq to use centralized configuration:" >&2
+        echo "   macOS: brew install jq" >&2
+        echo "   Linux: apt-get install jq or yum install jq" >&2
+        return 1
+    fi
+    
+    # Get as JSON array (Pydantic Settings expects JSON format for List fields)
+    local origins=$(jq -c ".environments[\"$env\"].corsOrigins" "$ENV_CONFIG_JSON" 2>/dev/null)
+    if [ -z "$origins" ] || [ "$origins" = "null" ]; then
+        echo "❌ Error: Could not read CORS origins configuration for environment: $env" >&2
+        echo "   Please check that config/environments.json contains valid CORS configuration for '$env'." >&2
+        return 1
+    fi
+    
+    echo "CORS_ORIGINS=$origins"
+    return 0
 }
 
 # Export all configuration for an environment

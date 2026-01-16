@@ -21,14 +21,17 @@ SARA Plus™ is a comprehensive business management application designed for dea
 
 ## Interview Notes - Automated Software Testing Position
 
-**Interview Date**: 2026-01-11  
+**Interview Date**: 2026-01-11
 ### SARA Plus Contacts
 | Name | Position | Email | LinkedIn |
 |---| ---| ---| ---| 
-| Chris Ollaili | President | ChrisOllaili@saraplus.com |  |
+| Chris Ollila | President | ChrisOllila@saraplus.com | https://www.linkedin.com/in/chris-ollila-39b7832aa/ |
 | Greg Strub | Senior Director of Development | GregStrub@saraplus.com | https://www.linkedin.com/in/greg-strub-42608318/ |
 | Ryan Velo | QA Manager | RyanVelo@saraplus.com |  |
 | Sai Mekala | Architect | SaiMekala@saraplus.com |  |
+| James Harsha | QA Lead | JamesHarsha@saraplus.com | https://www.linkedin.com/in/james-harsha-b97701191/ |
+| Cristian Baker | QA Specailist | CristianBaker@saraplus.com |  |
+| Ian Lunen | QA Specailist | IanLunen@saraplus.com |  |
 | Brent Anderson | SDET | BrentAnderson@saraplus.com | https://www.linkedin.com/in/brent-david-anderson-992555a/ |
 | Shelli Duane | Senior Recruiter – Human Resources | ShelliDuane@saraplus.com | https://www.linkedin.com/in/shelli-duane/ |
 | Susan Reynolds | Training Manager | SusanReynolds@saraplus.com |  |
