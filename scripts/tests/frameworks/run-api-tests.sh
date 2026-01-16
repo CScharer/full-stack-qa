@@ -1,6 +1,38 @@
 #!/bin/bash
+# scripts/tests/frameworks/run-api-tests.sh
 # API Test Runner
-# Run REST API tests without requiring Selenium Grid
+#
+# Purpose: Run REST API tests without requiring Selenium Grid or Docker
+#
+# Usage:
+#   ./scripts/tests/frameworks/run-api-tests.sh
+#
+# Description:
+#   This script runs REST API tests using REST Assured and Robot Framework.
+#   No browser or Selenium Grid is required, making these tests fast and lightweight.
+#   Tests include API contract validation, OAuth authentication, and response schema validation.
+#
+# Examples:
+#   ./scripts/tests/frameworks/run-api-tests.sh
+#
+# Dependencies:
+#   - Maven wrapper (./mvnw)
+#   - Java 21+
+#   - REST Assured library (via Maven)
+#   - Robot Framework (for Python-based API tests, optional)
+#
+# Output:
+#   - Test results in target/surefire-reports/
+#   - Allure results in target/allure-results/
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Fast execution (no browser startup overhead)
+#   - Can run in CI/CD, local, or Docker environments
+#   - Uses testng-api-suite.xml test suite
+#   - Results integrated with Allure reporting
+#
+# Last Updated: January 2026
 
 set -e
 

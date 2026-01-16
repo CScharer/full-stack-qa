@@ -1,7 +1,49 @@
 #!/bin/bash
-
-# Script to run Playwright integration tests
-# Tests the full stack: Frontend + Backend + Database
+# scripts/tests/frameworks/run-integration-tests.sh
+# Integration Test Runner
+#
+# Purpose: Run Playwright integration tests for the full stack (Frontend + Backend + Database)
+#
+# Usage:
+#   ./scripts/tests/frameworks/run-integration-tests.sh [ENVIRONMENT]
+#
+# Parameters:
+#   ENVIRONMENT   Environment to test: dev, test, prod (default: "dev")
+#                 Can also be set via ENVIRONMENT environment variable
+#
+# Examples:
+#   ./scripts/tests/frameworks/run-integration-tests.sh                # Dev environment
+#   ./scripts/tests/frameworks/run-integration-tests.sh test           # Test environment
+#   ENVIRONMENT=prod ./scripts/tests/frameworks/run-integration-tests.sh  # Prod via env var
+#
+# Description:
+#   This script runs Playwright integration tests that test the full application stack:
+#   - Frontend (Next.js application)
+#   - Backend (FastAPI application)
+#   - Database (SQLite database)
+#
+#   Tests verify end-to-end functionality across all layers of the application.
+#
+# Dependencies:
+#   - Node.js 20+
+#   - npm (installed in playwright/ directory)
+#   - Playwright dependencies (installed via npm)
+#   - Backend service running (required)
+#   - Frontend service running (required)
+#   - Database configured for the specified environment
+#
+# Output:
+#   - Test results in playwright/playwright-report/
+#   - Screenshots on failure in playwright/test-results/
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Requires both frontend and backend services to be running
+#   - Uses environment-specific database and ports
+#   - Tests full user workflows across the stack
+#   - Verifies data persistence and API integration
+#
+# Last Updated: January 2026
 
 set -e
 

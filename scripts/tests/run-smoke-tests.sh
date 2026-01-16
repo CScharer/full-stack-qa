@@ -1,6 +1,38 @@
 #!/bin/bash
+# scripts/tests/run-smoke-tests.sh
 # Smoke Test Runner
-# Fast critical path verification in < 2 minutes
+#
+# Purpose: Run fast critical path verification tests in < 2 minutes
+#          Used for quick validation before committing changes
+#
+# Usage:
+#   ./scripts/tests/run-smoke-tests.sh
+#
+# Description:
+#   This script starts a lightweight Selenium Grid (hub + 1 Chrome node),
+#   runs the smoke test suite (testng-smoke-suite.xml), and stops the Grid.
+#   Expected execution time: < 2 minutes
+#
+# Examples:
+#   ./scripts/tests/run-smoke-tests.sh
+#
+# Dependencies:
+#   - Docker and Docker Compose
+#   - Selenium Grid services (selenium-hub, chrome-node-1)
+#   - Maven wrapper (./mvnw)
+#   - Java 21+
+#
+# Output:
+#   - Test results in target/surefire-reports/
+#   - Execution time displayed
+#   - Exit code: 0 on success, 1 on failure
+#
+# Notes:
+#   - Grid is automatically started and stopped by this script
+#   - Uses docker-compose.yml for Grid configuration
+#   - Waits up to 30 seconds for Grid to be ready
+#
+# Last Updated: January 2026
 
 set -e
 

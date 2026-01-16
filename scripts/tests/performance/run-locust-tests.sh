@@ -1,6 +1,45 @@
 #!/bin/bash
+# scripts/tests/performance/run-locust-tests.sh
 # Locust Performance Test Runner
-# 40% of performance testing allocation (primary tool)
+#
+# Purpose: Run Locust performance tests (30% of performance testing allocation, primary tool)
+#
+# Usage:
+#   ./scripts/tests/performance/run-locust-tests.sh [USERS] [SPAWN_RATE] [RUNTIME]
+#
+# Parameters:
+#   USERS        Number of concurrent users (default: 100)
+#   SPAWN_RATE   Users spawned per second (default: 10)
+#   RUNTIME      Test duration (default: "3m" - 3 minutes)
+#
+# Examples:
+#   ./scripts/tests/performance/run-locust-tests.sh                    # Default: 100 users, 10/sec, 3min
+#   ./scripts/tests/performance/run-locust-tests.sh 200 20 5m          # 200 users, 20/sec, 5min
+#   ./scripts/tests/performance/run-locust-tests.sh 50 5 1m            # 50 users, 5/sec, 1min
+#
+# Description:
+#   This script runs Locust load tests using Python-based test scenarios.
+#   Locust provides a real-time web UI for monitoring test execution.
+#   Tests are located in src/test/locust/.
+#
+# Dependencies:
+#   - Python 3.13+
+#   - Locust Python package (installed via pip)
+#   - Locust test files in src/test/locust/
+#
+# Output:
+#   - Test results in target/locust/
+#   - Real-time web UI at http://localhost:8089
+#   - HTML reports and CSV results
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Real-time web UI available during execution
+#   - Supports distributed load testing
+#   - Flexible and scriptable test scenarios
+#   - 30% allocation of total performance testing (primary tool)
+#
+# Last Updated: January 2026
 
 set -e
 

@@ -1,8 +1,39 @@
 #!/bin/bash
 # scripts/ci/port-config.sh
-# Centralized configuration for all environments
-# This file reads from config/environments.json (single source of truth)
-# All scripts should source this file to get configuration values
+# Centralized Port Configuration (Legacy - Use env-config.sh for new code)
+#
+# Purpose: Provide port and URL configuration for all environments (legacy fallback)
+#
+# Usage:
+#   # Source this file in other scripts:
+#   source scripts/ci/port-config.sh
+#
+#   # Then use the function:
+#   get_ports_for_environment "dev"
+#
+# Description:
+#   This script provides port and URL configuration functions, reading from:
+#   - Primary: config/environments.json (comprehensive config)
+#   - Fallback: config/ports.json (legacy, deprecated)
+#
+#   ⚠️ DEPRECATED: This script is maintained for backward compatibility.
+#   New code should use env-config.sh instead, which provides more comprehensive
+#   configuration options.
+#
+# Dependencies:
+#   - jq (JSON processor) - recommended but not required
+#   - config/environments.json (preferred) or config/ports.json (fallback)
+#
+# Functions Provided:
+#   - get_ports_for_environment(env) - Get frontend port, backend port, and URLs
+#
+# Notes:
+#   - This script is designed to be SOURCED, not executed directly
+#   - Falls back to ports.json if environments.json is unavailable
+#   - Legacy script - use env-config.sh for new code
+#   - See config/README.md for deprecation timeline
+#
+# Last Updated: January 2026
 
 set -e
 

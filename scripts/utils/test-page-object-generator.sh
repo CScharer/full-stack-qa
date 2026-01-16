@@ -1,7 +1,37 @@
 #!/bin/bash
-
-# Test script for Page Object Generator
-# This script runs automated tests to validate the generator
+# scripts/utils/test-page-object-generator.sh
+# Page Object Generator Test Script
+#
+# Purpose: Run automated tests to validate the Page Object Generator functionality
+#
+# Usage:
+#   ./scripts/utils/test-page-object-generator.sh
+#
+# Description:
+#   This script runs automated tests to validate that the Page Object Generator
+#   is working correctly. It checks ChromeDriver availability and runs generator
+#   validation tests.
+#
+# Examples:
+#   ./scripts/utils/test-page-object-generator.sh
+#
+# Dependencies:
+#   - ChromeDriver (must be in PATH or specified)
+#   - Java 21+ (for generator execution)
+#   - Maven wrapper (./mvnw)
+#   - Chrome browser (for WebDriver)
+#
+# Output:
+#   - Test results in console output
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Validates generator functionality
+#   - Checks ChromeDriver availability
+#   - Runs generator test suite
+#   - Useful for troubleshooting generator issues
+#
+# Last Updated: January 2026
 
 set -e
 

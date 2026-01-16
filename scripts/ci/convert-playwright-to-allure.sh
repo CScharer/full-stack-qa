@@ -1,11 +1,46 @@
 #!/bin/bash
-# Convert Playwright Test Results to Allure Format
-# Usage: ./scripts/ci/convert-playwright-to-allure.sh <allure-results-dir> <playwright-results-dir> [environment]
+# scripts/ci/convert-playwright-to-allure.sh
+# Playwright to Allure Results Converter
 #
-# Arguments:
-#   allure-results-dir    - Directory where Allure results should be stored
-#   playwright-results-dir - Directory containing Playwright test results
-#   environment           - Optional environment name (dev, test, prod)
+# Purpose: Convert Playwright test results to Allure-compatible JSON format
+#
+# Usage:
+#   ./scripts/ci/convert-playwright-to-allure.sh [ALLURE_RESULTS_DIR] [PLAYWRIGHT_RESULTS_DIR] [ENVIRONMENT]
+#
+# Parameters:
+#   ALLURE_RESULTS_DIR      Directory where Allure results should be stored (default: "allure-results-combined")
+#   PLAYWRIGHT_RESULTS_DIR  Directory containing Playwright test results (default: "playwright/test-results")
+#   ENVIRONMENT             Optional environment name for metadata: dev, test, prod (optional)
+#
+# Examples:
+#   ./scripts/ci/convert-playwright-to-allure.sh
+#   ./scripts/ci/convert-playwright-to-allure.sh allure-results playwright/test-results dev
+#   ./scripts/ci/convert-playwright-to-allure.sh combined-results playwright/results test
+#
+# Description:
+#   This script converts Playwright test results (JSON format) into Allure-compatible JSON files.
+#   It reads Playwright result files and generates Allure result files (*-result.json) with
+#   test names, status, duration, attachments (screenshots, videos, traces), and environment metadata.
+#
+# Dependencies:
+#   - Playwright test results (JSON files in PLAYWRIGHT_RESULTS_DIR)
+#   - jq (JSON processor) for parsing Playwright results
+#   - Allure metadata utilities (scripts/ci/allure-metadata-utils.sh)
+#   - Python 3.x (for some conversion utilities, optional)
+#
+# Output:
+#   - Allure-compatible JSON files in ALLURE_RESULTS_DIR
+#   - Screenshots, videos, and traces attached to test results
+#   - Environment metadata included
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline to integrate Playwright results with Allure reports
+#   - Handles Playwright result file structure and naming
+#   - Preserves screenshots, videos, and traces as attachments
+#   - Adds environment labels for filtering in Allure reports
+#
+# Last Updated: January 2026
 
 set -e
 

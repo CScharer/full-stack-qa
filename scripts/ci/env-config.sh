@@ -1,8 +1,48 @@
 #!/bin/bash
 # scripts/ci/env-config.sh
-# Comprehensive environment configuration utility
-# Reads from config/environments.json (single source of truth)
-# Provides functions to get all configuration values (ports, database, API, timeouts, CORS)
+# Comprehensive Environment Configuration Utility
+#
+# Purpose: Provide centralized environment configuration functions for all CI/CD scripts
+#
+# Usage:
+#   # Source this file in other scripts:
+#   source scripts/ci/env-config.sh
+#
+#   # Then use the functions:
+#   get_ports_for_environment "dev"
+#   get_database_for_environment "test"
+#   get_api_endpoints "prod"
+#
+# Description:
+#   This script provides functions to read configuration from config/environments.json
+#   (single source of truth). It provides access to:
+#   - Ports (frontend, backend)
+#   - URLs (frontend, backend, API)
+#   - Database paths and configuration
+#   - API endpoints
+#   - Timeouts
+#   - CORS origins
+#
+#   All functions read from config/environments.json using jq.
+#
+# Dependencies:
+#   - jq (JSON processor) - recommended but not required (falls back gracefully)
+#   - config/environments.json (configuration file)
+#
+# Functions Provided:
+#   - get_ports_for_environment(env) - Get frontend and backend ports
+#   - get_database_for_environment(env) - Get database path
+#   - get_api_endpoints(env) - Get API base path
+#   - get_timeouts(env) - Get timeout values
+#   - get_cors_origins(env) - Get CORS allowed origins
+#
+# Notes:
+#   - This script is designed to be SOURCED, not executed directly
+#   - Does not use 'set -e' to allow graceful error handling in parent scripts
+#   - Falls back gracefully if jq is not available (with warnings)
+#   - Single source of truth: config/environments.json
+#
+# Last Updated: January 2026
 
 # Note: We don't use 'set -e' here because this script is sourced by other scripts
 # and we want to handle errors gracefully rather than exiting the parent script

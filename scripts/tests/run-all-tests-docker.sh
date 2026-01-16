@@ -1,7 +1,46 @@
 #!/bin/bash
-
-# Run All Tests in Docker (Matching CI/CD Pipeline)
-# This script runs all test frameworks in Docker, matching the CI/CD pipeline execution
+# scripts/tests/run-all-tests-docker.sh
+# All Tests Runner (Docker)
+#
+# Purpose: Run all test frameworks in Docker, matching the CI/CD pipeline execution
+#
+# Usage:
+#   ./scripts/tests/run-all-tests-docker.sh
+#
+# Description:
+#   This script runs all test frameworks in Docker containers, matching the exact
+#   execution environment used in the CI/CD pipeline. This ensures local testing
+#   matches production pipeline behavior.
+#
+#   Test frameworks executed:
+#   - Selenium tests (Java/TestNG)
+#   - Cypress tests (TypeScript)
+#   - Playwright tests (TypeScript)
+#   - Robot Framework tests (Python)
+#   - Backend tests (Python/pytest)
+#   - Frontend tests (TypeScript/Vitest)
+#
+# Examples:
+#   ./scripts/tests/run-all-tests-docker.sh
+#
+# Dependencies:
+#   - Docker and Docker Compose
+#   - Selenium Grid services (selenium-hub, browser nodes)
+#   - Maven wrapper (./mvnw)
+#   - All test framework dependencies (managed in Docker)
+#
+# Output:
+#   - Test results for each framework in their respective directories
+#   - Combined Allure reports (if configured)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Matches CI/CD pipeline execution exactly
+#   - Uses Docker containers for isolation
+#   - All dependencies managed in containers
+#   - Useful for validating changes before pushing
+#
+# Last Updated: January 2026
 
 set -e
 

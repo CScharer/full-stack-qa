@@ -1,18 +1,49 @@
 #!/bin/bash
-# Run Maven Tests
-# Usage: ./scripts/ci/run-maven-tests.sh <environment> <suite-file> [retry-count] [browser] [additional-args...]
+# scripts/ci/run-maven-tests.sh
+# Maven Test Runner
 #
-# Arguments:
-#   environment    - Test environment (dev, test, prod)
-#   suite-file    - TestNG suite file (e.g., testng-smoke-suite.xml)
-#   retry-count   - Number of retries for failed tests (default: 1)
-#   browser       - Browser name for browser-specific tests (optional)
-#   additional-args - Additional Maven arguments (optional)
+# Purpose: Run Maven tests with TestNG suite files in CI/CD pipeline
+#
+# Usage:
+#   ./scripts/ci/run-maven-tests.sh <ENVIRONMENT> <SUITE_FILE> [RETRY_COUNT] [BROWSER] [ADDITIONAL_ARGS...]
+#
+# Parameters:
+#   ENVIRONMENT     Test environment: dev, test, or prod
+#   SUITE_FILE      TestNG suite XML file (e.g., testng-smoke-suite.xml, testng-grid-suite.xml)
+#   RETRY_COUNT     Number of retries for failed tests (default: 1)
+#   BROWSER         Browser name for browser-specific tests (optional: chrome, firefox, edge)
+#   ADDITIONAL_ARGS Additional Maven arguments (optional, passed directly to Maven)
 #
 # Examples:
 #   ./scripts/ci/run-maven-tests.sh dev testng-smoke-suite.xml
 #   ./scripts/ci/run-maven-tests.sh test testng-grid-suite.xml 2 chrome
 #   ./scripts/ci/run-maven-tests.sh dev testng-ci-suite.xml 1 firefox -Dcustom.property=value
+#
+# Description:
+#   This script runs Maven tests using TestNG suite files with support for:
+#   - Environment-specific configuration
+#   - Test retry logic
+#   - Browser-specific test execution
+#   - Custom Maven properties
+#
+# Dependencies:
+#   - Maven wrapper (./mvnw)
+#   - Java 21+
+#   - TestNG suite XML files in src/test/resources/
+#   - Selenium Grid (for browser tests)
+#
+# Output:
+#   - Test results in target/surefire-reports/
+#   - Allure results in target/allure-results/ (if configured)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline for test execution
+#   - Supports retry logic for flaky tests
+#   - Browser parameter sets Dbrowser Maven property
+#   - Additional args are passed directly to Maven
+#
+# Last Updated: January 2026
 
 set -e
 

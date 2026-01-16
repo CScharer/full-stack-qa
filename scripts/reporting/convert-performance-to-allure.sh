@@ -1,6 +1,47 @@
 #!/bin/bash
-# Convert Performance Test Results to Allure Format
-# This script converts Gatling, JMeter, and Locust results into Allure-compatible JSON files
+# scripts/reporting/convert-performance-to-allure.sh
+# Performance Test Results to Allure Converter
+#
+# Purpose: Convert performance test results (Gatling, JMeter, Locust) into Allure-compatible format
+#
+# Usage:
+#   ./scripts/reporting/convert-performance-to-allure.sh [ENVIRONMENT]
+#
+# Parameters:
+#   ENVIRONMENT   Environment name for metadata (default: "dev")
+#                 Used for Allure report metadata and labeling
+#
+# Examples:
+#   ./scripts/reporting/convert-performance-to-allure.sh                # Dev environment
+#   ./scripts/reporting/convert-performance-to-allure.sh test           # Test environment
+#   ./scripts/reporting/convert-performance-to-allure.sh prod           # Production environment
+#
+# Description:
+#   This script converts performance test results from multiple tools into Allure format:
+#   - Gatling results (from target/gatling/)
+#   - JMeter results (from target/jmeter/)
+#   - Locust results (from target/locust/)
+#
+#   Converted results are placed in target/allure-results/ for inclusion in Allure reports.
+#
+# Dependencies:
+#   - Performance test results must exist in target/ directories
+#   - Allure metadata utilities (scripts/ci/allure-metadata-utils.sh)
+#   - jq (JSON processor) for result parsing
+#   - Python 3.x (for some conversion utilities)
+#
+# Output:
+#   - Allure-compatible JSON files in target/allure-results/
+#   - Performance metrics included in Allure reports
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Integrates performance test results with Allure reporting
+#   - Adds environment metadata to results
+#   - Supports multiple performance testing tools
+#   - Results can be combined with UI/API test results
+#
+# Last Updated: January 2026
 
 set -e
 

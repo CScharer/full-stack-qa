@@ -1,8 +1,42 @@
 #!/bin/bash
 # scripts/ci/add-environment-labels.sh
-# Adds environment labels to Allure result files to prevent deduplication across environments
-# This script processes results from the merged directory and adds environment labels based on
-# the source artifact path or file metadata
+# Allure Environment Labels Adder
+#
+# Purpose: Add environment labels to Allure result files to prevent deduplication across environments
+#
+# Usage:
+#   ./scripts/ci/add-environment-labels.sh [RESULTS_DIR] [SOURCE_DIR]
+#
+# Parameters:
+#   RESULTS_DIR  Directory containing merged Allure results (default: "allure-results-combined")
+#   SOURCE_DIR   Directory containing source test results (default: "all-test-results")
+#
+# Examples:
+#   ./scripts/ci/add-environment-labels.sh
+#   ./scripts/ci/add-environment-labels.sh allure-results-combined all-test-results
+#   ./scripts/ci/add-environment-labels.sh merged-results source-results
+#
+# Description:
+#   This script processes Allure result files from the merged directory and adds environment
+#   labels based on the source artifact path or file metadata. This prevents test results
+#   from different environments (dev, test, prod) from being deduplicated in Allure reports.
+#
+# Dependencies:
+#   - jq (JSON processor) for parsing and modifying Allure result files
+#   - Allure result files (*-result.json) in RESULTS_DIR
+#   - Source directory structure indicating environment
+#
+# Output:
+#   - Modified Allure result files with environment labels
+#   - Console output showing labels added
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline after merging results from multiple environments
+#   - Prevents test deduplication across environments
+#   - Adds labels based on source artifact paths or metadata
+#
+# Last Updated: January 2026
 
 set -e
 

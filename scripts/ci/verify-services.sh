@@ -1,14 +1,45 @@
 #!/bin/bash
-# Verify Backend and Frontend Services Are Running
-# Usage: ./scripts/ci/verify-services.sh <base-url> [timeout-seconds]
+# scripts/ci/verify-services.sh
+# Service Verification
 #
-# Arguments:
-#   base-url       - Base URL for the environment (e.g., http://localhost:3003)
-#   timeout-seconds - Timeout in seconds for waiting for services (default: 5)
+# Purpose: Verify that Backend and Frontend services are running and responding
+#
+# Usage:
+#   ./scripts/ci/verify-services.sh <BASE_URL> [TIMEOUT_SECONDS]
+#
+# Parameters:
+#   BASE_URL         Base URL for the environment (e.g., http://localhost:3003)
+#   TIMEOUT_SECONDS  Timeout in seconds for waiting for services (default: 5, or from config)
 #
 # Examples:
 #   ./scripts/ci/verify-services.sh http://localhost:3003
-#   ./scripts/ci/verify-services.sh http://localhost:3004 5
+#   ./scripts/ci/verify-services.sh http://localhost:3004 10
+#
+# Description:
+#   This script verifies that both Backend and Frontend services are running and
+#   responding to HTTP requests. It checks:
+#   - Frontend service (BASE_URL)
+#   - Backend API service (BASE_URL/api/v1/health or /docs)
+#
+#   Uses timeout from centralized config (config/environments.json) if available.
+#
+# Dependencies:
+#   - curl (for HTTP health checks)
+#   - config/environments.json (for timeout configuration, optional)
+#   - jq (for reading config, optional)
+#   - Services must be running
+#
+# Output:
+#   - Console output showing verification status
+#   - Exit code: 0 if both services verified, 1 if verification fails
+#
+# Notes:
+#   - Used in CI/CD pipeline to verify services before tests
+#   - Reads timeout from centralized config if available
+#   - Fails fast if either service is not responding
+#   - Provides clear error messages for troubleshooting
+#
+# Last Updated: January 2026
 
 set -e
 

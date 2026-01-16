@@ -1,11 +1,46 @@
 #!/bin/bash
+# scripts/tests/frameworks/run-vibium-tests.sh
 # Vibium Test Runner
-# Run Vibium browser automation tests using Vitest
-# Usage: ./scripts/run-vibium-tests.sh [options]
+#
+# Purpose: Run Vibium browser automation tests using Vitest
+#
+# Usage:
+#   ./scripts/tests/frameworks/run-vibium-tests.sh [OPTIONS]
+#
 # Options:
-#   --watch    Run tests in watch mode
-#   --ui       Run tests with UI
-#   --coverage Generate coverage report
+#   --watch      Run tests in watch mode (auto-rerun on file changes)
+#   --ui         Run tests with Vitest UI (interactive interface)
+#   --coverage   Generate coverage report
+#
+# Examples:
+#   ./scripts/tests/frameworks/run-vibium-tests.sh                    # Run tests normally
+#   ./scripts/tests/frameworks/run-vibium-tests.sh --watch            # Watch mode
+#   ./scripts/tests/frameworks/run-vibium-tests.sh --ui               # UI mode
+#   ./scripts/tests/frameworks/run-vibium-tests.sh --coverage         # With coverage
+#
+# Description:
+#   This script runs Vibium browser automation tests using Vitest.
+#   Vibium is a TypeScript-based testing framework for browser automation.
+#   Tests are located in vibium/tests/.
+#
+# Dependencies:
+#   - Node.js 20+
+#   - npm (installed in vibium/ directory)
+#   - Vibium dependencies (installed via npm)
+#   - Vitest test framework (installed via npm)
+#
+# Output:
+#   - Test results in console output
+#   - Coverage reports in vibium/coverage/ (if --coverage used)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Automatically installs dependencies if node_modules/ is missing
+#   - Watch mode useful for development
+#   - UI mode provides interactive test execution
+#   - Coverage reports help identify untested code
+#
+# Last Updated: January 2026
 
 set -e
 

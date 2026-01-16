@@ -1,7 +1,46 @@
 #!/bin/bash
-# scripts/validate-pre-commit.sh
-# Pre-commit validation automation script
-# Automates common pre-commit checks to prevent pipeline failures
+# scripts/quality/validate-pre-commit.sh
+# Pre-Commit Validation Script
+#
+# Purpose: Automate common pre-commit checks to prevent pipeline failures
+#
+# Usage:
+#   ./scripts/quality/validate-pre-commit.sh
+#
+# Description:
+#   This script runs comprehensive validation checks before code is committed:
+#   - Code compilation (Maven)
+#   - Node.js project validation (package-lock.json sync)
+#   - TypeScript type checking
+#   - GitHub Actions workflow validation
+#   - Shell script syntax validation
+#   - Security and secrets scanning
+#
+#   Used by pre-push Git hooks to ensure code quality before pushing to remote.
+#
+# Examples:
+#   ./scripts/quality/validate-pre-commit.sh
+#
+# Dependencies:
+#   - Maven wrapper (./mvnw)
+#   - Java 21+
+#   - Node.js 20+ (for TypeScript projects)
+#   - npm (for package-lock.json validation)
+#   - yamllint or yq (for YAML validation, optional)
+#   - ShellCheck (for shell script validation, optional)
+#
+# Output:
+#   - Validation results for each check
+#   - Summary of passed/failed/warning checks
+#   - Exit code: 0 if all checks pass, non-zero if any fail
+#
+# Notes:
+#   - Used in pre-push Git hooks
+#   - Comprehensive validation prevents pipeline failures
+#   - Continues checking even if one check fails (shows all issues)
+#   - Provides clear error messages for troubleshooting
+#
+# Last Updated: January 2026
 
 set -e
 

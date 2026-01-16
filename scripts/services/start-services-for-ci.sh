@@ -1,7 +1,45 @@
 #!/bin/bash
-# Start Backend and Frontend services for CI/CD testing
-# This script checks if services are running and starts them if needed
-# It's idempotent - safe to run multiple times
+# scripts/services/start-services-for-ci.sh
+# CI/CD Services Starter
+#
+# Purpose: Start Backend and Frontend services for CI/CD testing (idempotent)
+#
+# Usage:
+#   ./scripts/services/start-services-for-ci.sh [ENVIRONMENT]
+#
+# Parameters:
+#   ENVIRONMENT   Environment to start services for: dev, test, prod (default: "dev" or from ENVIRONMENT env var)
+#
+# Examples:
+#   ./scripts/services/start-services-for-ci.sh
+#   ./scripts/services/start-services-for-ci.sh test
+#   ENVIRONMENT=prod ./scripts/services/start-services-for-ci.sh
+#
+# Description:
+#   This script starts Backend and Frontend services for CI/CD testing. It's idempotent -
+#   safe to run multiple times. It checks if services are already running and only starts
+#   them if needed. Services run without auto-reload for CI/CD stability.
+#
+# Dependencies:
+#   - Python 3.13+ (for Backend)
+#   - Node.js 20+ (for Frontend)
+#   - Backend virtual environment (backend/venv/)
+#   - Frontend dependencies (frontend/node_modules/)
+#   - scripts/ci/env-config.sh (for port configuration)
+#
+# Output:
+#   - Service startup status
+#   - PID files created (.service-pids)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Idempotent: safe to run multiple times
+#   - Checks if services are already running before starting
+#   - Disables auto-reload for CI/CD stability
+#   - Stores PIDs for graceful shutdown
+#   - Used in GitHub Actions workflows
+#
+# Last Updated: January 2026
 
 set -e
 

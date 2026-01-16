@@ -1,6 +1,38 @@
 #!/bin/bash
-# Run ONE GOAL Frontend Tests
-# This script runs the frontend test suite
+# scripts/tests/frameworks/run-frontend-tests.sh
+# Frontend Test Runner
+#
+# Purpose: Run frontend tests for the ONE GOAL Next.js application
+#
+# Usage:
+#   ./scripts/tests/frameworks/run-frontend-tests.sh
+#
+# Description:
+#   This script runs the Next.js frontend test suite using Vitest.
+#   Tests are located in frontend/__tests__/ and cover React components,
+#   API routes, and user interactions.
+#
+# Examples:
+#   ./scripts/tests/frameworks/run-frontend-tests.sh
+#
+# Dependencies:
+#   - Node.js 20+
+#   - npm (installed in frontend/ directory)
+#   - Frontend dependencies (installed via npm)
+#   - Vitest test framework (installed via npm)
+#
+# Output:
+#   - Test results in console output
+#   - Coverage reports (if configured)
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Installs dependencies if node_modules/ is missing
+#   - Uses Vitest for test execution
+#   - Supports snapshot testing
+#   - May require frontend service to be running for integration tests
+#
+# Last Updated: January 2026
 
 set -e
 

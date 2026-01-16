@@ -1,21 +1,45 @@
 #!/bin/bash
-# Start ONE GOAL Frontend Application
-# This script starts the Next.js frontend server for the specified environment
+# scripts/services/start-fe.sh
+# Frontend Service Starter
 #
-# USAGE:
-#   ./scripts/start-fe.sh [OPTIONS]
+# Purpose: Start the Next.js frontend application for the specified environment
 #
-# ENVIRONMENT OPTIONS:
+# Usage:
+#   ./scripts/services/start-fe.sh [OPTIONS]
+#
+# Options:
 #   --env ENV    or  -e ENV     Environment: dev, test, or prod (default: dev)
 #   --env=ENV    or  -e=ENV     Same as above with equals sign
+#   --help                       Show full usage information
 #
-# EXAMPLES:
-#   ./scripts/start-fe.sh                    # Default: dev environment
-#   ./scripts/start-fe.sh --env test         # Test environment
-#   ./scripts/start-fe.sh -e prod            # Production environment
-#   ./scripts/start-fe.sh --env=dev          # Dev with equals syntax
+# Examples:
+#   ./scripts/services/start-fe.sh                    # Default: dev environment
+#   ./scripts/services/start-fe.sh --env test         # Test environment
+#   ./scripts/services/start-fe.sh -e prod            # Production environment
+#   ./scripts/services/start-fe.sh --env=dev          # Dev with equals syntax
 #
-# Run with --help for full usage information
+# Description:
+#   This script starts the Next.js frontend server for the ONE GOAL application.
+#   It reads configuration from config/environments.json and starts the server
+#   on the appropriate port for the specified environment.
+#
+# Dependencies:
+#   - Node.js 20+
+#   - npm (installed in frontend/ directory)
+#   - config/environments.json (for port and API endpoint configuration)
+#
+# Output:
+#   - Frontend server running on configured port
+#   - Console output showing server status and logs
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Uses centralized configuration from config/environments.json
+#   - Automatically connects to backend API for the specified environment
+#   - Supports hot-reload for development
+#   - Handles environment-specific API endpoints
+#
+# Last Updated: January 2026
 
 set -e
 

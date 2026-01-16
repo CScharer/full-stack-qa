@@ -1,11 +1,46 @@
 #!/bin/bash
-# Convert Artillery Test Results to Allure Format
-# Usage: ./scripts/ci/convert-artillery-to-allure.sh <allure-results-dir> <artillery-results-dir> [environment]
+# scripts/ci/convert-artillery-to-allure.sh
+# Artillery to Allure Results Converter
 #
-# Arguments:
-#   allure-results-dir    - Directory where Allure results should be stored
-#   artillery-results-dir - Directory containing Artillery JSON results
-#   environment           - Optional environment name (dev, test, prod)
+# Purpose: Convert Artillery test results to Allure-compatible JSON format
+#
+# Usage:
+#   ./scripts/ci/convert-artillery-to-allure.sh [ALLURE_RESULTS_DIR] [ARTILLERY_RESULTS_DIR] [ENVIRONMENT]
+#
+# Parameters:
+#   ALLURE_RESULTS_DIR    Directory where Allure results should be stored (default: "allure-results-combined")
+#   ARTILLERY_RESULTS_DIR Directory containing Artillery JSON results (default: "playwright/artillery-results")
+#   ENVIRONMENT           Optional environment name for metadata: dev, test, prod (optional)
+#
+# Examples:
+#   ./scripts/ci/convert-artillery-to-allure.sh
+#   ./scripts/ci/convert-artillery-to-allure.sh allure-results playwright/artillery-results dev
+#   ./scripts/ci/convert-artillery-to-allure.sh combined-results artillery/output test
+#
+# Description:
+#   This script converts Artillery browser-level load test results (JSON format) into
+#   Allure-compatible JSON files. It reads Artillery result files and generates Allure
+#   result files (*-result.json) with test names, status, duration, metrics, and environment metadata.
+#
+# Dependencies:
+#   - Artillery test results (JSON files in ARTILLERY_RESULTS_DIR)
+#   - jq (JSON processor) for parsing Artillery results
+#   - Allure metadata utilities (scripts/ci/allure-metadata-utils.sh)
+#   - Python 3.x (for some conversion utilities, optional)
+#
+# Output:
+#   - Allure-compatible JSON files in ALLURE_RESULTS_DIR
+#   - Performance metrics included in test results
+#   - Environment metadata included
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline to integrate Artillery results with Allure reports
+#   - Handles Artillery result file structure and naming
+#   - Includes Core Web Vitals metrics (LCP, FCP, CLS, TTI)
+#   - Adds environment labels for filtering in Allure reports
+#
+# Last Updated: January 2026
 
 set -e
 

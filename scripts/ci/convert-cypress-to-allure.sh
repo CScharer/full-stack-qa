@@ -1,11 +1,46 @@
 #!/bin/bash
-# Convert Cypress Test Results to Allure Format
-# Usage: ./scripts/ci/convert-cypress-to-allure.sh <allure-results-dir> <cypress-results-dir> [environment]
+# scripts/ci/convert-cypress-to-allure.sh
+# Cypress to Allure Results Converter
 #
-# Arguments:
-#   allure-results-dir  - Directory where Allure results should be stored
-#   cypress-results-dir - Directory containing Cypress test results
-#   environment         - Optional environment name (dev, test, prod)
+# Purpose: Convert Cypress test results to Allure-compatible JSON format
+#
+# Usage:
+#   ./scripts/ci/convert-cypress-to-allure.sh [ALLURE_RESULTS_DIR] [CYPRESS_RESULTS_DIR] [ENVIRONMENT]
+#
+# Parameters:
+#   ALLURE_RESULTS_DIR   Directory where Allure results should be stored (default: "allure-results-combined")
+#   CYPRESS_RESULTS_DIR  Directory containing Cypress test results (default: "cypress/cypress")
+#   ENVIRONMENT          Optional environment name for metadata: dev, test, prod (optional)
+#
+# Examples:
+#   ./scripts/ci/convert-cypress-to-allure.sh
+#   ./scripts/ci/convert-cypress-to-allure.sh allure-results cypress/cypress dev
+#   ./scripts/ci/convert-cypress-to-allure.sh combined-results cypress/cypress/results test
+#
+# Description:
+#   This script converts Cypress test results (JSON format) into Allure-compatible JSON files.
+#   It reads Cypress result files and generates Allure result files (*-result.json) with
+#   test names, status, duration, attachments (screenshots, videos), and environment metadata.
+#
+# Dependencies:
+#   - Cypress test results (JSON files in CYPRESS_RESULTS_DIR)
+#   - jq (JSON processor) for parsing Cypress results
+#   - Allure metadata utilities (scripts/ci/allure-metadata-utils.sh)
+#   - Python 3.x (for some conversion utilities, optional)
+#
+# Output:
+#   - Allure-compatible JSON files in ALLURE_RESULTS_DIR
+#   - Screenshots and videos attached to test results
+#   - Environment metadata included
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline to integrate Cypress results with Allure reports
+#   - Handles Cypress result file structure and naming
+#   - Preserves screenshots and videos as attachments
+#   - Adds environment labels for filtering in Allure reports
+#
+# Last Updated: January 2026
 
 set -e
 

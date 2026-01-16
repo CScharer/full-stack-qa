@@ -1,6 +1,42 @@
 #!/bin/bash
 # scripts/ci/merge-allure-results.sh
-# Logic to merge results from multiple environments into one directory
+# Allure Results Merger
+#
+# Purpose: Merge Allure test results from multiple environments into a single directory
+#
+# Usage:
+#   ./scripts/ci/merge-allure-results.sh [SOURCE_DIR] [TARGET_DIR]
+#
+# Parameters:
+#   SOURCE_DIR   Source directory containing environment-specific results (default: "all-test-results")
+#   TARGET_DIR   Target directory for merged results (default: "allure-results-combined")
+#
+# Examples:
+#   ./scripts/ci/merge-allure-results.sh                              # Default directories
+#   ./scripts/ci/merge-allure-results.sh test-results merged-results   # Custom directories
+#
+# Description:
+#   This script merges Allure test results from multiple environments (dev, test, prod)
+#   into a single directory for combined reporting. It searches recursively for Allure
+#   result files (*-result.json, *-container.json, *-attachment.*) and copies them
+#   to the target directory.
+#
+# Dependencies:
+#   - Source directory with Allure results
+#   - Standard Unix utilities (find, cp, mkdir)
+#
+# Output:
+#   - Merged results in TARGET_DIR (default: allure-results-combined/)
+#   - Console output showing merge progress
+#   - Exit code: 0 on success, non-zero on failure
+#
+# Notes:
+#   - Used in CI/CD pipeline to combine results from multiple test runs
+#   - Handles environment-specific subdirectories
+#   - Preserves all Allure result file types
+#   - Creates target directory if it doesn't exist
+#
+# Last Updated: January 2026
 
 set -e
 

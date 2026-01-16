@@ -1,8 +1,46 @@
 #!/bin/bash
 # scripts/ci/wait-for-grid.sh
-# Waits for Selenium Grid to be ready (Optimized: Aggressive timeout and minimal sleep)
-# This script is a wrapper around wait-for-service.sh for Selenium Grid
-# Enhanced with optional version validation
+# Selenium Grid Waiter
+#
+# Purpose: Wait for Selenium Grid to be ready before running browser tests
+#
+# Usage:
+#   ./scripts/ci/wait-for-grid.sh [GRID_URL] [TIMEOUT] [SKIP_VERSION_CHECK] [SELENIUM_VERSION]
+#
+# Parameters:
+#   GRID_URL            Selenium Grid status URL (default: http://localhost:4444/wd/hub/status)
+#   TIMEOUT             Maximum wait time in seconds (default: 5)
+#   SKIP_VERSION_CHECK  Skip version validation: "true" or "false" (default: "false")
+#   SELENIUM_VERSION    Expected Selenium version for validation (optional)
+#
+# Examples:
+#   ./scripts/ci/wait-for-grid.sh
+#   ./scripts/ci/wait-for-grid.sh http://localhost:4444/wd/hub/status 10
+#   ./scripts/ci/wait-for-grid.sh "" 5 "true" "4.39.0"
+#
+# Description:
+#   This script waits for Selenium Grid to be ready by checking its status endpoint.
+#   It uses the centralized wait-for-service.sh utility with aggressive timeouts
+#   for fast CI/CD pipeline execution. Optionally validates Selenium version.
+#
+# Dependencies:
+#   - scripts/ci/wait-for-service.sh (centralized wait utility)
+#   - curl (for HTTP health checks)
+#   - jq (for version validation, optional)
+#   - Selenium Grid must be starting or already running
+#
+# Output:
+#   - Console output showing wait progress
+#   - Version validation results (if enabled)
+#   - Exit code: 0 if Grid ready, 1 if timeout or version mismatch
+#
+# Notes:
+#   - Uses aggressive 5-second timeout for fast CI/CD execution
+#   - Wrapper around wait-for-service.sh for convenience
+#   - Optional version validation ensures client/server version match
+#   - Used in CI/CD pipeline before browser test execution
+#
+# Last Updated: January 2026
 
 set -e
 
