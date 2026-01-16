@@ -58,7 +58,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2025-12-30
+- **Last Review**: 2026-01-16 (Item 5.2 - Dependency updates)
 - **Next Review**: 2026-01-30 (recommended)
 
 ---
@@ -87,6 +87,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Maven Compiler Plugin | 3.13.0 | 3.14.1 | [⚠️] | 2025-12-30 | Current: 3.13.0, update available: 3.14.1 |
 | Maven Surefire Plugin | 3.5.4 | 3.5.4 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Maven Checkstyle Plugin | 3.6.0 | 3.6.0 | [✅] | - | Current |
+| Checkstyle Tool | 13.0.0 | 13.0.0 | [✅] | 2026-01-16 | Updated from 12.3.0 (Item 5.2) |
 | SpotBugs | 4.9.8 | 4.9.8 | [✅] | - | Current |
 | PMD | 3.27.0 | 3.27.0 | [✅] | - | Current |
 
@@ -109,6 +110,11 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Jackson Annotations | 2.20 | 2.20 | [✅] | 2025-12-19 | Compatible with Jackson 3.0.0 |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | MSSQL JDBC | 13.2.1.jre11 | 13.2.1.jre11 | [✅] | 2025-12-30 | Current stable version |
+| PostgreSQL JDBC | 42.7.9 | 42.7.9 | [✅] | 2026-01-16 | Updated from 42.7.8 (Item 5.2) |
+| JSoup | 1.22.1 | 1.22.1 | [✅] | 2026-01-16 | Updated from 1.21.2 (Item 5.2) |
+| Google Cloud Secret Manager | 2.82.0 | 2.82.0 | [✅] | 2026-01-16 | Updated from 2.81.0 (Item 5.2) |
+| ByteBuddy | 1.18.4 | 1.18.4 | [✅] | 2026-01-16 | Updated from 1.18.3 (Item 5.2) |
+| Cucumber Reporting | 5.10.2 | 5.10.2 | [✅] | 2026-01-16 | Updated from 5.10.1 (Item 5.2) |
 
 ---
 
@@ -316,6 +322,12 @@ The `overrides` section forces all instances of the package (including transitiv
 - **pytest-cov**: >=4.1.0 → 7.0.0 (PR #51)
 - **Log4j 2**: 2.22.0 → 2.25.3 (Dependabot PR #52)
 - **Vitest**: 1.1.0 → 4.0.16 (Dependabot PR #48)
+- **Checkstyle Tool**: 12.3.0 → 13.0.0 (Item 5.2, 2026-01-16)
+- **PostgreSQL JDBC**: 42.7.8 → 42.7.9 (Item 5.2, 2026-01-16)
+- **JSoup**: 1.21.2 → 1.22.1 (Item 5.2, 2026-01-16)
+- **Google Cloud Secret Manager**: 2.81.0 → 2.82.0 (Item 5.2, 2026-01-16)
+- **ByteBuddy**: 1.18.3 → 1.18.4 (Item 5.2, 2026-01-16)
+- **Cucumber Reporting**: 5.10.1 → 5.10.2 (Item 5.2, 2026-01-16)
 
 ---
 
@@ -392,7 +404,7 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2025-12-30
+- **Last Updated**: 2026-01-16
 - **Next Review**: 2026-01-30 (recommended)
 - **Maintainer**: Development Team
 

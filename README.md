@@ -1182,7 +1182,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | **JSON** | Gson | 2.13.2 |
 | **Excel** | Apache POI | 5.5.1 |
 | **PDF** | PDFBox | 3.0.6 |
-| **Security** | Google Cloud Secret Manager | 2.80.0 |
+| **Security** | Google Cloud Secret Manager | 2.82.0 |
 | **Driver Management** | WebDriverManager | 6.3.3 |
 | **UI Testing** | Playwright (TS) | 1.57.0 |
 | **UI Testing** | Cypress (TS) | 15.8.1 |
