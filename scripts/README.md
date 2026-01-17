@@ -303,8 +303,66 @@ All scripts were organized into logical subdirectories for better maintainabilit
 - **Issues Found & Fixed**: 11
 - **Total Files Modified**: 60+
 
+### Script Headers and Documentation
+
+**Last Updated**: January 16, 2026
+
+All commonly used scripts (51 scripts) now have comprehensive headers that include:
+- **Purpose**: Brief description of what the script does
+- **Usage**: Command-line syntax and options
+- **Parameters**: Detailed parameter descriptions
+- **Examples**: Common usage examples
+- **Dependencies**: Required tools and dependencies
+- **Output**: What the script produces
+- **Notes**: Additional important information
+- **Last Updated**: Date of last modification
+
+**Scripts with Headers**:
+- ✅ All service scripts (5 scripts)
+- ✅ All quality scripts (3 scripts)
+- ✅ All test execution scripts (5 scripts)
+- ✅ All framework test runners (8 scripts)
+- ✅ All performance test runners (4 scripts)
+- ✅ All build & reporting scripts (3 scripts)
+- ✅ All Docker scripts (4 scripts)
+- ✅ All utility scripts (3 scripts)
+- ✅ All library scripts (1 script)
+- ✅ Key CI/CD scripts (20 scripts)
+- ✅ Test utility scripts (1 script)
+
+**Header Template**:
+```bash
+#!/bin/bash
+# scripts/path/to/script.sh
+# Script Name
+#
+# Purpose: Brief description
+#
+# Usage:
+#   ./scripts/path/to/script.sh [OPTIONS]
+#
+# Parameters:
+#   PARAM    Description
+#
+# Examples:
+#   ./scripts/path/to/script.sh
+#
+# Dependencies:
+#   - Dependency list
+#
+# Output:
+#   - Output description
+#   - Exit code information
+#
+# Notes:
+#   - Additional notes
+#
+# Last Updated: January 2026
+```
+
 ### Maintenance Notes
 
 - When adding new scripts, place them in appropriate subdirectories
 - Test `SCRIPT_DIR` calculations when moving scripts
 - Update this README when adding new scripts
+- **Always add comprehensive headers** to new scripts using the template above

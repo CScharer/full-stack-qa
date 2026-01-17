@@ -1206,7 +1206,7 @@ This section documents the historical context and key fixes that were implemente
 
 **Next Steps**:
 - Test with Allure3 (may have different container processing logic)
-- See `docs/work/20260111_ALLURE_SUITES_TAB_ISSUE.md` for detailed investigation
+- See `docs/work/20260117_TEST_REPORTING_ISSUES.md` for detailed investigation
 
 **Result**: Containers are created correctly, but Allure2 only displays the first one in Suites tab. All frameworks appear correctly in Overview section.
 
