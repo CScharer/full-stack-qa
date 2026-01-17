@@ -385,9 +385,9 @@ If a port is already in use:
 
 ### Configuration Centralization
 
-All hardcoded fallback values have been removed from configuration scripts. The system now:
+The configuration system has been fully centralized. The system now:
 
-- ✅ **Requires** `config/environments.json` - No silent fallbacks to hardcoded values
+- ✅ **Uses** `config/environments.json` as primary source - Falls back to hardcoded values if unavailable
 - ✅ **Auto-syncs** for Java tests - Maven automatically copies config during build
 - ✅ **Validates** configuration availability - Clear error messages if config is missing
 - ✅ **Documents** priority order - Comprehensive guide for all frameworks

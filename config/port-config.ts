@@ -18,7 +18,6 @@
  */
 // Import JSON files - paths are relative to this file's location (config/)
 import envConfig from './environments.json';
-import portConfig from './ports.json';  // Fallback for backward compatibility
 
 export interface PortConfig {
   frontend: {
@@ -78,6 +77,28 @@ export interface FullConfig {
 export type Environment = 'dev' | 'test' | 'prod';
 
 /**
+ * Get hardcoded port configuration as fallback when environments.json is unavailable.
+ * These values match the previous ports.json values for backward compatibility.
+ */
+function getHardcodedPortConfig(env: Environment): PortConfig {
+  const hardcodedConfigs: Record<Environment, PortConfig> = {
+    dev: {
+      frontend: { port: 3003, url: 'http://localhost:3003' },
+      backend: { port: 8003, url: 'http://localhost:8003' },
+    },
+    test: {
+      frontend: { port: 3004, url: 'http://localhost:3004' },
+      backend: { port: 8004, url: 'http://localhost:8004' },
+    },
+    prod: {
+      frontend: { port: 3005, url: 'http://localhost:3005' },
+      backend: { port: 8005, url: 'http://localhost:8005' },
+    },
+  };
+  return hardcodedConfigs[env];
+}
+
+/**
  * Get port configuration for a specific environment
  * @param environment - Environment name (dev, test, prod)
  * @param defaultEnv - Default environment if invalid (defaults to 'dev')
@@ -98,13 +119,9 @@ export function getPortsForEnvironment(
     };
   }
   
-  // Fallback to ports.json (backward compatibility)
-  if (env in portConfig) {
-    return portConfig[env];
-  }
-  
-  console.warn(`⚠️  Unknown environment: ${environment}, defaulting to ${defaultEnv}`);
-  return portConfig[defaultEnv];
+  // Fallback to hardcoded values (matching previous ports.json values)
+  console.warn(`⚠️  Warning: environments.json not available, using hardcoded fallback for ${env}`);
+  return getHardcodedPortConfig(env);
 }
 
 /**

@@ -105,7 +105,7 @@ This directory contains all project documentation and analysis reports for the C
   - **Item 2.3**: Verified no PMD UselessParentheses violations (already complete)
   - **Item 3.1**: Updated documentation dates in `docs/NAVIGATION.md` and `docs/README.md`
   - **Item 3.2**: Validated all documentation links (79 markdown files, all links valid)
-  - **Item 4.1**: Documented legacy `ports.json` deprecation plan in `config/README.md`
+  - **Item 4.1**: Removed legacy `ports.json` file (January 17, 2026) - all code now uses `environments.json` with hardcoded fallback
   - **Item 5.1**: Resolved Maven project configuration warning (IDE-specific, user action required)
   - **Item 5.2**: Updated 7 dependency versions (patch/minor updates, no breaking changes)
   - **Item 6.1**: Added comprehensive headers to 51 scripts (Purpose, Usage, Parameters, Examples, Dependencies, Output, Notes, Last Updated)
