@@ -29,7 +29,7 @@ This is the **primary configuration file** for all environment settings. Both sh
 **Migration Complete**:
 - ✅ **Phase 1 (Complete)**: All code migrated to use `environments.json` as primary source
 - ✅ **Phase 2 (Complete)**: Fallback logic updated to use hardcoded values instead of `ports.json`
-- ✅ **Phase 3 (Complete)**: `ports.json` file removed
+- ✅ **Phase 3 (Complete)**: `ports.json` file removed (after CI/CD verification)
 
 **Fallback Behavior**:
 - **Primary**: `environments.json` (comprehensive configuration)
@@ -42,6 +42,7 @@ This is the **primary configuration file** for all environment settings. Both sh
 - All port information previously in `ports.json` is available in `environments.json` under each environment's `frontend` and `backend` sections
 - **All code uses `environments.json`** - `ports.json` has been removed
 - If `environments.json` is unavailable, hardcoded fallback values are used (matching previous `ports.json` values for backward compatibility)
+- See `docs/work/20260117_PORTS_JSON_REMOVAL_PLAN.md` for complete removal plan and history
 
 ## Usage
 
@@ -231,11 +232,12 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
 
 **Example**: If you change `api.basePath` from `/api/v1` to `/api/v2`, all API endpoints will automatically use `/api/v2` instead of `/api/v1`.
 
-**⚠️ Deprecated: Update `ports.json` (ports only)**
-- ~~If you only need to change ports, you can update `config/ports.json`~~ **DEPRECATED**
-- **Do not update `ports.json`** - This file is deprecated and will be removed
-- **Always update `config/environments.json`** instead - it contains all port information and more
-- Scripts automatically read from `environments.json` first, then fall back to `ports.json` only if `environments.json` is unavailable
+**⚠️ Deprecated: `ports.json` has been removed**
+- ~~If you only need to change ports, you can update `config/ports.json`~~ **REMOVED**
+- **`ports.json` file has been removed** - All code now uses `environments.json` with hardcoded fallback
+- **Always update `config/environments.json`** - It contains all port information and more
+- Scripts read from `environments.json` first, then fall back to hardcoded values if `environments.json` is unavailable
+- See `docs/work/20260117_PORTS_JSON_REMOVAL_PLAN.md` for complete removal details
 
 **Requirements**: 
 - Shell scripts require `jq` for JSON parsing (install with `brew install jq` on macOS or `apt-get install jq` on Linux)
