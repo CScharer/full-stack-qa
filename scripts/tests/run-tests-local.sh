@@ -6,7 +6,10 @@
 #          Executes Cypress, Playwright, Robot Framework, and Vibium tests
 #
 # Usage:
-#   ./scripts/tests/run-tests-local.sh
+#   ./scripts/tests/run-tests-local.sh [ENVIRONMENT]
+#
+# Parameters:
+#   ENVIRONMENT    - Optional. Environment to run tests for: dev, test, or prod (default: dev)
 #
 # Description:
 #   This script runs test frameworks that don't require Docker:
@@ -18,7 +21,10 @@
 #   Selenium tests are skipped as they require Docker/Selenium Grid.
 #
 # Examples:
-#   ./scripts/tests/run-tests-local.sh
+#   ./scripts/tests/run-tests-local.sh           # Run tests for dev environment (default)
+#   ./scripts/tests/run-tests-local.sh dev      # Run tests for dev environment
+#   ./scripts/tests/run-tests-local.sh test     # Run tests for test environment
+#   ./scripts/tests/run-tests-local.sh prod     # Run tests for prod environment
 #
 # Dependencies:
 #   - Node.js 20+ (for Cypress, Playwright, Vibium)
@@ -56,13 +62,28 @@ NC='\033[0m' # No Color
 TESTS_PASSED=0
 TESTS_FAILED=0
 
+# Parse command-line arguments
+ENV_ARG="${1:-dev}"  # First argument, default to "dev"
+ENV_ARG=$(echo "$ENV_ARG" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase
+
+# Validate environment argument
+if [[ ! "$ENV_ARG" =~ ^(dev|test|prod)$ ]]; then
+    echo "❌ Error: Invalid environment '$ENV_ARG'"
+    echo "   Valid environments: dev, test, prod"
+    echo "   Usage: ./scripts/tests/run-tests-local.sh [dev|test|prod]"
+    exit 1
+fi
+
+# Set environment (command-line argument takes precedence over environment variable)
+ENVIRONMENT=${ENVIRONMENT:-"$ENV_ARG"}
+
 # Default values
 BASE_URL=${BASE_URL:-"https://www.google.com"}
-ENVIRONMENT=${ENVIRONMENT:-"dev"}  # Changed from "local" to "dev" (valid environment)
 
 # Set non-interactive flags to prevent prompts
 export CI=${CI:-true}
 export NON_INTERACTIVE=${NON_INTERACTIVE:-true}
+export ENVIRONMENT  # Export for use in test commands
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🧪 Running Tests Locally (No Docker)${NC}"
@@ -76,7 +97,7 @@ echo ""
 run_test_suite() {
     local suite_name=$1
     local command=$2
-    local timeout_seconds=${3:-1800}  # 30 minutes default timeout
+    local timeout_seconds=${3:-300}  # 5 minutes default timeout
     
     echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
     echo -e "${BLUE}🧪 Running: $suite_name (timeout: ${timeout_seconds}s)${NC}"
@@ -144,7 +165,7 @@ if [ -d "$SCRIPT_DIR/cypress" ]; then
         export BASE_URL=\"$BASE_URL\" && \
         export ENVIRONMENT=\"${ENVIRONMENT:-dev}\" && \
         export CI=true && \
-        npm run cypress:run" 600
+        npm run cypress:run" 300
 else
     echo -e "${YELLOW}⚠️  Cypress directory not found, skipping...${NC}"
 fi
@@ -157,7 +178,7 @@ if [ -d "$SCRIPT_DIR/playwright" ] && [ -f "$SCRIPT_DIR/playwright/package.json"
         export BASE_URL=\"$BASE_URL\" && \
         export ENVIRONMENT=\"${ENVIRONMENT:-dev}\" && \
         export CI=true && \
-        npm test" 600
+        npm test" 300
 else
     echo -e "${YELLOW}⚠️  Playwright directory or package.json not found, skipping...${NC}"
 fi
