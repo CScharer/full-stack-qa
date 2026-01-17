@@ -18,37 +18,31 @@ This is the **primary configuration file** for all environment settings. Both sh
 
 **Java Tests**: This file is automatically copied to `src/test/resources/config/environments.json` during Maven build (see `pom.xml` maven-resources-plugin configuration). Java tests load it from the classpath. **Do not edit the copy in `src/test/resources/config/`** - always edit `config/environments.json` (the source of truth).
 
-### `ports.json` (Ports Only - Legacy) ⚠️ **DEPRECATED**
+### `ports.json` (Ports Only - Legacy) ❌ **REMOVED**
 
-**Purpose**: Port assignments and URLs for all environments.
+**Purpose**: ~~Port assignments and URLs for all environments.~~ **This file has been removed.**
 
-**Status**: ⚠️ **DEPRECATED** - Maintained for backward compatibility only. **Will be removed in a future release.**
+**Status**: ❌ **REMOVED** - File deleted. All code now uses `environments.json` as primary source with hardcoded fallback values.
 
-**Deprecation Timeline**:
-- **Current (January 2026)**: Legacy file maintained as fallback
-- **Future**: Will be removed once all references are migrated to `environments.json`
-- **Migration Target**: All code should use `environments.json` directly
+**Removal Date**: January 17, 2026
 
-**Use Case**: ~~Use this file if you only need port configuration.~~ **Do not use this file for new code.** For all configuration needs, use `environments.json`.
+**Migration Complete**:
+- ✅ **Phase 1 (Complete)**: All code migrated to use `environments.json` as primary source
+- ✅ **Phase 2 (Complete)**: Fallback logic updated to use hardcoded values instead of `ports.json`
+- ✅ **Phase 3 (Complete)**: `ports.json` file removed (after CI/CD verification)
 
-**Migration Status**:
-- ✅ **Primary Source**: All scripts and code read from `environments.json` first
-- ✅ **Fallback Only**: `ports.json` is only used as a fallback if `environments.json` is unavailable
-- ✅ **No Direct Usage**: No code directly reads from `ports.json` - it's only used via fallback logic
-
-**Files Using `ports.json` (as fallback only)**:
-- `scripts/ci/port-config.sh` - Falls back to `ports.json` if `environments.json` unavailable
-- `config/port_config.py` - Falls back to `ports.json` if `environments.json` unavailable
-
-**Migration Plan**:
-1. ✅ **Phase 1 (Complete)**: All code migrated to use `environments.json` as primary source
-2. ⏳ **Phase 2 (Current)**: `ports.json` maintained as fallback for backward compatibility
-3. 🔜 **Phase 3 (Future)**: Remove fallback logic and `ports.json` file once stability is confirmed
+**Fallback Behavior**:
+- **Primary**: `environments.json` (comprehensive configuration)
+- **Fallback**: Hardcoded values (matching previous `ports.json` values)
+  - `dev`: frontend=3003, backend=8003
+  - `test`: frontend=3004, backend=8004
+  - `prod`: frontend=3005, backend=8005
 
 **Note**: 
-- All port information in `ports.json` is also available in `environments.json` under each environment's `frontend` and `backend` sections
-- **New code must use `environments.json`** - `ports.json` is deprecated and will be removed
-- The fallback to `ports.json` is only for edge cases where `environments.json` might be unavailable (should not happen in normal operation)
+- All port information previously in `ports.json` is available in `environments.json` under each environment's `frontend` and `backend` sections
+- **All code uses `environments.json`** - `ports.json` has been removed
+- If `environments.json` is unavailable, hardcoded fallback values are used (matching previous `ports.json` values for backward compatibility)
+- See `docs/work/20260117_PORTS_JSON_REMOVAL_PLAN.md` for complete removal plan and history
 
 ## Usage
 
@@ -61,11 +55,12 @@ export_environment_config "dev"
 # Now all config vars are set: FRONTEND_PORT, API_PORT, DATABASE_NAME, API_BASE_PATH, etc.
 ```
 
-**Using `port-config.sh` (ports only):**
+**Using `port-config.sh` (ports only - legacy):**
 ```bash
 source scripts/ci/port-config.sh
 eval "$(get_ports_for_environment "dev")"
 # Ports are set: FRONTEND_PORT, API_PORT, FRONTEND_URL, API_URL
+# Note: Falls back to hardcoded values if environments.json unavailable
 ```
 
 **Reading directly with jq:**
@@ -237,11 +232,12 @@ int backendPort = EnvironmentConfig.getBackendPort("dev");
 
 **Example**: If you change `api.basePath` from `/api/v1` to `/api/v2`, all API endpoints will automatically use `/api/v2` instead of `/api/v1`.
 
-**⚠️ Deprecated: Update `ports.json` (ports only)**
-- ~~If you only need to change ports, you can update `config/ports.json`~~ **DEPRECATED**
-- **Do not update `ports.json`** - This file is deprecated and will be removed
-- **Always update `config/environments.json`** instead - it contains all port information and more
-- Scripts automatically read from `environments.json` first, then fall back to `ports.json` only if `environments.json` is unavailable
+**⚠️ Deprecated: `ports.json` has been removed**
+- ~~If you only need to change ports, you can update `config/ports.json`~~ **REMOVED**
+- **`ports.json` file has been removed** - All code now uses `environments.json` with hardcoded fallback
+- **Always update `config/environments.json`** - It contains all port information and more
+- Scripts read from `environments.json` first, then fall back to hardcoded values if `environments.json` is unavailable
+- See `docs/work/20260117_PORTS_JSON_REMOVAL_PLAN.md` for complete removal details
 
 **Requirements**: 
 - Shell scripts require `jq` for JSON parsing (install with `brew install jq` on macOS or `apt-get install jq` on Linux)

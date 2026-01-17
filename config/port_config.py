@@ -21,37 +21,104 @@ from typing import Dict, Any, Optional
 PROJECT_ROOT = Path(__file__).parent.parent
 CONFIG_DIR = PROJECT_ROOT / 'config'
 ENVIRONMENTS_JSON = CONFIG_DIR / 'environments.json'
-PORTS_JSON = CONFIG_DIR / 'ports.json'  # Fallback for backward compatibility
 
 # Cache loaded config
 _config_cache: Optional[Dict[str, Any]] = None
-_ports_cache: Optional[Dict[str, Any]] = None
+
+
+def _get_hardcoded_config() -> Dict[str, Any]:
+    """
+    Get hardcoded configuration as fallback when environments.json is unavailable.
+    
+    Returns:
+        Hardcoded configuration dictionary matching environments.json structure.
+        These values match the previous ports.json values for backward compatibility.
+    """
+    return {
+        "api": {
+            "basePath": "/api/v1",
+            "healthEndpoint": "/health",
+            "docsEndpoint": "/docs",
+            "redocEndpoint": "/redoc"
+        },
+        "database": {
+            "directory": "data/core",
+            "schemaDatabase": "full_stack_qa.db",
+            "namingPattern": "full_stack_qa_{env}.db"
+        },
+        "timeouts": {
+            "serviceStartup": 120,
+            "serviceVerification": 30,
+            "apiClient": 10000,
+            "webServer": 120000,
+            "checkInterval": 2
+        },
+        "environments": {
+            "dev": {
+                "frontend": {"port": 3003, "url": "http://localhost:3003"},
+                "backend": {"port": 8003, "url": "http://localhost:8003"},
+                "database": {
+                    "name": "full_stack_qa_dev.db",
+                    "path": "data/core/full_stack_qa_dev.db"
+                },
+                "corsOrigins": [
+                    "http://127.0.0.1:3003",
+                    "http://localhost:3003",
+                    "http://0.0.0.0:3003"
+                ]
+            },
+            "test": {
+                "frontend": {"port": 3004, "url": "http://localhost:3004"},
+                "backend": {"port": 8004, "url": "http://localhost:8004"},
+                "database": {
+                    "name": "full_stack_qa_test.db",
+                    "path": "data/core/full_stack_qa_test.db"
+                },
+                "corsOrigins": [
+                    "http://127.0.0.1:3004",
+                    "http://localhost:3004",
+                    "http://0.0.0.0:3004"
+                ]
+            },
+            "prod": {
+                "frontend": {"port": 3005, "url": "http://localhost:3005"},
+                "backend": {"port": 8005, "url": "http://localhost:8005"},
+                "database": {
+                    "name": "full_stack_qa_prod.db",
+                    "path": "data/core/full_stack_qa_prod.db"
+                },
+                "corsOrigins": [
+                    "http://127.0.0.1:3005",
+                    "http://localhost:3005",
+                    "http://0.0.0.0:3005"
+                ]
+            }
+        }
+    }
 
 
 def _load_config() -> Dict[str, Any]:
-    """Load environments.json with caching."""
+    """
+    Load environments.json with caching, fallback to hardcoded values.
+    
+    Returns:
+        Configuration dictionary from environments.json or hardcoded fallback
+    """
     global _config_cache
     if _config_cache is None:
-        if not ENVIRONMENTS_JSON.exists():
-            raise FileNotFoundError(
-                f"Configuration file not found: {ENVIRONMENTS_JSON}. "
-                f"Expected at: {ENVIRONMENTS_JSON.absolute()}"
-            )
-        with open(ENVIRONMENTS_JSON, 'r', encoding='utf-8') as f:
-            _config_cache = json.load(f)
-    return _config_cache
-
-
-def _load_ports() -> Dict[str, Any]:
-    """Load ports.json with caching (fallback)."""
-    global _ports_cache
-    if _ports_cache is None:
-        if PORTS_JSON.exists():
-            with open(PORTS_JSON, 'r', encoding='utf-8') as f:
-                _ports_cache = json.load(f)
+        if ENVIRONMENTS_JSON.exists():
+            try:
+                with open(ENVIRONMENTS_JSON, 'r', encoding='utf-8') as f:
+                    _config_cache = json.load(f)
+            except (json.JSONDecodeError, IOError) as e:
+                print(f"⚠️  Warning: Failed to load {ENVIRONMENTS_JSON}: {e}")
+                print("⚠️  Falling back to hardcoded configuration values")
+                _config_cache = _get_hardcoded_config()
         else:
-            _ports_cache = {}
-    return _ports_cache
+            print(f"⚠️  Warning: Configuration file not found: {ENVIRONMENTS_JSON}")
+            print("⚠️  Falling back to hardcoded configuration values")
+            _config_cache = _get_hardcoded_config()
+    return _config_cache
 
 
 def get_environment_config(environment: str = 'dev', default_env: str = 'dev') -> Dict[str, Any]:
@@ -163,7 +230,7 @@ def get_ports_for_environment(environment: str = 'dev', default_env: str = 'dev'
     env = (environment or default_env).lower()
     config = _load_config()
     
-    # Try environments.json first (comprehensive config)
+    # Get environment configuration (from environments.json or hardcoded fallback)
     if 'environments' in config and env in config['environments']:
         env_data = config['environments'][env]
         return {
@@ -171,13 +238,17 @@ def get_ports_for_environment(environment: str = 'dev', default_env: str = 'dev'
             'backend': env_data['backend'],
         }
     
-    # Fallback to ports.json (backward compatibility)
-    ports = _load_ports()
-    if env in ports:
-        return ports[env]
-    
+    # Unknown environment - default to specified default_env
     print(f"⚠️  Unknown environment: {environment}, defaulting to {default_env}")
-    return ports.get(default_env, {
+    if 'environments' in config and default_env in config['environments']:
+        env_data = config['environments'][default_env]
+        return {
+            'frontend': env_data['frontend'],
+            'backend': env_data['backend'],
+        }
+    
+    # Final fallback to hardcoded dev values
+    return {
         'frontend': {'port': 3003, 'url': 'http://localhost:3003'},
         'backend': {'port': 8003, 'url': 'http://localhost:8003'},
-    })
+    }

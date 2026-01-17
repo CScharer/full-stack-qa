@@ -6,7 +6,7 @@ This document describes the centralized port configuration system used in this r
 
 ## Port Assignments
 
-Port assignments are documented in `docs/new_app/ONE_GOAL.md` and enforced via `config/ports.json` (single source of truth).
+Port assignments are documented in `docs/new_app/ONE_GOAL.md` and enforced via `config/environments.json` (single source of truth).
 
 ### Environment Port Mapping
 
@@ -18,7 +18,7 @@ Port assignments are documented in `docs/new_app/ONE_GOAL.md` and enforced via `
 
 ## Centralized Configuration
 
-**Single Source of Truth**: `config/environments.json` (recommended) or `config/ports.json` (legacy)
+**Single Source of Truth**: `config/environments.json`
 
 The `config/environments.json` file contains comprehensive configuration for all environments including:
 - Ports and URLs (frontend/backend)
@@ -29,7 +29,7 @@ The `config/environments.json` file contains comprehensive configuration for all
 
 **API Version Configuration**: The API base path (e.g., `/api/v1`) is centralized in `config/environments.json` under `api.basePath`. All code (backend, frontend, tests, scripts) reads from this single source of truth. To change the API version, update `api.basePath` in the config file. See `config/README.md` for details.
 
-The `config/ports.json` file is maintained for backward compatibility (ports only).
+**Note**: The legacy `config/ports.json` file has been removed (January 2026). All code now uses `config/environments.json` as the primary source with hardcoded fallback values if the config file is unavailable.
 
 **Shell Scripts**: 
 - Use `scripts/ci/env-config.sh` for comprehensive config (recommended)
@@ -39,7 +39,7 @@ The `config/ports.json` file is maintained for backward compatibility (ports onl
 
 **See Also**: 
 - [Service Scripts Guide](./SERVICE_SCRIPTS.md) for information on how service management scripts use port configuration
-- Configuration files are documented in `config/environments.json` and `config/ports.json` (see inline comments)
+- Configuration files are documented in `config/environments.json` (see inline comments)
 
 ### Usage
 
@@ -65,7 +65,7 @@ Configuration values are resolved using a consistent priority order across all f
 1. **Command-Line Arguments** (`--env`, `-e`, `--port`, etc.) - Highest priority
 2. **Environment Variables** (`ENVIRONMENT`, `API_PORT`, `FRONTEND_PORT`, `DATABASE_PATH`, etc.)
 3. **`.env` Files** (backend/.env, frontend/.env.local) - Framework-specific
-4. **Centralized Config Files** (`config/environments.json` or `config/ports.json`) - Single source of truth
+4. **Centralized Config Files** (`config/environments.json`) - Single source of truth
 5. **Default Values** - Framework-specific defaults (only used if all above sources fail)
 
 ### Framework-Specific Implementations
@@ -130,26 +130,24 @@ python -m backend.app.main
 **Priority Order:**
 1. Environment variables (`process.env.ENVIRONMENT`, `process.env.API_PORT`, etc.)
 2. Centralized config (`config/environments.json`)
-3. Legacy fallback (`config/ports.json`) - for backward compatibility
-4. Hardcoded defaults (only in fallback scenarios)
+3. Hardcoded defaults (only if `environments.json` is unavailable)
 
 **Example:**
 ```typescript
 // Environment variable takes precedence
 process.env.ENVIRONMENT = 'test';
-const config = getEnvironmentConfig('dev'); // Uses 'test' from env var
+const config = getEnvironmentConfig(); // Uses 'test' from env var
 
 // Falls back to config/environments.json
 const config = getEnvironmentConfig('dev'); // Uses 'dev' from config
 
-// Legacy fallback to config/ports.json (if environments.json missing)
-// Then hardcoded defaults (if ports.json also missing)
+// Falls back to hardcoded defaults (if environments.json missing)
 ```
 
 **Implementation Details:**
 - Functions like `getEnvironmentConfig()` accept `environment` parameter
 - If `environment` is not provided, reads from `process.env.ENVIRONMENT`
-- Falls back to `config/ports.json` if `config/environments.json` is missing (backward compatibility)
+- Falls back to hardcoded values if `config/environments.json` is missing
 - Used by: Cypress, Playwright, Vibium, Frontend
 
 #### Python Tests (`config/port_config.py`)
@@ -158,8 +156,7 @@ const config = getEnvironmentConfig('dev'); // Uses 'dev' from config
 1. Environment variables (`os.getenv('ENVIRONMENT')`)
 2. Function parameters (e.g., `get_backend_url('test')`)
 3. Centralized config (`config/environments.json`)
-4. Legacy fallback (`config/ports.json`) - for backward compatibility
-5. Hardcoded defaults (only in fallback scenarios)
+4. Hardcoded defaults (only if `environments.json` is unavailable)
 
 **Example:**
 ```python
@@ -177,7 +174,7 @@ backend_url = get_backend_url('dev')  # Uses 'dev' from config
 **Implementation Details:**
 - Functions accept `environment` parameter with optional `default_env`
 - If `environment` is `None` or empty, reads from `os.getenv('ENVIRONMENT', default_env)`
-- Falls back to `config/ports.json` if `config/environments.json` is missing
+- Falls back to hardcoded values if `config/environments.json` is missing
 - Used by: Robot Framework (via `ConfigHelper.py`), Locust tests, Backend tests
 
 #### Java Tests (`src/test/java/com/cjs/qa/config/EnvironmentConfig.java`)
@@ -338,7 +335,7 @@ Centralized configuration ensures:
 2. **Validate environment**: Ensure `ENVIRONMENT` is set correctly before starting services (defaults to `dev`)
 3. **Check port availability**: Scripts should verify ports are available before binding
 4. **Document changes**: If configuration needs to change, update `config/environments.json` (single source of truth) and `ONE_GOAL.md`
-5. **Use comprehensive config**: Prefer `config/environments.json` over `config/ports.json` for new code
+5. **Use comprehensive config**: All code uses `config/environments.json` (legacy `ports.json` has been removed)
 
 ## Files Using Configuration
 

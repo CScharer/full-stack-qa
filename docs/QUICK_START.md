@@ -151,4 +151,4 @@ Open browser: http://127.0.0.1:3003
 - [Local Development Guide](./guides/setup/LOCAL_DEVELOPMENT.md) - Complete local development guide
 - [Service Scripts Guide](./guides/infrastructure/SERVICE_SCRIPTS.md) - Service management scripts documentation
 - [Port Configuration Guide](./guides/infrastructure/PORT_CONFIGURATION.md) - Port assignments and configuration
-- Configuration files are documented in `config/environments.json` and `config/ports.json` (see inline comments)
+- Configuration files are documented in `config/environments.json` (see inline comments)
