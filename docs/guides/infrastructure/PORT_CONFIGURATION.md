@@ -29,7 +29,7 @@ The `config/environments.json` file contains comprehensive configuration for all
 
 **API Version Configuration**: The API base path (e.g., `/api/v1`) is centralized in `config/environments.json` under `api.basePath`. All code (backend, frontend, tests, scripts) reads from this single source of truth. To change the API version, update `api.basePath` in the config file. See `config/README.md` for details.
 
-**Note**: The legacy `config/ports.json` file has been removed (January 2026). All code now uses `config/environments.json` as the primary source with hardcoded fallback values if the config file is unavailable.
+**Note**: The legacy `config/ports.json` file has been removed (January 17, 2026). All code (Python, Shell scripts, TypeScript) now uses `config/environments.json` as the primary source with hardcoded fallback values if the config file is unavailable.
 
 **Shell Scripts**: 
 - Use `scripts/ci/env-config.sh` for comprehensive config (recommended)
