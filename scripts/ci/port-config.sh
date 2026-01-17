@@ -14,7 +14,7 @@
 # Description:
 #   This script provides port and URL configuration functions, reading from:
 #   - Primary: config/environments.json (comprehensive config)
-#   - Fallback: config/ports.json (legacy, deprecated)
+#   - Fallback: Hardcoded values (if environments.json unavailable)
 #
 #   ⚠️ DEPRECATED: This script is maintained for backward compatibility.
 #   New code should use env-config.sh instead, which provides more comprehensive
@@ -22,7 +22,7 @@
 #
 # Dependencies:
 #   - jq (JSON processor) - recommended but not required
-#   - config/environments.json (preferred) or config/ports.json (fallback)
+#   - config/environments.json (preferred) or hardcoded fallback values
 #
 # Functions Provided:
 #   - get_ports_for_environment(env) - Get frontend port, backend port, and URLs
@@ -40,11 +40,10 @@ set -e
 # Get script directory to find config JSON
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_CONFIG_JSON="${SCRIPT_DIR}/config/environments.json"
-PORT_CONFIG_JSON="${SCRIPT_DIR}/config/ports.json"  # Fallback for backward compatibility
 
 # Configuration (Single Source of Truth)
 # Documented in: docs/new_app/ONE_GOAL.md
-# Source: config/environments.json (comprehensive config) or config/ports.json (fallback)
+# Source: config/environments.json (comprehensive config) or hardcoded fallback values
 
 get_ports_for_environment() {
     local env=$(echo "${1:-dev}" | tr '[:upper:]' '[:lower:]')
@@ -65,23 +64,7 @@ get_ports_for_environment() {
         fi
     fi
     
-    # Fallback to ports.json (backward compatibility)
-    if [ -f "$PORT_CONFIG_JSON" ] && command -v jq &> /dev/null; then
-        local frontend_port=$(jq -r ".[\"$env\"].frontend.port" "$PORT_CONFIG_JSON" 2>/dev/null)
-        local backend_port=$(jq -r ".[\"$env\"].backend.port" "$PORT_CONFIG_JSON" 2>/dev/null)
-        local frontend_url=$(jq -r ".[\"$env\"].frontend.url" "$PORT_CONFIG_JSON" 2>/dev/null)
-        local backend_url=$(jq -r ".[\"$env\"].backend.url" "$PORT_CONFIG_JSON" 2>/dev/null)
-        
-        if [ "$frontend_port" != "null" ] && [ -n "$frontend_port" ]; then
-            echo "FRONTEND_PORT=$frontend_port"
-            echo "API_PORT=$backend_port"
-            echo "FRONTEND_URL=$frontend_url"
-            echo "API_URL=$backend_url"
-            return 0
-        fi
-    fi
-    
-    # Fallback to hardcoded values if JSON not available or jq not installed
+    # Fallback to hardcoded values if environments.json not available or jq not installed
     case "$env" in
         dev)
             echo "FRONTEND_PORT=3003"

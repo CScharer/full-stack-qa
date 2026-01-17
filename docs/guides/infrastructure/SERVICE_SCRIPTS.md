@@ -310,7 +310,7 @@ export_environment_config "dev"
 - `config/environments.json` - Single source of truth for all configuration
 
 ### `scripts/ci/port-config.sh` (Backward Compatibility)
-**Purpose**: Port configuration only (reads from `config/environments.json` or `config/ports.json`)  
+**Purpose**: Port configuration only (reads from `config/environments.json` with hardcoded fallback)  
 **Location**: `scripts/ci/port-config.sh`  
 **Usage**: Source this file and use `get_ports_for_environment`:
 ```bash
@@ -323,8 +323,8 @@ eval "$PORT_VARS"
 **Function Provided**:
 - **`get_ports_for_environment <environment>`**
   - Returns environment variables for ports
-  - Reads from `config/environments.json` (preferred) or `config/ports.json` (fallback)
-  - Falls back to hardcoded values if `jq` is not installed
+  - Reads from `config/environments.json` (preferred)
+  - Falls back to hardcoded values if `environments.json` is unavailable or `jq` is not installed
   - Example: `PORT_VARS=$(get_ports_for_environment "test")`
 
 **Used by**: Scripts that only need port configuration (backward compatibility)
