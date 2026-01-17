@@ -29,9 +29,9 @@
 #
 # Notes:
 #   - This script is designed to be SOURCED, not executed directly
-#   - Falls back to ports.json if environments.json is unavailable
+#   - Falls back to hardcoded values if environments.json is unavailable
 #   - Legacy script - use env-config.sh for new code
-#   - See config/README.md for deprecation timeline
+#   - See config/README.md for configuration details
 #
 # Last Updated: January 2026
 

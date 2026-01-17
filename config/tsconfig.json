@@ -8,5 +8,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["port-config.ts", "environments.json", "ports.json"]
+  "include": ["port-config.ts", "environments.json"]
 }
