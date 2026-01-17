@@ -178,7 +178,7 @@ if [ -d "$SCRIPT_DIR/playwright" ] && [ -f "$SCRIPT_DIR/playwright/package.json"
         export BASE_URL=\"$BASE_URL\" && \
         export ENVIRONMENT=\"${ENVIRONMENT:-dev}\" && \
         export CI=true && \
-        npm test" 300
+        npx playwright test" 300
 else
     echo -e "${YELLOW}⚠️  Playwright directory or package.json not found, skipping...${NC}"
 fi
