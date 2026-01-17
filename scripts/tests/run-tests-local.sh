@@ -41,7 +41,8 @@
 set -e
 
 # Get the script directory (project root)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Script is in scripts/tests/, so go up two levels to get project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$SCRIPT_DIR"
 
 # Colors for output
@@ -57,7 +58,11 @@ TESTS_FAILED=0
 
 # Default values
 BASE_URL=${BASE_URL:-"https://www.google.com"}
-ENVIRONMENT=${ENVIRONMENT:-"local"}
+ENVIRONMENT=${ENVIRONMENT:-"dev"}  # Changed from "local" to "dev" (valid environment)
+
+# Set non-interactive flags to prevent prompts
+export CI=${CI:-true}
+export NON_INTERACTIVE=${NON_INTERACTIVE:-true}
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}🧪 Running Tests Locally (No Docker)${NC}"
@@ -67,20 +72,27 @@ echo "Environment: $ENVIRONMENT"
 echo "Base URL: $BASE_URL"
 echo ""
 
-# Function to run a test suite
+# Function to run a test suite with timeout
 run_test_suite() {
     local suite_name=$1
     local command=$2
+    local timeout_seconds=${3:-1800}  # 30 minutes default timeout
     
     echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
-    echo -e "${BLUE}🧪 Running: $suite_name${NC}"
+    echo -e "${BLUE}🧪 Running: $suite_name (timeout: ${timeout_seconds}s)${NC}"
     echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
     
-    if eval "$command"; then
+    # Use timeout to prevent hanging
+    if timeout $timeout_seconds bash -c "$command" 2>&1; then
         echo -e "${GREEN}✅ $suite_name: PASSED${NC}"
         ((TESTS_PASSED++))
     else
-        echo -e "${RED}❌ $suite_name: FAILED${NC}"
+        local exit_code=$?
+        if [ $exit_code -eq 124 ]; then
+            echo -e "${RED}❌ $suite_name: TIMEOUT (exceeded ${timeout_seconds}s)${NC}"
+        else
+            echo -e "${RED}❌ $suite_name: FAILED${NC}"
+        fi
         ((TESTS_FAILED++))
     fi
     echo ""
@@ -121,19 +133,18 @@ echo -e "${YELLOW}   They will be skipped in this local run.${NC}"
     echo -e "${YELLOW}   To run them, use: ./scripts/tests/run-smoke-tests.sh${NC}"
 echo ""
 
-# Get the script directory (project root)
-# Since this script is in scripts/tests/, we need to go up two levels
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# Already set SCRIPT_DIR above, just ensure we're in the right directory
 cd "$SCRIPT_DIR"
 
 # 1. Cypress Tests
 if [ -d "$SCRIPT_DIR/cypress" ]; then
     run_test_suite "Cypress Tests" \
         "cd \"$SCRIPT_DIR/cypress\" && \
-        if [ ! -d 'node_modules' ]; then npm install; fi && \
+        if [ ! -d 'node_modules' ]; then npm install --silent; fi && \
         export BASE_URL=\"$BASE_URL\" && \
-        export ENVIRONMENT=\"$ENVIRONMENT\" && \
-        npm run cypress:run"
+        export ENVIRONMENT=\"${ENVIRONMENT:-dev}\" && \
+        export CI=true && \
+        npm run cypress:run" 600
 else
     echo -e "${YELLOW}⚠️  Cypress directory not found, skipping...${NC}"
 fi
@@ -142,11 +153,11 @@ fi
 if [ -d "$SCRIPT_DIR/playwright" ] && [ -f "$SCRIPT_DIR/playwright/package.json" ]; then
     run_test_suite "Playwright Tests" \
         "cd \"$SCRIPT_DIR/playwright\" && \
-        if [ ! -d 'node_modules' ]; then npm install && npx playwright install --with-deps chromium; fi && \
+        if [ ! -d 'node_modules' ]; then npm install --silent && npx playwright install --with-deps chromium; fi && \
         export BASE_URL=\"$BASE_URL\" && \
-        export ENVIRONMENT=\"$ENVIRONMENT\" && \
+        export ENVIRONMENT=\"${ENVIRONMENT:-dev}\" && \
         export CI=true && \
-        npm test"
+        npm test" 600
 else
     echo -e "${YELLOW}⚠️  Playwright directory or package.json not found, skipping...${NC}"
 fi
@@ -177,12 +188,14 @@ if [ "$SKIP_ROBOT" = false ]; then
         # Run but don't fail the script if Grid is needed (expected behavior)
         cd "$SCRIPT_DIR"
         export BASE_URL="$BASE_URL"
-        export ENVIRONMENT="$ENVIRONMENT"
-        if ./mvnw test -Probot 2>&1 | grep -q "Selenium Grid\|WebDriverException"; then
+        export ENVIRONMENT="${ENVIRONMENT:-dev}"
+        export CI=true
+        # Use timeout to prevent hanging (5 minutes for Robot Framework)
+        if timeout 300 bash -c "./mvnw test -Probot" 2>&1 | grep -q "Selenium Grid\|WebDriverException"; then
             echo -e "${YELLOW}⚠️  Robot Framework tests require Selenium Grid (expected).${NC}"
             # Don't count as failure since it's expected
         else
-            run_test_suite "Robot Framework Tests" "./mvnw test -Probot"
+            run_test_suite "Robot Framework Tests" "cd \"$SCRIPT_DIR\" && ./mvnw test -Probot" 300
         fi
     else
         echo -e "${YELLOW}⚠️  Robot Framework test directory not found, skipping...${NC}"
