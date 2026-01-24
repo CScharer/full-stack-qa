@@ -811,15 +811,9 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<!-- Prevent automatic test discovery - only run tests via TestNG suites -->
 					<!-- JUnit tests in com.cjs.qa are Windows-specific and should only run via TestNG suites -->
 					<!-- TestNG suites will still work because they explicitly specify test classes -->
-					<includes>
-						<!-- Match nothing by default - prevents automatic discovery -->
-						<include>**/DO_NOT_MATCH_ANYTHING.java</include>
-					</includes>
+					<!-- Exclude all tests in com.cjs.qa package using class name patterns -->
 					<excludes>
-						<!-- Exclude all JUnit tests in com.cjs.qa package as backup -->
-						<exclude>com.cjs.qa.**.*Test*</exclude>
-						<exclude>com.cjs.qa.**.*Tests</exclude>
-						<exclude>com.cjs.qa.**.*TestCase</exclude>
+						<exclude>com.cjs.qa.**</exclude>
 					</excludes>
 					<systemPropertyVariables>
 						<cucumber.execution.parallel.enabled>true</cucumber.execution.parallel.enabled>
