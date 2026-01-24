@@ -25,6 +25,9 @@
     "typescript": "^5.9.3",
     "artillery": "^2.0.0"
   },
+  "overrides": {
+    "lodash": ">=4.17.23"
+  },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
