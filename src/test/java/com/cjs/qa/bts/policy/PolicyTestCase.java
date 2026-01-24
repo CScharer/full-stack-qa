@@ -15,7 +15,7 @@ public final class PolicyTestCase {
   }
 
   @Test
-  public static void mainTest() {
+  public void mainTest() {
     // main(String[] args)
     final Policy policy = new Policy("123456789-10");
     LOG.debug("{}", policy.getPolicy());

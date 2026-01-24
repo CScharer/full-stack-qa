@@ -808,6 +808,14 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<parallel>methods</parallel>
 					<threadCount>5</threadCount>
 					<perCoreThreadCount>true</perCoreThreadCount>
+					<!-- Exclude all JUnit tests in com.cjs.qa package by default -->
+					<!-- These tests are Windows-specific or should only run via TestNG suites -->
+					<!-- TestNG suites will still work because they explicitly specify test classes -->
+					<excludes>
+						<exclude>**/com/cjs/qa/**/*Test*.java</exclude>
+						<exclude>**/com/cjs/qa/**/*Tests.java</exclude>
+						<exclude>**/com/cjs/qa/**/*TestCase.java</exclude>
+					</excludes>
 					<systemPropertyVariables>
 						<cucumber.execution.parallel.enabled>true</cucumber.execution.parallel.enabled>
 						<cucumber.execution.parallel.config.strategy>fixed</cucumber.execution.parallel.config.strategy>

@@ -2824,7 +2824,7 @@ public class VivitDataTests extends Environment {
    * @throws Throwable
    */
   @Test
-  public static void ymApiGetTest(String dateTimeFrom) throws Throwable {
+  public void ymApiGetTest(String dateTimeFrom) throws Throwable {
     sysOut(Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName() + "]");
     sysOut(
         ParameterHelper.getParameters(

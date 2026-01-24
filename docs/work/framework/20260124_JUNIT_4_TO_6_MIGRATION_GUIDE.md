@@ -450,6 +450,42 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
 
 ---
 
+## 🔧 Post-Migration Configuration Changes
+
+### Test Discovery Issue and Fix
+
+**Problem Identified**: After migrating to JUnit 6, Maven Surefire Plugin began automatically discovering and running all tests annotated with `@Test` from `org.junit.jupiter.api.Test`. This caused Windows-specific tests in the `com.cjs.qa` package to run unintentionally on Mac systems.
+
+**Root Cause**: JUnit 6's test discovery mechanism is more aggressive than JUnit 4. In JUnit 4, tests might not have been discovered automatically if they weren't properly configured. With JUnit 6, all `@Test`-annotated methods are automatically discovered by Surefire.
+
+**Solution Applied**: Added exclusions to `maven-surefire-plugin` configuration in `pom.xml` to prevent automatic discovery of tests in the `com.cjs.qa` package:
+
+```xml
+<configuration>
+    <!-- Exclude all JUnit tests in com.cjs.qa package by default -->
+    <!-- These tests are Windows-specific or should only run via TestNG suites -->
+    <!-- TestNG suites will still work because they explicitly specify test classes -->
+    <excludes>
+        <exclude>**/com/cjs/qa/**/*Test*.java</exclude>
+        <exclude>**/com/cjs/qa/**/*Tests.java</exclude>
+        <exclude>**/com/cjs/qa/**/*TestCase.java</exclude>
+    </excludes>
+    <!-- ... rest of configuration ... -->
+</configuration>
+```
+
+**Why This Works**:
+- ✅ TestNG suites continue to work because they explicitly specify test classes in their XML files, bypassing Surefire's automatic discovery
+- ✅ Tests can still be run explicitly using `-Dtest=ClassName` if needed
+- ✅ Restores pre-migration behavior where tests only ran via TestNG suites or explicit selection
+- ✅ Prevents Windows-specific tests from running automatically on Mac systems
+
+**Location**: `pom.xml` lines 811-818
+
+**Date Applied**: 2026-01-24
+
+---
+
 ## 🔗 Additional Resources
 
 - [JUnit 6 User Guide](https://junit.org/junit6/docs/current/user-guide/)
@@ -465,6 +501,7 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
 3. ✅ All test files migrated to JUnit 6 (completed)
 4. ✅ Archived files migrated (completed)
 5. ✅ Documentation updated (completed)
+6. ✅ Test discovery configuration fixed (completed - prevents automatic execution of Windows-specific tests)
 
 ### Next Steps (Optional)
 
