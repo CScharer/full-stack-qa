@@ -117,6 +117,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 
 		<!-- Logging -->
 		<log4j2.version>2.25.3</log4j2.version>
+		<logback-core.version>1.5.25</logback-core.version>
 
 		<!-- API Testing -->
 		<rest-assured.version>6.0.0</rest-assured.version>
@@ -753,6 +754,12 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<artifactId>gatling-charts-highcharts</artifactId>
 			<version>${gatling.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<!-- Explicitly add logback-core ${logback-core.version} to override vulnerable 1.5.20 from Gatling transitive dependencies -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${logback-core.version}</version>
 		</dependency>
 
 		<!-- Scala Library (required for Gatling) -->
