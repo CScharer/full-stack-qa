@@ -1,22 +1,19 @@
 # @SuppressWarnings Inventory
 
 **Document Type**: Reference Document (Non-Living)  
-**Last Updated**: 2026-01-16  
-**Total Annotations**: 27 across 21 files
+**Last Updated**: 2026-01-24  
+**Total Annotations**: 28 across 22 files
 
 ---
 
 ## Status and Summary
 
-**Status**: ✅ **REVIEWED AND DOCUMENTED** - 27 @SuppressWarnings annotations remain across 21 files (reduced from 31)
+**Status**: ✅ **REVIEWED AND DOCUMENTED** - 28 @SuppressWarnings annotations remain across 22 files (reduced from 31)
 
-**Summary**: After Item 2.2 review (January 16, 2026), 4 @SuppressWarnings were removed (2 bugs fixed, 2 unused code removed). All remaining 27 annotations have been reviewed and documented with explanatory comments explaining why they are necessary.
+**Summary**: After Item 2.2 review (January 16, 2026), 4 @SuppressWarnings were removed (2 bugs fixed, 2 unused code removed). All remaining 28 annotations have been reviewed and documented with explanatory comments explaining why they are necessary.
 
-**Recent Changes (January 16, 2026)**:
-- ✅ Fixed 2 bugs in `EveryoneSocial.java` (removed 2 @SuppressWarnings("unchecked"))
-- ✅ Removed unused code in `ISelenium.java` and `SOAP.java` (removed 2 @SuppressWarnings("unused"))
-- ✅ Added documentation comments to all 27 remaining suppressions
-- ✅ Verified all remaining suppressions are legitimate and necessary
+**Recent Changes (January 24, 2026)**:
+- ✅ Added `HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming)
 
 **Breakdown by Type**:
 
@@ -27,19 +24,21 @@
 | `"rawtypes"` | 3 | 3 files | All documented - required by TestNG/Apache POI APIs |
 | `"deprecation"` | 3 | 3 files | All documented - Commons CSV library limitation |
 | `PMD.SingularField` | 3 | 1 file | All documented - design choice for performance |
+| `PMD.ClassNamingConventions` | 1 | 1 file | All documented - example file with intentional naming |
 | `PMD.DoNotExtendJavaLangThrowable` | 2 | 2 files | All documented - custom exception design |
 | `PMD.GuardLogStatement` | 1 | 1 file | All documented - wrapper class design |
 | `PMD.UnnecessaryImport` | 1 | 1 file | All documented - wildcard import for many classes |
 | `java:S2068` (SonarQube) | 1 | 1 file | All documented - intentional placeholder |
 
-**Files with @SuppressWarnings** (21 total):
+**Files with @SuppressWarnings** (22 total):
 
-1. **PMD Violations** (6 annotations) - ✅ All documented:
+1. **PMD Violations** (7 annotations) - ✅ All documented:
    - `src/test/java/com/cjs/qa/utilities/GuardedLogger.java` - `PMD.GuardLogStatement` (intentional - wrapper class handles guards internally)
    - `src/test/java/com/cjs/qa/core/QAException.java` - `PMD.DoNotExtendJavaLangThrowable` (custom exception design - documented)
    - `src/test/java/com/cjs/qa/utilities/QALogger.java` - `PMD.DoNotExtendJavaLangThrowable` (custom logging exception design - documented)
    - `src/test/java/com/cjs/qa/microsoft/utilities/XlsReader.java` - `PMD.SingularField` (3x - design choice for performance - documented)
    - `src/test/java/com/cjs/qa/ym/xml/objects/DataSet.java` - `PMD.UnnecessaryImport` (wildcard import used for many classes - documented)
+   - `src/test/java/com/cjs/qa/junit/tests/HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming - documented)
 
 2. **Java Compiler Warnings** (20 annotations) - ✅ All documented:
    - **"unused"** (7 annotations):
@@ -94,6 +93,7 @@
 
 | Type | Description | Typical Use Case |
 |------|-------------|------------------|
+| `PMD.ClassNamingConventions` | Suppresses PMD rule about class naming conventions | Example/documentation files that intentionally don't match Test* naming pattern |
 | `PMD.GuardLogStatement` | Suppresses PMD rule requiring log statements to check log level before logging | Wrapper classes (like GuardedLogger) that handle guards internally |
 | `PMD.DoNotExtendJavaLangThrowable` | Suppresses PMD rule against extending Throwable directly | Custom exception classes that extend Throwable for specific design reasons |
 | `PMD.SingularField` | Suppresses PMD rule about fields that could be local variables | Fields that are reused across multiple methods as temporary variables |
@@ -118,7 +118,8 @@
 | 5 | `src/test/java/com/cjs/qa/microsoft/utilities/XlsReader.java` | 44 | `PMD.SingularField` | Field: `sheet` | Reused across multiple methods as temporary variable |
 | 6 | `src/test/java/com/cjs/qa/microsoft/utilities/XlsReader.java` | 47 | `PMD.SingularField` | Field: `row` | Reused across multiple methods as temporary variable |
 | 7 | `src/test/java/com/cjs/qa/microsoft/utilities/XlsReader.java` | 50 | `PMD.SingularField` | Field: `cell` | Reused across multiple methods as temporary variable |
-| 8 | `src/test/java/com/cjs/qa/utilities/AIHelper.java` | 159 | `"unused"` | Constructor: `ChatCompletionRequest()` | No-arg constructor for Gson deserialization |
+| 8 | `src/test/java/com/cjs/qa/junit/tests/HomePageTestsExample.java` | 24 | `PMD.ClassNamingConventions` | Class-level | Example file with intentional naming (doesn't match Test* pattern) |
+| 9 | `src/test/java/com/cjs/qa/utilities/AIHelper.java` | 159 | `"unused"` | Constructor: `ChatCompletionRequest()` | No-arg constructor for Gson deserialization |
 | 9 | `src/test/java/com/cjs/qa/utilities/AIHelper.java` | 196 | `"unused"` | Constructor: `ChatCompletionResponse()` | No-arg constructor for Gson deserialization |
 | 10 | `src/test/java/com/cjs/qa/utilities/AIHelper.java` | 213 | `"unused"` | Constructor: `Choice()` | No-arg constructor for Gson deserialization |
 | 11 | `src/test/java/com/cjs/qa/utilities/AIHelper.java` | 229 | `"unused"` | Constructor: `Message()` | No-arg constructor for Gson deserialization |
@@ -155,20 +156,21 @@
 | `"rawtypes"` | 3 | 11.1% |
 | `"deprecation"` | 3 | 11.1% |
 | `PMD.SingularField` | 3 | 11.1% |
-| `PMD.DoNotExtendJavaLangThrowable` | 2 | 7.4% |
-| `PMD.GuardLogStatement` | 1 | 3.7% |
-| `PMD.UnnecessaryImport` | 1 | 3.7% |
-| `java:S2068` (SonarQube) | 1 | 3.7% |
-| **Total** | **27** | **100%** |
+| `PMD.ClassNamingConventions` | 1 | 3.6% |
+| `PMD.DoNotExtendJavaLangThrowable` | 2 | 7.1% |
+| `PMD.GuardLogStatement` | 1 | 3.6% |
+| `PMD.UnnecessaryImport` | 1 | 3.6% |
+| `java:S2068` (SonarQube) | 1 | 3.6% |
+| **Total** | **28** | **100%** |
 
 ### By Category
 
 | Category | Count | Files |
 |----------|-------|-------|
 | **Java Compiler Warnings** | 20 | 13 files |
-| **PMD Rule Suppressions** | 6 | 4 files |
+| **PMD Rule Suppressions** | 7 | 5 files |
 | **SonarQube Rule Suppressions** | 1 | 1 file |
-| **Total** | **27** | **21 files** |
+| **Total** | **28** | **22 files** |
 
 ### By File (Files with Multiple Annotations)
 
@@ -250,6 +252,17 @@
 
 ---
 
+### PMD.ClassNamingConventions (1 annotation) ✅ **REVIEWED AND DOCUMENTED**
+
+**Purpose**: Suppresses PMD rule about class naming conventions (classes should match `^Test.*$|^[A-Z][a-zA-Z0-9]*Test(s|Case)?$` pattern).
+
+**Files**:
+1. `HomePageTestsExample.java` (1x) - Example file with intentional naming ✅ **Documented**
+
+**Status**: ✅ Suppression is documented. This is an example file demonstrating EnvironmentConfig usage. The class name intentionally doesn't match the Test* pattern because it's an example/documentation file, not a standard test class.
+
+---
+
 ### PMD.DoNotExtendJavaLangThrowable (2 annotations) ✅ **REVIEWED AND DOCUMENTED**
 
 **Purpose**: Suppresses PMD rule against extending Throwable directly.
@@ -328,20 +341,18 @@
 
 ## Notes
 
-- **Total Annotations**: 27 (reduced from 31 on January 16, 2026)
-- **Total Files**: 21 (reduced from 23 on January 16, 2026)
-- **Most Common Type**: `"unused"` (7 annotations, 25.9%)
+- **Total Annotations**: 28 (reduced from 31 on January 16, 2026, added 1 on January 24, 2026)
+- **Total Files**: 22 (reduced from 23 on January 16, 2026, added 1 on January 24, 2026)
+- **Most Common Type**: `"unused"` (7 annotations, 25.0%)
 - **Files with Multiple Annotations**: 2 files (AIHelper.java: 4, XlsReader.java: 3)
 - **Removed Annotations**: 4 (2 bugs fixed, 2 unused code removed)
-- **Documentation Status**: ✅ All 27 remaining annotations are documented
+- **Added Annotations**: 1 (`HomePageTestsExample.java` - PMD.ClassNamingConventions)
+- **Documentation Status**: ✅ All 28 remaining annotations are documented
 
-**Recent Updates (January 16, 2026)**:
-- ✅ Fixed 2 bugs in `EveryoneSocial.java` (removed 2 @SuppressWarnings("unchecked"))
-- ✅ Removed unused code in `ISelenium.java` and `SOAP.java` (removed 2 @SuppressWarnings("unused"))
-- ✅ Added documentation comments to all 27 remaining suppressions
-- ✅ Verified all remaining suppressions are legitimate and necessary
+**Recent Updates (January 24, 2026)**:
+- ✅ Added `HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming)
 
 ---
 
-**Document Status**: Reference document - updated January 16, 2026  
+**Document Status**: Reference document - updated January 24, 2026  
 **Note**: This document is the authoritative source for @SuppressWarnings information. All annotations have been reviewed and documented. The related section has been removed from `docs/work/20260103_REMAINING_WORK_SUMMARY.md` and consolidated here.

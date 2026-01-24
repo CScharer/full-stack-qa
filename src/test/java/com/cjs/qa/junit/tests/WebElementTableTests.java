@@ -1,5 +1,6 @@
 package com.cjs.qa.junit.tests;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -194,7 +195,7 @@ public class WebElementTableTests {
   }
 
   private String getTestName(TestInfo testInfo) {
-    return testInfo.getTestMethod().map((method) -> method.getName()).orElse("Unknown");
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 
   private WebDriver getWebDriver() {

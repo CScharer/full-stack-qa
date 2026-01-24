@@ -1,5 +1,6 @@
 package com.cjs.qa.junit.tests;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class BitcoinTests {
   }
 
   private String getTestName(TestInfo testInfo) {
-    return testInfo.getTestMethod().map((method) -> method.getName()).orElse("Unknown");
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 
   public JDBC getJdbc() {

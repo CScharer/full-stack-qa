@@ -1,5 +1,6 @@
 package com.cjs.qa.junit.tests;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -140,7 +141,7 @@ public class ScenariosTests {
       testWatcherList.add(
           Arrays.asList(
               context.getTestClass().map(Class::getName).orElse("Unknown"),
-              context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+              context.getTestMethod().map(Method::getName).orElse("Unknown"),
               context.getDisplayName(),
               status));
       mapTestCount.put(status, mapTestCount.get(status) + 1);
@@ -295,7 +296,7 @@ public class ScenariosTests {
   }
 
   private String getTestName(TestInfo testInfo) {
-    return testInfo.getTestMethod().map((method) -> method.getName()).orElse("Unknown");
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 
   @Test

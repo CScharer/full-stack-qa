@@ -1,5 +1,7 @@
 package com.cjs.qa.junit.dbunit;
 
+import java.lang.reflect.Method;
+
 import org.apache.logging.log4j.LogManager;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.DefaultTable;
@@ -125,6 +127,6 @@ public class H2DBUtilDemoTests extends BaseDBUnitTestForJPADao {
   }
 
   private String getTestName(TestInfo testInfo) {
-    return testInfo.getTestMethod().map((method) -> method.getName()).orElse("Unknown");
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 }

@@ -1,5 +1,7 @@
 package com.cjs.qa.junit.tests;
 
+import java.lang.reflect.Method;
+
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -41,7 +43,7 @@ public class ScenariosSetupTeardownTests {
       LOG.error(
           "Test failed: {}|{}|{}",
           context.getTestClass().map(Class::getName).orElse("Unknown"),
-          context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+          context.getTestMethod().map(Method::getName).orElse("Unknown"),
           context.getDisplayName(),
           cause);
     }
@@ -53,7 +55,7 @@ public class ScenariosSetupTeardownTests {
       LOG.info(
           "Test skipped: {}|{}|{}",
           context.getTestClass().map(Class::getName).orElse("Unknown"),
-          context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+          context.getTestMethod().map(Method::getName).orElse("Unknown"),
           context.getDisplayName());
     }
 
@@ -64,7 +66,7 @@ public class ScenariosSetupTeardownTests {
       LOG.info(
           "Test succeeded: {}|{}|{}",
           context.getTestClass().map(Class::getName).orElse("Unknown"),
-          context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+          context.getTestMethod().map(Method::getName).orElse("Unknown"),
           context.getDisplayName());
     }
   }
@@ -139,6 +141,6 @@ public class ScenariosSetupTeardownTests {
   }
 
   private String getTestName(TestInfo testInfo) {
-    return testInfo.getTestMethod().map((method) -> method.getName()).orElse("Unknown");
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 }

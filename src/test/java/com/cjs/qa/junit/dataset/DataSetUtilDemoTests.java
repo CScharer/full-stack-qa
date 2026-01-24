@@ -1,6 +1,7 @@
 package com.cjs.qa.junit.dataset;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
 import org.dbunit.dataset.IDataSet;
@@ -89,6 +90,6 @@ public class DataSetUtilDemoTests extends BaseDBUnitTestForJPADao {
   }
 
   private String getTestName(TestInfo testInfo) {
-    return testInfo.getTestMethod().map((method) -> method.getName()).orElse("Unknown");
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 }

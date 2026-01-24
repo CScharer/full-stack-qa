@@ -1,5 +1,7 @@
 package com.cjs.qa.junit.reporting;
 
+import java.lang.reflect.Method;
+
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
@@ -24,7 +26,7 @@ public class RTestWatcher implements TestWatcher {
    */
   private Description createDescription(ExtensionContext context) {
     String className = context.getTestClass().map(Class::getName).orElse("Unknown");
-    String methodName = context.getTestMethod().map((m) -> m.getName()).orElse("Unknown");
+    String methodName = context.getTestMethod().map(Method::getName).orElse("Unknown");
     String displayName = context.getDisplayName();
     return Description.createTestDescription(className, methodName + " - " + displayName);
   }
@@ -35,7 +37,7 @@ public class RTestWatcher implements TestWatcher {
     LOG.debug(
         "Test failed: {}|{}|{}",
         context.getTestClass().map(Class::getName).orElse("Unknown"),
-        context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
         context.getDisplayName());
   }
 
@@ -45,7 +47,7 @@ public class RTestWatcher implements TestWatcher {
     LOG.debug(
         "Test skipped: {}|{}|{}",
         context.getTestClass().map(Class::getName).orElse("Unknown"),
-        context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
         context.getDisplayName());
   }
 
@@ -55,7 +57,7 @@ public class RTestWatcher implements TestWatcher {
     LOG.debug(
         "Test succeeded: {}|{}|{}",
         context.getTestClass().map(Class::getName).orElse("Unknown"),
-        context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
         context.getDisplayName());
   }
 
@@ -65,7 +67,7 @@ public class RTestWatcher implements TestWatcher {
     LOG.debug(
         "Test disabled: {}|{}|{}",
         context.getTestClass().map(Class::getName).orElse("Unknown"),
-        context.getTestMethod().map((m) -> m.getName()).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
         context.getDisplayName());
   }
 }
