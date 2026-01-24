@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -137,7 +137,8 @@ public class BoDPage extends Page {
         mapActual.put(field, value);
       }
     }
-    Assert.assertSame(PAGE_TITLE + " validatePage", mapExpected.toString(), mapActual.toString());
+    Assertions.assertSame(
+        mapExpected.toString(), mapActual.toString(), PAGE_TITLE + " validatePage");
     // hardAssert.assertSame(actual, expected, PAGE_TITLE + "
     // validatePage");
     // softAssert.assertSame(actual, expected, PAGE_TITLE + "validatePage");

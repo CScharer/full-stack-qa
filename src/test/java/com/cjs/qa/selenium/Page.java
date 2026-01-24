@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -1638,7 +1638,8 @@ public class Page extends JavaHelpers {
               break;
             }
           }
-          Assert.assertTrue("Could not find an item with the value of [" + value + "]", itemFound);
+          Assertions.assertTrue(
+              itemFound, "Could not find an item with the value of [" + value + "]");
         }
       }
       // logFieldName(webElement.getAttribute("id").toString(), value)
@@ -1900,7 +1901,7 @@ public class Page extends JavaHelpers {
   protected void verifyResultData(String expected, By by) {
     final WebElement webElement = getWebElement(by);
     final String actual = webElement.getText();
-    Assert.assertEquals(actual, expected);
+    Assertions.assertEquals(expected, actual);
   }
 
   /**
@@ -1910,7 +1911,7 @@ public class Page extends JavaHelpers {
     waitForPageToLoad();
     final String actual = getWebDriver().getTitle();
     LOG.info("Expected title: [{}], Actual title: [{}]", expected, actual);
-    Assert.assertEquals(actual, expected);
+    Assertions.assertEquals(expected, actual);
   }
 
   /**

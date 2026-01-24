@@ -28,7 +28,7 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.core.QAException;
 import com.cjs.qa.microsoft.excel.IExcel;
@@ -65,7 +65,7 @@ public class XLS implements IExcel {
         sheetName);
     final String fileNameExtensionActual = "." + FilenameUtils.getExtension(getFileName());
     if (!fileNameExtensionActual.equalsIgnoreCase(fileNameExtensionExpected)) {
-      Assert.fail(
+      Assertions.fail(
           "The file ["
               + getFileName()
               + "] does not match the expected file extension of ["

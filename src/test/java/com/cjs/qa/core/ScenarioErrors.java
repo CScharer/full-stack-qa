@@ -3,7 +3,7 @@ package com.cjs.qa.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public class ScenarioErrors {
 
@@ -14,7 +14,7 @@ public class ScenarioErrors {
   }
 
   public void assertErrors(String message) {
-    Assert.assertEquals(message, 0, getErrors().size());
+    Assertions.assertEquals(0, getErrors().size(), message);
   }
 
   public void add(String error) {

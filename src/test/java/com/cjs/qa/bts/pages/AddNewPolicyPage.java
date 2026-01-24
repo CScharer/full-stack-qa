@@ -1,6 +1,6 @@
 package com.cjs.qa.bts.pages;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -110,8 +110,8 @@ public class AddNewPolicyPage extends Page {
   public void verifyPolicyNum(String policyNum, String policyNumSeq) {
     final String shownPolicyNum = getEdit(editPolicyNum);
     final String shownPolicyNumSeq = getEdit(editPolicyNumSeq);
-    Assert.assertEquals(shownPolicyNumSeq, policyNumSeq);
-    Assert.assertEquals(shownPolicyNum, policyNum);
+    Assertions.assertEquals(policyNumSeq, shownPolicyNumSeq);
+    Assertions.assertEquals(policyNum, shownPolicyNum);
     clickObject(clickOffDate);
   }
 

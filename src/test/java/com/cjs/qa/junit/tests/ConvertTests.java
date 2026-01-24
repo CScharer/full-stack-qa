@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.microsoft.excel.IExcel;
 import com.cjs.qa.utilities.Convert;

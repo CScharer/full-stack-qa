@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -104,7 +104,7 @@ public class GroupPage extends Page {
       }
       getWebDriver().get(groupValue);
       final String title = getWebDriver().findElement(byTitleBar).getText();
-      Assert.assertEquals(title, expectedTitle, title);
+      Assertions.assertEquals(expectedTitle, title, title);
       sleep(1, 0);
       final List<WebElement> links = getWebDriver().findElements(byLinksGroups);
       final List<String> chapterURLList = new ArrayList<>();

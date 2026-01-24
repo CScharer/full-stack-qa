@@ -15,8 +15,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1167,7 +1167,7 @@ public class YMDataTests extends Environment {
                 sysOut("headingsCSVMissingList:" + headingsExpectedMissingList.toString());
                 if (!headingsExpectedMissingList.isEmpty()
                     && !removeExtraFields(apiNamespace, tableName, headingsExpectedMissingList)) {
-                  Assert.fail(
+                  Assertions.fail(
                       "Expected headings (headingsExpectedMissingList["
                           + headingsExpectedMissingList.toString()
                           + "]) do not match CSV headings and could not be"
@@ -1177,7 +1177,7 @@ public class YMDataTests extends Environment {
                 }
                 if (!headingsCSVMissingList.isEmpty()
                     && !addMissingFields(apiNamespace, tableName, headingsCSVMissingList)) {
-                  Assert.fail(
+                  Assertions.fail(
                       "CSV headings (headingsCSVMissingList["
                           + headingsCSVMissingList.toString()
                           + "]) do not match Expected DB headings and could"

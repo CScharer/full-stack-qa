@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -109,7 +109,7 @@ public class StaffPage extends Page {
         actual.put(field, value);
       }
     }
-    Assert.assertSame(PAGE_TITLE + " validatePage", expected.toString(), actual.toString());
+    Assertions.assertSame(expected.toString(), actual.toString(), PAGE_TITLE + " validatePage");
     // hardAssert.assertSame(actual.toString(), expected.toString(),
     // PAGE_TITLE + " validatePage")
     // softAssert.assertSame(actual.toString(), expected.toString(),

@@ -58,12 +58,19 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-01-16 (Item 5.2 - Dependency updates)
+- **Last Review**: 2026-01-24 (Security fixes - logback-core and lodash)
+- **Latest Stable Versions Check**: 2026-01-24 (See "Latest Stable" column for updateable versions)
 - **Next Review**: 2026-01-30 (recommended)
 
 ---
 
 ## 📦 Java/Maven Dependencies (pom.xml)
+
+> **💡 Checking Latest Stable Versions**: To verify the latest stable versions for Maven dependencies, use:
+> - `./mvnw versions:display-dependency-updates` (shows all available updates)
+> - Check [Maven Central](https://search.maven.org/) for specific packages
+> - Review Dependabot PRs for automated update suggestions
+> - The "Latest Stable" column indicates the newest stable version available (may differ from Current Version if updates are available)
 
 ### Core Testing Frameworks
 
@@ -72,7 +79,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Selenium | 4.39.0 | 4.39.0 | [✅] | 2025-12-20 | Aligned with Grid server version |
 | Selenide | 7.13.0 | 7.13.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | TestNG | 7.11.0 | 7.11.0 | [✅] | - | Current |
-| JUnit | 4.13.2 | 4.13.2 | [✅] | - | Current (JUnit 5.14.0 available) |
+| JUnit | 4.13.2 | 6.0.2 | [✅] | 2026-01-24 | Latest stable: 6.0.2 - Compilation verified ✅ - Migration complete ✅ (all test files migrated from JUnit 4 to JUnit 6 APIs) |
 | Cucumber | 7.33.0 | 7.33.0 | [✅] | - | Current |
 | REST Assured | 6.0.0 | 6.0.0 | [✅] | 2025-12-19 | Updated in PR #51 - Requires Java 17+, Jackson 3.0.0 |
 | Allure3 CLI | 3.0.0 | 3.0.0 | [✅] | 2025-12-30 | Active - Allure3 CLI in use (TypeScript-based, npm install) |
@@ -84,7 +91,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 |------------|----------------|---------------|--------|--------------|-------|
 | Maven | 3.9.11 | 3.9.11 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Java | 21 | 21 (LTS) | [✅] | - | Current LTS version |
-| Maven Compiler Plugin | 3.13.0 | 3.14.1 | [⚠️] | 2025-12-30 | Current: 3.13.0, update available: 3.14.1 |
+| Maven Compiler Plugin | 3.14.1 | 3.14.1 | [✅] | 2026-01-24 | Current stable version |
 | Maven Surefire Plugin | 3.5.4 | 3.5.4 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Maven Checkstyle Plugin | 3.6.0 | 3.6.0 | [✅] | - | Current |
 | Checkstyle Tool | 13.0.0 | 13.0.0 | [✅] | 2026-01-16 | Updated from 12.3.0 (Item 5.2) |
@@ -98,7 +105,6 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Gatling | 3.14.9 | 3.14.9 | [✅] | - | Current |
 | JMeter | 5.6.3 | 5.6.3 | [✅] | - | Current |
 | Scala | 2.13.18 | 2.13.18 | [✅] | 2025-12-19 | Updated in PR #51 - For Gatling |
-| Artillery | 2.0.0 | 2.0.0 | [✅] | 2025-12-31 | Browser-level load testing with Playwright |
 
 ### Utilities & Libraries
 
@@ -106,6 +112,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 |------------|----------------|---------------|--------|--------------|-------|
 | WebDriverManager | 6.3.3 | 6.3.3 | [✅] | - | Current |
 | Log4j 2 | 2.25.3 | 2.25.3 | [✅] | 2025-12-19 | Updated via Dependabot PR #52 |
+| Logback Core | 1.5.25 | 1.5.25 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 1.5.20 from Gatling transitive dependency (CVE) |
 | Jackson Databind | 3.0.3 | 3.0.3 | [✅] | 2025-12-30 | Current stable version |
 | Jackson Annotations | 2.20 | 2.20 | [✅] | 2025-12-19 | Compatible with Jackson 3.0.0 |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -120,6 +127,12 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ## 📦 Node.js Dependencies
 
+> **💡 Checking Latest Stable Versions**: To verify the latest stable versions for npm dependencies, use:
+> - `npm outdated` (run in each project directory: cypress, playwright, vibium, frontend)
+> - Check [npm registry](https://www.npmjs.com/) for specific packages
+> - Review Dependabot PRs for automated update suggestions
+> - The "Latest Stable" column indicates the newest stable version available (may differ from Current Version if updates are available)
+
 ### Cypress Project (cypress/package.json)
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
@@ -133,6 +146,8 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
 | Playwright | 1.57.0 | 1.57.0 | [✅] | - | Current |
+| Artillery | 2.0.0 | 2.0.0 | [✅] | 2025-12-31 | Browser-level load testing with Playwright |
+| lodash (override) | >=4.17.23 | 4.17.23 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 4.17.21 from artillery transitive dependency (CVE) |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
 | @types/node | 25.0.0 | 25.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 
@@ -165,6 +180,12 @@ All dependency ecosystems are now managed via **Dependabot**:
 ---
 
 ## 🐍 Python Dependencies
+
+> **💡 Checking Latest Stable Versions**: To verify the latest stable versions for Python dependencies, use:
+> - `pip list --outdated` (shows packages with available updates)
+> - Check [PyPI](https://pypi.org/) for specific packages
+> - Review Dependabot PRs for automated update suggestions
+> - The "Latest Stable" column indicates the newest stable version available (may differ from Current Version if updates are available)
 
 ### Root (pyproject.toml)
 
@@ -234,12 +255,12 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2025-12-30)
+### Current Status (as of 2026-01-24)
 
-**Total Vulnerabilities**: 28 (reduced from 29)
+**Total Vulnerabilities**: 26 (reduced from 28)
 - **Critical**: 6 🔴
-- **High**: 9 🟠 (reduced from 10 - qs vulnerability fixed)
-- **Moderate**: 10 🟡
+- **High**: 8 🟠 (reduced from 9 - lodash vulnerability fixed)
+- **Moderate**: 9 🟡 (reduced from 10 - logback-core vulnerability fixed)
 - **Low**: 3 🟢
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
@@ -257,7 +278,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 When a vulnerability exists in a transitive dependency (not directly in your `package.json`), use npm's `overrides` feature to force a patched version:
 
-**Example**: Fixing `qs` vulnerability in Cypress (Dependabot Alert #1)
+**Example 1**: Fixing `qs` vulnerability in Cypress (Dependabot Alert #1)
 ```json
 {
   "devDependencies": {
@@ -265,6 +286,15 @@ When a vulnerability exists in a transitive dependency (not directly in your `pa
   },
   "overrides": {
     "qs": "^6.14.1"
+  }
+}
+```
+
+**Example 2**: Fixing `lodash` vulnerability in Playwright (Dependabot Alert #5)
+```json
+{
+  "overrides": {
+    "lodash": ">=4.17.23"
   }
 }
 ```
@@ -295,18 +325,22 @@ The `overrides` section forces all instances of the package (including transitiv
 - **jsdom**: 27.3.0 → 27.4.0 (current stable)
 - **Jackson Databind**: 3.0.0 → 3.0.3 (current stable)
 - **MSSQL JDBC**: 13.2.0.jre11 → 13.2.1.jre11 (current stable)
-- **Maven Compiler Plugin**: Current 3.13.0 (update available: 3.14.1)
-- **jsdom**: 27.3.0 (update available: 27.4.0)
+- **Maven Compiler Plugin**: 3.13.0 → 3.14.1 (current stable, updated 2026-01-24)
 - **Outdated Dependencies Document**: Created `docs/work/20251230_OUTDATED_DEPENDENCIES.md` with 10 outdated dependencies identified
 - **Security Fix - qs (npm)**: Fixed Dependabot alert #1 (High severity) by adding `qs@^6.14.1` as direct dependency and using npm `overrides` to force patched version throughout dependency tree. Vulnerability: ArrayLimit bypass in bracket notation allows DoS via memory exhaustion (GHSA-6rw7-vpxm-498p). Fixed in `cypress/package.json`.
 - **Dependency Fix - requests (Python)**: Adjusted `requests` from 2.32.5 to 2.32.4 in `requirements.txt` and `.github/workflows/env-be.yml` to resolve dependency conflict with Locust 2.42.6 (requires `requests<2.32.5`). This fixes the dependency submission workflow failure.
+
+### 2026-01-24
+- **Maven Compiler Plugin**: 3.13.0 → 3.14.1 (Current stable version)
+- **Security Fix - logback-core (Maven)**: Added explicit dependency override for `ch.qos.logback:logback-core` version 1.5.25 to override vulnerable 1.5.20 from Gatling transitive dependency. Vulnerability: ACE vulnerability in configuration file processing (CVE). Fixed in `pom.xml` via PR #190.
+- **Security Fix - lodash (npm)**: Added npm `overrides` to force lodash >=4.17.23 in `playwright/package.json` to override vulnerable 4.17.21 from artillery transitive dependency. Vulnerability: Prototype Pollution in `_.unset` and `_.omit` functions (CVE). Fixed via PR #191.
 
 ### 2025-12-19
 - **REST Assured**: 5.5.6 → 6.0.0 (PR #51)
 - **Cypress**: 13.7.0 → 15.2.0 (PR #51)
 - **Selenide**: 7.12.3 → 7.13.0 (PR #51)
 - **Maven**: 3.9.9 → 3.9.11 (PR #51)
-- **Maven Compiler Plugin**: 3.13.1 → 3.13.0 (current, update available: 3.14.1)
+- **Maven Compiler Plugin**: 3.13.1 → 3.13.0 (updated to 3.14.1 on 2026-01-24)
 - **Maven Surefire Plugin**: 3.5.2 → 3.5.4 (PR #51)
 - **Scala**: 2.13.17 → 2.13.18 (PR #51)
 - **Apache POI**: 5.2.3 → 5.5.1 (PR #51)
@@ -404,7 +438,7 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-16
+- **Last Updated**: 2026-01-24
 - **Next Review**: 2026-01-30 (recommended)
 - **Maintainer**: Development Team
 

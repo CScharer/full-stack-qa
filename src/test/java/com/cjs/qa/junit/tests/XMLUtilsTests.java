@@ -1,7 +1,7 @@
 package com.cjs.qa.junit.tests;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
 import com.cjs.qa.utilities.Constants;

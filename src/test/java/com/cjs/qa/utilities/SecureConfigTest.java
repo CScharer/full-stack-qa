@@ -1,9 +1,9 @@
 package com.cjs.qa.utilities;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.security.EPasswords;
 
@@ -26,9 +26,9 @@ public class SecureConfigTest {
     LOG.info("Testing SecureConfig.getPassword()...");
 
     String password = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
-    assertNotNull("Password should not be null", password);
-    assertFalse("Password should not be empty", password.isEmpty());
-    assertTrue("Password should have minimum length", password.length() >= 8);
+    assertNotNull(password, "Password should not be null");
+    assertFalse(password.isEmpty(), "Password should not be empty");
+    assertTrue(password.length() >= 8, "Password should have minimum length");
 
     LOG.info("✅ SecureConfig.getPassword() test passed!");
   }
@@ -38,9 +38,9 @@ public class SecureConfigTest {
     LOG.info("Testing EPasswords enum integration...");
 
     String password = EPasswords.BTSQA.getValue();
-    assertNotNull("EPasswords should return a value", password);
-    assertFalse("EPasswords value should not be empty", password.isEmpty());
-    assertTrue("EPasswords should return valid password", password.length() >= 8);
+    assertNotNull(password, "EPasswords should return a value");
+    assertFalse(password.isEmpty(), "EPasswords value should not be empty");
+    assertTrue(password.length() >= 8, "EPasswords should return valid password");
 
     LOG.info("✅ EPasswords integration test passed!");
   }
@@ -51,22 +51,22 @@ public class SecureConfigTest {
 
     // Clear cache
     SecureConfig.clearCache();
-    assertEquals("Cache should be empty after clear", 0, SecureConfig.getCacheSize());
+    assertEquals(0, SecureConfig.getCacheSize(), "Cache should be empty after clear");
 
     // First retrieval (should hit Secret Manager)
     long startTime = System.currentTimeMillis();
     String password1 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
     final long firstCallTime = System.currentTimeMillis() - startTime;
 
-    assertEquals("Cache should have 1 item", 1, SecureConfig.getCacheSize());
+    assertEquals(1, SecureConfig.getCacheSize(), "Cache should have 1 item");
 
     // Second retrieval (should use cache - much faster)
     startTime = System.currentTimeMillis();
     String password2 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
     long secondCallTime = System.currentTimeMillis() - startTime;
 
-    assertEquals("Cached password should match", password1, password2);
-    assertTrue("Cached retrieval should be faster", secondCallTime < firstCallTime);
+    assertEquals(password1, password2, "Cached password should match");
+    assertTrue(secondCallTime < firstCallTime, "Cached retrieval should be faster");
 
     LOG.info("  First call time: " + firstCallTime + "ms");
     LOG.info("  Second call time (cached): " + secondCallTime + "ms");
@@ -81,9 +81,9 @@ public class SecureConfigTest {
     String linkedin = EPasswords.LINKEDIN.getValue();
     String dropbox = EPasswords.DROPBOX.getValue();
 
-    assertNotNull("BTSQA password should not be null", btsqa);
-    assertNotNull("LinkedIn password should not be null", linkedin);
-    assertNotNull("Dropbox password should not be null", dropbox);
+    assertNotNull(btsqa, "BTSQA password should not be null");
+    assertNotNull(linkedin, "LinkedIn password should not be null");
+    assertNotNull(dropbox, "Dropbox password should not be null");
 
     LOG.info("  BTSQA: " + (btsqa != null ? "✅" : "❌"));
     LOG.info("  LinkedIn: " + (linkedin != null ? "✅" : "❌"));
@@ -96,7 +96,7 @@ public class SecureConfigTest {
     LOG.info("Testing EPasswords.getSecretKey()...");
 
     String secretKey = EPasswords.BTSQA.getSecretKey();
-    assertEquals("Secret key should match", "AUTO_BTSQA_PASSWORD", secretKey);
+    assertEquals("AUTO_BTSQA_PASSWORD", secretKey, "Secret key should match");
 
     LOG.info("✅ getSecretKey() test passed!");
   }

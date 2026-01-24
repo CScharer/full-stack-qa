@@ -18,8 +18,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.QAException;
@@ -1643,7 +1643,7 @@ public class VivitDataTests extends Environment {
       mapProcess = CommandLineTests.runProcess(command, true);
       sysOut("mapProcess:[" + mapProcess + "]");
       if (!"0".equals(mapProcess.get("status"))) {
-        Assert.fail("VBScript Did Not Work");
+        Assertions.fail("VBScript Did Not Work");
       }
     } catch (final Exception e) {
       sysOut(e);

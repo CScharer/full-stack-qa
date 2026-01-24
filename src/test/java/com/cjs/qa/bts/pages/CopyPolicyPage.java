@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -212,9 +212,9 @@ public class CopyPolicyPage extends Page {
     final String copyFromPolicyNum = getEdit(editCopyFromPolicyNumber);
     final String copyToPolicyNum = getEdit(editCopyToPolicyNumber);
     if (getWebElement(checkboxRetainBaseNumber).isSelected()) {
-      Assert.assertEquals(copyFromPolicyNum, copyToPolicyNum);
+      Assertions.assertEquals(copyFromPolicyNum, copyToPolicyNum);
     } else {
-      Assert.assertNotSame(copyFromPolicyNum, copyToPolicyNum);
+      Assertions.assertNotSame(copyFromPolicyNum, copyToPolicyNum);
     }
   }
 
@@ -380,6 +380,6 @@ public class CopyPolicyPage extends Page {
         actual.put(field, value);
       }
     }
-    Assert.assertSame(getPageTitle() + " validatePage", expected, actual);
+    Assertions.assertSame(expected, actual, getPageTitle() + " validatePage");
   }
 }

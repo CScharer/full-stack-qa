@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import io.cucumber.java.Scenario;
 
@@ -44,9 +44,9 @@ public class SoftAssert {
         }
       }
       if (scenario == null) {
-        Assert.fail();
+        Assertions.fail();
       } else {
-        Assert.fail(
+        Assertions.fail(
             scenario.getId()
                 + Constants.NEWLINE
                 + scenario.getName()

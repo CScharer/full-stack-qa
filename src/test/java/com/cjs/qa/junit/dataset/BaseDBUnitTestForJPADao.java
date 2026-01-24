@@ -15,10 +15,10 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.h2.Driver;
 import org.h2.tools.RunScript;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.utilities.Constants;
@@ -73,8 +73,8 @@ public class BaseDBUnitTestForJPADao {
     return Driver.load().connect(url, properties);
   }
 
-  @BeforeClass
-  public static void setupTestClass() throws Exception {
+  @BeforeAll
+  static void setupTestClass() throws Exception {
     synchronized (INIT_LOCK) {
       if (entityManagerFactory != null) {
         // Already initialized
@@ -127,8 +127,8 @@ public class BaseDBUnitTestForJPADao {
     }
   }
 
-  @AfterClass
-  public static void teardownTestClass() {
+  @AfterAll
+  static void teardownTestClass() {
     synchronized (INIT_LOCK) {
       LOG.debug("TearDown-Class Method:[{}]", JavaHelpers.getCurrentClassName());
       try {
@@ -151,13 +151,13 @@ public class BaseDBUnitTestForJPADao {
     }
   }
 
-  @Before
-  public void baseSetup() throws Exception {
+  @BeforeEach
+  void baseSetup() throws Exception {
     setEntityManager(entityManagerFactory.createEntityManager());
   }
 
-  @After
-  public void baseTeardown() throws Exception {
+  @AfterEach
+  void baseTeardown() throws Exception {
     if (getEntityManager() != null) {
       if (getEntityManager().isOpen()) {
         getEntityManager().close();

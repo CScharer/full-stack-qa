@@ -1,6 +1,6 @@
 package com.cjs.qa.bts;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.saucelabs.SauceUtils;

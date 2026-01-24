@@ -5,11 +5,10 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import com.cjs.qa.bitcoin.Bitcoin;
 import com.cjs.qa.jdbc.JDBC;
@@ -27,35 +26,32 @@ public class BitcoinTests {
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(BitcoinTests.class));
 
-  @Rule public TestName testName = new TestName();
-
-  private String mavenCommand =
-      new TestRunCommand(this.getClass().getName(), getTestName()).toString();
+  private String mavenCommand;
   private JDBC jdbc = new JDBC("", VivitDataTests.DATABASE_DEFINITION);
 
-  @Before
-  public void beforeTestSetup() throws Throwable {
+  @BeforeEach
+  void beforeTestSetup(TestInfo testInfo) throws Throwable {
     LOG.debug(
         "{}], TestName: [{}]",
         Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName(),
-        getTestName());
+        getTestName(testInfo));
     // mavenCommand = "mvn clean test " + getDArgLine() + "
     // -DfailIfNoTests=false -Dtest=" + this.getClass().getName() + "#" +
     // getTestName() + " -Dtags=" + Constants.QUOTE_DOUBLE + "@" +
     // Constants.QUOTE_DOUBLE
-    mavenCommand = new TestRunCommand(this.getClass().getName(), getTestName()).toString();
+    mavenCommand = new TestRunCommand(this.getClass().getName(), getTestName(testInfo)).toString();
   }
 
-  @After
-  public void afterTestTeardown() {
+  @AfterEach
+  void afterTestTeardown(TestInfo testInfo) {
     LOG.debug(
         "{}], TestName: [{}]",
         Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName(),
-        getTestName());
+        getTestName(testInfo));
   }
 
-  public String getTestName() {
-    return testName.getMethodName();
+  private String getTestName(TestInfo testInfo) {
+    return testInfo.getTestMethod().map((method) -> method.getName()).orElse("Unknown");
   }
 
   public JDBC getJdbc() {
@@ -67,7 +63,7 @@ public class BitcoinTests {
   }
 
   @Test
-  public void mining() throws Throwable {
+  void mining(TestInfo testInfo) throws Throwable {
     LOG.debug("getCurrentMethodDebugName: [{}]", JavaHelpers.getCurrentMethodDebugName());
     LOG.info("mavenCommand: [{}]", mavenCommand);
     String urlBitcoinCurrentPrice = "https://api.coindesk.com/v1/bpi/currentprice.json";

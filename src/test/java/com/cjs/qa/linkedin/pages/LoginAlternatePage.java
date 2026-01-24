@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -183,7 +183,7 @@ public class LoginAlternatePage extends Page {
         actual.put(field, value);
       }
     }
-    Assert.assertSame(
+    Assertions.assertSame(
         this.getClass().getName() + "validatePage", expected.toString(), actual.toString());
   }
 

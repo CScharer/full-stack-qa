@@ -112,7 +112,7 @@ Tests run: 0, Failures: 0, Errors: 0, Skipped: 0
 ```
 [INFO] Using auto detected provider org.apache.maven.surefire.testng.TestNGProvider
 ```
-But tests are written in JUnit.
+But tests are written in JUnit (JUnit 6).
 
 **Solution:**
 Ensure tests use the detected provider (TestNG in our case), or configure Surefire explicitly:

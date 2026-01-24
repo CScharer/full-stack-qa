@@ -86,7 +86,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<jfreechart.version>1.5.6</jfreechart.version>
 		<json.version>20251224</json.version>
 		<jsoup.version>1.22.1</jsoup.version>
-		<junit.version>4.13.2</junit.version>
+		<junit.version>6.0.2</junit.version>
 		<jxl.version>2.6.12</jxl.version>
 		<lazy.version>1.0.1</lazy.version>
 		<mail.version>1.4.7</mail.version>
@@ -362,9 +362,10 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<version>${joda-time.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>net.bytebuddy</groupId>

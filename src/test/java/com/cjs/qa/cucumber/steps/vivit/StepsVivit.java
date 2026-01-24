@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 
 import com.cjs.qa.core.Environment;
@@ -278,7 +278,7 @@ public class StepsVivit extends Environment {
               + Constants.NEWLINE
               + mapTest.toString().replaceAll(", ", Constants.NEWLINE));
     }
-    Assert.assertEquals(0, getScenarioErrors().size());
+    Assertions.assertEquals(0, getScenarioErrors().size());
     // getWebDriver().get(VivitEnvironment.URL_LOGIN);
   }
 

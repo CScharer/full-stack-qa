@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 

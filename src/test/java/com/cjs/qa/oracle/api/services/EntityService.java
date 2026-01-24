@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.api.WebService;
@@ -49,7 +49,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Member/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -67,7 +67,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/OrgType/";
     final String json = getAPIJSONResponse("PUT", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -85,7 +85,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/WorkArea/";
     final String json = getAPIJSONResponse("PUT", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -103,7 +103,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/WorkType/";
     final String json = getAPIJSONResponse("PUT", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -175,7 +175,7 @@ public class EntityService extends WebService {
       final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Project/";
       final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
       map.put("JSON", json);
-      Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+      Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     }
     return map;
   }
@@ -274,7 +274,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Address/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -365,7 +365,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Address/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -405,7 +405,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Award/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -460,7 +460,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Certification/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -580,7 +580,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Contact/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -626,7 +626,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/License/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -649,7 +649,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Membership/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -891,7 +891,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     organizationId =
         json.substring(
             (json.indexOf("body" + Constants.QUOTE_DOUBLE + ":")
@@ -905,7 +905,7 @@ public class EntityService extends WebService {
     LOG.debug("oPhones:" + oPhones);
     LOG.debug("oCompanyInfo:" + oCompanyInfo);
     LOG.debug("Organization ID:[" + organizationId + "]");
-    Assert.assertNotNull("Organization ID:[" + organizationId + "]", organizationId);
+    Assertions.assertNotNull("Organization ID:[" + organizationId + "]", organizationId);
     return organizationId;
   }
 
@@ -992,7 +992,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     organizationId =
         json.substring(
             (json.indexOf("body" + Constants.QUOTE_DOUBLE + ":")
@@ -1002,7 +1002,7 @@ public class EntityService extends WebService {
                 .length());
     organizationId = organizationId.substring(0, organizationId.indexOf(","));
     LOG.debug("Organization ID:[" + organizationId + "]");
-    Assert.assertNotNull("Organization ID:[" + organizationId + "]", organizationId);
+    Assertions.assertNotNull("Organization ID:[" + organizationId + "]", organizationId);
     return organizationId;
   }
 
@@ -1049,7 +1049,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Phone/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -1125,7 +1125,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Project/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -1153,7 +1153,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/Relationship/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -1171,7 +1171,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Organization/" + organizationId + "/ShopType/";
     final String json = getAPIJSONResponse("PUT", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -1386,7 +1386,7 @@ public class EntityService extends WebService {
     final String requestURL = baseAPIEntity + "/Search/Organizations/Count";
     final String json = getAPIJSONResponse("PUT", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 

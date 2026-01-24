@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -351,7 +351,7 @@ public final class YMAPIMethodsTests {
   }
 
   public static void createMapping(WebDriver webDriver) throws QAException {
-    Assert.fail("This has already created the tables.");
+    Assertions.fail("This has already created the tables.");
     SQL.execute(JDBCConstants.DELETE_FROM + "[t_DOM_Vivit_YMAPIMethod];");
     SQL.execute(JDBCConstants.DELETE_FROM + "[t_DOM_Vivit_YMAPIMethodParameters];");
     final By byMethods = By.xpath("html/body/p/a");

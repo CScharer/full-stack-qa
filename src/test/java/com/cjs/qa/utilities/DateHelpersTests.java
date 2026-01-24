@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DateHelpersTests {
 
