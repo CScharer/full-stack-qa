@@ -7,7 +7,7 @@ This script:
 2. For each violation, adds @SuppressWarnings("PMD.RuleName") at the class level
 3. Updates the violations document to mark violations as Fixed
 
-Usage: python3 scripts/temp/add-suppress-warnings-to-classes.py
+Usage: python3 scripts/archive/add-suppress-warnings-to-classes.py
 """
 
 import os

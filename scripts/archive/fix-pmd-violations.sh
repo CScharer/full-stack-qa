@@ -2,7 +2,7 @@
 #
 # Fix PMD Violations: UnnecessaryFullyQualifiedName, UselessParentheses, LiteralsFirstInComparisons
 #
-# Usage: ./scripts/temp/fix-pmd-violations.sh
+# Usage: ./scripts/archive/fix-pmd-violations.sh
 #
 
 set -e

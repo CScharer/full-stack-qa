@@ -5,7 +5,7 @@
 # Since Page extends JavaHelpers, all Page subclasses inherit JavaHelpers methods
 # and don't need the JavaHelpers. qualifier.
 #
-# Usage: ./scripts/fix-javahelpers-qualifiers.sh
+# Usage: ./scripts/archive/fix-javahelpers-qualifiers.sh
 #
 # Note: This script modifies files in place. Make sure you have a backup or are using version control.
 
