@@ -808,10 +808,15 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<parallel>methods</parallel>
 					<threadCount>5</threadCount>
 					<perCoreThreadCount>true</perCoreThreadCount>
-					<!-- Exclude all JUnit tests in com.cjs.qa package by default -->
-					<!-- These tests are Windows-specific or should only run via TestNG suites -->
+					<!-- Prevent automatic test discovery - only run tests via TestNG suites -->
+					<!-- JUnit tests in com.cjs.qa are Windows-specific and should only run via TestNG suites -->
 					<!-- TestNG suites will still work because they explicitly specify test classes -->
+					<includes>
+						<!-- Match nothing by default - prevents automatic discovery -->
+						<include>**/DO_NOT_MATCH_ANYTHING.java</include>
+					</includes>
 					<excludes>
+						<!-- Exclude all JUnit tests in com.cjs.qa package as backup -->
 						<exclude>com.cjs.qa.**.*Test*</exclude>
 						<exclude>com.cjs.qa.**.*Tests</exclude>
 						<exclude>com.cjs.qa.**.*TestCase</exclude>
