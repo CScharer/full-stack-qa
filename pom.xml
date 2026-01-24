@@ -812,9 +812,9 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<!-- These tests are Windows-specific or should only run via TestNG suites -->
 					<!-- TestNG suites will still work because they explicitly specify test classes -->
 					<excludes>
-						<exclude>**/com/cjs/qa/**/*Test*.java</exclude>
-						<exclude>**/com/cjs/qa/**/*Tests.java</exclude>
-						<exclude>**/com/cjs/qa/**/*TestCase.java</exclude>
+						<exclude>com.cjs.qa.**.*Test*</exclude>
+						<exclude>com.cjs.qa.**.*Tests</exclude>
+						<exclude>com.cjs.qa.**.*TestCase</exclude>
 					</excludes>
 					<systemPropertyVariables>
 						<cucumber.execution.parallel.enabled>true</cucumber.execution.parallel.enabled>
