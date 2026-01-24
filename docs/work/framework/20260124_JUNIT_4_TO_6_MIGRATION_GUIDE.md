@@ -466,13 +466,15 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
     <!-- These tests are Windows-specific or should only run via TestNG suites -->
     <!-- TestNG suites will still work because they explicitly specify test classes -->
     <excludes>
-        <exclude>**/com/cjs/qa/**/*Test*.java</exclude>
-        <exclude>**/com/cjs/qa/**/*Tests.java</exclude>
-        <exclude>**/com/cjs/qa/**/*TestCase.java</exclude>
+        <exclude>com.cjs.qa.**.*Test*</exclude>
+        <exclude>com.cjs.qa.**.*Tests</exclude>
+        <exclude>com.cjs.qa.**.*TestCase</exclude>
     </excludes>
     <!-- ... rest of configuration ... -->
 </configuration>
 ```
+
+**Important Note**: The exclusion patterns must use **class name format** (without `.java` extension), not file path format. Surefire matches patterns against fully qualified class names, not file paths. The pattern `com.cjs.qa.**.*Tests` will match classes like `com.cjs.qa.bts.CompanyEnvironmentSetupTests`.
 
 **Why This Works**:
 - ✅ TestNG suites continue to work because they explicitly specify test classes in their XML files, bypassing Surefire's automatic discovery
@@ -482,7 +484,8 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
 
 **Location**: `pom.xml` lines 811-818
 
-**Date Applied**: 2026-01-24
+**Date Applied**: 2026-01-24  
+**Updated**: 2026-01-24 (fixed exclusion pattern format)
 
 ---
 
