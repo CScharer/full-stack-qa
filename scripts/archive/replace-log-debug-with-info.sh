@@ -5,7 +5,7 @@
 # This script replaces all LOG.debug calls with LOG.info calls in Java source files.
 # This is a simpler solution than adding log level guards around every LOG.debug call.
 #
-# Usage: ./scripts/replace-log-debug-with-info.sh
+# Usage: ./scripts/archive/replace-log-debug-with-info.sh
 #
 # Note: This script modifies files in place. Make sure you have a backup or are using version control.
 

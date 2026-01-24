@@ -5,7 +5,7 @@
 # This script removes unnecessary fully qualified names when the class is already
 # in scope through inheritance or imports.
 #
-# Usage: ./scripts/fix-unnecessary-qualified-names.sh
+# Usage: ./scripts/archive/fix-unnecessary-qualified-names.sh
 #
 # Note: This script modifies files in place. Make sure you have a backup or are using version control.
 

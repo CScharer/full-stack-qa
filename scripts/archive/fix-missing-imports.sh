@@ -3,7 +3,7 @@
 # Fix Missing Imports
 # Restores imports that were incorrectly removed by the unused import script
 #
-# Usage: ./scripts/fix-missing-imports.sh
+# Usage: ./scripts/archive/fix-missing-imports.sh
 
 set -e
 

@@ -10,7 +10,7 @@ This script:
 5. Updates the LOG declaration to use GuardedLogger
 
 Usage:
-    python3 scripts/migrate-to-guarded-logger.py [--dry-run] [--file <file>]
+    python3 scripts/archive/migrate-to-guarded-logger.py [--dry-run] [--file <file>]
     
 Options:
     --dry-run    Show what would be changed without making changes
