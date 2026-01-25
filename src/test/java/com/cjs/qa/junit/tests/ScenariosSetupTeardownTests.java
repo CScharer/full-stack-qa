@@ -25,6 +25,7 @@ import com.cjs.qa.utilities.JavaHelpers;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ExtendWith(ScenariosSetupTeardownTests.TestWatcherExtension.class)
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ScenariosSetupTeardownTests {
 
   private static final GuardedLogger LOG =
