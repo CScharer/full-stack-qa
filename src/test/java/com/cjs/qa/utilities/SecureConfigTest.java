@@ -28,7 +28,11 @@ public class SecureConfigTest {
 
   @BeforeEach
   public void checkCredentialsAvailability() {
+    // Clear cache to ensure we're testing with fresh credentials
+    SecureConfig.clearCache();
+
     try {
+      // Try to get a password - this will fail if credentials aren't available
       SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
       credentialsAvailable = true;
       LOG.info("Google Cloud credentials available - using real credentials");
@@ -42,6 +46,19 @@ public class SecureConfigTest {
       } else {
         // Re-throw if it's a different error
         throw e;
+      }
+    } catch (Exception e) {
+      // Catch any other exceptions (like IOException from Google Cloud)
+      if (e.getMessage() != null
+          && (e.getMessage().contains("default credentials were not found")
+              || e.getMessage().contains("Failed to fetch secret")
+              || e.getMessage().contains("credentials were not found"))) {
+        LOG.warn(
+            "Google Cloud credentials not available - using mocked responses: {}", e.getMessage());
+        credentialsAvailable = false;
+      } else {
+        // Re-throw if it's a different error
+        throw new RuntimeException(e);
       }
     }
   }
@@ -104,11 +121,10 @@ public class SecureConfigTest {
   public void testCaching() {
     LOG.info("Testing SecureConfig caching...");
 
-    // Clear cache
-    SecureConfig.clearCache();
-    assertEquals(0, SecureConfig.getCacheSize(), "Cache should be empty after clear");
-
     if (credentialsAvailable) {
+      // Clear cache
+      SecureConfig.clearCache();
+      assertEquals(0, SecureConfig.getCacheSize(), "Cache should be empty after clear");
       // Use real credentials
       // First retrieval (should hit Secret Manager)
       long startTime = System.currentTimeMillis();
@@ -128,6 +144,10 @@ public class SecureConfigTest {
       LOG.info("  First call time: " + firstCallTime + "ms");
       LOG.info("  Second call time (cached): " + secondCallTime + "ms");
     } else {
+      // Clear cache before mocking
+      SecureConfig.clearCache();
+      assertEquals(0, SecureConfig.getCacheSize(), "Cache should be empty after clear");
+
       // Mock Google Cloud Secret Manager calls
       try (MockedStatic<GoogleCloud> mockedGoogleCloud = Mockito.mockStatic(GoogleCloud.class)) {
         mockedGoogleCloud

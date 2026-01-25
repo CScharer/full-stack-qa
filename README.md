@@ -16,7 +16,7 @@
 
 [![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
 
-[![JUnit](https://img.shields.io/badge/JUnit-4.13.2-blue.svg)](https://junit.org/junit4/)
+[![JUnit](https://img.shields.io/badge/JUnit-6.0.2-blue.svg)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
 [![Vitest](https://img.shields.io/badge/Vitest-4.0.16-blue.svg)](https://vitest.dev/)
 
@@ -45,7 +45,7 @@
 
 [![Reporting](https://img.shields.io/badge/Reporting-Allure_Reports-yellow.svg)](docs/guides/testing/ALLURE_REPORTING.md)
 
-[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:2.36.0_Java:2.32.0-blue.svg)](https://allurereport.org/)
+[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:3.0.0_Java:2.32.0-blue.svg)](https://allurereport.org/)
 
 [![Coming Soon!!!](https://img.shields.io/badge/Coming%20Soon!!!-What's_Next!!!-cyan.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 <!-- [![Vibium](https://img.shields.io/badge/Vibium-0.1.2-cyan.svg)](https://vibium.com/) -->
@@ -131,7 +131,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Log4j 2.25.3** - Professional structured logging (updated via Dependabot PR #52)
 - **Maven 3.9.11** - Build management (wrapper included!)
 - **Docker & Docker Compose** - Complete containerization
-- **Allure2 CLI 2.36.0 (configurable), Allure2 Java 2.32.0** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
+- **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.32.0** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.3** - Automatic driver management
@@ -1174,8 +1174,8 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 |----------|---------|---------|
 | **WebDriver** | Selenium | 4.40.0 |
 | **BDD** | Cucumber | 7.33.0 |
-| **Testing** | JUnit | 4.13.2 |
-| **Testing** | TestNG | 7.20.1 |
+| **Testing** | JUnit | 6.0.2 |
+| **Testing** | TestNG | 7.11.0 |
 | **Testing** | Vitest | 4.0.16 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
