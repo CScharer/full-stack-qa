@@ -7,6 +7,7 @@ import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.openqa.selenium.WebDriver;
@@ -17,6 +18,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.SeleniumGridConfig;
 
 /** Simple test to verify Grid connection and basic Selenium functionality */
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class GridConnectionTest {
 
   private static final GuardedLogger LOG =

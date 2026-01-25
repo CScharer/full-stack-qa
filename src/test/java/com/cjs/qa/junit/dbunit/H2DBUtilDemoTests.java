@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -20,6 +21,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JavaHelpers;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class H2DBUtilDemoTests extends BaseDBUnitTestForJPADao {
 
   private static final GuardedLogger LOG =

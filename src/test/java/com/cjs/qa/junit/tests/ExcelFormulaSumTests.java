@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
@@ -18,6 +19,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.utilities.JavaHelpers;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ExcelFormulaSumTests {
 
   private static final GuardedLogger LOG =

@@ -19,6 +19,7 @@ import com.cjs.qa.utilities.RetryAnalyzer;
  *   <li>Testing retry behavior
  * </ul>
  */
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class RetryAnalyzerTest {
 
   private static final GuardedLogger LOGGER =

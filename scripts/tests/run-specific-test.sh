@@ -41,7 +41,7 @@ fi
 echo "🧪 Running: ${TEST_CLASS}#${TEST_METHOD}"
 echo "=========================================="
 
-./mvnw test -Dsurefire.skip=false -Dtest="${TEST_CLASS}#${TEST_METHOD}" -DfailIfNoTests=false
+./mvnw test -Dtest="${TEST_CLASS}#${TEST_METHOD}" -DfailIfNoTests=false
 
 echo ""
 echo "✅ Test completed!"

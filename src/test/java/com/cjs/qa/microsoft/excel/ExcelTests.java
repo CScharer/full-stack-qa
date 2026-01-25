@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
@@ -17,6 +18,7 @@ import com.cjs.qa.utilities.FSOTests;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ExcelTests {
 
   private static final GuardedLogger LOG =

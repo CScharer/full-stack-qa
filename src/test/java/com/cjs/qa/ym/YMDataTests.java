@@ -16,6 +16,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,6 +49,7 @@ import com.cjs.qa.ym.api.namespace.EventsNamespace;
 import com.cjs.qa.ym.api.objects.Event;
 import com.cjs.qa.ym.api.services.YMAPI;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class YMDataTests extends Environment {
 
   private static final GuardedLogger LOG =

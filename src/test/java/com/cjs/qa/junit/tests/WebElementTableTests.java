@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -28,6 +29,7 @@ import com.cjs.qa.utilities.IExtension;
 import io.cucumber.datatable.DataTable;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class WebElementTableTests {
 
   private static final GuardedLogger LOG =

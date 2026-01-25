@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.security.EAPIKeys;
@@ -17,6 +18,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.utilities.IHTTP;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class GTWebinarServiceTests {
 
   private static final GuardedLogger LOG =

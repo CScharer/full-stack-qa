@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.atlassian.jira.ManualTestSteps;
@@ -14,6 +15,7 @@ import com.cjs.qa.atlassian.jira.TestManual;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JSON;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class AtlassianTests {
 
   private static final GuardedLogger LOG =

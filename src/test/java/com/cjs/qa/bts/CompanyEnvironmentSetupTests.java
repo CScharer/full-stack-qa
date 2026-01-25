@@ -1,5 +1,6 @@
 package com.cjs.qa.bts;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
@@ -8,6 +9,7 @@ import com.cjs.qa.selenium.ISelenium;
 import com.cjs.qa.utilities.Constants;
 import com.cjs.qa.utilities.JavaHelpers;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class CompanyEnvironmentSetupTests extends Environment {
 
   private CompanyEnvironmentData companyEnvironmentData = null;

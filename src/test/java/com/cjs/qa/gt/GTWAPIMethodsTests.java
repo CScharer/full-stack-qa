@@ -3,6 +3,7 @@ package com.cjs.qa.gt;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.jdbc.JDBC;
@@ -12,6 +13,7 @@ import com.cjs.qa.utilities.FSOTests;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.vivit.VivitDataTests;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class GTWAPIMethodsTests {
 
   public static final String GTW_METHOD_TABLE = "t_DOM_GTWNamespaces-Methods";

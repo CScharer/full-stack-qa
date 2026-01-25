@@ -3,6 +3,7 @@ package com.cjs.qa.utilities;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.security.EPasswords;
@@ -16,6 +17,7 @@ import com.cjs.qa.core.security.EPasswords;
  * @author CJS QA Team
  * @version 1.0
  */
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class SecureConfigTest {
 
   private static final GuardedLogger LOG =

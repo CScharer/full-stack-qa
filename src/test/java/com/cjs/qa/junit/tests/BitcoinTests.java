@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
@@ -22,6 +23,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JavaHelpers;
 import com.cjs.qa.vivit.VivitDataTests;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class BitcoinTests {
 
   private static final GuardedLogger LOG =

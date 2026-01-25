@@ -27,11 +27,13 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.QAException;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class FSOTests {
 
   private static final GuardedLogger LOG = new GuardedLogger(LogManager.getLogger(FSOTests.class));

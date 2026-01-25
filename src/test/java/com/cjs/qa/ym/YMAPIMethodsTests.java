@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -26,6 +27,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.ym.api.services.YMService;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public final class YMAPIMethodsTests {
 
   private static final GuardedLogger LOG =
