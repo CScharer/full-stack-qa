@@ -24,7 +24,6 @@ import org.testng.annotations.Test;
  *
  * @author CJS QA Team
  */
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class PageObjectGeneratorBrowserTest {
 
   private static final GuardedLogger LOG =

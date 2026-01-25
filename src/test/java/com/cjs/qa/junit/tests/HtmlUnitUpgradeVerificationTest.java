@@ -27,7 +27,6 @@ import com.cjs.qa.utilities.IExtension;
  *
  * <p>Run with: mvn test -Dtest=HtmlUnitUpgradeVerificationTest
  */
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class HtmlUnitUpgradeVerificationTest {
 
   private static final GuardedLogger LOG =

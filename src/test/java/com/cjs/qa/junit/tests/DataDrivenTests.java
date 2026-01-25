@@ -30,7 +30,6 @@ import io.qameta.allure.*;
  */
 @Epic("Extended Test Coverage")
 @Feature("Data-Driven Tests")
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class DataDrivenTests {
 
   private static final GuardedLogger LOGGER =

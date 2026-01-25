@@ -24,7 +24,6 @@ import io.qameta.allure.*;
 @SuppressWarnings("PMD.ClassNamingConventions")
 @Epic("HomePage Tests - Example")
 @Feature("HomePage Navigation - Using Shared Config")
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class HomePageTestsExample {
 
   private static final GuardedLogger LOGGER =

@@ -19,7 +19,6 @@ import io.qameta.allure.*;
 /** Simple TestNG test to verify Grid connection and basic Selenium functionality */
 @Epic("Selenium Grid Testing")
 @Feature("Basic Grid Tests")
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class SimpleGridTest {
 
   private static final GuardedLogger LOGGER =

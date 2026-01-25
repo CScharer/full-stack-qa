@@ -21,7 +21,6 @@ import io.qameta.allure.*;
 /** Simple test for the HomePage */
 @Epic("HomePage Tests")
 @Feature("HomePage Navigation")
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class HomePageTests {
 
   private static final GuardedLogger LOGGER =

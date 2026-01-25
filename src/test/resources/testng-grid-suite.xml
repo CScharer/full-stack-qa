@@ -6,6 +6,8 @@
         <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
     </listeners>
     
+    <!-- Windows-specific tests disabled - not compatible with Mac -->
+    <!--
     <test name="Chrome Browser Tests" preserve-order="true">
         <parameter name="browser" value="chrome"/>
         <classes>
@@ -13,20 +15,18 @@
         </classes>
     </test>
 
-    <!-- Firefox tests disabled until framework changes are complete -->
-    <!--
     <test name="Firefox Browser Tests" preserve-order="true">
         <parameter name="browser" value="firefox"/>
         <classes>
             <class name="com.cjs.qa.junit.tests.EnhancedGridTests"/>
         </classes>
     </test>
-    -->
 
     <test name="Simple Grid Tests" preserve-order="true">
         <classes>
             <class name="com.cjs.qa.junit.tests.SimpleGridTest"/>
         </classes>
     </test>
+    -->
 </suite>
 

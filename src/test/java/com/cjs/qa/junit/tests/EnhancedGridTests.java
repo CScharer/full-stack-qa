@@ -27,7 +27,6 @@ import io.qameta.allure.*;
 /** Enhanced Grid tests demonstrating multi-browser support and advanced scenarios */
 @Epic("Selenium Grid Testing")
 @Feature("Enhanced Grid Tests")
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class EnhancedGridTests {
 
   private static final GuardedLogger LOGGER =
