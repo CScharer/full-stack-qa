@@ -43,7 +43,7 @@ echo ""
 
 # Run tests
 ./mvnw clean test \
-  -DskipTests=false \
+  -Dmaven.test.skip=false \
   -Dtest=$TEST_SUITE \
   -Dbrowser=$BROWSER \
   -DfailIfNoTests=false

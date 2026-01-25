@@ -73,7 +73,7 @@ echo ""
 
 START_TIME=$(date +%s)
 
-docker-compose run --rm tests -DskipTests=false -DsuiteXmlFile=testng-smoke-suite.xml
+docker-compose run --rm tests -Dmaven.test.skip=false -DsuiteXmlFile=testng-smoke-suite.xml
 
 TEST_EXIT=$?
 END_TIME=$(date +%s)
