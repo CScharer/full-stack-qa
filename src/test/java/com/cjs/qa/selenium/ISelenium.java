@@ -20,7 +20,7 @@ import org.htmlunit.html.HtmlPage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -160,7 +160,7 @@ public interface ISelenium {
     final String indexer = webElementString.substring(0, webElementString.indexOf("Driver:"));
     final int parents = (indexer.lastIndexOf("[") + 1) / 2;
     if (parents != parentList.size()) {
-      Assert.fail(
+      Assertions.fail(
           "The parentList ["
               + parentList.size()
               + "] does not match the number of parents ["

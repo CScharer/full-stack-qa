@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
 import com.cjs.qa.microsoft.excel.xls.XLS;

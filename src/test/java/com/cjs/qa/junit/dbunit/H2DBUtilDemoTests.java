@@ -1,24 +1,27 @@
 package com.cjs.qa.junit.dbunit;
 
+import java.lang.reflect.Method;
+
 import org.apache.logging.log4j.LogManager;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.operation.DatabaseOperation;
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JavaHelpers;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class H2DBUtilDemoTests extends BaseDBUnitTestForJPADao {
 
   private static final GuardedLogger LOG =
@@ -27,17 +30,14 @@ public class H2DBUtilDemoTests extends BaseDBUnitTestForJPADao {
   // private final OrderDaoJpaImpl target = null;
   private DefaultDataSet dataSet = null;
 
-  //
-  @Rule public TestName testName = new TestName();
-
-  @BeforeClass
-  public static void classSetup() {
+  @BeforeAll
+  static void classSetup() {
     LOG.debug("Setup-Class Method:[{}]", JavaHelpers.getCurrentClassName());
   }
 
-  @Before
-  public void testSetup() throws Exception {
-    LOG.debug("Setup-Test Method:[{}]", getTestName());
+  @BeforeEach
+  void testSetup(TestInfo testInfo) throws Exception {
+    LOG.debug("Setup-Test Method:[{}]", getTestName(testInfo));
     dataSet = new DefaultDataSet();
     final DefaultTable orderSourceEntityTable =
         new DefaultTable("OrderSourceEntity", DBDataDef.ORDER_SOURCE_ENTITY_COLUMNS);
@@ -57,14 +57,14 @@ public class H2DBUtilDemoTests extends BaseDBUnitTestForJPADao {
     DatabaseOperation.INSERT.execute(getiDatabaseConnection(), dataSet);
   }
 
-  @After
-  public void testTeardown() throws Exception {
-    LOG.debug("TearDown-Test Method:[{}]", getTestName());
+  @AfterEach
+  void testTeardown(TestInfo testInfo) throws Exception {
+    LOG.debug("TearDown-Test Method:[{}]", getTestName(testInfo));
     DatabaseOperation.DELETE.execute(getiDatabaseConnection(), dataSet);
   }
 
-  @AfterClass
-  public static void classTearDown() {
+  @AfterAll
+  static void classTearDown() {
     LOG.debug("TearDown-Class Method:[{}]", JavaHelpers.getCurrentClassName());
   }
 
@@ -124,11 +124,11 @@ public class H2DBUtilDemoTests extends BaseDBUnitTestForJPADao {
   }
 
   @Test
-  public void t001() {
-    LOG.debug("{}", getTestName());
+  void t001(TestInfo testInfo) {
+    LOG.debug("{}", getTestName(testInfo));
   }
 
-  public String getTestName() {
-    return testName.getMethodName();
+  private String getTestName(TestInfo testInfo) {
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 }

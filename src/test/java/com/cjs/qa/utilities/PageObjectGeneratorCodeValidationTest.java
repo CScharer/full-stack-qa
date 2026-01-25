@@ -1,13 +1,13 @@
 package com.cjs.qa.utilities;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for PageObjectGenerator code structure validation.
@@ -23,7 +23,7 @@ public class PageObjectGeneratorCodeValidationTest {
   public void testGeneratorClassExists() {
     // Verify PageObjectGenerator class exists and is accessible
     Class<?> generatorClass = PageObjectGenerator.class;
-    assertNotNull("PageObjectGenerator class should exist", generatorClass);
+    assertNotNull(generatorClass, "PageObjectGenerator class should exist");
   }
 
   @Test
@@ -33,11 +33,11 @@ public class PageObjectGeneratorCodeValidationTest {
       Method generateMethod =
           PageObjectGenerator.class.getMethod(
               "generate", String.class, String.class, String.class, String.class);
-      assertNotNull("generate() method should exist", generateMethod);
-      assertTrue("generate() should be static", Modifier.isStatic(generateMethod.getModifiers()));
-      assertTrue("generate() should be public", Modifier.isPublic(generateMethod.getModifiers()));
+      assertNotNull(generateMethod, "generate() method should exist");
+      assertTrue(Modifier.isStatic(generateMethod.getModifiers()), "generate() should be static");
+      assertTrue(Modifier.isPublic(generateMethod.getModifiers()), "generate() should be public");
     } catch (NoSuchMethodException e) {
-      assertTrue("generate() method not found", false);
+      assertTrue(false, "generate() method not found");
     }
   }
 
@@ -55,11 +55,11 @@ public class PageObjectGeneratorCodeValidationTest {
               boolean.class,
               boolean.class,
               boolean.class);
-      assertNotNull("generate() method with options should exist", generateMethod);
-      assertTrue("generate() should be static", Modifier.isStatic(generateMethod.getModifiers()));
-      assertTrue("generate() should be public", Modifier.isPublic(generateMethod.getModifiers()));
+      assertNotNull(generateMethod, "generate() method with options should exist");
+      assertTrue(Modifier.isStatic(generateMethod.getModifiers()), "generate() should be static");
+      assertTrue(Modifier.isPublic(generateMethod.getModifiers()), "generate() should be public");
     } catch (NoSuchMethodException e) {
-      assertTrue("generate() method with options not found", false);
+      assertTrue(false, "generate() method with options not found");
     }
   }
 
@@ -68,9 +68,9 @@ public class PageObjectGeneratorCodeValidationTest {
     // Verify default constructor exists
     try {
       PageObjectGenerator generator = new PageObjectGenerator();
-      assertNotNull("Default constructor should work", generator);
+      assertNotNull(generator, "Default constructor should work");
     } catch (Exception e) {
-      assertTrue("Default constructor failed: " + e.getMessage(), false);
+      assertTrue(false, "Default constructor failed: " + e.getMessage());
     }
   }
 
@@ -79,9 +79,9 @@ public class PageObjectGeneratorCodeValidationTest {
     // Verify constructor with options exists
     try {
       PageObjectGenerator generator = new PageObjectGenerator(false, true, true);
-      assertNotNull("Constructor with options should work", generator);
+      assertNotNull(generator, "Constructor with options should work");
     } catch (Exception e) {
-      assertTrue("Constructor with options failed: " + e.getMessage(), false);
+      assertTrue(false, "Constructor with options failed: " + e.getMessage());
     }
   }
 
@@ -89,15 +89,15 @@ public class PageObjectGeneratorCodeValidationTest {
   public void testGeneratorIsPublic() {
     // Verify class is public
     assertTrue(
-        "PageObjectGenerator should be public",
-        Modifier.isPublic(PageObjectGenerator.class.getModifiers()));
+        Modifier.isPublic(PageObjectGenerator.class.getModifiers()),
+        "PageObjectGenerator should be public");
   }
 
   @Test
   public void testGeneratorIsNotAbstract() {
     // Verify class is not abstract (can be instantiated)
     assertFalse(
-        "PageObjectGenerator should not be abstract",
-        Modifier.isAbstract(PageObjectGenerator.class.getModifiers()));
+        Modifier.isAbstract(PageObjectGenerator.class.getModifiers()),
+        "PageObjectGenerator should not be abstract");
   }
 }

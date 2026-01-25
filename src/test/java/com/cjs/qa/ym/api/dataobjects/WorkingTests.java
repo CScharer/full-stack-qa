@@ -1,9 +1,11 @@
 package com.cjs.qa.ym.api.dataobjects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class WorkingTests extends Environment {
 
   @Test

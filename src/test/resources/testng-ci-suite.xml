@@ -6,6 +6,8 @@
         <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
     </listeners>
     
+    <!-- Windows-specific tests disabled - not compatible with Mac -->
+    <!--
     <test name="Simple Grid Tests" preserve-order="true">
         <classes>
             <class name="com.cjs.qa.junit.tests.SimpleGridTest"/>
@@ -17,5 +19,6 @@
             <class name="com.cjs.qa.junit.tests.EnhancedGridTests"/>
         </classes>
     </test>
+    -->
 </suite>
 

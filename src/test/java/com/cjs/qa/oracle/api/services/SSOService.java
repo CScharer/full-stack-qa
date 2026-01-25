@@ -12,7 +12,7 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.api.WebService;
@@ -78,7 +78,7 @@ public class SSOService extends WebService {
     final String ssoUserTokenId = "";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     try {
       map.put(
           "ssoUserTokenId", new JSONObject(json).getJSONObject("body").getString("ssoUserTokenId"));
@@ -102,7 +102,7 @@ public class SSOService extends WebService {
     final String ssoUserTokenId = "";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return json;
   }
 
@@ -126,7 +126,7 @@ public class SSOService extends WebService {
     final String ssoUserTokenId = "";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return emailToken;
   }
 
@@ -154,7 +154,7 @@ public class SSOService extends WebService {
     final String ssoUserTokenId = "";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
   }
 
   /**
@@ -479,7 +479,7 @@ public class SSOService extends WebService {
     final String ssoUserTokenId = "";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     if (confirmUser) {
       final String jsonConfirmUser = confirmUser(eMail);
       if (!jsonConfirmUser.contains(OracleConstants.API_JSON_SUCCESS)) {

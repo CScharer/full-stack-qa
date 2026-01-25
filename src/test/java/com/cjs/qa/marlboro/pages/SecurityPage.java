@@ -1,6 +1,6 @@
 package com.cjs.qa.marlboro.pages;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -25,7 +25,7 @@ public class SecurityPage extends Page {
   private static final By buttonEnterPin = By.xpath(".//*[@id='btnEnterPin']");
 
   public void editSetPin(String pin) {
-    Assert.assertEquals("Pin is not 5 characters in length.", 5, pin.length());
+    Assertions.assertEquals(5, pin.length(), "Pin is not 5 characters in length.");
     for (int index = 0; index < 4; index++) {
       final By editPin = By.xpath(".//*[@id='createPin_pin" + (index + 1) + "']");
       final String value = pin.substring(index, index);

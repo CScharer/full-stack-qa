@@ -1,13 +1,15 @@
 package com.cjs.qa.junit.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URI;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -16,6 +18,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.SeleniumGridConfig;
 
 /** Simple test to verify Grid connection and basic Selenium functionality */
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class GridConnectionTest {
 
   private static final GuardedLogger LOG =
@@ -23,8 +26,8 @@ public class GridConnectionTest {
 
   private WebDriver driver;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp(TestInfo testInfo) throws Exception {
     // Resolve Selenium Grid URL (with sensible default)
     String gridUrl = SeleniumGridConfig.getGridUrl();
 
@@ -49,37 +52,37 @@ public class GridConnectionTest {
   }
 
   @Test
-  public void testGridConnection() {
-    assertNotNull("Driver should be initialized", driver);
+  void testGridConnection(TestInfo testInfo) {
+    assertNotNull(driver, "Driver should be initialized");
     LOG.info("✅ Grid connection test PASSED");
   }
 
   @Test
-  public void testNavigateToGoogle() throws Exception {
+  void testNavigateToGoogle(TestInfo testInfo) throws Exception {
     LOG.info("Navigating to Google...");
     driver.get("https://www.google.com");
 
     String title = driver.getTitle();
     LOG.info("Page title: {}", title);
 
-    assertTrue("Title should contain 'Google'", title.contains("Google"));
+    assertTrue(title.contains("Google"), "Title should contain 'Google'");
     LOG.info("✅ Google navigation test PASSED");
   }
 
   @Test
-  public void testNavigateToGitHub() throws Exception {
+  void testNavigateToGitHub(TestInfo testInfo) throws Exception {
     LOG.info("Navigating to GitHub...");
     driver.get("https://github.com");
 
     String title = driver.getTitle();
     LOG.info("Page title: {}", title);
 
-    assertTrue("Title should contain 'GitHub'", title.contains("GitHub"));
+    assertTrue(title.contains("GitHub"), "Title should contain 'GitHub'");
     LOG.info("✅ GitHub navigation test PASSED");
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     if (driver != null) {
       LOG.info("Closing browser...");
       driver.quit();

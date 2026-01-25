@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -390,6 +390,6 @@ public class AddNewAddressClientPage extends Page {
       }
     }
     actual.put("~", null);
-    Assert.assertEquals(getPageTitle() + " validatePage", expected, actual);
+    Assertions.assertEquals(expected, actual, getPageTitle() + " validatePage");
   }
 }

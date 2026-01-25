@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.QAException;
@@ -71,16 +71,16 @@ public class YMService {
           // unsuccessful with response of [" + responseCode + ":" +
           // IHTTP.getResponseValue(responseCode) + "].")
         }
-        Assert.assertTrue(
+        Assertions.assertTrue(
+            responseCode >= HttpURLConnection.HTTP_OK
+                && responseCode < HttpURLConnection.HTTP_BAD_REQUEST,
             CONNECTED_TO
                 + URL_YM
                 + "] unsuccessful with response of ["
                 + responseCode
                 + ":"
                 + IHTTP.getResponseValue(responseCode)
-                + "].",
-            responseCode >= HttpURLConnection.HTTP_OK
-                && responseCode < HttpURLConnection.HTTP_BAD_REQUEST);
+                + "].");
         LOG.debug(
             "{}{}] successfull with response of [{}:{}].",
             CONNECTED_TO,

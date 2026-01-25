@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.api.WebService;
@@ -46,7 +46,7 @@ public class RoleManagementService extends WebService {
         baseAPIRoleManagement + "/Organization/" + organizationId + "/Role/" + roleId + "/User/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 
@@ -73,7 +73,7 @@ public class RoleManagementService extends WebService {
     final String requestURL = baseAPIRoleManagement + "/Organization/" + organizationId + "/Role/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     roleId =
         json.substring(
             (json.indexOf("body" + Constants.QUOTE_DOUBLE + ":")
@@ -83,7 +83,7 @@ public class RoleManagementService extends WebService {
                 .length());
     roleId = roleId.substring(0, roleId.indexOf(","));
     LOG.info("Role ID:[{}]", roleId);
-    Assert.assertNotNull("Role ID:[" + roleId + "]", roleId);
+    Assertions.assertNotNull(roleId, "Role ID:[" + roleId + "]");
     return roleId;
   }
 
@@ -180,7 +180,7 @@ public class RoleManagementService extends WebService {
     final String requestURL = baseAPIRoleManagement + "/Organization";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     organizationId =
         json.substring(
             (json.indexOf("body" + Constants.QUOTE_DOUBLE + ":")
@@ -195,7 +195,7 @@ public class RoleManagementService extends WebService {
     LOG.debug("oPhones:{}", oPhones);
     LOG.debug("oCompanyInfo:{}", oCompanyInfo);
     LOG.info("Organization ID:[{}]", organizationId);
-    Assert.assertNotNull("Organization ID:[" + organizationId + "]", organizationId);
+    Assertions.assertNotNull(organizationId, "Organization ID:[" + organizationId + "]");
     // return organizationId;
     return map;
   }
@@ -233,7 +233,7 @@ public class RoleManagementService extends WebService {
         baseAPIRoleManagement + "/Organization/" + organizationId + "/License/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return json;
   }
 }

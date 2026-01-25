@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -152,7 +152,7 @@ public class CasePaymentsPage extends Page {
     if (!headingListActual.toString().equals(headingListExpected.toString())) {
       LOG.warn("{}", message);
     }
-    Assert.assertEquals(message, headingListActual.toString(), headingListExpected.toString());
+    Assertions.assertEquals(headingListExpected.toString(), headingListActual.toString(), message);
     return headingListActual;
   }
 }

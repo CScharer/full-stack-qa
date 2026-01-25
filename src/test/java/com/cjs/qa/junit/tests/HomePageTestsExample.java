@@ -21,6 +21,7 @@ import io.qameta.allure.*;
  * <p><strong>Note:</strong> This is an example file. The actual HomePageTests.java can be updated
  * to use EnvironmentConfig if desired.
  */
+@SuppressWarnings("PMD.ClassNamingConventions")
 @Epic("HomePage Tests - Example")
 @Feature("HomePage Navigation - Using Shared Config")
 public class HomePageTestsExample {

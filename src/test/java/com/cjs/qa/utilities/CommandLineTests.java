@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 
@@ -24,12 +24,27 @@ public class CommandLineTests {
 
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(CommandLineTests.class));
+
+  // Windows-specific commands
   public static final String TASKKILL = "taskkill /f /im ";
   public static final String TASKLIST = "tasklist";
 
+  // Cross-platform process name normalization
+  private static String normalizeProcessName(String processName) {
+    if (processName == null) {
+      return null;
+    }
+    // On Mac/Linux, remove .exe extension if present
+    if (!Constants.IS_WINDOWS && processName.endsWith(".exe")) {
+      return processName.substring(0, processName.length() - 4);
+    }
+    return processName;
+  }
+
   @Test
   public void testCommandLine() throws IOException {
-    LOG.info("Chrome is running: [{}]", isProcessRunning("chrome.exe"));
+    String processName = Constants.IS_WINDOWS ? "chrome.exe" : "chrome";
+    LOG.info("Chrome is running: [{}]", isProcessRunning(processName));
   }
 
   @Test
@@ -49,10 +64,20 @@ public class CommandLineTests {
       String pid = entry.getKey();
       String processName = entry.getValue();
       String imageName = null;
-      String command = TASKLIST + " /fo:csv /nh /fi \"pid eq " + pid + "\"";
-      Processes processes = new Processes(command);
-      if (!processes.getProcessList().isEmpty()) {
-        imageName = processes.getProcessList().get(0).getImageName();
+      String command;
+      if (Constants.IS_WINDOWS) {
+        command = TASKLIST + " /fo:csv /nh /fi \"pid eq " + pid + "\"";
+      } else {
+        // Mac/Linux: Use ps with PID
+        command = "ps -p " + pid + " -o pid,comm,args";
+      }
+      try {
+        Processes processes = new Processes(command);
+        if (!processes.getProcessList().isEmpty()) {
+          imageName = processes.getProcessList().get(0).getImageName();
+        }
+      } catch (Exception e) {
+        LOG.warn("Failed to get process info for PID {}: {}", pid, e.getMessage());
       }
       LOG.debug("pid: [{}], processName: [{}], imageName: [{}]", pid, processName, imageName);
     }
@@ -75,7 +100,8 @@ public class CommandLineTests {
 
   public List<String> getJpsProcessesList(String jpsProcessName) throws Throwable {
     List<String> jpsProcessListNew = new ArrayList<>();
-    String command = "cmd /C jps";
+    // Cross-platform jps command
+    String command = Constants.IS_WINDOWS ? "cmd /C jps" : "jps";
     final Map<String, String> mapProcess = runProcess(command, true);
     String status = mapProcess.get("status");
     if ("0".equals(status)) {
@@ -98,27 +124,54 @@ public class CommandLineTests {
   public void testProcesses() throws Throwable {
     Processes processes = null;
     String command = "";
-    command = TASKLIST + " /fo:csv /nh /fi \"imagename eq chrome.exe\"";
-    LOG.debug("command: [{}]", command);
-    processes = new Processes(command);
-    LOG.debug("Processes: {}", processes.toString());
-    command = TASKLIST + " /fo:csv /nh /fi \"windowtitle eq Selenium-Grid2-Hub_CSCHARER-LAPTOP*\"";
-    LOG.debug("command: [{}]", command);
-    processes = new Processes(command);
-    LOG.debug("Processes: {}", processes.toString());
-    command =
-        TASKLIST + " /fo:csv /nh /fi \"windowtitle eq" + " Selenium-Grid2-Node_CSCHARER-LAPTOP*\"";
-    LOG.debug("command: [{}]", command);
-    processes = new Processes(command);
-    LOG.debug("Processes: {}", processes.toString());
-    command = TASKLIST + " /fo:csv /nh /fi \"windowtitle eq Selenium-Grid2-*\"";
-    LOG.debug("command: [{}]", command);
-    processes = new Processes(command);
-    LOG.debug("Processes: {}", processes.toString());
-    command = TASKLIST + " /fo:csv /nh /fi \"windowtitle eq Selenium-Grid3-*\"";
-    LOG.debug("command: [{}]", command);
-    processes = new Processes(command);
-    LOG.debug("Processes: {}", processes.toString());
+
+    if (Constants.IS_WINDOWS) {
+      // Windows-specific tasklist commands
+      command = TASKLIST + " /fo:csv /nh /fi \"imagename eq chrome.exe\"";
+      LOG.debug("command: [{}]", command);
+      processes = new Processes(command);
+      LOG.debug("Processes: {}", processes.toString());
+      command =
+          TASKLIST + " /fo:csv /nh /fi \"windowtitle eq Selenium-Grid2-Hub_CSCHARER-LAPTOP*\"";
+      LOG.debug("command: [{}]", command);
+      processes = new Processes(command);
+      LOG.debug("Processes: {}", processes.toString());
+      command =
+          TASKLIST
+              + " /fo:csv /nh /fi \"windowtitle eq"
+              + " Selenium-Grid2-Node_CSCHARER-LAPTOP*\"";
+      LOG.debug("command: [{}]", command);
+      processes = new Processes(command);
+      LOG.debug("Processes: {}", processes.toString());
+      command = TASKLIST + " /fo:csv /nh /fi \"windowtitle eq Selenium-Grid2-*\"";
+      LOG.debug("command: [{}]", command);
+      processes = new Processes(command);
+      LOG.debug("Processes: {}", processes.toString());
+      command = TASKLIST + " /fo:csv /nh /fi \"windowtitle eq Selenium-Grid3-*\"";
+      LOG.debug("command: [{}]", command);
+      processes = new Processes(command);
+      LOG.debug("Processes: {}", processes.toString());
+    } else {
+      // Mac/Linux: Use ps command with similar filtering
+      // Note: Window title filtering is Windows-specific, so we'll use process name filtering
+      command = "ps -eo pid,comm,args | grep -i chrome | head -5";
+      LOG.debug("command: [{}] (Mac/Linux)", command);
+      try {
+        processes = new Processes(command);
+        LOG.debug("Processes: {}", processes.toString());
+      } catch (Exception e) {
+        LOG.warn("Process listing failed (expected on Mac/Linux): {}", e.getMessage());
+      }
+      // Additional ps commands for testing
+      command = "ps -eo pid,comm | head -10";
+      LOG.debug("command: [{}] (Mac/Linux)", command);
+      try {
+        processes = new Processes(command);
+        LOG.debug("Processes: {}", processes.toString());
+      } catch (Exception e) {
+        LOG.warn("Process listing failed: {}", e.getMessage());
+      }
+    }
   }
 
   public static String executeCommand(String command) throws Exception {
@@ -126,15 +179,22 @@ public class CommandLineTests {
     try {
       // Handle Windows shell commands (cmd /C ...) and simple commands
       ProcessBuilder processBuilder;
-      if (command.startsWith("cmd /C ") || command.startsWith("cmd /c ")) {
-        // Shell command: split into ["cmd", "/C", "rest of command"]
+      if (Constants.IS_WINDOWS
+          && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+        // Windows shell command: split into ["cmd", "/C", "rest of command"]
         String[] parts = command.split("\\s+", 3);
         if (parts.length == 3) {
           processBuilder = new ProcessBuilder(parts[0], parts[1], parts[2]);
         } else {
           processBuilder = new ProcessBuilder(command.split("\\s+"));
         }
+      } else if (!Constants.IS_WINDOWS
+          && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+        // On Mac/Linux, strip "cmd /C" prefix and execute directly
+        String actualCommand = command.replaceFirst("(?i)cmd /C ", "").trim();
+        processBuilder = new ProcessBuilder("/bin/sh", "-c", actualCommand);
       } else {
+        // Simple command - split by spaces
         processBuilder = new ProcessBuilder(command.split("\\s+"));
       }
       Process process = processBuilder.start();
@@ -156,23 +216,45 @@ public class CommandLineTests {
   }
 
   public static boolean isProcessRunning(String processName) throws IOException {
-    final ProcessBuilder processBuilder = new ProcessBuilder(TASKLIST + ".exe");
-    final Process process = processBuilder.start();
-    final String tasksList = getInputStream(process.getInputStream()).toLowerCase(Locale.ENGLISH);
-    return tasksList.contains(processName.toLowerCase(Locale.ENGLISH));
+    String normalizedName = normalizeProcessName(processName);
+    if (Constants.IS_WINDOWS) {
+      final ProcessBuilder processBuilder = new ProcessBuilder(TASKLIST + ".exe");
+      final Process process = processBuilder.start();
+      final String tasksList = getInputStream(process.getInputStream()).toLowerCase(Locale.ENGLISH);
+      return tasksList.contains(normalizedName.toLowerCase(Locale.ENGLISH));
+    } else {
+      // Mac/Linux: Use ps command
+      try {
+        ProcessBuilder processBuilder = new ProcessBuilder("ps", "aux");
+        Process process = processBuilder.start();
+        final String processes =
+            getInputStream(process.getInputStream()).toLowerCase(Locale.ENGLISH);
+        return processes.contains(normalizedName.toLowerCase(Locale.ENGLISH));
+      } catch (IOException e) {
+        LOG.warn("Failed to check process on Mac/Linux: {}", e.getMessage());
+        return false;
+      }
+    }
   }
 
   public static boolean isProcessRunningNoException(String processRunning) {
+    String normalizedName = normalizeProcessName(processRunning);
     Process process;
     try {
-      ProcessBuilder processBuilder = new ProcessBuilder(TASKLIST);
+      ProcessBuilder processBuilder;
+      if (Constants.IS_WINDOWS) {
+        processBuilder = new ProcessBuilder(TASKLIST);
+      } else {
+        // Mac/Linux: Use ps command
+        processBuilder = new ProcessBuilder("ps", "aux");
+      }
       process = processBuilder.start();
       try (BufferedReader bufferedReader =
           new BufferedReader(new InputStreamReader(process.getInputStream()))) {
         String line;
         while ((line = bufferedReader.readLine()) != null) {
           line = line.toLowerCase(Locale.ENGLISH);
-          if (line.contains(processRunning.toLowerCase(Locale.ENGLISH))) {
+          if (line.contains(normalizedName.toLowerCase(Locale.ENGLISH))) {
             if (Environment.isLogAll()) {
               LOG.debug("Output line: {}", line);
             }
@@ -188,7 +270,14 @@ public class CommandLineTests {
   }
 
   public static void killProcess(String processRunning) throws Exception {
-    final String command = TASKKILL + processRunning;
+    String command;
+    if (Constants.IS_WINDOWS) {
+      command = TASKKILL + processRunning;
+    } else {
+      // Mac/Linux: Use killall or pkill
+      String normalizedName = normalizeProcessName(processRunning);
+      command = "killall " + normalizedName;
+    }
     if (Environment.isLogAll()) {
       LOG.debug("command: [{}]", command);
     }
@@ -220,14 +309,19 @@ public class CommandLineTests {
   public static int runProcess(String command) throws Exception {
     // Handle Windows shell commands (cmd /C ...) and simple commands
     ProcessBuilder processBuilder;
-    if (command.startsWith("cmd /C ") || command.startsWith("cmd /c ")) {
-      // Shell command: split into ["cmd", "/C", "rest of command"]
+    if (Constants.IS_WINDOWS && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+      // Windows shell command: split into ["cmd", "/C", "rest of command"]
       String[] parts = command.split("\\s+", 3);
       if (parts.length == 3) {
         processBuilder = new ProcessBuilder(parts[0], parts[1], parts[2]);
       } else {
         processBuilder = new ProcessBuilder(command.split("\\s+"));
       }
+    } else if (!Constants.IS_WINDOWS
+        && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+      // On Mac/Linux, strip "cmd /C" prefix and execute directly
+      String actualCommand = command.replaceFirst("(?i)cmd /C ", "").trim();
+      processBuilder = new ProcessBuilder("/bin/sh", "-c", actualCommand);
     } else {
       processBuilder = new ProcessBuilder(command.split("\\s+"));
     }
@@ -240,14 +334,19 @@ public class CommandLineTests {
   public static Map<String, String> runProcess(String command, boolean wait) throws Exception {
     // Handle Windows shell commands (cmd /C ...) and simple commands
     ProcessBuilder processBuilder;
-    if (command.startsWith("cmd /C ") || command.startsWith("cmd /c ")) {
-      // Shell command: split into ["cmd", "/C", "rest of command"]
+    if (Constants.IS_WINDOWS && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+      // Windows shell command: split into ["cmd", "/C", "rest of command"]
       String[] parts = command.split("\\s+", 3);
       if (parts.length == 3) {
         processBuilder = new ProcessBuilder(parts[0], parts[1], parts[2]);
       } else {
         processBuilder = new ProcessBuilder(command.split("\\s+"));
       }
+    } else if (!Constants.IS_WINDOWS
+        && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+      // On Mac/Linux, strip "cmd /C" prefix and execute directly
+      String actualCommand = command.replaceFirst("(?i)cmd /C ", "").trim();
+      processBuilder = new ProcessBuilder("/bin/sh", "-c", actualCommand);
     } else {
       processBuilder = new ProcessBuilder(command.split("\\s+"));
     }
@@ -265,14 +364,19 @@ public class CommandLineTests {
     LOG.debug("command: [{}]", command);
     // Handle Windows shell commands (cmd /C ...) and simple commands
     ProcessBuilder processBuilder;
-    if (command.startsWith("cmd /C ") || command.startsWith("cmd /c ")) {
-      // Shell command: split into ["cmd", "/C", "rest of command"]
+    if (Constants.IS_WINDOWS && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+      // Windows shell command: split into ["cmd", "/C", "rest of command"]
       String[] parts = command.split("\\s+", 3);
       if (parts.length == 3) {
         processBuilder = new ProcessBuilder(parts[0], parts[1], parts[2]);
       } else {
         processBuilder = new ProcessBuilder(command.split("\\s+"));
       }
+    } else if (!Constants.IS_WINDOWS
+        && (command.startsWith("cmd /C ") || command.startsWith("cmd /c "))) {
+      // On Mac/Linux, strip "cmd /C" prefix and execute directly
+      String actualCommand = command.replaceFirst("(?i)cmd /C ", "").trim();
+      processBuilder = new ProcessBuilder("/bin/sh", "-c", actualCommand);
     } else {
       processBuilder = new ProcessBuilder(command.split("\\s+"));
     }

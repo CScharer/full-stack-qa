@@ -1,7 +1,7 @@
 # 📚 Documentation Navigation Guide
 ## CJS QA Automation Framework(s) Documentation
 
-**Last Updated**: January 16, 2026
+**Last Updated**: January 24, 2026
 **Version**: 2.1 - Cleaned Up Structure
 **Purpose**: Navigate and understand the documentation structure
 
@@ -17,6 +17,14 @@ docs/
 ├── README.md                            📖 Main documentation overview
 │
 ├── work/                                📋 Work & Planning Documents
+│   ├── framework/                       🔧 Framework Migration & Planning
+│   │   ├── 20260124_JUNIT_4_TO_6_MIGRATION_GUIDE.md ✅ JUnit 4→6 Migration (Complete)
+│   │   ├── 20260120_TEST_FIXTURES_PLAN.md Test fixtures planning
+│   │   ├── 20260120_API_MOCK_DATA_TESTS_PLAN.md API mock data tests planning
+│   │   ├── 20260117_WIZARD_TESTS_IMPLEMENTATION_PLAN.md Wizard tests implementation
+│   │   ├── 20260117_TEST_DATA_CENTRALIZATION_PLAN.md Test data centralization
+│   │   ├── 20260117_SHARED_TEST_SPECIFICATION_ANALYSIS.md Shared test specifications
+│   │   └── 20260117_CONCURRENT_TEST_DATA_ISOLATION_PLAN.md Concurrent test data isolation
 │   ├── MIGRATE_REPO.md                  📦 Repository migration guide (in setup/)
 │   └── [date-prefixed documents]        📅 Planning and analysis documents
 │
@@ -130,6 +138,7 @@ Project Structure:
 | **See Allure reports** | `guides/testing/ALLURE_REPORTING.md` |
 | **Performance testing** | `guides/testing/PERFORMANCE_TESTING.md` |
 | **Mobile testing** | `guides/testing/MOBILE_TESTING.md` |
+| **Understand JUnit migration** | `work/framework/20260124_JUNIT_4_TO_6_MIGRATION_GUIDE.md` |
 | **Improve the framework** | `work/` (planning documents) |
 | **Learn modern Java/Selenium** | `guides/java/CODE_QUALITY.md` |
 | **See what's been done** | `archive/` |
@@ -138,6 +147,6 @@ Project Structure:
 
 ---
 
-**Last Updated**: January 16, 2026
+**Last Updated**: January 24, 2026
 **Maintained By**: CJS QA Team
 **Version**: 2.1 - Cleaned Up Structure

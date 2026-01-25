@@ -40,11 +40,11 @@ public final class SeleniumGridVersionValidator {
 
   /** Version tolerance levels for compatibility checking. */
   public enum VersionTolerance {
-    /** Must match exactly (e.g., 4.39.0 == 4.39.0) */
+    /** Must match exactly (e.g., 4.40.0 == 4.40.0) */
     EXACT,
-    /** Allow minor version differences (e.g., 4.39.0 == 4.40.0) */
+    /** Allow minor version differences (e.g., 4.40.0 == 4.41.0) */
     MINOR,
-    /** Allow patch version differences (e.g., 4.39.0 == 4.39.1) */
+    /** Allow patch version differences (e.g., 4.40.0 == 4.40.1) */
     PATCH,
     /** Skip version validation */
     NONE,
@@ -93,7 +93,7 @@ public final class SeleniumGridVersionValidator {
    * Gets the Selenium Grid server version by querying the status endpoint.
    *
    * @param gridUrl The Grid hub URL
-   * @return The server version string (e.g., "4.39.0")
+   * @return The server version string (e.g., "4.40.0")
    * @throws QAException if unable to connect to Grid or parse response
    */
   public static String getGridServerVersion(String gridUrl) throws QAException {
@@ -158,7 +158,7 @@ public final class SeleniumGridVersionValidator {
   /**
    * Gets the Selenium client version from the library or pom.xml.
    *
-   * @return The client version string (e.g., "4.39.0")
+   * @return The client version string (e.g., "4.40.0")
    */
   public static String getClientVersion() {
     // Try to get from system property first

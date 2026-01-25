@@ -1,57 +1,73 @@
 package com.cjs.qa.junit.reporting;
 
+import java.lang.reflect.Method;
+
 import org.apache.logging.log4j.LogManager;
-import org.junit.AssumptionViolatedException;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
 import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 
 import com.cjs.qa.utilities.GuardedLogger;
 
-public class RTestWatcher implements TestRule {
+/**
+ * JUnit 6 TestWatcher extension for test lifecycle callbacks.
+ *
+ * <p>Note: This class has been migrated from JUnit 4 TestRule to JUnit 6 Extension API. To use this
+ * watcher, annotate your test class with: {@code @ExtendWith(RTestWatcher.class)}
+ */
+public class RTestWatcher implements TestWatcher {
 
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(RTestWatcher.class));
   private static final RTestRun R_TEST_RUN = new RTestRun(null, null);
 
-  @Rule
-  public TestWatcher testWatcher =
-      new TestWatcher() {
-        @Override
-        protected void failed(Throwable e, Description description) {
-          R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(description, "Failed");
-          LOG.debug("{}", description.toString());
-        }
-
-        @Override
-        protected void finished(Description description) {
-          R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(description, "Finished");
-          LOG.debug("{}", description.toString());
-        }
-
-        @Override
-        protected void skipped(AssumptionViolatedException e, Description description) {
-          R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(description, "Skipped");
-          LOG.debug("{}", description.toString());
-        }
-
-        @Override
-        protected void starting(Description description) {
-          R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(description, "Starting");
-          LOG.debug("{}", description.toString());
-        }
-
-        @Override
-        protected void succeeded(Description description) {
-          R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(description, "Succeeded");
-          LOG.debug("{}", description.toString());
-        }
-      };
+  /**
+   * Creates a Description-like object from ExtensionContext for compatibility with RTest.addStep
+   */
+  private Description createDescription(ExtensionContext context) {
+    String className = context.getTestClass().map(Class::getName).orElse("Unknown");
+    String methodName = context.getTestMethod().map(Method::getName).orElse("Unknown");
+    String displayName = context.getDisplayName();
+    return Description.createTestDescription(className, methodName + " - " + displayName);
+  }
 
   @Override
-  public Statement apply(Statement base, Description description) {
-    return base;
+  public void testFailed(ExtensionContext context, Throwable cause) {
+    R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(createDescription(context), "Failed");
+    LOG.debug(
+        "Test failed: {}|{}|{}",
+        context.getTestClass().map(Class::getName).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
+        context.getDisplayName());
+  }
+
+  @Override
+  public void testAborted(ExtensionContext context, Throwable cause) {
+    R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(createDescription(context), "Skipped");
+    LOG.debug(
+        "Test skipped: {}|{}|{}",
+        context.getTestClass().map(Class::getName).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
+        context.getDisplayName());
+  }
+
+  @Override
+  public void testSuccessful(ExtensionContext context) {
+    R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(createDescription(context), "Succeeded");
+    LOG.debug(
+        "Test succeeded: {}|{}|{}",
+        context.getTestClass().map(Class::getName).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
+        context.getDisplayName());
+  }
+
+  @Override
+  public void testDisabled(ExtensionContext context, java.util.Optional<String> reason) {
+    R_TEST_RUN.cRTestSet().cRScenario().cRTest().addStep(createDescription(context), "Disabled");
+    LOG.debug(
+        "Test disabled: {}|{}|{}",
+        context.getTestClass().map(Class::getName).orElse("Unknown"),
+        context.getTestMethod().map(Method::getName).orElse("Unknown"),
+        context.getDisplayName());
   }
 }

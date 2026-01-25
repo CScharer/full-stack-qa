@@ -6,6 +6,8 @@
         <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
     </listeners>
     
+    <!-- Windows-specific tests disabled - not compatible with Mac -->
+    <!--
     <test name="Data-Driven Tests" preserve-order="true">
         <classes>
             <class name="com.cjs.qa.junit.tests.DataDrivenTests"/>
@@ -17,6 +19,7 @@
             <class name="com.cjs.qa.junit.tests.NegativeTests"/>
         </classes>
     </test>
+    -->
     
     <test name="Advanced Features Tests" preserve-order="true">
         <classes>

@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.americanairlines.AmericanAirlinesEnvironment;
 import com.cjs.qa.dropbox.DropboxEnvironment;
@@ -215,7 +215,7 @@ public class Environment {
         setFileLog(WellmarkEnvironment.FILE_LOG);
       }
       default ->
-          Assert.fail(
+          Assertions.fail(
               "The setEnvironmentFileStructure has not been defined for the ["
                   + project
                   + "] Project");
@@ -256,7 +256,7 @@ public class Environment {
 
   public static void sysOut(Exception e) {
     LOG.error("Exception occurred", e); // Modernized: Using log4j 2.x with exception
-    Assert.fail();
+    Assertions.fail();
   }
 
   public static void sysOut(Throwable e) {

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -128,9 +128,9 @@ public class EarnPointsPage extends Page {
     LOG.debug("Codes Entered:{}", codesEnteredThisMonthLabel);
     String[] codesEnteredThisMonthArray = codesEnteredThisMonthLabel.split(" ");
     int codesEnteredThisMonth = Integer.valueOf(codesEnteredThisMonthArray[2]);
-    Assert.assertTrue(
-        "Codes Entered:" + codesEnteredThisMonth + "<" + codesPerMonthMax,
-        codesEnteredThisMonth < codesPerMonthMax);
+    Assertions.assertTrue(
+        codesEnteredThisMonth < codesPerMonthMax,
+        "Codes Entered:" + codesEnteredThisMonth + "<" + codesPerMonthMax);
   }
 
   public void earnPoints(Marlboro marlboro, Map<String, String> mapUser) throws QAException {

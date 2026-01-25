@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -162,7 +162,7 @@ public class LoginPage extends Page {
         }
       }
     }
-    Assert.assertSame(getPageTitle() + " validatePage", expected, actual);
+    Assertions.assertSame(expected, actual, getPageTitle() + " validatePage");
   }
   // public void openBrowser(String company, String environment) {
   // getWebDriver().get("http://bts-blda/policystarweb/login.faces");

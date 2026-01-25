@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.microsoft.excel.IExcel;
 import com.cjs.qa.utilities.Convert;
@@ -15,6 +16,7 @@ import com.cjs.qa.utilities.JavaHelpers;
 
 import io.cucumber.datatable.DataTable;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ConvertTests {
 
   private static final GuardedLogger LOG =

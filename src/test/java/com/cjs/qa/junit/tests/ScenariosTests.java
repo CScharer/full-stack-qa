@@ -1,5 +1,6 @@
 package com.cjs.qa.junit.tests;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,19 +11,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.AssumptionViolatedException;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -68,7 +69,9 @@ import com.cjs.qa.ym.YMAPIMethodsTests;
 
 import io.cucumber.datatable.DataTable;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
+@ExtendWith(ScenariosTests.TestWatcherExtension.class)
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ScenariosTests {
 
   private static final GuardedLogger LOG =
@@ -80,8 +83,6 @@ public class ScenariosTests {
     body += " (from " + from + ")";
     Email.sendEmail(from, password, from, from, from, subject, body, attachment);
   }
-
-  @Rule public TestName testName = new TestName();
 
   public static final String DATABASE_QA = "QAAuto";
   private static final int SCROLL_PIXELS = 400;
@@ -120,63 +121,53 @@ public class ScenariosTests {
   private static String[] listStatus =
       "failed;finished;skipped;starting;succeeded".split(Constants.DELIMETER_LIST);
 
-  @Rule
-  public TestWatcher testWatcher =
-      new TestWatcher() {
-        @Override
-        protected void failed(Throwable e, Description description) {
-          updateTestWatcher(description, JavaHelpers.getCurrentMethodName());
-        }
+  // TestWatcher extension for JUnit 6
+  static class TestWatcherExtension implements TestWatcher {
 
-        @Override
-        protected void finished(Description description) {
-          updateTestWatcher(description, JavaHelpers.getCurrentMethodName());
-        }
+    @Override
+    public void testFailed(ExtensionContext context, Throwable cause) {
+      updateTestWatcher(context, "failed");
+    }
 
-        @Override
-        protected void skipped(AssumptionViolatedException e, Description description) {
-          updateTestWatcher(description, JavaHelpers.getCurrentMethodName());
-        }
+    @Override
+    public void testAborted(ExtensionContext context, Throwable cause) {
+      updateTestWatcher(context, "skipped");
+    }
 
-        @Override
-        protected void starting(Description description) {
-          updateTestWatcher(description, JavaHelpers.getCurrentMethodName());
-        }
+    @Override
+    public void testSuccessful(ExtensionContext context) {
+      updateTestWatcher(context, "succeeded");
+    }
 
-        @Override
-        protected void succeeded(Description description) {
-          updateTestWatcher(description, JavaHelpers.getCurrentMethodName());
-        }
-
-        private void updateTestWatcher(Description description, String status) {
-          testWatcherList.add(
-              Arrays.asList(
-                  description.getClassName(),
-                  description.getMethodName(),
-                  description.getDisplayName(),
-                  status));
-          mapTestCount.put(status, mapTestCount.get(status) + 1);
-        }
-      };
+    private void updateTestWatcher(ExtensionContext context, String status) {
+      testWatcherList.add(
+          Arrays.asList(
+              context.getTestClass().map(Class::getName).orElse("Unknown"),
+              context.getTestMethod().map(Method::getName).orElse("Unknown"),
+              context.getDisplayName(),
+              status));
+      mapTestCount.put(status, mapTestCount.get(status) + 1);
+    }
+  }
 
   @Test
-  public void testClassSetup01() throws Throwable {
+  void testClassSetup01(TestInfo testInfo) throws Throwable {
     // Empty
   }
 
   @Test
-  public void testClassSetup02() throws Throwable {
+  void testClassSetup02(TestInfo testInfo) throws Throwable {
     // Empty
   }
 
   @Test
-  public void testClassSetup03() throws Throwable {
+  void testClassSetup03(TestInfo testInfo) throws Throwable {
     // Empty
   }
 
-  @BeforeClass
-  public static void beforeClassSetup() {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  @BeforeAll
+  static void beforeClassSetup() {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     testWatcherList = new ArrayList<>();
     testWatcherList.add(Arrays.asList("Class Name", "Method Name", "Display Name", "Status"));
     for (final String status : listStatus) {
@@ -184,20 +175,21 @@ public class ScenariosTests {
     }
   }
 
-  @Before
-  public void beforeTestSetup() throws Throwable {
+  @BeforeEach
+  void beforeTestSetup(TestInfo testInfo) throws Throwable {
     LOG.debug(
-        "{}], TestName: [{}]",
+        "[{}], TestName: [{}]",
         Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName(),
-        getTestName());
+        getTestName(testInfo));
     // mavenCommand = "mvn clean test " + getDArgLine() + "
     // -DfailIfNoTests=false -Dtest=" + this.getClass().getName() + "#" +
     // getTestName() + " -Dtags=" + Constants.QUOTE_DOUBLE + "@" +
     // Constants.QUOTE_DOUBLE
-    String mavenCommand = new TestRunCommand(this.getClass().getName(), getTestName()).toString();
+    String mavenCommand =
+        new TestRunCommand(this.getClass().getName(), getTestName(testInfo)).toString();
     LOG.info("mavenCommand: [{}]", mavenCommand);
     Environment.setEnvironmentVariableValues();
-    final String[] methodElements = getTestName().split("_");
+    final String[] methodElements = getTestName(testInfo).split("_");
     String methodTest = methodElements[0];
     Environment.setEnvironmentFileStructure(methodTest);
     getJenkinsInfo();
@@ -262,8 +254,8 @@ public class ScenariosTests {
     }
   }
 
-  @After
-  public void afterTestTeardown() {
+  @AfterEach
+  void afterTestTeardown(TestInfo testInfo) {
     try {
       // Placeholder for future cleanup logic
       assert true; // No-op statement to satisfy PMD
@@ -271,9 +263,9 @@ public class ScenariosTests {
       throwable.printStackTrace();
     }
     LOG.debug(
-        "{}], TestName: [{}]",
+        "[{}], TestName: [{}]",
         Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName(),
-        getTestName());
+        getTestName(testInfo));
     // LOG.debug("QAException: [{}]", QAException.getQaErrorMessage())
     final boolean failures = mapTestCount.get("failed") != 0;
     if (failures) {
@@ -282,9 +274,9 @@ public class ScenariosTests {
     getSeleniumWebDriver().killBrowser();
   }
 
-  @AfterClass
-  public static void afterClassTearDown() {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  @AfterAll
+  static void afterClassTearDown() {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     LOG.info("testWatcher DataTable");
     // testWatcherList.sort(null)
     DataTable dataTable = DataTable.create(testWatcherList);
@@ -305,14 +297,14 @@ public class ScenariosTests {
     LOG.info("Count Tests: [{}]", count);
   }
 
-  public String getTestName() {
-    return testName.getMethodName();
+  private String getTestName(TestInfo testInfo) {
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 
   @Test
-  // @Ignore
-  public void americanAirlines() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  // @Disabled
+  void americanAirlines(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     getAmericanAirlines().getVacationabilityPage().populate();
   }
 
@@ -330,8 +322,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void core() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void core(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     // SystemProcesses.check()
     try {
       // /?[:<BRIEF|FULL>] Usage information.
@@ -416,8 +408,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void dropbox() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void dropbox(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     JDBC jdbc = new JDBC("", DATABASE_QA);
     StringBuilder sqlStringBuilder = new StringBuilder();
     sqlStringBuilder.append(
@@ -436,8 +428,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void everyoneSocial() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void everyoneSocial(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     getEveryoneSocial()
         .getSignInPage()
         .login(CJSConstants.EMAIL_ADDRESS_VIVIT, EPasswords.EVERYONE_SOCIAL.getValue());
@@ -523,29 +515,29 @@ public class ScenariosTests {
   }
 
   @Test
-  public void google() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void google(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     JavaHelpers.displaySystemProperties();
     getGoogle().getSignInPage().load();
     getGoogle().getSignInPage().editSearchSet("Searching");
     getGoogle().getSignInPage().pressEnter();
   }
 
-  @Test // @Ignore
-  public void hardees() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  @Test // @Disabled
+  void hardees(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     getHardees().getSurveyPage().populate();
   }
 
   @Test
-  public void iaDhs() throws Throwable {
+  void iaDhs(TestInfo testInfo) throws Throwable {
     getIadhs().getSignInPage().signIn(CJSConstants.USERID_DHS, EPasswords.IADHS.getValue());
     getIadhs().getCasePaymentsPage().getPreviousPayments();
   }
 
   @Test
-  public void jenkins() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void jenkins(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     final SoftAssert softAssert = new SoftAssert();
     // Firefox tests disabled until framework changes are complete
     List<String> browserList = Arrays.asList(ISelenium.BROWSER_DEFAULT, "edge", "ie");
@@ -592,7 +584,7 @@ public class ScenariosTests {
   }
 
   @Test
-  public void jenkinsColors() throws Throwable {
+  void jenkinsColors(TestInfo testInfo) throws Throwable {
     getSeleniumWebDriver().killBrowser();
     getSeleniumWebDriver().setBrowser(ISelenium.BROWSER_DEFAULT);
     getSeleniumWebDriver().initializeWebDriver();
@@ -642,7 +634,7 @@ public class ScenariosTests {
   }
 
   @Test
-  public void jenkinsPluralsight() throws Throwable {
+  void jenkinsPluralsight(TestInfo testInfo) throws Throwable {
     final String filePathname =
         Constants.PATH_DESKTOP + "PluralSightSessionInformation" + IExtension.TXT;
     final List<String> listSessions = new ArrayList<>();
@@ -686,8 +678,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void linkedIn() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void linkedIn(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     // getLinkedIn().run(getSeleniumWebDriver().getWebDriver());
     getLinkedIn()
         .getLoginPage()
@@ -700,8 +692,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void marlboro() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void marlboro(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     final SoftAssert softAssert = new SoftAssert();
     JDBC jdbc = new JDBC("", DATABASE_QA);
     StringBuilder sqlStringBuilder = new StringBuilder();
@@ -741,8 +733,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void marlboroEarnPoints() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void marlboroEarnPoints(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     JDBC jdbc = new JDBC("", DATABASE_QA);
     String sql =
         JDBCConstants.SELECT_ALL
@@ -763,8 +755,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void microsoft() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void microsoft(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     try {
       if (getMicrosoft().getRewardsPage().load()) {
         getMicrosoft().getRewardsPage().clickSignInWithMicrosoftButton();
@@ -789,8 +781,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void polkCounty() {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void polkCounty(TestInfo testInfo) {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     getPolkCounty().getMain().getInmatesOnTheWeb(true);
   }
 
@@ -851,7 +843,7 @@ public class ScenariosTests {
   }
 
   @Test
-  public void testQueryAccess() throws Throwable {
+  void testQueryAccess(TestInfo testInfo) throws Throwable {
     final JDBC jdbc = new JDBC("", "QAAutoWEB");
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append(JDBCConstants.SELECT_ALL);
@@ -877,7 +869,7 @@ public class ScenariosTests {
   }
 
   @Test
-  public void testQueryMapping() throws Throwable {
+  void testQueryMapping(TestInfo testInfo) throws Throwable {
     final String tableFrom = "t_DOM_Vivit Contractor";
     final String tableTo = "t_DOM_Vivit ContractorNew";
     JDBC jdbc = new JDBC("", DATABASE_QA);
@@ -943,7 +935,7 @@ public class ScenariosTests {
   }
 
   @Test
-  public void jenkinsTestSendEMail() throws Throwable {
+  void jenkinsTestSendEMail(TestInfo testInfo) throws Throwable {
     final String date = new Date().toString();
     final String subject = "Test-Send Email";
     String from = "";
@@ -986,8 +978,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void united() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void united(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     getUnited().getHomePage().load();
     getUnited().getHomePage().buttonSignInClick();
     getUnited().getLoginPage().login("JGD80526", EPasswords.UNITED.getValue(), "unchecked");
@@ -1008,8 +1000,8 @@ public class ScenariosTests {
   }
 
   @Test
-  public void vivit() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void vivit(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     // setVivit(new Vivit(getSeleniumWebDriver().getWebDriver()))
     // getVivit().BoDPage.getData();
     // getVivit().StaffPage.getData();
@@ -1040,7 +1032,7 @@ public class ScenariosTests {
   }
 
   @Test
-  public void vivitCommutes() throws Throwable {
+  void vivitCommutes(TestInfo testInfo) throws Throwable {
     Environment.setEnvironmentFileStructure("Google");
     setGoogle(new Google(getSeleniumWebDriver().getWebDriver()));
     Environment.setScrollToObject(false);
@@ -1050,7 +1042,7 @@ public class ScenariosTests {
   }
 
   @Test
-  public void vivitTest() throws Throwable {
+  void vivitTest(TestInfo testInfo) throws Throwable {
     // VivitDataTests.createReportHTMLTestInformation(getSeleniumWebDriver());
     getSeleniumWebDriver().killBrowser();
     // YMDataTests.push();
@@ -1061,15 +1053,15 @@ public class ScenariosTests {
   }
 
   @Test
-  public void vivitCreateYmapiMapping() throws Throwable {
-    Assert.fail("This has already created the tables.");
+  void vivitCreateYmapiMapping(TestInfo testInfo) throws Throwable {
+    Assertions.fail("This has already created the tables.");
     YMAPIMethodsTests.createMapping(getSeleniumWebDriver().getWebDriver());
   }
 
-  // @Ignore
+  // @Disabled
   @Test
-  public void wellmark() throws Throwable {
-    LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
+  void wellmark(TestInfo testInfo) throws Throwable {
+    LOG.info("[{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     getWellmark().getLogInPage().login();
     getWellmark().getPopUpPage().linkNoThanksClick();
     getWellmark().getHomePage().linkSeeAllClaimsClick();

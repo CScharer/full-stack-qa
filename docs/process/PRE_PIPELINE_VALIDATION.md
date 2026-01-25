@@ -309,8 +309,8 @@ For each Node.js project (`cypress/`, `playwright/`, `vibium/`, `frontend/`) **t
 - `[ ]` **Verify Selenium Client/Server Version Match** (if Selenium changes)
   - Check `pom.xml` for Selenium client version
   - Check `.github/workflows/test-environment.yml` for `selenium_version` input default value
-  - **Required**: Versions must match (e.g., client 4.39.0 = server 4.39.0)
-  - **Note**: Server version is now centralized in workflow input variable `selenium_version` (default: 4.39.0)
+  - **Required**: Versions must match (e.g., client 4.40.0 = server 4.40.0)
+  - **Note**: Server version is now centralized in workflow input variable `selenium_version` (default: 4.40.0)
   - **Reference**: See troubleshooting documentation for Selenium Grid issues
 
 #### 5.2 npm Audit (Security)

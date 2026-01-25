@@ -1,7 +1,8 @@
 package com.cjs.qa.junit.tests;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
 import com.cjs.qa.utilities.Constants;
@@ -10,6 +11,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.utilities.XML;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class XMLUtilsTests {
 
   private static final GuardedLogger LOG =

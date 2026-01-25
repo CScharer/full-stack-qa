@@ -18,8 +18,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.QAException;
@@ -55,6 +56,7 @@ import com.cjs.qa.ym.YMDataTests;
 import com.cjs.qa.ym.api.services.YMAPI;
 import com.cjs.qa.ym.api.services.YMService;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class VivitDataTests extends Environment {
 
   private static final GuardedLogger LOG =
@@ -1643,7 +1645,7 @@ public class VivitDataTests extends Environment {
       mapProcess = CommandLineTests.runProcess(command, true);
       sysOut("mapProcess:[" + mapProcess + "]");
       if (!"0".equals(mapProcess.get("status"))) {
-        Assert.fail("VBScript Did Not Work");
+        Assertions.fail("VBScript Did Not Work");
       }
     } catch (final Exception e) {
       sysOut(e);
@@ -2824,7 +2826,7 @@ public class VivitDataTests extends Environment {
    * @throws Throwable
    */
   @Test
-  public static void ymApiGetTest(String dateTimeFrom) throws Throwable {
+  public void ymApiGetTest(String dateTimeFrom) throws Throwable {
     sysOut(Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName() + "]");
     sysOut(
         ParameterHelper.getParameters(

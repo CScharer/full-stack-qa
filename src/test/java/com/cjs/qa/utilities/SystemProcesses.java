@@ -13,7 +13,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.jdbc.JDBC;
@@ -291,7 +291,7 @@ public final class SystemProcesses {
               LOG.debug("mapHeadingsExpected: [{}]", mapHeadingsExpected.keySet());
               LOG.debug("mapHeadingsCSV: [{}]", mapHeadingsCSV.keySet());
               if (!mapHeadingsCSV.keySet().equals(mapHeadingsExpected.keySet())) {
-                Assert.fail("CSV headings do not match Expected DB headings");
+                Assertions.fail("CSV headings do not match Expected DB headings");
               }
               for (final String key : mapHeadingsCSV.keySet()) {
                 LOG.debug("heading: [{}]", key);

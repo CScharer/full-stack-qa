@@ -3,7 +3,7 @@ package com.cjs.qa.oracle.api.services;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.api.WebService;
@@ -46,7 +46,7 @@ public class SecurityService extends WebService {
     final String requestURL = baseAPISecurity + "/SharedEntity/Claim/";
     final String json = getAPIJSONResponse("POST", requestURL, apiRequest, ssoUserTokenId);
     map.put("JSON", json);
-    Assert.assertTrue(map.toString(), json.contains(OracleConstants.API_JSON_SUCCESS));
+    Assertions.assertTrue(json.contains(OracleConstants.API_JSON_SUCCESS), map.toString());
     return map;
   }
 }

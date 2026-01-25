@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -156,7 +156,7 @@ public class ClaimsAndSpendingPage extends Page {
       stringBuilder.append(Constants.NEWLINE);
       LOG.debug("listHeadings: {}", listHeadings);
       LOG.debug("headings: {}", headings);
-      Assert.assertEquals("Headings " + type, listHeadings, headings);
+      Assertions.assertEquals(listHeadings, headings, "Headings " + type);
       String xPath = byType.toString().replace(byXpath, "") + "/tr";
       LOG.debug("xPath:{}", xPath);
       final List<WebElement> rowElements = getWebDriver().findElements(By.xpath(xPath));

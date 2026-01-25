@@ -47,9 +47,9 @@ Version validation ensures that the Selenium Grid server version matches the cli
 
 | Tolerance | Description | Example |
 |-----------|-------------|---------|
-| `EXACT` | Must match exactly (default) | `4.39.0` == `4.39.0` ✅ |
-| `MINOR` | Allow minor version differences | `4.39.0` == `4.40.0` ✅ |
-| `PATCH` | Allow patch version differences | `4.39.0` == `4.39.1` ✅ |
+| `EXACT` | Must match exactly (default) | `4.40.0` == `4.40.0` ✅ |
+| `MINOR` | Allow minor version differences | `4.40.0` == `4.41.0` ✅ |
+| `PATCH` | Allow patch version differences | `4.40.0` == `4.40.1` ✅ |
 | `NONE` | Skip version validation | Always passes |
 
 **Set Tolerance:**
@@ -84,13 +84,13 @@ driver.initializeWebDriver(); // Version validation runs automatically
 SeleniumGridConfig.validateGridVersion("http://localhost:4444/wd/hub");
 
 // Using test utilities
-GridTestUtils.validateGridVersion(gridUrl, "4.39.0");
+GridTestUtils.validateGridVersion(gridUrl, "4.40.0");
 ```
 
 **In Bash Scripts:**
 ```bash
 # With version validation
-SELENIUM_VERSION="4.39.0" ./scripts/ci/wait-for-grid.sh
+SELENIUM_VERSION="4.40.0" ./scripts/ci/wait-for-grid.sh
 
 # Skip version check
 SKIP_VERSION_CHECK=true ./scripts/ci/wait-for-grid.sh
@@ -200,7 +200,7 @@ RemoteWebDriver driver = RetryableGridConnection.connectWithRetry(
 ```bash
 # Complete configuration example
 export SELENIUM_REMOTE_URL="http://localhost:4444/wd/hub"
-export SELENIUM_VERSION="4.39.0"
+export SELENIUM_VERSION="4.40.0"
 export SELENIUM_GRID_VERSION_TOLERANCE="EXACT"
 export SELENIUM_GRID_MAX_RETRIES="5"
 export SELENIUM_GRID_RETRY_BASE_DELAY_MS="1000"
@@ -227,7 +227,7 @@ All environment variables can also be set as system properties with dot notation
 ```bash
 mvn test -Dselenium.grid.max.retries=3 \
          -Dselenium.grid.retry.base.delay.ms=500 \
-         -Dselenium.version=4.39.0
+         -Dselenium.version=4.40.0
 ```
 
 ---
@@ -249,7 +249,7 @@ public void setUp() {
 **Bash Script:**
 ```bash
 # Wait for Grid with version validation
-SELENIUM_VERSION="4.39.0" ./scripts/ci/wait-for-grid.sh
+SELENIUM_VERSION="4.40.0" ./scripts/ci/wait-for-grid.sh
 ```
 
 ### Advanced Configuration
@@ -271,7 +271,7 @@ System.setProperty("selenium.grid.retry.base.delay.ms", "500");
 GridTestUtils.waitForGridReady(gridUrl, 60); // 60 second timeout
 
 // Validate version
-GridTestUtils.validateGridVersion(gridUrl, "4.39.0");
+GridTestUtils.validateGridVersion(gridUrl, "4.40.0");
 
 // Check Grid health (comprehensive check)
 if (GridTestUtils.isGridHealthy(gridUrl)) {
@@ -289,14 +289,14 @@ System.out.println(status);
 ```yaml
 - name: Wait for Selenium Grid
   env:
-    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.39.0' }}
+    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.40.0' }}
   run: |
     ./scripts/ci/wait-for-grid.sh "http://localhost:4444/wd/hub/status" 10
 
 - name: Run Grid Tests
   env:
     SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
-    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.39.0' }}
+    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.40.0' }}
     SELENIUM_GRID_MAX_RETRIES: '5'
     SELENIUM_GRID_RETRY_BASE_DELAY_MS: '1000'
     SELENIUM_GRID_RETRY_MAX_DELAY_MS: '10000'
@@ -317,12 +317,12 @@ System.out.println(status);
 1. Update Grid Docker images to match client version:
    ```bash
    # Update docker-compose.yml
-   image: selenium/hub:4.39.0  # Match pom.xml version
+   image: selenium/hub:4.40.0  # Match pom.xml version
    ```
 
 2. Update `pom.xml` to match Grid version:
    ```xml
-   <selenium.version>4.39.0</selenium.version>
+   <selenium.version>4.40.0</selenium.version>
    ```
 
 3. Use version tolerance (if appropriate):
@@ -410,7 +410,7 @@ When running in CI/CD pipelines, look for these log messages to verify the enhan
 
 **Version Validation:**
 ```
-✅ Version validation passed: 4.39.0
+✅ Version validation passed: 4.40.0
 🔍 Validating Grid version...
 ```
 
@@ -425,7 +425,7 @@ Transient error on attempt 1/5: Connection refused. Retrying in 1000ms...
 ```
 Phase 4: Docker Compose Version Validation
 Checking docker-compose.yml...
-✅ Version matches pom.xml: 4.39.0
+✅ Version matches pom.xml: 4.40.0
 ```
 
 ### Key Test Scenarios

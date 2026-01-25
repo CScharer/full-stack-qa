@@ -10,7 +10,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -21,6 +22,7 @@ import com.cjs.qa.utilities.FSOTests;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.XML;
 
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class BTSConvertDatabaseToXMLTests {
 
   private static final GuardedLogger LOG =

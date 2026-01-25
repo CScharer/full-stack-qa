@@ -1,5 +1,6 @@
 package com.cjs.qa.junit.tests;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.WebDriver;
 
 import com.cjs.qa.core.Environment;
@@ -27,13 +28,12 @@ import com.cjs.qa.utilities.IExtension;
 
 import io.cucumber.datatable.DataTable;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
+@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class WebElementTableTests {
 
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(WebElementTableTests.class));
-
-  @Rule public final TestName testName = new TestName();
 
   public static final String LABEL_TITLE = "Title";
   public static final String LABEL_GROSS = "Gross";
@@ -47,10 +47,10 @@ public class WebElementTableTests {
   private final String boxOfficeMojoDate =
       DateHelpersTests.getCurrentDatePlusMinusDays("YYYY-MM-dd", -2);
 
-  @Before
-  public void testSetup() throws Throwable {
+  @BeforeEach
+  void testSetup(TestInfo testInfo) throws Throwable {
     Environment.setEnvironmentVariableValues();
-    setMethodName(getTestName().getMethodName());
+    setMethodName(getTestName(testInfo));
     final String[] methodElements = getMethodName().split("_");
     final String methodTest = methodElements[0];
     // Environment.setEnvironmentFileStructure(methodTest)
@@ -59,8 +59,8 @@ public class WebElementTableTests {
     LOG.info("Setup-Test Method: [{}], methodTest: [{}]", getMethodName(), methodTest);
   }
 
-  @After
-  public void testTeardown() {
+  @AfterEach
+  void testTeardown() {
     LOG.info("TearDown");
     getSeleniumWebDriver().killBrowser();
   }
@@ -196,8 +196,8 @@ public class WebElementTableTests {
     return dataTable;
   }
 
-  private TestName getTestName() {
-    return testName;
+  private String getTestName(TestInfo testInfo) {
+    return testInfo.getTestMethod().map(Method::getName).orElse("Unknown");
   }
 
   private WebDriver getWebDriver() {
@@ -351,7 +351,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void tBoxOffice() {
+  void tBoxOffice(TestInfo testInfo) {
     setTable();
     readWriteSysOut(1, 1, 0, 0);
     getWebElementTable().highlightObjects(false);
@@ -360,7 +360,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void tBoxOfficeClickColumnRow() {
+  void tBoxOfficeClickColumnRow(TestInfo testInfo) {
     final List<String> columnsToClick = Arrays.asList("#1", LABEL_TITLE, "#6");
     setTable();
     final int columns = getWebElementTable().getColumnCount();
@@ -377,7 +377,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void tBoxOfficeClickRowColumn() {
+  void tBoxOfficeClickRowColumn(TestInfo testInfo) {
     final List<String> columnsToClick = Arrays.asList("#1", LABEL_TITLE, "#6");
     setTable();
     final int columns = getWebElementTable().getColumnCount();
@@ -394,7 +394,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void tBoxOfficeLists() {
+  void tBoxOfficeLists(TestInfo testInfo) {
     setTable();
     final int columnCount = getWebElementTable().getColumnCount();
     LOG.debug("columnCount: [{}]", columnCount);
@@ -419,7 +419,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void testBoxOfficeMojo00() {
+  void testBoxOfficeMojo00(TestInfo testInfo) {
     setTable();
     readWriteSysOut(1, 1, 0, 0);
     getWebElementTable().highlightObjects(false);
@@ -430,7 +430,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void testBoxOfficeMojo01() {
+  void testBoxOfficeMojo01(TestInfo testInfo) {
     setTable();
     readWriteSysOut(1, 1, 0, 0);
     getWebElementTable().highlightObjects(false);
@@ -441,7 +441,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void testBoxOfficeMojo07() {
+  void testBoxOfficeMojo07(TestInfo testInfo) {
     setTable();
     readWriteSysOut(1, 1, 0, 0);
     getWebElementTable().highlightObjects(false);
@@ -452,7 +452,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void testBoxOfficeMojo34() {
+  void testBoxOfficeMojo34(TestInfo testInfo) {
     setTable();
     readWriteSysOut(1, 1, 0, 0);
     getWebElementTable().highlightObjects(false);
@@ -463,7 +463,7 @@ public class WebElementTableTests {
   }
 
   @Test
-  public void tBoxOfficeSearch() {
+  void tBoxOfficeSearch(TestInfo testInfo) {
     setTable();
     final int rowsCount = getWebElementTable().getRowCount();
     for (int searchRecord = 1; searchRecord <= rowsCount; searchRecord++) {

@@ -41,7 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 import com.cjs.qa.core.QAException;
