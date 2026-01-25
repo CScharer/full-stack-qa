@@ -3,7 +3,10 @@ package com.cjs.qa.utilities;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import com.cjs.qa.core.security.EPasswords;
 
@@ -21,14 +24,51 @@ public class SecureConfigTest {
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(SecureConfigTest.class));
 
+  private boolean credentialsAvailable = false;
+
+  @BeforeEach
+  public void checkCredentialsAvailability() {
+    try {
+      SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
+      credentialsAvailable = true;
+      LOG.info("Google Cloud credentials available - using real credentials");
+    } catch (RuntimeException e) {
+      if (e.getMessage() != null
+          && (e.getMessage().contains("default credentials were not found")
+              || e.getMessage().contains("Failed to fetch secret"))) {
+        LOG.warn(
+            "Google Cloud credentials not available - using mocked responses: {}", e.getMessage());
+        credentialsAvailable = false;
+      } else {
+        // Re-throw if it's a different error
+        throw e;
+      }
+    }
+  }
+
   @Test
   public void testSecretRetrieval() {
     LOG.info("Testing SecureConfig.getPassword()...");
 
-    String password = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
-    assertNotNull(password, "Password should not be null");
-    assertFalse(password.isEmpty(), "Password should not be empty");
-    assertTrue(password.length() >= 8, "Password should have minimum length");
+    if (credentialsAvailable) {
+      // Use real credentials
+      String password = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
+      assertNotNull(password, "Password should not be null");
+      assertFalse(password.isEmpty(), "Password should not be empty");
+      assertTrue(password.length() >= 8, "Password should have minimum length");
+    } else {
+      // Mock Google Cloud Secret Manager calls
+      try (MockedStatic<GoogleCloud> mockedGoogleCloud = Mockito.mockStatic(GoogleCloud.class)) {
+        mockedGoogleCloud
+            .when(() -> GoogleCloud.getKeyValue("cscharer", "AUTO_BTSQA_PASSWORD"))
+            .thenReturn("mock-btsqa-password-12345678");
+
+        String password = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
+        assertNotNull(password, "Password should not be null");
+        assertFalse(password.isEmpty(), "Password should not be empty");
+        assertTrue(password.length() >= 8, "Password should have minimum length");
+      }
+    }
 
     LOG.info("✅ SecureConfig.getPassword() test passed!");
   }
@@ -37,10 +77,25 @@ public class SecureConfigTest {
   public void testEPasswordsIntegration() {
     LOG.info("Testing EPasswords enum integration...");
 
-    String password = EPasswords.BTSQA.getValue();
-    assertNotNull(password, "EPasswords should return a value");
-    assertFalse(password.isEmpty(), "EPasswords value should not be empty");
-    assertTrue(password.length() >= 8, "EPasswords should return valid password");
+    if (credentialsAvailable) {
+      // Use real credentials
+      String password = EPasswords.BTSQA.getValue();
+      assertNotNull(password, "EPasswords should return a value");
+      assertFalse(password.isEmpty(), "EPasswords value should not be empty");
+      assertTrue(password.length() >= 8, "EPasswords should return valid password");
+    } else {
+      // Mock Google Cloud Secret Manager calls
+      try (MockedStatic<GoogleCloud> mockedGoogleCloud = Mockito.mockStatic(GoogleCloud.class)) {
+        mockedGoogleCloud
+            .when(() -> GoogleCloud.getKeyValue("cscharer", "AUTO_BTSQA_PASSWORD"))
+            .thenReturn("mock-btsqa-password-12345678");
+
+        String password = EPasswords.BTSQA.getValue();
+        assertNotNull(password, "EPasswords should return a value");
+        assertFalse(password.isEmpty(), "EPasswords value should not be empty");
+        assertTrue(password.length() >= 8, "EPasswords should return valid password");
+      }
+    }
 
     LOG.info("✅ EPasswords integration test passed!");
   }
@@ -53,23 +108,52 @@ public class SecureConfigTest {
     SecureConfig.clearCache();
     assertEquals(0, SecureConfig.getCacheSize(), "Cache should be empty after clear");
 
-    // First retrieval (should hit Secret Manager)
-    long startTime = System.currentTimeMillis();
-    String password1 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
-    final long firstCallTime = System.currentTimeMillis() - startTime;
+    if (credentialsAvailable) {
+      // Use real credentials
+      // First retrieval (should hit Secret Manager)
+      long startTime = System.currentTimeMillis();
+      String password1 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
+      final long firstCallTime = System.currentTimeMillis() - startTime;
 
-    assertEquals(1, SecureConfig.getCacheSize(), "Cache should have 1 item");
+      assertEquals(1, SecureConfig.getCacheSize(), "Cache should have 1 item");
 
-    // Second retrieval (should use cache - much faster)
-    startTime = System.currentTimeMillis();
-    String password2 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
-    long secondCallTime = System.currentTimeMillis() - startTime;
+      // Second retrieval (should use cache - much faster)
+      startTime = System.currentTimeMillis();
+      String password2 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
+      long secondCallTime = System.currentTimeMillis() - startTime;
 
-    assertEquals(password1, password2, "Cached password should match");
-    assertTrue(secondCallTime < firstCallTime, "Cached retrieval should be faster");
+      assertEquals(password1, password2, "Cached password should match");
+      assertTrue(secondCallTime < firstCallTime, "Cached retrieval should be faster");
 
-    LOG.info("  First call time: " + firstCallTime + "ms");
-    LOG.info("  Second call time (cached): " + secondCallTime + "ms");
+      LOG.info("  First call time: " + firstCallTime + "ms");
+      LOG.info("  Second call time (cached): " + secondCallTime + "ms");
+    } else {
+      // Mock Google Cloud Secret Manager calls
+      try (MockedStatic<GoogleCloud> mockedGoogleCloud = Mockito.mockStatic(GoogleCloud.class)) {
+        mockedGoogleCloud
+            .when(() -> GoogleCloud.getKeyValue("cscharer", "AUTO_BTSQA_PASSWORD"))
+            .thenReturn("mock-btsqa-password-12345678");
+
+        // First retrieval (should hit Secret Manager)
+        long startTime = System.currentTimeMillis();
+        String password1 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
+        final long firstCallTime = System.currentTimeMillis() - startTime;
+
+        assertEquals(1, SecureConfig.getCacheSize(), "Cache should have 1 item");
+
+        // Second retrieval (should use cache - much faster)
+        startTime = System.currentTimeMillis();
+        String password2 = SecureConfig.getPassword("AUTO_BTSQA_PASSWORD");
+        long secondCallTime = System.currentTimeMillis() - startTime;
+
+        assertEquals(password1, password2, "Cached password should match");
+        assertTrue(secondCallTime < firstCallTime, "Cached retrieval should be faster");
+
+        LOG.info("  First call time: " + firstCallTime + "ms");
+        LOG.info("  Second call time (cached): " + secondCallTime + "ms");
+      }
+    }
+
     LOG.info("✅ Caching test passed!");
   }
 
@@ -77,17 +161,46 @@ public class SecureConfigTest {
   public void testMultiplePasswords() {
     LOG.info("Testing multiple password retrieval...");
 
-    String btsqa = EPasswords.BTSQA.getValue();
-    String linkedin = EPasswords.LINKEDIN.getValue();
-    String dropbox = EPasswords.DROPBOX.getValue();
+    if (credentialsAvailable) {
+      // Use real credentials
+      String btsqa = EPasswords.BTSQA.getValue();
+      String linkedin = EPasswords.LINKEDIN.getValue();
+      String dropbox = EPasswords.DROPBOX.getValue();
 
-    assertNotNull(btsqa, "BTSQA password should not be null");
-    assertNotNull(linkedin, "LinkedIn password should not be null");
-    assertNotNull(dropbox, "Dropbox password should not be null");
+      assertNotNull(btsqa, "BTSQA password should not be null");
+      assertNotNull(linkedin, "LinkedIn password should not be null");
+      assertNotNull(dropbox, "Dropbox password should not be null");
 
-    LOG.info("  BTSQA: " + (btsqa != null ? "✅" : "❌"));
-    LOG.info("  LinkedIn: " + (linkedin != null ? "✅" : "❌"));
-    LOG.info("  Dropbox: " + (dropbox != null ? "✅" : "❌"));
+      LOG.info("  BTSQA: " + (btsqa != null ? "✅" : "❌"));
+      LOG.info("  LinkedIn: " + (linkedin != null ? "✅" : "❌"));
+      LOG.info("  Dropbox: " + (dropbox != null ? "✅" : "❌"));
+    } else {
+      // Mock Google Cloud Secret Manager calls
+      try (MockedStatic<GoogleCloud> mockedGoogleCloud = Mockito.mockStatic(GoogleCloud.class)) {
+        mockedGoogleCloud
+            .when(() -> GoogleCloud.getKeyValue("cscharer", "AUTO_BTSQA_PASSWORD"))
+            .thenReturn("mock-btsqa-password-12345678");
+        mockedGoogleCloud
+            .when(() -> GoogleCloud.getKeyValue("cscharer", "AUTO_LINKEDIN_PASSWORD"))
+            .thenReturn("mock-linkedin-password-12345678");
+        mockedGoogleCloud
+            .when(() -> GoogleCloud.getKeyValue("cscharer", "AUTO_DROPBOX_PASSWORD"))
+            .thenReturn("mock-dropbox-password-12345678");
+
+        String btsqa = EPasswords.BTSQA.getValue();
+        String linkedin = EPasswords.LINKEDIN.getValue();
+        String dropbox = EPasswords.DROPBOX.getValue();
+
+        assertNotNull(btsqa, "BTSQA password should not be null");
+        assertNotNull(linkedin, "LinkedIn password should not be null");
+        assertNotNull(dropbox, "Dropbox password should not be null");
+
+        LOG.info("  BTSQA: " + (btsqa != null ? "✅" : "❌"));
+        LOG.info("  LinkedIn: " + (linkedin != null ? "✅" : "❌"));
+        LOG.info("  Dropbox: " + (dropbox != null ? "✅" : "❌"));
+      }
+    }
+
     LOG.info("✅ Multiple password test passed!");
   }
 

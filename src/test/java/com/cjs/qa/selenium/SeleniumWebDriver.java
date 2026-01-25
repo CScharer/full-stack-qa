@@ -63,7 +63,15 @@ public class SeleniumWebDriver {
 
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(SeleniumWebDriver.class));
+
+  /**
+   * Property key for system property "os.name". This is NOT an OS detection variable. For OS
+   * detection (IS_WINDOWS, IS_MAC, IS_LINUX), use Constants.IS_WINDOWS, Constants.IS_MAC,
+   * Constants.IS_LINUX instead. This constant is used to retrieve the full OS name string (e.g.,
+   * "Windows 10", "Mac OS X") for Selenium platform capabilities, not for boolean OS checks.
+   */
   public static final String OS_NAME = "os.name";
+
   public static final String PATH_SCREENSHOTS = Constants.PATH_SCREENSHOTS;
   public static final String FORMAT_SCREENSHOT = "###000";
   private String browser = Browser.CHROME;

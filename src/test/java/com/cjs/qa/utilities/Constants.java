@@ -8,32 +8,63 @@ public class Constants {
 
   public static final String DELIMETER_PATH = System.getProperty("file.separator");
   private static final String FS = DELIMETER_PATH;
-  public static final String PATH_LOCAL = "C:" + FS;
+  private static final String OS_NAME = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+  public static final boolean IS_WINDOWS = OS_NAME.contains("windows");
+  public static final boolean IS_MAC = OS_NAME.contains("mac");
+  public static final boolean IS_LINUX = OS_NAME.contains("linux") || OS_NAME.contains("unix");
+
+  // Cross-platform local path: Windows uses C:\, Mac/Linux use root /
+  public static final String PATH_LOCAL = IS_WINDOWS ? "C:" + FS : FS;
   // System.getenv("USERNAME").toUpperCase(Locale.ENGLISH)
   public static final String CURRENT_USER =
       System.getProperty("user.name").toUpperCase(Locale.ENGLISH);
   public static final String PATH_TEMP = System.getProperty("java.io.tmpdir");
-  public static final String PATH_TEMP_WINDOWS = PATH_LOCAL + "WINDOWS" + FS + "TEMP" + FS;
-  public static final String PATH_CURRENT_USER = PATH_LOCAL + "Users" + FS + CURRENT_USER + FS;
+  // Windows-specific temp path, fallback to system temp on other platforms
+  public static final String PATH_TEMP_WINDOWS =
+      IS_WINDOWS ? PATH_LOCAL + "WINDOWS" + FS + "TEMP" + FS : PATH_TEMP;
+  // Cross-platform user path: Windows uses C:\Users\, Mac/Linux use /Users/ or /home/
+  public static final String PATH_CURRENT_USER =
+      IS_WINDOWS
+          ? PATH_LOCAL + "Users" + FS + CURRENT_USER + FS
+          : IS_MAC ? FS + "Users" + FS + CURRENT_USER + FS : FS + "home" + FS + CURRENT_USER + FS;
   public static final String PATH_CURRENT_USER_HOME = System.getProperty("user.home") + FS;
-  public static final String PATH_DESKTOP = PATH_CURRENT_USER + "Desktop" + FS;
-  public static final String PATH_DOWNLOADS = PATH_CURRENT_USER + "Downloads" + FS;
-  public static final String PATH_APPDATA = PATH_CURRENT_USER + "AppData" + FS;
-  public static final String PATH_APPDATA_LOCAL = PATH_APPDATA + "Local" + FS;
-  public static final String PATH_APPDATA_ROAMING = PATH_APPDATA + "Roaming" + FS;
+  public static final String PATH_DESKTOP = PATH_CURRENT_USER_HOME + "Desktop" + FS;
+  public static final String PATH_DOWNLOADS = PATH_CURRENT_USER_HOME + "Downloads" + FS;
+  // Windows-specific AppData paths, null/empty on other platforms
+  public static final String PATH_APPDATA =
+      IS_WINDOWS ? PATH_CURRENT_USER + "AppData" + FS : PATH_CURRENT_USER_HOME + ".config" + FS;
+  public static final String PATH_APPDATA_LOCAL =
+      IS_WINDOWS ? PATH_APPDATA + "Local" + FS : PATH_CURRENT_USER_HOME + ".local" + FS;
+  public static final String PATH_APPDATA_ROAMING =
+      IS_WINDOWS ? PATH_APPDATA + "Roaming" + FS : PATH_CURRENT_USER_HOME + ".config" + FS;
+  // Windows-specific SQLite path, use system PATH or common locations on other platforms
   public static final String PATH_SQLITE3_FILE =
-      PATH_APPDATA_LOCAL + "Android" + FS + "sdk" + FS + "platform-tools" + FS + "sqlite3.exe";
+      IS_WINDOWS
+          ? PATH_APPDATA_LOCAL + "Android" + FS + "sdk" + FS + "platform-tools" + FS + "sqlite3.exe"
+          : IS_MAC
+              ? FS + "usr" + FS + "bin" + FS + "sqlite3"
+              : FS + "usr" + FS + "bin" + FS + "sqlite3";
+  // Windows-specific Outlook path, not applicable on other platforms
   public static final String PATH_OUTLOOK_SIGNATURES =
-      PATH_APPDATA_ROAMING + "Microsoft" + FS + "Signatures" + FS;
-  public static final String PATH_FILES_WORKSPACE = PATH_LOCAL + "Workspace" + FS;
+      IS_WINDOWS
+          ? PATH_APPDATA_ROAMING + "Microsoft" + FS + "Signatures" + FS
+          : PATH_CURRENT_USER_HOME + ".outlook" + FS + "Signatures" + FS;
+  // Cross-platform workspace: Windows uses C:\Workspace, Mac/Linux use user home
+  public static final String PATH_FILES_WORKSPACE =
+      IS_WINDOWS ? PATH_LOCAL + "Workspace" + FS : PATH_CURRENT_USER_HOME + "Workspace" + FS;
   public static final String PATH_FILES_DATA = PATH_FILES_WORKSPACE + "Data" + FS;
   public static final String PATH_FILES_DATA_DATABASES = PATH_FILES_DATA + "Databases" + FS;
   public static final String PATH_FILES_XML = PATH_FILES_DATA + "xml" + FS;
   public static final String PATH_FILES_SOAPUI_RESULTS = PATH_FILES_DATA + "SoapUI" + FS;
   public static final String PATH_PROJECT = System.getProperty("user.dir") + FS;
   public static final String PATH_ROOT = PATH_PROJECT;
+  // Cross-platform drivers path: Windows uses C:\, Mac/Linux use user home or /opt
   public static final String PATH_DRIVERS_LOCAL =
-      "C:" + FS + "Selenium" + FS + "Grid2" + FS + "Drivers" + FS;
+      IS_WINDOWS
+          ? "C:" + FS + "Selenium" + FS + "Grid2" + FS + "Drivers" + FS
+          : IS_MAC
+              ? PATH_CURRENT_USER_HOME + "selenium" + FS + "drivers" + FS
+              : FS + "opt" + FS + "selenium" + FS + "drivers" + FS;
   // PATH_DRIVERS_REPOSITORY removed - legacy constant, WebDriverManager handles drivers now
   // public static final String PATH_DRIVERS_REPOSITORY =
   //     PATH_ROOT + "src" + FS + "test" + FS + "resources" + FS + "Drivers" + FS;

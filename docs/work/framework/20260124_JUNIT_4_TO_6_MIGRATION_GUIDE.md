@@ -547,6 +547,90 @@ The following tests are **commented out** in their respective suite XML files an
 **Verification Date**: 2026-01-25  
 **Pipeline Run Verified**: [21313293717](https://github.com/CScharer/full-stack-qa/actions/runs/21313293717)
 
+### Failed Tests from Latest Pipeline Run
+
+The following tests failed in the latest pipeline run ([21335754826](https://github.com/CScharer/full-stack-qa/actions/runs/21335754826)):
+
+| Test Class | Failed Test Methods | Error Count | Status |
+|------------|---------------------|-------------|--------|
+| `com.cjs.qa.microsoft.sharepoint.services.SharepointServiceTests` | `sharepointServiceTest` | 1 | ✅ **RESOLVED** |
+| `com.cjs.qa.utilities.SecureConfigTest` | `testEPasswordsIntegration`<br>`testSecretRetrieval`<br>`testMultiplePasswords`<br>`testCaching`<br>`testGetSecretKey` | 5 | ✅ **RESOLVED** |
+| `com.cjs.qa.utilities.CommandLineTests` | `testCommandLine`<br>`testGetJpsProcesses`<br>`testProcesses` | 3 | ✅ **RESOLVED** |
+
+**Total Failures**: ~~8 errors across 3 test classes~~ **All resolved** ✅
+
+**Note**: These test classes were recently enabled (removed `@Disabled` annotations) and encountered errors. All issues have been resolved with hybrid credential checking and cross-platform support.
+
+#### Failure Analysis and Resolution
+
+**1. `com.cjs.qa.microsoft.sharepoint.services.SharepointServiceTests`** ✅ **RESOLVED**
+- **Original Error**: `ExceptionInInitializerError` → `RuntimeException: Failed to fetch secret from Google Cloud Secret Manager`
+- **Root Cause**: Missing Google Cloud Application Default Credentials (ADC)
+- **Resolution**: Implemented hybrid approach with credential checking and mocking
+  - Checks if Google Cloud credentials are available at test start
+  - If available: Uses real credentials and makes actual API calls
+  - If not available: Mocks `SecureConfig.getPassword()` and provides mocked HTTP responses
+  - Added null checks and try-catch for XML parsing to handle API response variations
+- **Status**: ✅ All tests passing (1 test, 0 failures, 0 errors)
+- **Date Resolved**: 2026-01-25
+
+**2. `com.cjs.qa.utilities.SecureConfigTest`** ✅ **RESOLVED**
+- **Original Error**: `RuntimeException: Failed to fetch secret from Google Cloud Secret Manager: AUTO_BTSQA_PASSWORD`
+- **Root Cause**: Missing Google Cloud Application Default Credentials (ADC)
+- **Resolution**: Implemented hybrid approach with credential checking in `@BeforeEach`
+  - Checks credentials availability before each test
+  - If available: Uses real Google Cloud Secret Manager calls
+  - If not available: Mocks `GoogleCloud.getKeyValue()` to return test values
+  - All 5 test methods (`testSecretRetrieval`, `testEPasswordsIntegration`, `testCaching`, `testMultiplePasswords`, `testGetSecretKey`) now work in both scenarios
+- **Status**: ✅ All tests passing (5 tests, 0 failures, 0 errors)
+- **Date Resolved**: 2026-01-25
+
+**3. `com.cjs.qa.utilities.CommandLineTests`** ✅ **RESOLVED**
+- **Original Error**: `IOException: Cannot run program "tasklist.exe": error=2, No such file or directory` / `Cannot run program "cmd": error=2, No such file or directory`
+- **Root Cause**: Windows-specific command-line tools (`tasklist.exe`, `cmd`) are not available on Mac/Linux
+- **Resolution**: Added comprehensive cross-platform support
+  - Removed duplicate OS detection variables, now uses `Constants.IS_WINDOWS`, `Constants.IS_MAC`, `Constants.IS_LINUX`
+  - `isProcessRunning()`: Uses `tasklist.exe` on Windows, `ps aux` on Mac/Linux
+  - `getJpsProcessesList()`: Uses `cmd /C jps` on Windows, `jps` directly on Mac/Linux
+  - `testProcesses()`: Uses Windows `tasklist` commands on Windows, `ps` commands on Mac/Linux
+  - `killProcess()`: Uses `taskkill` on Windows, `killall` on Mac/Linux
+  - `executeCommand()`, `runProcess()`, `runProcessNoWait()`: Strip `cmd /C` prefix on Mac/Linux and execute via `/bin/sh -c`
+  - Added process name normalization to remove `.exe` extension on Mac/Linux
+- **Status**: ✅ All tests passing (3 tests, 0 failures, 0 errors)
+- **Date Resolved**: 2026-01-25
+- **Note**: Some warnings may appear for `Processes` class parsing on Mac/Linux (expects Windows CSV format), but tests complete successfully
+
+**Pipeline Run Date**: 2026-01-25  
+**Pipeline Run ID**: [21335754826](https://github.com/CScharer/full-stack-qa/actions/runs/21335754826)
+
+---
+
+### Code Consolidation: OS Detection Variables
+
+**Date**: 2026-01-25
+
+**Issue**: OS detection variables (`IS_WINDOWS`, `IS_MAC`, `IS_LINUX`) were duplicated in multiple files, creating maintenance overhead and potential inconsistencies.
+
+**Resolution**:
+- Made OS detection variables public in `Constants.java`:
+  - `Constants.IS_WINDOWS`
+  - `Constants.IS_MAC`
+  - `Constants.IS_LINUX`
+- Removed duplicate OS detection code from `CommandLineTests.java`
+- Updated all references in `CommandLineTests.java` to use `Constants.*` variables (16 references updated)
+- Added clarifying comment to `SeleniumWebDriver.java` explaining that `OS_NAME` is a property key string (`"os.name"`), not an OS detection variable
+
+**Files Modified**:
+- `src/test/java/com/cjs/qa/utilities/Constants.java` - Made OS detection variables public
+- `src/test/java/com/cjs/qa/utilities/CommandLineTests.java` - Removed duplicates, updated all references
+- `src/test/java/com/cjs/qa/selenium/SeleniumWebDriver.java` - Added clarifying comment
+
+**Benefits**:
+- ✅ Single source of truth for OS detection
+- ✅ Reduced code duplication
+- ✅ Easier maintenance and consistency
+- ✅ Clear documentation of variable purposes
+
 **Why This Works**:
 - ✅ `@Disabled` annotations prevent JUnit 6 from discovering and running these tests automatically
 - ✅ TestNG suites continue to work because they explicitly specify test classes in their XML files
@@ -577,6 +661,8 @@ The following tests are **commented out** in their respective suite XML files an
 4. ✅ Archived files migrated (completed)
 5. ✅ Documentation updated (completed)
 6. ✅ Test discovery configuration fixed (completed - prevents automatic execution of Windows-specific tests)
+7. ✅ Failed test classes resolved (completed - SharepointServiceTests, SecureConfigTest, CommandLineTests)
+8. ✅ Code consolidation completed (completed - OS detection variables unified in Constants.java)
 
 ### Next Steps (Optional)
 
@@ -586,5 +672,6 @@ The following tests are **commented out** in their respective suite XML files an
 
 ---
 
-**Last Updated**: 2026-01-24  
-**Status**: ✅ Migration Complete - All files migrated (including archived files)
+**Last Updated**: 2026-01-25  
+**Status**: ✅ Migration Complete - All files migrated (including archived files)  
+**Test Failures**: ✅ All previously failing tests resolved (SharepointServiceTests, SecureConfigTest, CommandLineTests)
