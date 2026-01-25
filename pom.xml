@@ -25,9 +25,8 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<jmeter.skip>false</jmeter.skip>
 		<maven.compiler.skip>false</maven.compiler.skip>
 		<!-- Skip tests by default to prevent automatic JUnit discovery -->
-		<!-- Set to false when running TestNG suites: -DskipTests=false or -Dmaven.test.skip=false -->
-		<maven.test.skip>true</maven.test.skip>
-		<skipTests>true</skipTests>
+		<!-- Set to false when running TestNG suites: -Dsurefire.skip=false -->
+		<surefire.skip>true</surefire.skip>
 		<meminitial>128m</meminitial>
 		<maxmem>512m</maxmem>
 		<maven.version>3.9.11</maven.version>
@@ -813,10 +812,9 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<threadCount>5</threadCount>
 					<perCoreThreadCount>true</perCoreThreadCount>
 					<!-- Skip tests by default to prevent automatic JUnit discovery -->
-					<!-- Tests will only run when explicitly requested via TestNG suites with -Dmaven.test.skip=false -->
+					<!-- Tests will only run when explicitly requested via TestNG suites with -Dsurefire.skip=false -->
 					<!-- This prevents Windows-specific tests in com.cjs.qa from running automatically -->
-					<!-- Hardcode skip=true - override with -Dmaven.test.skip=false in scripts -->
-					<skip>true</skip>
+					<skip>${surefire.skip}</skip>
 					<!-- Exclude all tests in com.cjs.qa package as backup -->
 					<excludes>
 						<exclude>com.cjs.qa.**</exclude>

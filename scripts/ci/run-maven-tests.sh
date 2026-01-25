@@ -133,7 +133,7 @@ fi
 # Build Maven command
 # Solution 2: Skip checkstyle, formatting, and JMeter since they already run in dedicated jobs
 MAVEN_CMD="./mvnw -ntp test"
-MAVEN_CMD="$MAVEN_CMD -Dmaven.test.skip=false"
+MAVEN_CMD="$MAVEN_CMD -Dsurefire.skip=false"
 MAVEN_CMD="$MAVEN_CMD -Dtest.environment=$ENVIRONMENT"
 MAVEN_CMD="$MAVEN_CMD -Dtest.retry.max.count=$RETRY_COUNT"
 MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$SUITE_FILE"
