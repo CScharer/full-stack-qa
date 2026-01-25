@@ -16,7 +16,7 @@
 # Examples:
 #   ./scripts/ci/wait-for-grid.sh
 #   ./scripts/ci/wait-for-grid.sh http://localhost:4444/wd/hub/status 10
-#   ./scripts/ci/wait-for-grid.sh "" 5 "true" "4.39.0"
+#   ./scripts/ci/wait-for-grid.sh "" 5 "true" "4.40.0"
 #
 # Description:
 #   This script waits for Selenium Grid to be ready by checking its status endpoint.

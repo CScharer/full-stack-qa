@@ -33,7 +33,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-1.57.0-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
 [![Selenide](https://img.shields.io/badge/Selenide-7.13.0-blue.svg)](https://selenide.org/)
-[![Selenium](https://img.shields.io/badge/Selenium-4.39.0-blue.svg)](https://www.selenium.dev/)
+[![Selenium](https://img.shields.io/badge/Selenium-4.40.0-blue.svg)](https://www.selenium.dev/)
 [![Vibium](https://img.shields.io/badge/Vibium-0.1.2-blue.svg)](https://vibium.com/) 🎄🎁
 
 [![Maven](https://img.shields.io/badge/Maven-3.9.11-blue.svg)](https://maven.apache.org/)
@@ -121,7 +121,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Python 3.13** - Latest stable version (for Robot Framework & Locust)
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
 - **TypeScript 5.9.3** - Type-safe JavaScript (for Cypress & Playwright)
-- **Selenium 4.39.0** - Modern WebDriver API with Grid support
+- **Selenium 4.40.0** - Modern WebDriver API with Grid support
 - **Playwright 1.57.0** - Fast and reliable end-to-end testing
 - **Cypress 15.8.1** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
@@ -1172,7 +1172,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 
 | Category | Library | Version |
 |----------|---------|---------|
-| **WebDriver** | Selenium | 4.39.0 |
+| **WebDriver** | Selenium | 4.40.0 |
 | **BDD** | Cucumber | 7.33.0 |
 | **Testing** | JUnit | 4.13.2 |
 | **Testing** | TestNG | 7.20.1 |

@@ -57,7 +57,7 @@ on:
       selenium_version:
         description: 'Selenium Grid Docker image version (hub and nodes)'
         type: string
-        default: '4.39.0'
+        default: '4.40.0'
       # Test execution controls - Set to true to enable, false to disable
       enable_smoke_tests:
         description: 'Enable Smoke Tests'
@@ -353,7 +353,7 @@ jobs:
         timeout-minutes: 2
         run: |
           echo "🐳 Pre-pulling Selenium Docker images with retry logic..."
-          SELENIUM_VERSION="${{ inputs.selenium_version || '4.39.0' }}"
+          SELENIUM_VERSION="${{ inputs.selenium_version || '4.40.0' }}"
           
           # Function to pull with retry
           pull_with_retry() {
@@ -425,7 +425,7 @@ jobs:
 
       - name: Wait for Selenium Grid
         env:
-          SELENIUM_VERSION: ${{ inputs.selenium_version || '4.39.0' }}
+          SELENIUM_VERSION: ${{ inputs.selenium_version || '4.40.0' }}
         run: |
           echo "⏳ Waiting for Grid..."
           ./scripts/ci/wait-for-grid.sh "http://localhost:${{ inputs.se_hub_port }}/wd/hub/status" ${{ inputs.grid_wait_timeout_seconds || 5 }}
@@ -434,7 +434,7 @@ jobs:
         timeout-minutes: ${{ inputs.grid_tests_timeout_minutes || 5 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
-          SELENIUM_VERSION: ${{ inputs.selenium_version || '4.39.0' }}
+          SELENIUM_VERSION: ${{ inputs.selenium_version || '4.40.0' }}
           SELENIUM_GRID_MAX_RETRIES: '5'
           SELENIUM_GRID_RETRY_BASE_DELAY_MS: '1000'
           SELENIUM_GRID_RETRY_MAX_DELAY_MS: '10000'

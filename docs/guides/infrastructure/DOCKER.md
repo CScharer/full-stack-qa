@@ -429,7 +429,7 @@ Enable video recording in `docker-compose.yml`:
 
 ```yaml
 chrome-node-1:
-  image: selenium/node-chrome:4.39.0
+  image: selenium/node-chrome:4.40.0
   environment:
     - SE_VIDEO_RECORD=true
     - SE_VIDEO_FOLDER=/videos

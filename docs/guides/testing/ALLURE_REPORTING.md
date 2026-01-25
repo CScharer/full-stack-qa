@@ -475,7 +475,7 @@ Create `target/allure-results/environment.properties`:
 ```properties
 Browser=Chrome
 Browser.Version=120
-Selenium.Version=4.39.0
+Selenium.Version=4.40.0
 Grid.URL=http://selenium-hub:4444
 Java.Version=21
 ```

@@ -169,8 +169,8 @@ Or run locally:
   "errors": 0,
   "warnings": 0,
   "selenium": {
-    "pom_version": "4.39.0",
-    "workflow_version": "4.39.0",
+    "pom_version": "4.40.0",
+    "workflow_version": "4.40.0",
     "match": true
   },
   "mismatches": [],
@@ -182,7 +182,7 @@ Or run locally:
 
 ```csv
 timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,selenium_match,mismatches,warnings_list
-2025-12-20T02:00:00Z,success,0,0,4.39.0,4.39.0,true,,
+2025-12-20T02:00:00Z,success,0,0,4.40.0,4.40.0,true,,
 ```
 
 ---

@@ -351,7 +351,7 @@ for compose_file in "${DOCKER_COMPOSE_FILES[@]}"; do
         fi
         
         # Extract image name and tag
-        # Format: seleniarm/hub:latest or selenium/hub:4.39.0
+        # Format: seleniarm/hub:latest or selenium/hub:4.40.0
         IMAGE_NAME=$(echo "$image_line" | sed 's/:.*$//')
         IMAGE_TAG=$(echo "$image_line" | sed 's/.*://' | sed 's/[[:space:]]*$//')
         

@@ -58,9 +58,9 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-01-24 (Security fixes - logback-core and lodash)
-- **Latest Stable Versions Check**: 2026-01-24 (See "Latest Stable" column for updateable versions)
-- **Next Review**: 2026-01-30 (recommended)
+- **Last Review**: 2026-01-25 (Version check - Selenium 4.40.0 available)
+- **Latest Stable Versions Check**: 2026-01-25 (See "Latest Stable" column for updateable versions)
+- **Next Review**: 2026-02-01 (recommended)
 
 ---
 
@@ -76,10 +76,10 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| Selenium | 4.39.0 | 4.39.0 | [✅] | 2025-12-20 | Aligned with Grid server version |
+| Selenium | 4.40.0 | 4.40.0 | [✅] | 2026-01-25 | Updated from 4.39.0 to 4.40.0 - Aligned with Grid server version |
 | Selenide | 7.13.0 | 7.13.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | TestNG | 7.11.0 | 7.11.0 | [✅] | - | Current |
-| JUnit | 4.13.2 | 6.0.2 | [✅] | 2026-01-24 | Latest stable: 6.0.2 - Compilation verified ✅ - Migration complete ✅ (all test files migrated from JUnit 4 to JUnit 6 APIs) |
+| JUnit | 6.0.2 | 6.0.2 | [✅] | 2026-01-24 | Latest stable: 6.0.2 - Compilation verified ✅ - Migration complete ✅ (all test files migrated from JUnit 4 to JUnit 6 APIs) |
 | Cucumber | 7.33.0 | 7.33.0 | [✅] | - | Current |
 | REST Assured | 6.0.0 | 6.0.0 | [✅] | 2025-12-19 | Updated in PR #51 - Requires Java 17+, Jackson 3.0.0 |
 | Allure3 CLI | 3.0.0 | 3.0.0 | [✅] | 2025-12-30 | Active - Allure3 CLI in use (TypeScript-based, npm install) |
@@ -92,7 +92,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Maven | 3.9.11 | 3.9.11 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Java | 21 | 21 (LTS) | [✅] | - | Current LTS version |
 | Maven Compiler Plugin | 3.14.1 | 3.14.1 | [✅] | 2026-01-24 | Current stable version |
-| Maven Surefire Plugin | 3.5.4 | 3.5.4 | [✅] | 2025-12-19 | Updated in PR #51 |
+| Maven Surefire Plugin | 3.5.4 | 3.5.4 | [✅] | 2025-12-19 | Updated in PR #51 - Current stable version |
 | Maven Checkstyle Plugin | 3.6.0 | 3.6.0 | [✅] | - | Current |
 | Checkstyle Tool | 13.0.0 | 13.0.0 | [✅] | 2026-01-16 | Updated from 12.3.0 (Item 5.2) |
 | SpotBugs | 4.9.8 | 4.9.8 | [✅] | - | Current |
@@ -111,7 +111,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
 | WebDriverManager | 6.3.3 | 6.3.3 | [✅] | - | Current |
-| Log4j 2 | 2.25.3 | 2.25.3 | [✅] | 2025-12-19 | Updated via Dependabot PR #52 |
+| Log4j 2 | 2.25.3 | 2.25.3 | [✅] | 2025-12-19 | Updated via Dependabot PR #52 - Current stable version (2.25.x series in Active Maintenance) |
 | Logback Core | 1.5.25 | 1.5.25 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 1.5.20 from Gatling transitive dependency (CVE) |
 | Jackson Databind | 3.0.3 | 3.0.3 | [✅] | 2025-12-30 | Current stable version |
 | Jackson Annotations | 2.20 | 2.20 | [✅] | 2025-12-19 | Compatible with Jackson 3.0.0 |
@@ -119,7 +119,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | MSSQL JDBC | 13.2.1.jre11 | 13.2.1.jre11 | [✅] | 2025-12-30 | Current stable version |
 | PostgreSQL JDBC | 42.7.9 | 42.7.9 | [✅] | 2026-01-16 | Updated from 42.7.8 (Item 5.2) |
 | JSoup | 1.22.1 | 1.22.1 | [✅] | 2026-01-16 | Updated from 1.21.2 (Item 5.2) |
-| Google Cloud Secret Manager | 2.82.0 | 2.82.0 | [✅] | 2026-01-16 | Updated from 2.81.0 (Item 5.2) |
+| Google Cloud Secret Manager | 2.82.0 | 2.82.0 | [✅] | 2026-01-16 | Updated from 2.81.0 (Item 5.2) - Current version verified |
 | ByteBuddy | 1.18.4 | 1.18.4 | [✅] | 2026-01-16 | Updated from 1.18.3 (Item 5.2) |
 | Cucumber Reporting | 5.10.2 | 5.10.2 | [✅] | 2026-01-16 | Updated from 5.10.1 (Item 5.2) |
 
@@ -234,12 +234,12 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 | Component | Current Version | Latest Stable | Status | Last Updated | Notes |
 |-----------|----------------|---------------|--------|--------------|-------|
-| selenium/hub | 4.39.0 | 4.39.0 | [✅] | 2025-12-20 | Centralized via input variable |
-| selenium/node-chrome | 4.39.0 | 4.39.0 | [✅] | 2025-12-20 | Centralized via input variable |
-| selenium/node-firefox | 4.39.0 | 4.39.0 | [✅] | 2025-12-20 | Centralized via input variable |
-| selenium/node-edge | 4.39.0 | 4.39.0 | [✅] | 2025-12-20 | Centralized via input variable |
+| selenium/hub | 4.40.0 | 4.40.0 | [✅] | 2026-01-25 | Centralized via input variable |
+| selenium/node-chrome | 4.40.0 | 4.40.0 | [✅] | 2026-01-25 | Centralized via input variable |
+| selenium/node-firefox | 4.40.0 | 4.40.0 | [✅] | 2026-01-25 | Centralized via input variable |
+| selenium/node-edge | 4.40.0 | 4.40.0 | [✅] | 2026-01-25 | Centralized via input variable |
 
-**Note**: All Selenium Grid versions are now managed via `selenium_version` input variable in `.github/workflows/env-fe.yml` (default: `4.39.0`)
+**Note**: All Selenium Grid versions are now managed via `selenium_version` input variable in `.github/workflows/env-fe.yml` (default: `4.40.0`)
 
 ### Selenium Grid Ports (GitHub Actions Workflow)
 
@@ -311,7 +311,7 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 ### 2025-12-20
-- **Selenium Grid**: Centralized version (4.39.0) and ports via workflow input variables
+- **Selenium Grid**: Centralized version (4.39.0, updated to 4.40.0 on 2026-01-25) and ports via workflow input variables
 - **Document Created**: Initial version tracking document
 
 ### 2025-12-30
@@ -329,6 +329,15 @@ The `overrides` section forces all instances of the package (including transitiv
 - **Outdated Dependencies Document**: Created `docs/work/20251230_OUTDATED_DEPENDENCIES.md` with 10 outdated dependencies identified
 - **Security Fix - qs (npm)**: Fixed Dependabot alert #1 (High severity) by adding `qs@^6.14.1` as direct dependency and using npm `overrides` to force patched version throughout dependency tree. Vulnerability: ArrayLimit bypass in bracket notation allows DoS via memory exhaustion (GHSA-6rw7-vpxm-498p). Fixed in `cypress/package.json`.
 - **Dependency Fix - requests (Python)**: Adjusted `requests` from 2.32.5 to 2.32.4 in `requirements.txt` and `.github/workflows/env-be.yml` to resolve dependency conflict with Locust 2.42.6 (requires `requests<2.32.5`). This fixes the dependency submission workflow failure.
+
+### 2026-01-25
+- **Version Check**: Comprehensive dependency version verification completed
+- **Selenium**: Updated from 4.39.0 → 4.40.0 (released 2026-01-18)
+  - Updated `pom.xml` selenium.version property
+  - Updated `.github/workflows/env-fe.yml` default selenium_version input
+  - Aligned client and server versions
+  - Status changed from [⚠️] to [✅] - Current stable version
+- **All Other Dependencies**: Verified current versions match latest stable releases
 
 ### 2026-01-24
 - **Maven Compiler Plugin**: 3.13.0 → 3.14.1 (Current stable version)
@@ -415,7 +424,7 @@ The `overrides` section forces all instances of the package (including transitiv
 
 ## 📝 Notes
 
-- **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at 4.39.0.
+- **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at 4.40.0.
   - **Validation**: Currently validated via scheduled workflow and manual script execution
   - **✅ Implemented**: Pre-push hook validation catches mismatches before code is pushed (see [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md))
 - **TypeScript Updates**: Consider updating all projects together for consistency.
@@ -438,8 +447,8 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-24
-- **Next Review**: 2026-01-30 (recommended)
+- **Last Updated**: 2026-01-25
+- **Next Review**: 2026-02-01 (recommended)
 - **Maintainer**: Development Team
 
 **Remember**: This is a living document. Update it regularly to keep version information current!

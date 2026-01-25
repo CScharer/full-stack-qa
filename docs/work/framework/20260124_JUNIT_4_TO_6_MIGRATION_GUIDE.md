@@ -674,4 +674,5 @@ The following tests failed in the latest pipeline run ([21335754826](https://git
 
 **Last Updated**: 2026-01-25  
 **Status**: ✅ Migration Complete - All files migrated (including archived files)  
-**Test Failures**: ✅ All previously failing tests resolved (SharepointServiceTests, SecureConfigTest, CommandLineTests)
+**Test Failures**: ✅ All previously failing tests resolved (SharepointServiceTests, SecureConfigTest, CommandLineTests)  
+**Dependencies**: ✅ Selenium updated from 4.39.0 to 4.40.0 (2026-01-25)

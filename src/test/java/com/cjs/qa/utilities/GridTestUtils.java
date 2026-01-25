@@ -89,7 +89,7 @@ public final class GridTestUtils {
    * provides a test-friendly interface.
    *
    * @param gridUrl The Grid hub URL
-   * @param expectedVersion The expected Selenium version (e.g., "4.39.0")
+   * @param expectedVersion The expected Selenium version (e.g., "4.40.0")
    * @throws QAException if version validation fails
    */
   public static void validateGridVersion(String gridUrl, String expectedVersion)
