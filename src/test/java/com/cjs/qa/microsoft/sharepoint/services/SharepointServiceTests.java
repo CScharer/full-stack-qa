@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
@@ -24,7 +23,6 @@ import com.cjs.qa.utilities.XML;
 import com.cjs.qa.vivit.VivitDataTests;
 import com.cjs.qa.vivit.VivitEnvironment;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class SharepointServiceTests {
 
   private static final GuardedLogger LOG =

@@ -16,12 +16,10 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.Environment;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class CommandLineTests {
 
   private static final GuardedLogger LOG =

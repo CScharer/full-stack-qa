@@ -468,9 +468,84 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
 **Implementation**:
 - Added `@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")` annotation at the class level
 - Added `import org.junit.jupiter.api.Disabled;` where needed
-- **51 test files** were modified with `@Disabled` annotations
+- **39 test files** were modified with `@Disabled` annotations
 - This prevents JUnit 6 from automatically discovering and running these tests
 - TestNG suites will still work because they explicitly specify test classes in their XML files
+
+### Disabled Test Files
+
+The following table lists all test files that were previously marked with `@Disabled` annotations:
+
+| # | Package | Test Class | File Path | Disabled |
+|---|---------|------------|-----------|----------|
+| 1 | `com.cjs.qa.autocoder` | `CoderTests` | `src/test/java/com/cjs/qa/autocoder/CoderTests.java` | ✅ |
+| 2 | `com.cjs.qa.bts` | `BTSConvertDatabaseToXMLTests` | `src/test/java/com/cjs/qa/bts/BTSConvertDatabaseToXMLTests.java` | ✅ |
+| 3 | `com.cjs.qa.bts` | `CompanyEnvironmentSetupTests` | `src/test/java/com/cjs/qa/bts/CompanyEnvironmentSetupTests.java` | ✅ |
+| 4 | `com.cjs.qa.bts.policy` | `PolicyTestCase` | `src/test/java/com/cjs/qa/bts/policy/PolicyTestCase.java` | ✅ |
+| 5 | `com.cjs.qa.gt` | `GTWAPIMethodsTests` | `src/test/java/com/cjs/qa/gt/GTWAPIMethodsTests.java` | ✅ |
+| 6 | `com.cjs.qa.gt` | `GTWebinarDataTests` | `src/test/java/com/cjs/qa/gt/GTWebinarDataTests.java` | ✅ |
+| 7 | `com.cjs.qa.gt.api.services` | `GTWebinarServiceTests` | `src/test/java/com/cjs/qa/gt/api/services/GTWebinarServiceTests.java` | ✅ |
+| 8 | `com.cjs.qa.jdbc` | `JDBCTest` | `src/test/java/com/cjs/qa/jdbc/JDBCTest.java` | ✅ |
+| 9 | `com.cjs.qa.junit.dataset` | `DataSetUtilDemoTests` | `src/test/java/com/cjs/qa/junit/dataset/DataSetUtilDemoTests.java` | ✅ |
+| 10 | `com.cjs.qa.junit.dbunit` | `H2DBUtilDemoTests` | `src/test/java/com/cjs/qa/junit/dbunit/H2DBUtilDemoTests.java` | ✅ |
+| 11 | `com.cjs.qa.junit.tests` | `AtlassianTests` | `src/test/java/com/cjs/qa/junit/tests/AtlassianTests.java` | ✅ |
+| 12 | `com.cjs.qa.junit.tests` | `BitcoinTests` | `src/test/java/com/cjs/qa/junit/tests/BitcoinTests.java` | ✅ |
+| 13 | `com.cjs.qa.junit.tests` | `ConvertTests` | `src/test/java/com/cjs/qa/junit/tests/ConvertTests.java` | ✅ |
+| 14 | `com.cjs.qa.junit.tests` | `EDBDriverTests` | `src/test/java/com/cjs/qa/junit/tests/EDBDriverTests.java` | ✅ |
+| 15 | `com.cjs.qa.junit.tests` | `ExcelFormulaSumTests` | `src/test/java/com/cjs/qa/junit/tests/ExcelFormulaSumTests.java` | ✅ |
+| 16 | `com.cjs.qa.junit.tests` | `ExcelStatisticalTests` | `src/test/java/com/cjs/qa/junit/tests/ExcelStatisticalTests.java` | ✅ |
+| 17 | `com.cjs.qa.junit.tests` | `GridConnectionTest` | `src/test/java/com/cjs/qa/junit/tests/GridConnectionTest.java` | ✅ |
+| 18 | `com.cjs.qa.junit.tests` | `MavenTests` | `src/test/java/com/cjs/qa/junit/tests/MavenTests.java` | ✅ |
+| 19 | `com.cjs.qa.junit.tests` | `ScenariosSetupTeardownTests` | `src/test/java/com/cjs/qa/junit/tests/ScenariosSetupTeardownTests.java` | ✅ |
+| 20 | `com.cjs.qa.junit.tests` | `ScenariosTests` | `src/test/java/com/cjs/qa/junit/tests/ScenariosTests.java` | ✅ |
+| 21 | `com.cjs.qa.junit.tests` | `TestSets` | `src/test/java/com/cjs/qa/junit/tests/TestSets.java` | ✅ |
+| 22 | `com.cjs.qa.junit.tests` | `WebElementTableTests` | `src/test/java/com/cjs/qa/junit/tests/WebElementTableTests.java` | ✅ |
+| 23 | `com.cjs.qa.junit.tests` | `XMLUtilsTests` | `src/test/java/com/cjs/qa/junit/tests/XMLUtilsTests.java` | ✅ |
+| 24 | `com.cjs.qa.linkedin.data` | `DataTests` | `src/test/java/com/cjs/qa/linkedin/data/DataTests.java` | ✅ |
+| 25 | `com.cjs.qa.microsoft.excel` | `ExcelTests` | `src/test/java/com/cjs/qa/microsoft/excel/ExcelTests.java` | ❌ |
+| 26 | `com.cjs.qa.microsoft.excel.xls` | `TestXLS` | `src/test/java/com/cjs/qa/microsoft/excel/xls/TestXLS.java` | ❌ |
+| 27 | `com.cjs.qa.microsoft.excel.xlsx` | `TestXLSX` | `src/test/java/com/cjs/qa/microsoft/excel/xlsx/TestXLSX.java` | ❌ |
+| 28 | `com.cjs.qa.microsoft.sharepoint.services` | `SharepointServiceTests` | `src/test/java/com/cjs/qa/microsoft/sharepoint/services/SharepointServiceTests.java` | ❌ |
+| 29 | `com.cjs.qa.microsoft.word` | `WordTests` | `src/test/java/com/cjs/qa/microsoft/word/WordTests.java` | ❌ |
+| 30 | `com.cjs.qa.utilities` | `CommandLineTests` | `src/test/java/com/cjs/qa/utilities/CommandLineTests.java` | ❌ |
+| 31 | `com.cjs.qa.utilities` | `DateHelpersTests` | `src/test/java/com/cjs/qa/utilities/DateHelpersTests.java` | ❌ |
+| 32 | `com.cjs.qa.utilities` | `FSOTests` | `src/test/java/com/cjs/qa/utilities/FSOTests.java` | ❌ |
+| 33 | `com.cjs.qa.utilities` | `PageObjectGeneratorCodeValidationTest` | `src/test/java/com/cjs/qa/utilities/PageObjectGeneratorCodeValidationTest.java` | ❌ |
+| 34 | `com.cjs.qa.utilities` | `SecureConfigTest` | `src/test/java/com/cjs/qa/utilities/SecureConfigTest.java` | ❌ |
+| 35 | `com.cjs.qa.vivit` | `VivitDataTests` | `src/test/java/com/cjs/qa/vivit/VivitDataTests.java` | ✅ |
+| 36 | `com.cjs.qa.ym` | `YMAPIMethodsTests` | `src/test/java/com/cjs/qa/ym/YMAPIMethodsTests.java` | ✅ |
+| 37 | `com.cjs.qa.ym` | `YMDataTests` | `src/test/java/com/cjs/qa/ym/YMDataTests.java` | ✅ |
+| 38 | `com.cjs.qa.ym.api.dataobjects` | `WorkingTests` | `src/test/java/com/cjs/qa/ym/api/dataobjects/WorkingTests.java` | ✅ |
+| 39 | `com.cjs.qa.ym.xml.objects` | `MarshallTests` | `src/test/java/com/cjs/qa/ym/xml/objects/MarshallTests.java` | ✅ |
+
+**Total**: 39 test files listed (29 disabled, 10 enabled)
+
+### Active Tests in Test Suites
+
+The following tests are **actively configured** to run in TestNG suite XML files and have been verified to **NOT** have `@Disabled` annotations:
+
+| Test Class | Test Suite(s) | Status |
+|------------|---------------|--------|
+| `com.cjs.qa.junit.tests.AdvancedFeaturesTests` | `testng-extended-suite.xml` | ✅ Active, Not Disabled |
+| `com.cjs.qa.junit.tests.mobile.MobileBrowserTests` | `testng-extended-suite.xml`, `testng-mobile-suite.xml`, `testng-mobile-browser-suite.xml` | ✅ Active, Not Disabled |
+| `com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests` | `testng-extended-suite.xml`, `testng-mobile-suite.xml`, `testng-responsive-suite.xml` | ✅ Active, Not Disabled |
+
+**Note**: API tests (`com.cjs.qa.api.tests.*`) are referenced in `testng-api-suite.xml`, but the test directory does not exist, so these tests will not execute.
+
+### Tests Commented Out in Suites
+
+The following tests are **commented out** in their respective suite XML files and will **NOT** run:
+
+- `com.cjs.qa.junit.tests.DataDrivenTests` - Commented out in `testng-extended-suite.xml`
+- `com.cjs.qa.junit.tests.NegativeTests` - Commented out in `testng-extended-suite.xml`
+- `com.cjs.qa.junit.tests.SimpleGridTest` - Commented out in `testng-ci-suite.xml` and `testng-grid-suite.xml`
+- `com.cjs.qa.junit.tests.EnhancedGridTests` - Commented out in `testng-ci-suite.xml` and `testng-grid-suite.xml`
+- All tests in `testng-smoke-suite.xml` - All classes commented out
+- All tests in `testng-selenide-suite.xml` - All classes commented out
+- All tests in `testng-grid-suite.xml` - All classes commented out
+
+**Verification Date**: 2026-01-25  
+**Pipeline Run Verified**: [21313293717](https://github.com/CScharer/full-stack-qa/actions/runs/21313293717)
 
 **Why This Works**:
 - ✅ `@Disabled` annotations prevent JUnit 6 from discovering and running these tests automatically
@@ -479,7 +554,7 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
 - ✅ Prevents Windows-specific tests from running automatically on Mac systems
 - ✅ More explicit and maintainable than exclusion patterns
 
-**Files Modified**: 51 test files in `src/test/java/com/cjs/qa/` package
+**Files Modified**: 39 test files in `src/test/java/com/cjs/qa/` package (see table above)
 
 **Date Applied**: 2026-01-24  
 **Updated**: 2026-01-24 (switched from exclusion patterns to @Disabled annotations)

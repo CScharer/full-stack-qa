@@ -21,7 +21,6 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
@@ -31,7 +30,6 @@ import com.cjs.qa.utilities.Constants;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class WordTests {
 
   private static final GuardedLogger LOG = new GuardedLogger(LogManager.getLogger(WordTests.class));
