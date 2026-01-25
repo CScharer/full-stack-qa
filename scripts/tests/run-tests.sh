@@ -43,6 +43,7 @@ echo ""
 
 # Run tests
 ./mvnw clean test \
+  -Dskip.tests=false \
   -Dtest=$TEST_SUITE \
   -Dbrowser=$BROWSER \
   -DfailIfNoTests=false
