@@ -810,8 +810,9 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<perCoreThreadCount>true</perCoreThreadCount>
 					<!-- Prevent automatic test discovery - only run tests via TestNG suites -->
 					<!-- JUnit tests in com.cjs.qa are Windows-specific and should only run via TestNG suites -->
+					<!-- By forcing the TestNG provider, JUnit Jupiter won't automatically discover tests -->
 					<!-- TestNG suites will still work because they explicitly specify test classes -->
-					<!-- Exclude all tests in com.cjs.qa package using class name patterns -->
+					<!-- Exclude all tests in com.cjs.qa package as backup -->
 					<excludes>
 						<exclude>com.cjs.qa.**</exclude>
 					</excludes>
@@ -836,6 +837,12 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjweaver</artifactId>
 						<version>${aspectj.version}</version>
+					</dependency>
+					<!-- Force TestNG provider to prevent JUnit Jupiter automatic discovery -->
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-testng</artifactId>
+						<version>${maven-surefire-plugin.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>

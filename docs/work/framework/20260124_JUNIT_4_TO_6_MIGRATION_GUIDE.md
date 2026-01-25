@@ -464,15 +464,25 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
 <configuration>
     <!-- Exclude all tests in com.cjs.qa package by default -->
     <!-- These tests are Windows-specific or should only run via TestNG suites -->
-    <!-- TestNG suites will still work because they explicitly specify test classes -->
     <excludes>
         <exclude>com.cjs.qa.**</exclude>
     </excludes>
     <!-- ... rest of configuration ... -->
 </configuration>
+<dependencies>
+    <!-- Force TestNG provider to prevent JUnit Jupiter automatic discovery -->
+    <dependency>
+        <groupId>org.apache.maven.surefire</groupId>
+        <artifactId>surefire-testng</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+    </dependency>
+</dependencies>
 ```
 
-**Important Note**: The exclusion pattern `com.cjs.qa.**` excludes the entire `com.cjs.qa` package and all subpackages. This prevents all tests in that package from being discovered automatically. Surefire matches patterns against fully qualified class names, not file paths. TestNG suites will still work because they explicitly specify test classes in their XML files, bypassing Surefire's automatic discovery mechanism.
+**Important Notes**:
+1. **Forcing TestNG Provider**: By explicitly adding `surefire-testng` as a dependency to the Surefire plugin, we force Surefire to use only the TestNG provider. This prevents JUnit Jupiter from automatically discovering and running tests.
+2. **Exclusion Pattern**: The exclusion pattern `com.cjs.qa.**` excludes the entire `com.cjs.qa` package and all subpackages as a backup measure. Surefire matches patterns against fully qualified class names, not file paths.
+3. **TestNG Suites Still Work**: TestNG suites will still work because they explicitly specify test classes in their XML files, bypassing Surefire's automatic discovery mechanism. When a TestNG suite XML file is specified (via `-DsuiteXmlFile=...`), TestNG will run the specified tests regardless of the provider configuration.
 
 **Why This Works**:
 - ✅ TestNG suites continue to work because they explicitly specify test classes in their XML files, bypassing Surefire's automatic discovery
