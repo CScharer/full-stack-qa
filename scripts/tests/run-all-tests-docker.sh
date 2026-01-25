@@ -103,7 +103,7 @@ run_test_suite() {
 
 # 1. Selenium/Java Tests (Smoke Tests)
 run_test_suite "Selenium Smoke Tests" \
-    "docker-compose run --rm tests -Dskip.tests=false -DsuiteXmlFile=testng-smoke-suite.xml"
+    "docker-compose run --rm tests -DskipTests=false -DsuiteXmlFile=testng-smoke-suite.xml"
 
 # 2. Selenium/Java Tests (Grid Tests)
 run_test_suite "Selenium Grid Tests" \
@@ -119,7 +119,7 @@ run_test_suite "Playwright Tests" \
 
 # 5. Robot Framework Tests
 run_test_suite "Robot Framework Tests" \
-    "docker-compose run --rm -e BASE_URL=$BASE_URL -e ENVIRONMENT=$ENVIRONMENT -e SELENIUM_REMOTE_URL=$SELENIUM_REMOTE_URL tests bash -c './mvnw test -Dskip.tests=false -Probot'"
+    "docker-compose run --rm -e BASE_URL=$BASE_URL -e ENVIRONMENT=$ENVIRONMENT -e SELENIUM_REMOTE_URL=$SELENIUM_REMOTE_URL tests bash -c './mvnw test -DskipTests=false -Probot'"
 
 # Summary
 echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
