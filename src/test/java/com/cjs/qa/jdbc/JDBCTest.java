@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.vivit.VivitDataTests;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Requires VivitDataTests.DATABASE_DEFINITION")
 public class JDBCTest {
 
   @Test

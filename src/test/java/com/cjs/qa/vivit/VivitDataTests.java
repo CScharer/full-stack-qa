@@ -56,7 +56,7 @@ import com.cjs.qa.ym.YMDataTests;
 import com.cjs.qa.ym.api.services.YMAPI;
 import com.cjs.qa.ym.api.services.YMService;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Deprecated and Requires VivitDataTests.DATABASE_DEFINITION")
 public class VivitDataTests extends Environment {
 
   private static final GuardedLogger LOG =

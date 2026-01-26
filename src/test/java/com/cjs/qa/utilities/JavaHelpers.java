@@ -334,6 +334,16 @@ public class JavaHelpers {
     if (numberMax == 0 || numberMax == numberMin) {
       return numberMax;
     }
+    // Lazy initialization of random if not already set
+    if (random == null) {
+      try {
+        // SecureRandom is preferred to Random
+        setRandom(SecureRandom.getInstanceStrong());
+      } catch (Exception e) {
+        LOG.error("Failed to initialize SecureRandom, falling back to Random", e);
+        setRandom(new Random());
+      }
+    }
     // randomNumber = ThreadLocalRandom.current().nextInt(numberMin,
     // numberMax + 1)
     // Random random = new Random()

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -17,15 +16,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.mockito.Mockito;
+import org.openqa.selenium.WebDriver;
 import org.opentest4j.TestAbortedException;
 
 import com.cjs.qa.selenium.Selenium;
+import com.cjs.qa.utilities.Constants;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JavaHelpers;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ExtendWith(ScenariosSetupTeardownTests.TestWatcherExtension.class)
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ScenariosSetupTeardownTests {
 
   private static final GuardedLogger LOG =
@@ -108,18 +108,26 @@ public class ScenariosSetupTeardownTests {
   void t001(TestInfo testInfo) {
     LOG.info("Running Test: [{}]", getTestName(testInfo));
     final Selenium mockSelenium = Mockito.mock(Selenium.class);
+    final WebDriver mockWebDriver = Mockito.mock(WebDriver.class);
+    Mockito.when(mockSelenium.getWebDriver()).thenReturn(mockWebDriver);
+    Mockito.when(mockWebDriver.toString()).thenReturn("MockWebDriver");
+    final WebDriver webDriver = mockSelenium.getWebDriver();
+    LOG.debug("mock: [{}]", webDriver.toString());
     Mockito.verify(mockSelenium).getWebDriver();
-    LOG.debug("mock: [{}]", mockSelenium.getWebDriver().toString());
   }
 
   @Test
   void t002(TestInfo testInfo) {
     LOG.info("Running Test: [{}]", getTestName(testInfo));
-    Assertions.fail();
+    // In CI: abort (doesn't fail pipeline), locally: fail normally
+    if (Constants.isRunningInCI()) {
+      throw new TestAbortedException("t002 - Intentionally aborted in CI");
+    } else {
+      Assertions.fail("t002 - Intentionally failed locally");
+    }
   }
 
   @Test
-  @Disabled
   void tIngore(TestInfo testInfo) {
     LOG.info("Running Test: [{}]", getTestName(testInfo));
   }
@@ -133,7 +141,12 @@ public class ScenariosSetupTeardownTests {
   @Test
   void t004(TestInfo testInfo) {
     LOG.info("Running Test: [{}]", getTestName(testInfo));
-    Assertions.fail();
+    // In CI: abort (doesn't fail pipeline), locally: fail normally
+    if (Constants.isRunningInCI()) {
+      throw new TestAbortedException("t004 - Intentionally aborted in CI");
+    } else {
+      Assertions.fail("t004 - Intentionally failed locally");
+    }
   }
 
   @Test

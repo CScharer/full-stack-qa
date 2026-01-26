@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
@@ -19,7 +18,6 @@ import com.cjs.qa.utilities.FSOTests;
 import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ExcelStatisticalTests {
 
   private static final GuardedLogger LOG =
@@ -29,20 +27,19 @@ public class ExcelStatisticalTests {
   // + Constants.DELIMETER_PATH + "bts QA" + Constants.DELIMETER_PATH + "QA
   // Tools" + Constants.DELIMETER_PATH + "Timings" + Constants.DELIMETER_PATH
   public static final String PATH_TIMINGS =
-      "C:"
-          + Constants.DELIMETER_PATH
-          + "Temp"
-          + Constants.DELIMETER_PATH
-          + "Excel_Timings"
-          + Constants.DELIMETER_PATH;
+      Constants.PATH_TEMP + "Excel_Timings" + Constants.DELIMETER_PATH;
   protected static final List<String> PATH_LIST = Arrays.asList("VALA", "VALA-LP");
   private ExcelTiming excelTimingControl = new ExcelTiming();
   private ExcelTiming excelTimingTest = new ExcelTiming();
 
   @Test
   public void getStatisticalTimings() throws IOException, QAException {
+    // Ensure base directory exists (cross-platform)
+    FSOTests.folderCreate(PATH_TIMINGS);
     for (final String path : PATH_LIST) {
       final String timingPath = PATH_TIMINGS + path + Constants.DELIMETER_PATH;
+      // Ensure subdirectory exists
+      FSOTests.folderCreate(timingPath);
       switch (path) {
         case "VALA":
           getData(timingPath, excelTimingControl);
@@ -86,6 +83,8 @@ public class ExcelStatisticalTests {
   }
 
   private void createStatisticalReport() throws QAException, IOException {
+    // Ensure directory exists (cross-platform)
+    FSOTests.folderCreate(PATH_TIMINGS);
     final String sheetName = "Statistical Timings";
     final String filePathName =
         PATH_TIMINGS

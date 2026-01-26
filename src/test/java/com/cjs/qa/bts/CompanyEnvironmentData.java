@@ -154,7 +154,7 @@ public class CompanyEnvironmentData {
   }
 
   public static String getEnvironmentsFilePathString() {
-    final String folderPath = Constants.PATH_PROJECT + "XML\\";
+    final String folderPath = Constants.PATH_PROJECT + "xml" + Constants.DELIMETER_PATH;
     FSOTests.folderCreate(folderPath);
     return folderPath;
   }
