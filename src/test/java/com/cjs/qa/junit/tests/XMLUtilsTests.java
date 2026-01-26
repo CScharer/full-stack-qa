@@ -76,7 +76,7 @@ public class XMLUtilsTests {
                 + IExtension.XML);
       }
       XML.xmlAssertEquals(xml1, xml1);
-    } catch (final org.opentest4j.TestAbortedException e) {
+    } catch (final TestAbortedException e) {
       throw e; // Re-throw TestAbortedException as-is
     } catch (final Exception e) {
       throw new QAException("Error trying to assertXMLEquals", e);
