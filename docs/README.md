@@ -213,7 +213,7 @@ When adding new documentation:
 - [Cucumber BDD Docs](https://cucumber.io/docs)
 - [Google Cloud Secret Manager](https://cloud.google.com/secret-manager/docs)
 - [Maven User Guide](https://maven.apache.org/users/)
-- [JUnit 6 Documentation](https://junit.org/junit6/docs/current/user-guide/)
+- [JUnit 6 Documentation](https://docs.junit.org/6.0.2/user-guide/index.html)
 
 ### Internal Resources
 - Jenkins CI: http://cscharer-laptop:8080/

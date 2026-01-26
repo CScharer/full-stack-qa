@@ -737,7 +737,7 @@ The following tests failed in the latest pipeline run ([21335754826](https://git
 
 ## 🔗 Additional Resources
 
-- [JUnit 6 User Guide](https://junit.org/junit6/docs/current/user-guide/)
+- [JUnit 6 User Guide](https://docs.junit.org/6.0.2/user-guide/index.html)
 - [JUnit 5 Migration Guide](https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4)
 - [OpenTest4J Documentation](https://github.com/ota4j-team/opentest4j)
 
