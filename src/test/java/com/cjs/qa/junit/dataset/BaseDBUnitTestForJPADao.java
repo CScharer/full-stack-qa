@@ -89,6 +89,7 @@ public class BaseDBUnitTestForJPADao {
       // iDatabaseConnection.close()
       // DatabaseConnection takes ownership of the Connection and will close it
       // Create connection without try-with-resources to prevent premature closing
+      @SuppressWarnings("PMD.CloseResource") // Connection is transferred to DatabaseConnection
       Connection connection = null;
       try {
         connection = createDatabaseConnection(DBInfo.URL, properties);

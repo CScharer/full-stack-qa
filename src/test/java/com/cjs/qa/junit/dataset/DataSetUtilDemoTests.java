@@ -110,6 +110,7 @@ public class DataSetUtilDemoTests extends BaseDBUnitTestForJPADao {
     // Verify connection is still open before using it
     try {
       // Attempt to use the connection - this will throw if it's closed
+      @SuppressWarnings("PMD.CloseResource") // Connection is managed by DatabaseConnection
       final java.sql.Connection sqlConnection = connection.getConnection();
       if (sqlConnection == null || sqlConnection.isClosed()) {
         throw new TestAbortedException("Database connection is closed - skipping test");
@@ -118,7 +119,8 @@ public class DataSetUtilDemoTests extends BaseDBUnitTestForJPADao {
       // Connection is closed or invalid - skip test instead of failing
       LOG.warn("Database connection is closed or invalid, skipping test: {}", e.getMessage());
       throw new TestAbortedException(
-          "Database connection is closed or invalid. This may occur if the connection was closed by another test or if EntityManagerFactory was closed.",
+          "Database connection is closed or invalid. This may occur if the connection was "
+              + "closed by another test or if EntityManagerFactory was closed.",
           e);
     }
 

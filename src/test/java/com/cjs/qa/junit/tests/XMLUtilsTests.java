@@ -44,7 +44,7 @@ public class XMLUtilsTests {
   public void assertXMLEqualPass() throws QAException {
     final String xml1 = getXML1();
     if (xml1 == null || xml1.trim().isEmpty()) {
-      throw new org.opentest4j.TestAbortedException(
+      throw new TestAbortedException(
           "Skipping test: xml1.xml file not found or empty. File path: "
               + Constants.PATH_FILES_XML
               + "xml1"
@@ -69,7 +69,7 @@ public class XMLUtilsTests {
     try {
       final String xml1 = getXML1();
       if (xml1 == null || xml1.trim().isEmpty()) {
-        throw new org.opentest4j.TestAbortedException(
+        throw new TestAbortedException(
             "Skipping test: xml1.xml file not found or empty. File path: "
                 + Constants.PATH_FILES_XML
                 + "xml1"
@@ -88,14 +88,14 @@ public class XMLUtilsTests {
     final String xml1 = getXML1();
     final String xml2 = getXML2();
     if (xml1 == null || xml1.trim().isEmpty()) {
-      throw new org.opentest4j.TestAbortedException(
+      throw new TestAbortedException(
           "Skipping test: xml1.xml file not found or empty. File path: "
               + Constants.PATH_FILES_XML
               + "xml1"
               + IExtension.XML);
     }
     if (xml2 == null || xml2.trim().isEmpty()) {
-      throw new org.opentest4j.TestAbortedException(
+      throw new TestAbortedException(
           "Skipping test: xml2.xml file not found or empty. File path: "
               + Constants.PATH_FILES_XML
               + "xml2"
@@ -110,14 +110,14 @@ public class XMLUtilsTests {
     final String xml1 = getXML1();
     final String xml2 = getXML2();
     if (xml1 == null || xml1.trim().isEmpty()) {
-      throw new org.opentest4j.TestAbortedException(
+      throw new TestAbortedException(
           "Skipping test: xml1.xml file not found or empty. File path: "
               + Constants.PATH_FILES_XML
               + "xml1"
               + IExtension.XML);
     }
     if (xml2 == null || xml2.trim().isEmpty()) {
-      throw new org.opentest4j.TestAbortedException(
+      throw new TestAbortedException(
           "Skipping test: xml2.xml file not found or empty. File path: "
               + Constants.PATH_FILES_XML
               + "xml2"
