@@ -27,7 +27,11 @@ public class ExcelStatisticalTests {
   // + Constants.DELIMETER_PATH + "bts QA" + Constants.DELIMETER_PATH + "QA
   // Tools" + Constants.DELIMETER_PATH + "Timings" + Constants.DELIMETER_PATH
   public static final String PATH_TIMINGS =
-      Constants.PATH_TEMP + "Excel_Timings" + Constants.DELIMETER_PATH;
+      (Constants.PATH_TEMP.endsWith(Constants.DELIMETER_PATH)
+              ? Constants.PATH_TEMP
+              : Constants.PATH_TEMP + Constants.DELIMETER_PATH)
+          + "Excel_Timings"
+          + Constants.DELIMETER_PATH;
   protected static final List<String> PATH_LIST = Arrays.asList("VALA", "VALA-LP");
   private ExcelTiming excelTimingControl = new ExcelTiming();
   private ExcelTiming excelTimingTest = new ExcelTiming();

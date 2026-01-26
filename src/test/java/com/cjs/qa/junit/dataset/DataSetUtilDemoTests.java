@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
+import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
@@ -99,7 +100,18 @@ public class DataSetUtilDemoTests extends BaseDBUnitTestForJPADao {
           "Could not load any dataset file. Check that dataset files exist in classpath.");
     }
 
-    DatabaseOperation.INSERT.execute(getiDatabaseConnection(), dataSet);
+    // Check if connection is still open before using it
+    final IDatabaseConnection connection = getiDatabaseConnection();
+    if (connection == null) {
+      throw new IllegalStateException("Database connection is null");
+    }
+    try {
+      // Verify connection is still open by checking if we can get the underlying connection
+      connection.getConnection();
+    } catch (Exception e) {
+      throw new IllegalStateException("Database connection is closed or invalid", e);
+    }
+    DatabaseOperation.INSERT.execute(connection, dataSet);
   }
 
   @AfterEach

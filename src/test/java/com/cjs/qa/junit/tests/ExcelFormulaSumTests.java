@@ -23,7 +23,11 @@ public class ExcelFormulaSumTests {
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(ExcelFormulaSumTests.class));
   public static final String PATH_SUM =
-      Constants.PATH_TEMP + "Excel_FormulaSum" + Constants.DELIMETER_PATH;
+      (Constants.PATH_TEMP.endsWith(Constants.DELIMETER_PATH)
+              ? Constants.PATH_TEMP
+              : Constants.PATH_TEMP + Constants.DELIMETER_PATH)
+          + "Excel_FormulaSum"
+          + Constants.DELIMETER_PATH;
   public static final String SHEET_NAME = IExcel.SHEET_SUMMARY;
   public static final int COUNT_ROWS = 10;
   protected static final Map<String, Integer> COLUMNS_MAP = getColumns();
