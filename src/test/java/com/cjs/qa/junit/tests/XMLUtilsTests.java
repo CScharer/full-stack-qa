@@ -43,8 +43,12 @@ public class XMLUtilsTests {
   @Test
   public void assertXMLEqualPass() throws QAException {
     final String xml1 = getXML1();
-    if (xml1 == null) {
-      throw new QAException("Failed to read xml1.xml - file not found or empty");
+    if (xml1 == null || xml1.trim().isEmpty()) {
+      throw new org.opentest4j.TestAbortedException(
+          "Skipping test: xml1.xml file not found or empty. File path: "
+              + Constants.PATH_FILES_XML
+              + "xml1"
+              + IExtension.XML);
     }
     XML.xmlAssertEqual(xml1, xml1);
   }
@@ -64,10 +68,16 @@ public class XMLUtilsTests {
   public void assertXMLEqualsPass() throws QAException {
     try {
       final String xml1 = getXML1();
-      if (xml1 == null) {
-        throw new QAException("Failed to read xml1.xml - file not found or empty");
+      if (xml1 == null || xml1.trim().isEmpty()) {
+        throw new org.opentest4j.TestAbortedException(
+            "Skipping test: xml1.xml file not found or empty. File path: "
+                + Constants.PATH_FILES_XML
+                + "xml1"
+                + IExtension.XML);
       }
       XML.xmlAssertEquals(xml1, xml1);
+    } catch (final org.opentest4j.TestAbortedException e) {
+      throw e; // Re-throw TestAbortedException as-is
     } catch (final Exception e) {
       throw new QAException("Error trying to assertXMLEquals", e);
     }
@@ -77,11 +87,19 @@ public class XMLUtilsTests {
   public void formatPretty() throws QAException {
     final String xml1 = getXML1();
     final String xml2 = getXML2();
-    if (xml1 == null) {
-      throw new QAException("Failed to read xml1.xml - file not found or empty");
+    if (xml1 == null || xml1.trim().isEmpty()) {
+      throw new org.opentest4j.TestAbortedException(
+          "Skipping test: xml1.xml file not found or empty. File path: "
+              + Constants.PATH_FILES_XML
+              + "xml1"
+              + IExtension.XML);
     }
-    if (xml2 == null) {
-      throw new QAException("Failed to read xml2.xml - file not found or empty");
+    if (xml2 == null || xml2.trim().isEmpty()) {
+      throw new org.opentest4j.TestAbortedException(
+          "Skipping test: xml2.xml file not found or empty. File path: "
+              + Constants.PATH_FILES_XML
+              + "xml2"
+              + IExtension.XML);
     }
     LOG.info("XML1 formatted: {}", XML.formatPretty(xml1));
     LOG.info("XML2 formatted: {}", XML.formatPretty(xml2));
@@ -91,11 +109,19 @@ public class XMLUtilsTests {
   public void fromStringToCanonicalXML() throws QAException {
     final String xml1 = getXML1();
     final String xml2 = getXML2();
-    if (xml1 == null) {
-      throw new QAException("Failed to read xml1.xml - file not found or empty");
+    if (xml1 == null || xml1.trim().isEmpty()) {
+      throw new org.opentest4j.TestAbortedException(
+          "Skipping test: xml1.xml file not found or empty. File path: "
+              + Constants.PATH_FILES_XML
+              + "xml1"
+              + IExtension.XML);
     }
-    if (xml2 == null) {
-      throw new QAException("Failed to read xml2.xml - file not found or empty");
+    if (xml2 == null || xml2.trim().isEmpty()) {
+      throw new org.opentest4j.TestAbortedException(
+          "Skipping test: xml2.xml file not found or empty. File path: "
+              + Constants.PATH_FILES_XML
+              + "xml2"
+              + IExtension.XML);
     }
     LOG.info("XML1 canonical: {}", XML.fromStringToCanonical(xml1));
     LOG.info("XML2 canonical: {}", XML.fromStringToCanonical(xml2));

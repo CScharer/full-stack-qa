@@ -88,14 +88,14 @@ public class BaseDBUnitTestForJPADao {
       // Connection is wrapped by DatabaseConnection and closed in @AfterClass via
       // iDatabaseConnection.close()
       // DatabaseConnection takes ownership of the Connection and will close it
-      // Use try-with-resources to ensure connection is closed if DatabaseConnection creation fails
-      try (Connection connection = createDatabaseConnection(DBInfo.URL, properties)) {
+      // Create connection without try-with-resources to prevent premature closing
+      Connection connection = null;
+      try {
+        connection = createDatabaseConnection(DBInfo.URL, properties);
         // Transfer ownership to DatabaseConnection - it will close the connection
         // when iDatabaseConnection.close() is called in @AfterClass
         iDatabaseConnection = new DatabaseConnection(connection);
         // Connection is now owned by DatabaseConnection, so we don't close it here
-        // The try-with-resources will only close it if an exception occurs before
-        // DatabaseConnection takes ownership
         String dbLocation = Constants.PATH_PROJECT + "b2csite.dll" + IExtension.SQL;
         dbLocation = "src/test/resources/tabledef/b2csite.dll" + IExtension.SQL;
         // FileReader is closed automatically by try-with-resources
@@ -104,18 +104,25 @@ public class BaseDBUnitTestForJPADao {
         }
         // Connection successfully transferred to DatabaseConnection
         // It will be closed by iDatabaseConnection.close() in @AfterClass
+        connection = null; // Clear reference so we don't close it below
       } catch (final Exception e) {
         // If DatabaseConnection was created, close it (which will close the underlying connection)
         if (iDatabaseConnection != null) {
           try {
             iDatabaseConnection.close();
+            iDatabaseConnection = null;
           } catch (final Exception closeException) {
-            // Connection will be closed by DatabaseConnection.close()
             LOG.warn("Error closing database connection: {}", closeException.getMessage());
           }
         }
-        // If try-with-resources didn't close the connection (shouldn't happen),
-        // it will be closed automatically when the try block exits
+        // If connection was created but DatabaseConnection wasn't, close it manually
+        if (connection != null) {
+          try {
+            connection.close();
+          } catch (final Exception closeException) {
+            LOG.warn("Error closing raw connection: {}", closeException.getMessage());
+          }
+        }
         throw e;
       }
 
