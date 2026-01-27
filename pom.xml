@@ -843,27 +843,17 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 						<artifactId>aspectjweaver</artifactId>
 						<version>${aspectj.version}</version>
 					</dependency>
-					<!-- Force TestNG provider to prevent JUnit Jupiter automatic discovery -->
+					<!-- TestNG provider: runs TestNG suite/default discovery -->
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-testng</artifactId>
 						<version>${maven-surefire-plugin.version}</version>
 					</dependency>
-					<!-- Exclude JUnit Jupiter provider to prevent automatic test discovery -->
+					<!-- JUnit Jupiter provider: runs JUnit tests; @Disabled tests are skipped -->
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-junit-platform</artifactId>
 						<version>${maven-surefire-plugin.version}</version>
-						<exclusions>
-							<exclusion>
-								<groupId>org.junit.platform</groupId>
-								<artifactId>junit-platform-launcher</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>org.junit.jupiter</groupId>
-								<artifactId>junit-jupiter-engine</artifactId>
-							</exclusion>
-						</exclusions>
 					</dependency>
 				</dependencies>
 			</plugin>

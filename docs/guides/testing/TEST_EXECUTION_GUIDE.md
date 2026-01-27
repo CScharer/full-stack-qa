@@ -305,3 +305,4 @@ docker-compose run --rm tests -Dtest=SmokeTests  # UI
 - UI tests require Selenium Grid
 - All tests generate Allure reports
 - Logs available in target/logs/
+- Maven Surefire runs both JUnit Jupiter and TestNG; JUnit tests with `@Disabled` are skipped. See `results/RESULTS.md` and [TEST_SUITES_REFERENCE.md](TEST_SUITES_REFERENCE.md) for test discovery and pipeline baseline.

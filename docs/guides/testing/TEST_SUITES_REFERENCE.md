@@ -58,6 +58,8 @@ TestNG is the primary testing framework, using Maven Surefire Plugin for executi
 - 5 threads per core
 - Cucumber parallel execution enabled (5 workers)
 
+**Test discovery**: Both the **JUnit Jupiter** and **TestNG** providers are enabled. Maven uses default class-name patterns (`**/Test*.java`, `**/*Test.java`, `**/*Tests.java`, `**/*TestCase.java`). JUnit tests annotated with `@Disabled` are skipped. The smoke-tests job passes `-DsuiteXmlFile=testng-smoke-suite.xml`, but `<suiteXmlFiles>` is not configured in `pom.xml`, so that property has no effect and all discovered (non-disabled) tests run. See `results/RESULTS.md` for the pipeline baseline and Maven/Surefire behavior.
+
 ### TestNG Suite Files
 
 All TestNG suite files are located in: `src/test/resources/`
@@ -742,7 +744,7 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 ---
 
-**Last Updated**: 2025-12-27  
+**Last Updated**: 2026-01-24  
 **Maintained By**: Development Team  
 **Review Frequency**: Quarterly or when test suite configurations change
 
