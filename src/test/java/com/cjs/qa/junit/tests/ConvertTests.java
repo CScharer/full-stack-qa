@@ -3,10 +3,10 @@ package com.cjs.qa.junit.tests;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.microsoft.excel.IExcel;
@@ -15,15 +15,22 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JavaHelpers;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTable.TableConverter;
+import io.cucumber.datatable.DataTableTypeRegistry;
+import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ConvertTests {
 
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(ConvertTests.class));
 
+  // DataTable converter setup for Cucumber 7.3.4+
+  private static final DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
+  private static final TableConverter tableConverter =
+      new DataTableTypeRegistryTableConverter(registry);
+
   private static DataTable getDataTable() {
-    return DataTable.create(getList());
+    return DataTable.create(getList(), tableConverter);
   }
 
   private static List<List<String>> getList() {

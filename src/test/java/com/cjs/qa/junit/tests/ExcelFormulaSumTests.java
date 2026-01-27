@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.cjs.qa.core.QAException;
@@ -19,16 +18,14 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.utilities.JavaHelpers;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
 public class ExcelFormulaSumTests {
 
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(ExcelFormulaSumTests.class));
   public static final String PATH_SUM =
-      "C:"
-          + Constants.DELIMETER_PATH
-          + "Temp"
-          + Constants.DELIMETER_PATH
+      (Constants.PATH_TEMP.endsWith(Constants.DELIMETER_PATH)
+              ? Constants.PATH_TEMP
+              : Constants.PATH_TEMP + Constants.DELIMETER_PATH)
           + "Excel_FormulaSum"
           + Constants.DELIMETER_PATH;
   public static final String SHEET_NAME = IExcel.SHEET_SUMMARY;
@@ -39,6 +36,8 @@ public class ExcelFormulaSumTests {
   public void testExcelSum() throws IOException, QAException {
     final String filePathName = PATH_SUM + "FormulaSum" + IExtension.XLS;
     LOG.info("filePathName: [{}]", filePathName);
+    // Ensure directory exists (cross-platform)
+    FSOTests.folderCreate(PATH_SUM);
     if (FSOTests.fileExists(filePathName)) {
       FSOTests.fileDelete(filePathName);
     }

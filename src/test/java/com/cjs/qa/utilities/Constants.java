@@ -177,4 +177,16 @@ public class Constants {
     tab += incriment;
     return tab;
   }
+
+  /**
+   * Detects if tests are running in CI/CD pipeline. Checks common CI environment variables: CI,
+   * GITHUB_ACTIONS, CONTINUOUS_INTEGRATION
+   *
+   * @return true if running in CI, false if running locally
+   */
+  public static boolean isRunningInCI() {
+    return ("true".equalsIgnoreCase(System.getenv("CI"))
+        || "true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))
+        || "true".equalsIgnoreCase(System.getenv("CONTINUOUS_INTEGRATION")));
+  }
 }

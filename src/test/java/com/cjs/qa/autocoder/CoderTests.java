@@ -22,7 +22,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.utilities.RegularExpression;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Requries JDBC(AutoCoderExcel)")
 public class CoderTests {
 
   private static final GuardedLogger LOG =

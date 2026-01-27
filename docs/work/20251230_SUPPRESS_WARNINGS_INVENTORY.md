@@ -1,19 +1,20 @@
 # @SuppressWarnings Inventory
 
 **Document Type**: Reference Document (Non-Living)  
-**Last Updated**: 2026-01-24  
-**Total Annotations**: 28 across 22 files
+**Last Updated**: 2026-01-26  
+**Total Annotations**: 30 across 22 files
 
 ---
 
 ## Status and Summary
 
-**Status**: ✅ **REVIEWED AND DOCUMENTED** - 28 @SuppressWarnings annotations remain across 22 files (reduced from 31)
+**Status**: ✅ **REVIEWED AND DOCUMENTED** - 30 @SuppressWarnings annotations remain across 22 files (reduced from 31, added 2 for PMD.CloseResource)
 
 **Summary**: After Item 2.2 review (January 16, 2026), 4 @SuppressWarnings were removed (2 bugs fixed, 2 unused code removed). All remaining 28 annotations have been reviewed and documented with explanatory comments explaining why they are necessary.
 
-**Recent Changes (January 24, 2026)**:
-- ✅ Added `HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming)
+**Recent Changes**:
+- **January 24, 2026**: Added `HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming)
+- **January 26, 2026**: Added `BaseDBUnitTestForJPADao.java` and `DataSetUtilDemoTests.java` - `PMD.CloseResource` (connections managed by DatabaseConnection)
 
 **Breakdown by Type**:
 
@@ -28,17 +29,20 @@
 | `PMD.DoNotExtendJavaLangThrowable` | 2 | 2 files | All documented - custom exception design |
 | `PMD.GuardLogStatement` | 1 | 1 file | All documented - wrapper class design |
 | `PMD.UnnecessaryImport` | 1 | 1 file | All documented - wildcard import for many classes |
+| `PMD.CloseResource` | 2 | 2 files | All documented - connections managed by DatabaseConnection |
 | `java:S2068` (SonarQube) | 1 | 1 file | All documented - intentional placeholder |
 
 **Files with @SuppressWarnings** (22 total):
 
-1. **PMD Violations** (7 annotations) - ✅ All documented:
+1. **PMD Violations** (9 annotations) - ✅ All documented:
    - `src/test/java/com/cjs/qa/utilities/GuardedLogger.java` - `PMD.GuardLogStatement` (intentional - wrapper class handles guards internally)
    - `src/test/java/com/cjs/qa/core/QAException.java` - `PMD.DoNotExtendJavaLangThrowable` (custom exception design - documented)
    - `src/test/java/com/cjs/qa/utilities/QALogger.java` - `PMD.DoNotExtendJavaLangThrowable` (custom logging exception design - documented)
    - `src/test/java/com/cjs/qa/microsoft/utilities/XlsReader.java` - `PMD.SingularField` (3x - design choice for performance - documented)
    - `src/test/java/com/cjs/qa/ym/xml/objects/DataSet.java` - `PMD.UnnecessaryImport` (wildcard import used for many classes - documented)
    - `src/test/java/com/cjs/qa/junit/tests/HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming - documented)
+   - `src/test/java/com/cjs/qa/junit/dataset/BaseDBUnitTestForJPADao.java` - `PMD.CloseResource` (connection transferred to DatabaseConnection - documented)
+   - `src/test/java/com/cjs/qa/junit/dataset/DataSetUtilDemoTests.java` - `PMD.CloseResource` (connection managed by DatabaseConnection - documented)
 
 2. **Java Compiler Warnings** (20 annotations) - ✅ All documented:
    - **"unused"** (7 annotations):
@@ -97,6 +101,7 @@
 | `PMD.GuardLogStatement` | Suppresses PMD rule requiring log statements to check log level before logging | Wrapper classes (like GuardedLogger) that handle guards internally |
 | `PMD.DoNotExtendJavaLangThrowable` | Suppresses PMD rule against extending Throwable directly | Custom exception classes that extend Throwable for specific design reasons |
 | `PMD.SingularField` | Suppresses PMD rule about fields that could be local variables | Fields that are reused across multiple methods as temporary variables |
+| `PMD.CloseResource` | Suppresses PMD rule requiring resources to be closed | Resources that are managed by other classes (e.g., connections transferred to DatabaseConnection) |
 | `PMD.UnnecessaryImport` | Suppresses PMD rule about unnecessary wildcard imports | Wildcard imports that are actually used for many classes from a package |
 
 ### SonarQube Rule Suppressions
@@ -156,21 +161,22 @@
 | `"rawtypes"` | 3 | 11.1% |
 | `"deprecation"` | 3 | 11.1% |
 | `PMD.SingularField` | 3 | 11.1% |
-| `PMD.ClassNamingConventions` | 1 | 3.6% |
-| `PMD.DoNotExtendJavaLangThrowable` | 2 | 7.1% |
-| `PMD.GuardLogStatement` | 1 | 3.6% |
-| `PMD.UnnecessaryImport` | 1 | 3.6% |
-| `java:S2068` (SonarQube) | 1 | 3.6% |
-| **Total** | **28** | **100%** |
+| `PMD.ClassNamingConventions` | 1 | 3.3% |
+| `PMD.DoNotExtendJavaLangThrowable` | 2 | 6.7% |
+| `PMD.GuardLogStatement` | 1 | 3.3% |
+| `PMD.UnnecessaryImport` | 1 | 3.3% |
+| `PMD.CloseResource` | 2 | 6.7% |
+| `java:S2068` (SonarQube) | 1 | 3.3% |
+| **Total** | **30** | **100%** |
 
 ### By Category
 
 | Category | Count | Files |
 |----------|-------|-------|
 | **Java Compiler Warnings** | 20 | 13 files |
-| **PMD Rule Suppressions** | 7 | 5 files |
+| **PMD Rule Suppressions** | 9 | 7 files |
 | **SonarQube Rule Suppressions** | 1 | 1 file |
-| **Total** | **28** | **22 files** |
+| **Total** | **30** | **22 files** |
 
 ### By File (Files with Multiple Annotations)
 
@@ -335,22 +341,23 @@
 
 ### Status
 
-**All recommendations completed.** All remaining 27 @SuppressWarnings annotations are legitimate, necessary, and documented with explanatory comments.
+**All recommendations completed.** All remaining 30 @SuppressWarnings annotations are legitimate, necessary, and documented with explanatory comments.
 
 ---
 
 ## Notes
 
-- **Total Annotations**: 28 (reduced from 31 on January 16, 2026, added 1 on January 24, 2026)
+- **Total Annotations**: 30 (reduced from 31 on January 16, 2026, added 1 on January 24, 2026, added 2 on January 26, 2026)
 - **Total Files**: 22 (reduced from 23 on January 16, 2026, added 1 on January 24, 2026)
-- **Most Common Type**: `"unused"` (7 annotations, 25.0%)
+- **Most Common Type**: `"unused"` (7 annotations, 23.3%)
 - **Files with Multiple Annotations**: 2 files (AIHelper.java: 4, XlsReader.java: 3)
 - **Removed Annotations**: 4 (2 bugs fixed, 2 unused code removed)
-- **Added Annotations**: 1 (`HomePageTestsExample.java` - PMD.ClassNamingConventions)
-- **Documentation Status**: ✅ All 28 remaining annotations are documented
+- **Added Annotations**: 3 (`HomePageTestsExample.java` - PMD.ClassNamingConventions, `BaseDBUnitTestForJPADao.java` and `DataSetUtilDemoTests.java` - PMD.CloseResource)
+- **Documentation Status**: ✅ All 30 remaining annotations are documented
 
-**Recent Updates (January 24, 2026)**:
-- ✅ Added `HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming)
+**Recent Updates**:
+- **January 24, 2026**: ✅ Added `HomePageTestsExample.java` - `PMD.ClassNamingConventions` (example file with intentional naming)
+- **January 26, 2026**: ✅ Added `BaseDBUnitTestForJPADao.java` and `DataSetUtilDemoTests.java` - `PMD.CloseResource` (connections managed by DatabaseConnection)
 
 ---
 

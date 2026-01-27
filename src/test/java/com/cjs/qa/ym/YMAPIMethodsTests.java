@@ -27,7 +27,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.IExtension;
 import com.cjs.qa.ym.api.services.YMService;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Deprecated and Requires VivitDataTests.DATABASE_DEFINITION")
 public final class YMAPIMethodsTests {
 
   private static final GuardedLogger LOG =

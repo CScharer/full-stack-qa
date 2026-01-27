@@ -49,7 +49,7 @@ import com.cjs.qa.ym.api.namespace.EventsNamespace;
 import com.cjs.qa.ym.api.objects.Event;
 import com.cjs.qa.ym.api.services.YMAPI;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Deprecated and Requires VivitDataTests.DATABASE_DEFINITION")
 public class YMDataTests extends Environment {
 
   private static final GuardedLogger LOG =

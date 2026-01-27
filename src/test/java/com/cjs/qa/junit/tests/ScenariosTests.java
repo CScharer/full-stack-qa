@@ -71,7 +71,7 @@ import io.cucumber.datatable.DataTable;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ExtendWith(ScenariosTests.TestWatcherExtension.class)
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Requires Selenium Grid and Requires VivitDataTests.DATABASE_DEFINITON")
 public class ScenariosTests {
 
   private static final GuardedLogger LOG =

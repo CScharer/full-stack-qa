@@ -28,7 +28,7 @@
             <value>2013-12-23 00:00:00</value>
         </row>
     </table>
-    <table>
+    <table name="OrderEntity">
         <column>id</column>
         <column>orderLabel</column>
         <column>orderNumber</column>

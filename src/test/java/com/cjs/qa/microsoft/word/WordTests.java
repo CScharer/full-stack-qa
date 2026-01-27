@@ -180,6 +180,12 @@ public class WordTests {
           }
           xwpfParagraph = xwpfDocument.createParagraph();
         }
+        // Ensure the directory exists before writing the file
+        final File outputFile = new File(filePathName);
+        final File parentDir = outputFile.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+          parentDir.mkdirs();
+        }
         try (FileOutputStream fileOutputStream = new FileOutputStream(filePathName)) {
           xwpfDocument.write(fileOutputStream);
         }

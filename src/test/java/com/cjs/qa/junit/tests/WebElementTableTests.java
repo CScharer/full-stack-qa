@@ -29,7 +29,7 @@ import com.cjs.qa.utilities.IExtension;
 import io.cucumber.datatable.DataTable;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Deprecated and Requires Selenium Grid")
 public class WebElementTableTests {
 
   private static final GuardedLogger LOG =

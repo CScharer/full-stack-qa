@@ -23,7 +23,7 @@ import com.cjs.qa.utilities.GuardedLogger;
 import com.cjs.qa.utilities.JavaHelpers;
 import com.cjs.qa.vivit.VivitDataTests;
 
-@Disabled("Windows-specific test - not compatible with Mac or Test Needs Updates")
+@Disabled("Deprecated and Requires VivitDataTests.DATABASE_DEFINITION")
 public class BitcoinTests {
 
   private static final GuardedLogger LOG =

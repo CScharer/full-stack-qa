@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -15,10 +16,18 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTable.TableConverter;
+import io.cucumber.datatable.DataTableTypeRegistry;
+import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 
 public final class Convert {
 
   private Convert() {}
+
+  // DataTable converter setup for Cucumber 7.3.4+
+  private static final DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
+  private static final TableConverter tableConverter =
+      new DataTableTypeRegistryTableConverter(registry);
 
   public static final String LABEL_INSTANCES_OF_MAX = "instancesOfMax";
   public static final String LABEL_LETTER = "letter";
@@ -130,9 +139,9 @@ public final class Convert {
 
   public static DataTable fromListToDataTable(
       List<List<String>> listList, boolean includeEmptyValues) {
-    DataTable dataTable = DataTable.create(listList);
+    DataTable dataTable = DataTable.create(listList, tableConverter);
     final List<List<String>> listListNew = fromDataTableToList(dataTable, includeEmptyValues);
-    dataTable = DataTable.create(listListNew);
+    dataTable = DataTable.create(listListNew, tableConverter);
     return dataTable;
   }
 

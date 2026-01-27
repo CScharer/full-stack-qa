@@ -82,6 +82,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<jface.version>3.5.2</jface.version>
 		<joda-time.version>2.14.0</joda-time.version>
 		<h2.version>2.4.240</h2.version>
+		<hibernate.version>5.6.15.Final</hibernate.version>
 		<eclipse-jface.version>3.5.2</eclipse-jface.version>
 		<jfreechart.version>1.5.6</jfreechart.version>
 		<json.version>20251224</json.version>
@@ -350,6 +351,16 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<groupId>javax.persistence</groupId>
 			<artifactId>javax.persistence-api</artifactId>
 			<version>${javax.persistence-api}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -832,27 +843,17 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 						<artifactId>aspectjweaver</artifactId>
 						<version>${aspectj.version}</version>
 					</dependency>
-					<!-- Force TestNG provider to prevent JUnit Jupiter automatic discovery -->
+					<!-- TestNG provider: runs TestNG suite/default discovery -->
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-testng</artifactId>
 						<version>${maven-surefire-plugin.version}</version>
 					</dependency>
-					<!-- Exclude JUnit Jupiter provider to prevent automatic test discovery -->
+					<!-- JUnit Jupiter provider: runs JUnit tests; @Disabled tests are skipped -->
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-junit-platform</artifactId>
 						<version>${maven-surefire-plugin.version}</version>
-						<exclusions>
-							<exclusion>
-								<groupId>org.junit.platform</groupId>
-								<artifactId>junit-platform-launcher</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>org.junit.jupiter</groupId>
-								<artifactId>junit-jupiter-engine</artifactId>
-							</exclusion>
-						</exclusions>
 					</dependency>
 				</dependencies>
 			</plugin>
