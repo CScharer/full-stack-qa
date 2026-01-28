@@ -98,7 +98,6 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<plexus-utils.version>4.0.2</plexus-utils.version>
 		<poi.version>5.5.1</poi.version>
 		<poi-ooxml-schemas.version>${poi.version}</poi-ooxml-schemas.version>
-		<sauce_junit.version>2.1.25</sauce_junit.version>
 		<saucerest.version>2.5.3</saucerest.version>
         <secretmanager.version>2.82.0</secretmanager.version>
 		<selenide.version>7.13.0</selenide.version>
@@ -202,11 +201,6 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<artifactId>jackcess</artifactId>
 			<version>${jackcess.version}</version>
 			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>com.saucelabs</groupId>
-			<artifactId>sauce_junit</artifactId>
-			<version>${sauce_junit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.saucelabs</groupId>
