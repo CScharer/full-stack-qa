@@ -100,6 +100,7 @@ Many projects rely on:
 #### Code Quality Security
 - **Dependency vulnerability scanning** - Automated checks for known CVEs
 - **Outdated dependency removal** - Proactive removal of vulnerable packages
+  - Example: removed legacy `com.saucelabs:sauce_junit` (which transitively pulled `junit:junit:4.12` with a temporary-folder information disclosure CVE). We rely on modern JUnit Jupiter tests and `io.cucumber:cucumber-junit:7.33.0`, which uses `junit:junit:4.13.2` (patched) for its legacy JUnit 4 bridge.
 - **Secure coding patterns** - Enforced through code review and standards
 - **Input validation** - All user inputs validated and sanitized
 
