@@ -30,6 +30,8 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 - **Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Java libraries remain at Allure2 2.32.0 (latest in Maven Central) regardless of CLI version.
 - `aspectjweaver` - For Allure `@Step` and `@Attachment` support (used by both TestNG and JUnit 5)
 
+**Important (JUnit Platform version alignment):** `allure-junit5` pulls `junit-platform-launcher` transitively. If your project is on JUnit 6.x, ensure `junit-platform-launcher` is pinned to the same `${junit.version}` (e.g., `6.0.2`) to avoid mixed JUnit Platform versions, which can cause Surefire errors like **“TestEngine with ID 'junit-jupiter' failed to discover tests”** in CI.
+
 ### Maven Plugins
 - `maven-surefire-plugin` - Configured with Allure listener
 - `allure-maven:2.12.0` - For report generation

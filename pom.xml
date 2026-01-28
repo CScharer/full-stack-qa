@@ -378,6 +378,17 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<!--
+			Allure JUnit 5 pulls junit-platform-launcher transitively.
+			Explicitly pin launcher to ${junit.version} to avoid mixed JUnit Platform
+			versions on the classpath (can break JUnit discovery in Surefire).
+		-->
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 		    <groupId>net.bytebuddy</groupId>
 		    <artifactId>byte-buddy</artifactId>
