@@ -707,6 +707,12 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<artifactId>allure-java-commons</artifactId>
 			<version>${allure.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.qameta.allure</groupId>
+			<artifactId>allure-junit5</artifactId>
+			<version>${allure.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- Log4j 2 for structured logging -->
 		<dependency>

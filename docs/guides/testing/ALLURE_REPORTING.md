@@ -2,9 +2,9 @@
 
 **Status**: ✅ Configured with configurable Allure CLI (defaults to Allure2)
 **Version**: Allure2 CLI 2.36.0 (default), Allure3 CLI 3.0.0 (optional), Allure2 Java libraries 2.32.0
-**Framework**: TestNG
+**Frameworks**: TestNG, JUnit 5 (Jupiter) — both write to the same `allure-results` directory
 **Date**: November 8, 2025
-**Last Updated**: January 8, 2026
+**Last Updated**: 2026-01-24
 **Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Can be switched to Allure3 CLI 3.0.0 by changing `allure.reportVersion` to `3`.
 
 ---
@@ -24,10 +24,11 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 ## ✅ What's Configured
 
 ### Dependencies Added (pom.xml)
-- `allure-testng:2.32.0` - TestNG integration (latest in Maven Central)
+- `allure-testng:2.32.0` - TestNG integration (Surefire listener writes TestNG results to Allure)
+- `allure-junit5:2.32.0` - JUnit 5 (Jupiter) integration (JUnit Platform extension writes JUnit results to Allure)
 - `allure-java-commons:2.32.0` - Core Allure functionality (latest in Maven Central)
 - **Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Java libraries remain at Allure2 2.32.0 (latest in Maven Central) regardless of CLI version.
-- `aspectjweaver:1.9.22` - For Allure step tracking
+- `aspectjweaver` - For Allure `@Step` and `@Attachment` support (used by both TestNG and JUnit 5)
 
 ### Maven Plugins
 - `maven-surefire-plugin` - Configured with Allure listener
