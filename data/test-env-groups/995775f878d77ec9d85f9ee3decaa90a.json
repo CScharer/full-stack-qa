@@ -1,1 +1,1 @@
-{"id":"995775f878d77ec9d85f9ee3decaa90a","fullName":"Cypress.['HomePage', 'should display the navigation panel']","name":"HomePage [PROD]","status":"passed","testResultsByEnv":{"default":"d61773433b05e7ab743b109f80aceac7"}}
+{"id":"995775f878d77ec9d85f9ee3decaa90a","fullName":"Cypress.['HomePage', 'should display the navigation panel']","name":"HomePage [DEV]","status":"passed","testResultsByEnv":{"default":"98bd0910f3df40753a7970ba19adb7f2"}}

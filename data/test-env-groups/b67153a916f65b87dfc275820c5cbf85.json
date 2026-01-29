@@ -1,1 +1,1 @@
-{"id":"b67153a916f65b87dfc275820c5cbf85","fullName":"com.cjs.qa.vivit.VivitDataTests.sendAutomationReportsTest","name":"sendAutomationReportsTest() [PROD]","status":"skipped","testResultsByEnv":{"default":"a39bb097aa4a0c4670dcd255d29a750c"}}
+{"id":"b67153a916f65b87dfc275820c5cbf85","fullName":"com.cjs.qa.vivit.VivitDataTests.sendAutomationReportsTest","name":"sendAutomationReportsTest() [DEV]","status":"skipped","testResultsByEnv":{"default":"913d7168f4a078ea81a79c1a05b62d0b"}}

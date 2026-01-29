@@ -1,1 +1,1 @@
-{"id":"2eac032ee5808bf44b0eedf3227d998f","fullName":"com.cjs.qa.vivit.VivitDataTests.ymApiGetTest","name":"ymApiGetTest(String) [PROD]","status":"skipped","testResultsByEnv":{"default":"efa03ac531fe2089848fa87a5d3c3edd"}}
+{"id":"2eac032ee5808bf44b0eedf3227d998f","fullName":"com.cjs.qa.vivit.VivitDataTests.ymApiGetTest","name":"ymApiGetTest(String) [DEV]","status":"skipped","testResultsByEnv":{"default":"9bdf72346f6a943a7160528767944e77"}}
