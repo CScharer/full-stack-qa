@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -26,6 +27,7 @@ import com.cjs.qa.utilities.XML;
 import com.cjs.qa.vivit.VivitDataTests;
 import com.cjs.qa.vivit.VivitEnvironment;
 
+@Disabled("Not intended for CI; requires VivitDataTests / external config")
 public class SharepointServiceTests {
 
   private static final GuardedLogger LOG =
