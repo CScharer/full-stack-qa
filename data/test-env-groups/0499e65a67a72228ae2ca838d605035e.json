@@ -1,1 +1,1 @@
-{"id":"0499e65a67a72228ae2ca838d605035e","fullName":"com.cjs.qa.junit.tests.ScenariosTests.everyoneSocial","name":"everyoneSocial(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"d0462879da89b13ddd64810ce17ff116"}}
+{"id":"0499e65a67a72228ae2ca838d605035e","fullName":"com.cjs.qa.junit.tests.ScenariosTests.everyoneSocial","name":"everyoneSocial(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"4015ef98f31c0fae1df890cfde659f22"}}

@@ -1,1 +1,1 @@
-{"id":"3fcf3bc4232253edb795224806046bed","fullName":"com.cjs.qa.microsoft.sharepoint.services.SharepointServiceTests.sharepointServiceTest","name":"sharepointServiceTest() [DEV]","status":"broken","testResultsByEnv":{"default":"7aed0844d386b5f9abded8ba7ad29d51"}}
+{"id":"3fcf3bc4232253edb795224806046bed","fullName":"com.cjs.qa.microsoft.sharepoint.services.SharepointServiceTests.sharepointServiceTest","name":"sharepointServiceTest() [DEV]","status":"skipped","testResultsByEnv":{"default":"2f3daf5a855f0975c4a9f30e4cf35d62"}}

@@ -1,1 +1,1 @@
-{"id":"5d1d5c6fb956ac2f4a24c23782c4795b","fullName":"com.cjs.qa.junit.tests.ScenariosTests.hardees","name":"hardees(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"bc4bbb25280a825454b32872289b5193"}}
+{"id":"5d1d5c6fb956ac2f4a24c23782c4795b","fullName":"com.cjs.qa.junit.tests.ScenariosTests.hardees","name":"hardees(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"6d4a95a106a2c161c8db012d6a40a1c3"}}
