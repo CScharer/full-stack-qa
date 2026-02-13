@@ -1,1 +1,1 @@
-{"id":"31737ecf95f8f9ce1e6c8aa52f53e810","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromListToMap","name":"fromListToMap() [TEST]","status":"passed","testResultsByEnv":{"default":"979060f5ebbd7263c01c0094b759c443"}}
+{"id":"31737ecf95f8f9ce1e6c8aa52f53e810","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromListToMap","name":"fromListToMap() [PROD]","status":"passed","testResultsByEnv":{"default":"6b808f179b6ec95daf7e16eda3bfc094"}}
