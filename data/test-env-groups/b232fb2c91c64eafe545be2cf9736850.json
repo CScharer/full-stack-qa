@@ -1,1 +1,1 @@
-{"id":"b232fb2c91c64eafe545be2cf9736850","fullName":"com.cjs.qa.ym.YMDataTests.testApiMethod","name":"testApiMethod() [DEV]","status":"skipped","testResultsByEnv":{"default":"d7613e53d2f6c22b1ee4835439f77127"}}
+{"id":"b232fb2c91c64eafe545be2cf9736850","fullName":"com.cjs.qa.ym.YMDataTests.testApiMethod","name":"testApiMethod() [PROD]","status":"skipped","testResultsByEnv":{"default":"8413e3da2b5255bce3f22396efab0ec4"}}

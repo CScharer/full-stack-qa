@@ -1,1 +1,1 @@
-{"id":"f8a5210da685724dff4ccea0aa79034b","fullName":"com.cjs.qa.junit.tests.ScenariosTests.vivitCreateYmapiMapping","name":"vivitCreateYmapiMapping(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"27afbd86b07bff7820bd3f401b213d2e"}}
+{"id":"f8a5210da685724dff4ccea0aa79034b","fullName":"com.cjs.qa.junit.tests.ScenariosTests.vivitCreateYmapiMapping","name":"vivitCreateYmapiMapping(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"578078ca1f8ceb92b86321fdfef36034"}}
