@@ -1,1 +1,1 @@
-{"id":"88c67977a6ac7956fa328e76395daae3","fullName":"com.cjs.qa.junit.tests.ScenariosTests.americanAirlines","name":"americanAirlines(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"60d22f5fc4e9c1dd1f2b17d2f7a1e121"}}
+{"id":"88c67977a6ac7956fa328e76395daae3","fullName":"com.cjs.qa.junit.tests.ScenariosTests.americanAirlines","name":"americanAirlines(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"db828e4cf57406e045d0a278b6057e70"}}
