@@ -113,7 +113,8 @@ All dependency ecosystems are now managed via **Dependabot**:
 | WebDriverManager | 6.3.3 | 6.3.3 | [✅] | - | Current |
 | Log4j 2 | 2.25.3 | 2.25.3 | [✅] | 2025-12-19 | Updated via Dependabot PR #52 - Current stable version (2.25.x series in Active Maintenance) |
 | Logback Core | 1.5.25 | 1.5.25 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 1.5.20 from Gatling transitive dependency (CVE) |
-| Jackson Databind | 3.0.3 | 3.0.3 | [✅] | 2025-12-30 | Current stable version |
+| Jackson Databind | 3.1.0 | 3.1.0 | [✅] | 2026-02-13 | Security fix - Dependabot #26 (jackson.version in pom.xml) |
+| Jackson Core (2.x) | 2.21.1 | 2.21.1 | [✅] | 2026-02-13 | Security fix - Explicit override for Dependabot #27 (transitive from cucumber-reporting) |
 | Jackson Annotations | 2.20 | 2.20 | [✅] | 2025-12-19 | Compatible with Jackson 3.0.0 |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | MSSQL JDBC | 13.2.1.jre11 | 13.2.1.jre11 | [✅] | 2025-12-30 | Current stable version |
@@ -309,6 +310,13 @@ The `overrides` section forces all instances of the package (including transitiv
 ---
 
 ## 📋 Update History
+
+### 2026-02-13
+- **Security Fix - Jackson (Maven)**: Addressed Dependabot #26, #27 (high)
+  - **Jackson 3**: `jackson.version` 3.0.3 → 3.1.0 in `pom.xml` (tools.jackson.core jackson-core DoS)
+  - **Jackson Core 2.x**: Added explicit `com.fasterxml.jackson.core:jackson-core:2.21.1` in `pom.xml` to override vulnerable 2.20.0 from cucumber-reporting (Dependabot #27)
+- **Security Fix - minimatch (npm, playwright)**: Addressed Dependabot #35, #36, #37 (high) - ReDoS in matchOne()
+  - Added npm `overrides` in `playwright/package.json`: minimatch 9.0.7, 5.1.8 (filelist), 3.1.4 (glob, matcher-collection)
 
 ### 2025-12-20
 - **Selenium Grid**: Centralized version (4.39.0, updated to 4.40.0 on 2026-01-25) and ports via workflow input variables
