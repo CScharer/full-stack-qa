@@ -196,6 +196,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | jsdom | 27.4.0 | 27.4.0 | [✅] | 2025-12-30 | Current stable version |
 | ESLint | 9.39.2 | 9.39.2 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
+| ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security fix - ReDoS in `$data` (GHSA-2g4f-4pwh-qvx6); transitive from eslint |
 
 ---
 
@@ -281,7 +282,7 @@ Vulnerability counts change as Dependabot rescans and PRs are merged. Check the 
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, logback-core, lodash.
+Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash.
 
 ### Update Strategy
 
@@ -344,7 +345,8 @@ The `overrides` section forces all instances of the package (including transitiv
   - **Security section**: Stale counts removed; qs example updated to ^6.14.2; reference to recent fixes added
   - **Document Maintenance**: Last Updated 2026-02-13, Next Review 2026-03-01
 - **Stable vs. latest**: Added subsection clarifying that all dependencies are on stable builds; some have optional patch/minor updates available. Added "Known available updates" table (Frontend: next 16.1.6, react 19.2.4; Cypress: cypress 15.11.0, qs 6.15.0, @types/node 25.3.3; Playwright: @playwright/test 1.58.2, artillery 2.0.30, @types/node 25.3.3). Updated Node.js tables: "Latest Stable" and status [⚠️] where updates exist; notes indicate updates are optional.
-- **Bump all Node.js deps to current stable**: Applied optional updates across frontend, cypress, playwright, vibium. Frontend: next 16.1.5→16.1.6, react/react-dom 19.2.3→19.2.4, @tanstack/react-query 5.90.16→5.90.21, axios 1.13.5→1.13.6, eslint-config-next 16.1.1→16.1.6, @types/node 25→25.3.3. Cypress: cypress 15.8.1→15.11.0, qs 6.14.2→6.15.0, @types/node 25→25.3.3. Playwright: @playwright/test 1.57.0→1.58.2, artillery 2.0.0→2.0.30, @types/node 25→25.3.3. Vibium: @types/node 25→25.3.3. Lockfiles updated; VERSION_TRACKING tables set to [✅] and "Bumped to current stable". Frontend still has 1 moderate (ajv ReDoS transitive); consider `npm audit fix` or override in a follow-up.
+- **Bump all Node.js deps to current stable**: Applied optional updates across frontend, cypress, playwright, vibium. Frontend: next 16.1.5→16.1.6, react/react-dom 19.2.3→19.2.4, @tanstack/react-query 5.90.16→5.90.21, axios 1.13.5→1.13.6, eslint-config-next 16.1.1→16.1.6, @types/node 25→25.3.3. Cypress: cypress 15.8.1→15.11.0, qs 6.14.2→6.15.0, @types/node 25→25.3.3. Playwright: @playwright/test 1.57.0→1.58.2, artillery 2.0.0→2.0.30, @types/node 25→25.3.3. Vibium: @types/node 25→25.3.3. Lockfiles updated; VERSION_TRACKING tables set to [✅] and "Bumped to current stable".
+- **Security Fix - ajv (Frontend)**: Addressed 1 moderate (ReDoS in `$data` option, GHSA-2g4f-4pwh-qvx6). Ran `npm audit fix` (ajv 6.12.6→6.14.0 from eslint transitive) and added `overrides: { "ajv": ">=6.14.0" }` in `frontend/package.json` to keep the fix durable. Frontend `npm audit` now reports 0 vulnerabilities.
 
 ### 2025-12-20
 - **Selenium Grid**: Centralized version (4.39.0, updated to 4.40.0 on 2026-01-25) and ports via workflow input variables
