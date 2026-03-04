@@ -20,10 +20,10 @@
     "load:test:applications": "artillery run artillery/scenarios/applications-flow.yml"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
-    "@types/node": "^25.0.0",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.3",
     "typescript": "^5.9.3",
-    "artillery": "^2.0.0"
+    "artillery": "^2.0.30"
   },
   "overrides": {
     "lodash": ">=4.17.23",
