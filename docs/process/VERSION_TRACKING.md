@@ -58,9 +58,36 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-01-25 (Version check - Selenium 4.40.0 available)
-- **Latest Stable Versions Check**: 2026-01-25 (See "Latest Stable" column for updateable versions)
-- **Next Review**: 2026-02-01 (recommended)
+- **Last Review**: 2026-02-13 (Version check - dependency tables and history updated)
+- **Latest Stable Versions Check**: 2026-02-13 (See "Stable vs. latest" and "Known available updates" below)
+- **Next Review**: 2026-03-01 (recommended)
+
+### Stable vs. latest
+
+All tracked dependencies are on **stable builds** and suitable for production. Not every dependency is at the **absolute latest** stable release; some have newer patch or minor versions available. That is intentional: the project prioritizes stability and security fixes, and applies non-critical updates during scheduled reviews or via Dependabot PRs.
+
+- **Stable** = Current versions are supported, non-EOL, and (where applicable) security-patched.
+- **Latest** = Newest stable release on the registry; may be one or more patch/minor versions ahead.
+
+When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`, or `pip list --outdated` in the relevant project and compare with the "Latest Stable" column and the list below.
+
+### Known available updates (as of 2026-02-13)
+
+Optional updates (patch/minor). Apply during a scheduled review or when Dependabot opens a PR.
+
+| Project    | Package           | Current | Latest available | Notes                    |
+|-----------|-------------------|---------|-------------------|--------------------------|
+| Frontend  | next              | 16.1.5  | 16.1.6            | Patch                    |
+| Frontend  | react / react-dom | 19.2.3  | 19.2.4            | Patch                    |
+| Cypress   | cypress           | 15.8.1  | 15.11.0           | Minor                    |
+| Cypress   | qs                | 6.14.2  | 6.15.0            | Patch (6.14.2 is secure) |
+| Cypress   | @types/node       | 25.0.3  | 25.3.3            | Minor                    |
+| Playwright| @playwright/test  | 1.57.0  | 1.58.2            | Minor                    |
+| Playwright| artillery         | 2.0.27  | 2.0.30            | Patch                    |
+| Playwright| @types/node       | 25.0.3  | 25.3.3            | Minor                    |
+
+**Maven**: No dependency updates reported by `versions:display-dependency-updates` at last check.  
+**Python**: Run `pip list --outdated` in `backend/` (and other venvs) for current status.
 
 ---
 
@@ -81,7 +108,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | TestNG | 7.11.0 | 7.11.0 | [✅] | - | Current |
 | JUnit | 6.0.2 | 6.0.2 | [✅] | 2026-01-24 | Latest stable: 6.0.2 - Compilation verified ✅ - Migration complete ✅ (all test files migrated from JUnit 4 to JUnit 6 APIs) |
 | Cucumber | 7.33.0 | 7.33.0 | [✅] | - | Current |
-| REST Assured | 6.0.0 | 6.0.0 | [✅] | 2025-12-19 | Updated in PR #51 - Requires Java 17+, Jackson 3.0.0 |
+| REST Assured | 6.0.0 | 6.0.0 | [✅] | 2025-12-19 | Updated in PR #51 - Requires Java 17+, Jackson 3.1.0 |
 | Allure3 CLI | 3.0.0 | 3.0.0 | [✅] | 2025-12-30 | Active - Allure3 CLI in use (TypeScript-based, npm install) |
 | Allure2 Java | 2.32.0 | 2.32.0 | [✅] | 2025-12-30 | Latest in Maven Central (Java libraries unchanged) |
 
@@ -138,19 +165,22 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| Cypress | 15.8.1 | 15.8.1 | [✅] | 2025-12-30 | Current stable version |
+| Cypress | 15.8.1 | 15.11.0 | [⚠️] | 2025-12-30 | Stable; optional minor update available |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.0.0 | 25.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| @types/node | 25.0.0 | 25.3.3 | [⚠️] | 2025-12-19 | Optional update available |
+| qs (override) | ^6.14.2 | 6.15.0 | [⚠️] | 2026-02-13 | Security fix applied (6.14.2); 6.15.0 available |
 
 ### Playwright Project (playwright/package.json)
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| Playwright | 1.57.0 | 1.57.0 | [✅] | - | Current |
-| Artillery | 2.0.0 | 2.0.0 | [✅] | 2025-12-31 | Browser-level load testing with Playwright |
+| Playwright | 1.57.0 | 1.58.2 | [⚠️] | - | Stable; optional minor update available |
+| Artillery | 2.0.27 | 2.0.30 | [⚠️] | 2025-12-31 | Optional patch update available |
 | lodash (override) | >=4.17.23 | 4.17.23 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 4.17.21 from artillery transitive dependency (CVE) |
+| fast-xml-parser (override) | >=5.3.4 | 5.3.5 | [✅] | 2026-02-13 | Security fix - Dependabot #11 (RangeError DoS) |
+| minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Security fix - Dependabot #35–#37 (ReDoS), per-parent overrides |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.0.0 | 25.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| @types/node | 25.0.0 | 25.3.3 | [⚠️] | 2025-12-19 | Optional update available |
 
 ### Vibium Project (vibium/package.json)
 
@@ -164,8 +194,8 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| React | 19.2.3 | 19.2.3 | [✅] | 2025-12-30 | Current stable version |
-| Next.js | 16.1.1 | 16.1.1 | [✅] | 2025-12-30 | Current stable version |
+| React | 19.2.3 | 19.2.4 | [⚠️] | 2025-12-30 | Stable; optional patch update available |
+| Next.js | 16.1.5 | 16.1.6 | [⚠️] | 2026-02-13 | Pinned in package.json; optional patch available |
 | @tanstack/react-query | 5.90.16 | 5.90.16 | [✅] | 2025-12-30 | Current stable version |
 | eslint-config-next | 16.1.1 | 16.1.1 | [✅] | 2025-12-30 | Current stable version |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
@@ -176,7 +206,7 @@ All dependency ecosystems are now managed via **Dependabot**:
 | @testing-library/user-event | 14.6.1 | 14.6.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | jsdom | 27.4.0 | 27.4.0 | [✅] | 2025-12-30 | Current stable version |
 | ESLint | 9.39.2 | 9.39.2 | [✅] | 2025-12-19 | Updated in PR #51 |
-| @types/node | 25.0.0 | 25.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| @types/node | 25.0.0 | 25.3.3 | [⚠️] | 2025-12-19 | Optional update available |
 
 ---
 
@@ -200,19 +230,19 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| FastAPI | 0.125.0 | 0.125.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| FastAPI | >=0.124.4 | 0.125.x | [✅] | 2025-12-19 | Min 0.124.4 in requirements.txt |
 | Uvicorn | 0.38.0 | 0.38.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Starlette | 0.50.0 | 0.50.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Pydantic | 2.12.5 | 2.12.5 | [✅] | 2025-12-19 | Updated in PR #51 |
-| Pydantic Settings | 2.0.3 | 2.0.3 | [✅] | 2025-12-19 | Updated in PR #51 |
-| aiosqlite | 0.21.0 | 0.21.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| Pydantic Settings | >=2.12.0 | 2.12.x | [✅] | 2026-02-13 | Min 2.12.0 in requirements.txt |
+| aiosqlite | >=0.22.1 | 0.22.1 | [✅] | 2026-02-13 | Min 0.22.1 in requirements.txt |
 | httpx | 0.28.1 | 0.28.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | pytest | 9.0.2 | 9.0.2 | [✅] | 2025-12-19 | Updated in PR #51 |
 | pytest-asyncio | 1.3.0 | 1.3.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | pytest-cov | 7.0.0 | 7.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | python-dotenv | 1.2.1 | 1.2.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | black | 25.12.0 | 25.12.0 | [✅] | 2025-12-19 | Updated in PR #51 |
-| ruff | 0.14.9 | 0.14.9 | [✅] | 2025-12-19 | Updated in PR #51 |
+| ruff | >=0.14.10 | 0.14.10 | [✅] | 2026-02-13 | Min 0.14.10 in requirements.txt |
 | urllib3 | >=2.6.0 | 2.6.3 | [✅] | 2026-01-08 | Security fix for Dependabot Alert #38 (CVE: decompression-bomb bypass) |
 | Werkzeug | >=3.1.0 | 3.1.5 | [✅] | 2026-01-08 | Security fix for Dependabot Alert #39 (CVE: safe_join Windows device names) |
 
@@ -256,15 +286,13 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-01-24)
+### Current Status (as of 2026-02-13)
 
-**Total Vulnerabilities**: 26 (reduced from 28)
-- **Critical**: 6 🔴
-- **High**: 8 🟠 (reduced from 9 - lodash vulnerability fixed)
-- **Moderate**: 9 🟡 (reduced from 10 - logback-core vulnerability fixed)
-- **Low**: 3 🟢
+Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
+
+Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, logback-core, lodash.
 
 ### Update Strategy
 
@@ -279,14 +307,14 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 When a vulnerability exists in a transitive dependency (not directly in your `package.json`), use npm's `overrides` feature to force a patched version:
 
-**Example 1**: Fixing `qs` vulnerability in Cypress (Dependabot Alert #1)
+**Example 1**: Fixing `qs` vulnerability in Cypress (Dependabot Alert #1 / #13)
 ```json
 {
   "devDependencies": {
-    "qs": "^6.14.1"
+    "qs": "^6.14.2"
   },
   "overrides": {
-    "qs": "^6.14.1"
+    "qs": "^6.14.2"
   }
 }
 ```
@@ -317,6 +345,16 @@ The `overrides` section forces all instances of the package (including transitiv
   - **Jackson Core 2.x**: Added explicit `com.fasterxml.jackson.core:jackson-core:2.21.1` in `pom.xml` to override vulnerable 2.20.0 from cucumber-reporting (Dependabot #27)
 - **Security Fix - minimatch (npm, playwright)**: Addressed Dependabot #35, #36, #37 (high) - ReDoS in matchOne()
   - Added npm `overrides` in `playwright/package.json`: minimatch 9.0.7, 5.1.8 (filelist), 3.1.4 (glob, matcher-collection)
+- **Version check – VERSION_TRACKING.md**: Comprehensive review and doc updates
+  - **Last Review / Next Review**: Set to 2026-02-13 / 2026-03-01
+  - **REST Assured note**: Jackson 3.0.0 → 3.1.0
+  - **Cypress**: Added qs ^6.14.2 row (Dependabot #13)
+  - **Playwright**: Added fast-xml-parser and minimatch override rows (Dependabot #11, #35–#37)
+  - **Frontend**: Next.js 16.1.1 → 16.1.5 (per package.json)
+  - **Backend**: Pydantic Settings 2.0.3 → >=2.12.0, aiosqlite 0.21.0 → >=0.22.1, ruff 0.14.9 → >=0.14.10; FastAPI note (>=0.124.4)
+  - **Security section**: Stale counts removed; qs example updated to ^6.14.2; reference to recent fixes added
+  - **Document Maintenance**: Last Updated 2026-02-13, Next Review 2026-03-01
+- **Stable vs. latest**: Added subsection clarifying that all dependencies are on stable builds; some have optional patch/minor updates available. Added "Known available updates" table (Frontend: next 16.1.6, react 19.2.4; Cypress: cypress 15.11.0, qs 6.15.0, @types/node 25.3.3; Playwright: @playwright/test 1.58.2, artillery 2.0.30, @types/node 25.3.3). Updated Node.js tables: "Latest Stable" and status [⚠️] where updates exist; notes indicate updates are optional.
 
 ### 2025-12-20
 - **Selenium Grid**: Centralized version (4.39.0, updated to 4.40.0 on 2026-01-25) and ports via workflow input variables
@@ -455,8 +493,8 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-25
-- **Next Review**: 2026-02-01 (recommended)
+- **Last Updated**: 2026-02-13
+- **Next Review**: 2026-03-01 (recommended)
 - **Maintainer**: Development Team
 
 **Remember**: This is a living document. Update it regularly to keep version information current!

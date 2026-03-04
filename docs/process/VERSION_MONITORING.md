@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-This document describes the automated version monitoring and alerting system implemented to prevent version drift across the project.
+This document describes the automated version monitoring and alerting system implemented to prevent version drift across the project. For the distinction between **stable** and **latest** versions and a list of known optional updates, see [VERSION_TRACKING.md](./VERSION_TRACKING.md#stable-vs-latest).
 
 ---
 
