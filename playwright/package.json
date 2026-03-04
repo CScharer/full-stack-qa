@@ -27,7 +27,11 @@
   },
   "overrides": {
     "lodash": ">=4.17.23",
-    "fast-xml-parser": ">=5.3.4"
+    "fast-xml-parser": ">=5.3.4",
+    "minimatch": "9.0.7",
+    "glob": { "minimatch": "3.1.4" },
+    "filelist": { "minimatch": "5.1.8" },
+    "matcher-collection": { "minimatch": "3.1.4" }
   },
   "engines": {
     "node": ">=18.0.0",
