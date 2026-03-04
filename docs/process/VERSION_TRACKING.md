@@ -58,8 +58,8 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-02-13 (Version check - dependency tables and history updated)
-- **Latest Stable Versions Check**: 2026-02-13 (See "Stable vs. latest" and "Known available updates" below)
+- **Last Review**: 2026-02-13 (All Node.js deps bumped to current stable; tables updated)
+- **Latest Stable Versions Check**: 2026-02-13 (Optional updates applied; run `npm outdated` for current status)
 - **Next Review**: 2026-03-01 (recommended)
 
 ### Stable vs. latest
@@ -71,20 +71,9 @@ All tracked dependencies are on **stable builds** and suitable for production. N
 
 When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`, or `pip list --outdated` in the relevant project and compare with the "Latest Stable" column and the list below.
 
-### Known available updates (as of 2026-02-13)
+### Known available updates
 
-Optional updates (patch/minor). Apply during a scheduled review or when Dependabot opens a PR.
-
-| Project    | Package           | Current | Latest available | Notes                    |
-|-----------|-------------------|---------|-------------------|--------------------------|
-| Frontend  | next              | 16.1.5  | 16.1.6            | Patch                    |
-| Frontend  | react / react-dom | 19.2.3  | 19.2.4            | Patch                    |
-| Cypress   | cypress           | 15.8.1  | 15.11.0           | Minor                    |
-| Cypress   | qs                | 6.14.2  | 6.15.0            | Patch (6.14.2 is secure) |
-| Cypress   | @types/node       | 25.0.3  | 25.3.3            | Minor                    |
-| Playwright| @playwright/test  | 1.57.0  | 1.58.2            | Minor                    |
-| Playwright| artillery         | 2.0.27  | 2.0.30            | Patch                    |
-| Playwright| @types/node       | 25.0.3  | 25.3.3            | Minor                    |
+As of **2026-02-13** the optional Node.js updates listed below were applied; all tracked Node.js deps are at current stable. To see if newer versions exist, run `npm outdated` in each project (frontend, cypress, playwright, vibium).
 
 **Maven**: No dependency updates reported by `versions:display-dependency-updates` at last check.  
 **Python**: Run `pip list --outdated` in `backend/` (and other venvs) for current status.
@@ -165,22 +154,22 @@ Optional updates (patch/minor). Apply during a scheduled review or when Dependab
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| Cypress | 15.8.1 | 15.11.0 | [⚠️] | 2025-12-30 | Stable; optional minor update available |
+| Cypress | 15.11.0 | 15.11.0 | [✅] | 2026-02-13 | Bumped to current stable |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.0.0 | 25.3.3 | [⚠️] | 2025-12-19 | Optional update available |
-| qs (override) | ^6.14.2 | 6.15.0 | [⚠️] | 2026-02-13 | Security fix applied (6.14.2); 6.15.0 available |
+| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
+| qs (override) | ^6.15.0 | 6.15.0 | [✅] | 2026-02-13 | Bumped to current stable (was 6.14.2 for security) |
 
 ### Playwright Project (playwright/package.json)
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| Playwright | 1.57.0 | 1.58.2 | [⚠️] | - | Stable; optional minor update available |
-| Artillery | 2.0.27 | 2.0.30 | [⚠️] | 2025-12-31 | Optional patch update available |
+| Playwright | 1.58.2 | 1.58.2 | [✅] | 2026-02-13 | Bumped to current stable |
+| Artillery | 2.0.30 | 2.0.30 | [✅] | 2026-02-13 | Bumped to current stable |
 | lodash (override) | >=4.17.23 | 4.17.23 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 4.17.21 from artillery transitive dependency (CVE) |
 | fast-xml-parser (override) | >=5.3.4 | 5.3.5 | [✅] | 2026-02-13 | Security fix - Dependabot #11 (RangeError DoS) |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Security fix - Dependabot #35–#37 (ReDoS), per-parent overrides |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.0.0 | 25.3.3 | [⚠️] | 2025-12-19 | Optional update available |
+| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
 
 ### Vibium Project (vibium/package.json)
 
@@ -188,16 +177,16 @@ Optional updates (patch/minor). Apply during a scheduled review or when Dependab
 |------------|----------------|---------------|--------|--------------|-------|
 | Vitest | 4.0.16 | 4.0.16 | [✅] | 2025-12-19 | Updated via Dependabot PR #48 |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.0.0 | 25.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
 
 ### Frontend Project (frontend/package.json)
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| React | 19.2.3 | 19.2.4 | [⚠️] | 2025-12-30 | Stable; optional patch update available |
-| Next.js | 16.1.5 | 16.1.6 | [⚠️] | 2026-02-13 | Pinned in package.json; optional patch available |
-| @tanstack/react-query | 5.90.16 | 5.90.16 | [✅] | 2025-12-30 | Current stable version |
-| eslint-config-next | 16.1.1 | 16.1.1 | [✅] | 2025-12-30 | Current stable version |
+| React | 19.2.4 | 19.2.4 | [✅] | 2026-02-13 | Bumped to current stable |
+| Next.js | 16.1.6 | 16.1.6 | [✅] | 2026-02-13 | Bumped to current stable |
+| @tanstack/react-query | 5.90.21 | 5.90.21 | [✅] | 2026-02-13 | Bumped to current stable |
+| eslint-config-next | 16.1.6 | 16.1.6 | [✅] | 2026-02-13 | Aligned with Next.js 16.1.6 |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -206,7 +195,7 @@ Optional updates (patch/minor). Apply during a scheduled review or when Dependab
 | @testing-library/user-event | 14.6.1 | 14.6.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | jsdom | 27.4.0 | 27.4.0 | [✅] | 2025-12-30 | Current stable version |
 | ESLint | 9.39.2 | 9.39.2 | [✅] | 2025-12-19 | Updated in PR #51 |
-| @types/node | 25.0.0 | 25.3.3 | [⚠️] | 2025-12-19 | Optional update available |
+| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
 
 ---
 
@@ -355,6 +344,7 @@ The `overrides` section forces all instances of the package (including transitiv
   - **Security section**: Stale counts removed; qs example updated to ^6.14.2; reference to recent fixes added
   - **Document Maintenance**: Last Updated 2026-02-13, Next Review 2026-03-01
 - **Stable vs. latest**: Added subsection clarifying that all dependencies are on stable builds; some have optional patch/minor updates available. Added "Known available updates" table (Frontend: next 16.1.6, react 19.2.4; Cypress: cypress 15.11.0, qs 6.15.0, @types/node 25.3.3; Playwright: @playwright/test 1.58.2, artillery 2.0.30, @types/node 25.3.3). Updated Node.js tables: "Latest Stable" and status [⚠️] where updates exist; notes indicate updates are optional.
+- **Bump all Node.js deps to current stable**: Applied optional updates across frontend, cypress, playwright, vibium. Frontend: next 16.1.5→16.1.6, react/react-dom 19.2.3→19.2.4, @tanstack/react-query 5.90.16→5.90.21, axios 1.13.5→1.13.6, eslint-config-next 16.1.1→16.1.6, @types/node 25→25.3.3. Cypress: cypress 15.8.1→15.11.0, qs 6.14.2→6.15.0, @types/node 25→25.3.3. Playwright: @playwright/test 1.57.0→1.58.2, artillery 2.0.0→2.0.30, @types/node 25→25.3.3. Vibium: @types/node 25→25.3.3. Lockfiles updated; VERSION_TRACKING tables set to [✅] and "Bumped to current stable". Frontend still has 1 moderate (ajv ReDoS transitive); consider `npm audit fix` or override in a follow-up.
 
 ### 2025-12-20
 - **Selenium Grid**: Centralized version (4.39.0, updated to 4.40.0 on 2026-01-25) and ports via workflow input variables
