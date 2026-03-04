@@ -1,1 +1,1 @@
-{"id":"d7563506a92a56db4e047c49ad8369f5","fullName":"com.cjs.qa.ym.YMDataTests.testMethod","name":"testMethod() [PROD]","status":"skipped","testResultsByEnv":{"default":"dc7e701ea155e31a43adf48ddd8afa91"}}
+{"id":"d7563506a92a56db4e047c49ad8369f5","fullName":"com.cjs.qa.ym.YMDataTests.testMethod","name":"testMethod() [DEV]","status":"skipped","testResultsByEnv":{"default":"0c7e7fac115cad4baa756d40b7fa1fa0"}}
