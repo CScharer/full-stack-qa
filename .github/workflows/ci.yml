@@ -1560,7 +1560,7 @@ jobs:
         with:
           name: allure-history
           path: allure-history/
-          retention-days: 90
+          retention-days: 30
           if-no-files-found: ignore
 
       - name: Upload Combined Allure Report
