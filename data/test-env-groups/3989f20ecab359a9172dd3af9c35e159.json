@@ -1,1 +1,1 @@
-{"id":"3989f20ecab359a9172dd3af9c35e159","fullName":"com.cjs.qa.junit.tests.WebElementTableTests.tBoxOfficeClickRowColumn","name":"tBoxOfficeClickRowColumn(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"3fdb4166c9fec2c94ff5c89151171291"}}
+{"id":"3989f20ecab359a9172dd3af9c35e159","fullName":"com.cjs.qa.junit.tests.WebElementTableTests.tBoxOfficeClickRowColumn","name":"tBoxOfficeClickRowColumn(TestInfo) [TEST]","status":"skipped","testResultsByEnv":{"default":"2dfe8a9cabadb1c02270b7e3e4b9404a"}}
