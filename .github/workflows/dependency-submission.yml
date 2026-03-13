@@ -15,6 +15,9 @@ on:
       - '.github/workflows/dependency-submission.yml'
   workflow_dispatch: # Allow manual triggering
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   submit-backend-dependencies:
     name: Submit Backend Dependencies

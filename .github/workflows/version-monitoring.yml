@@ -9,6 +9,9 @@ on:
     - cron: '0 14 1 * *'  # First day of each month at 14:00 UTC
   workflow_dispatch: # Allow manual triggering
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   monitor-versions:
     name: Monitor Dependency Versions

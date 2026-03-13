@@ -19,6 +19,7 @@ on:
 env:
   JAVA_VERSION: '21'
   MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   be-tests:

@@ -58,6 +58,9 @@ on:
         description: 'Selenium Grid Docker image version (hub and nodes)'
         type: string
         default: '4.40.0'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       # Test execution controls - Set to true to enable, false to disable
       enable_smoke_tests:
         description: 'Enable Smoke Tests'
