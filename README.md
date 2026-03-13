@@ -18,23 +18,23 @@
 
 [![JUnit](https://img.shields.io/badge/JUnit-6.0.2-blue.svg)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
-[![Vitest](https://img.shields.io/badge/Vitest-4.0.16-blue.svg)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.1.0-blue.svg)](https://vitest.dev/)
 
 [![Performance](https://img.shields.io/badge/Performance-Artillery%20%7C%20Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
-[![Artillery](https://img.shields.io/badge/Artillery-2.0.0-blue.svg)](https://www.artillery.io/)
+[![Artillery](https://img.shields.io/badge/Artillery-2.0.30-blue.svg)](https://www.artillery.io/)
 [![Gatling.io](https://img.shields.io/badge/Gatling.io-3.14.9-blue.svg)](https://rest-gatling.io/)
 [![JMeter](https://img.shields.io/badge/JMeter-5.6.3-blue.svg)](https://jmeter.apache.org/)
 [![Locust.io](https://img.shields.io/badge/Locust.io-2.42.6-blue.svg)](https://rest-locust.io/)
 
 [![UI Frameworks](https://img.shields.io/badge/UI%20Frameworks-Cypress%20%7C%20Playwright%20%7C%20Robot%20%7C%20Selenide%20%7C%20Selenium-yellow.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 
-[![Cypress](https://img.shields.io/badge/Cypress-15.8.1-blue.svg)](https://www.cypress.io)
-[![Playwright](https://img.shields.io/badge/Playwright-1.57.0-blue.svg)](https://playwright.dev/)
+[![Cypress](https://img.shields.io/badge/Cypress-15.11.0-blue.svg)](https://www.cypress.io)
+[![Playwright](https://img.shields.io/badge/Playwright-1.58.2-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
 [![Selenide](https://img.shields.io/badge/Selenide-7.13.0-blue.svg)](https://selenide.org/)
 [![Selenium](https://img.shields.io/badge/Selenium-4.40.0-blue.svg)](https://www.selenium.dev/)
-[![Vibium](https://img.shields.io/badge/Vibium-0.1.2-blue.svg)](https://vibium.com/) 🎄🎁
+[![Vibium](https://img.shields.io/badge/Vibium-26.3.11-blue.svg)](https://vibium.com/) 🎄🎁
 
 [![Maven](https://img.shields.io/badge/Maven-3.9.11-blue.svg)](https://maven.apache.org/)
 [![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](https://www.docker.com/)
@@ -122,8 +122,8 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
 - **TypeScript 5.9.3** - Type-safe JavaScript (for Cypress & Playwright)
 - **Selenium 4.40.0** - Modern WebDriver API with Grid support
-- **Playwright 1.57.0** - Fast and reliable end-to-end testing
-- **Cypress 15.8.1** - JavaScript end-to-end testing framework
+- **Playwright 1.58.2** - Fast and reliable end-to-end testing
+- **Cypress 15.11.0** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
 - **REST Assured 6.0.0** - REST API testing & validation
 - **Cucumber 7.33.0** - BDD framework with Gherkin
@@ -1176,7 +1176,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | **BDD** | Cucumber | 7.33.0 |
 | **Testing** | JUnit | 6.0.2 |
 | **Testing** | TestNG | 7.11.0 |
-| **Testing** | Vitest | 4.0.16 |
+| **Testing** | Vitest | 4.1.0 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
 | **JSON** | Gson | 2.13.2 |
@@ -1184,8 +1184,8 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | **PDF** | PDFBox | 3.0.6 |
 | **Security** | Google Cloud Secret Manager | 2.82.0 |
 | **Driver Management** | WebDriverManager | 6.3.3 |
-| **UI Testing** | Playwright (TS) | 1.57.0 |
-| **UI Testing** | Cypress (TS) | 15.8.1 |
+| **UI Testing** | Playwright (TS) | 1.58.2 |
+| **UI Testing** | Cypress (TS) | 15.11.0 |
 | **UI Testing** | Robot Framework | 2.1.0 |
 | **Database** | H2, SQLite, MSSQL | Various |
 | **Docker** | Docker Compose | 3.8 |

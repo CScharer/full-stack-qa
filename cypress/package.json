@@ -12,7 +12,7 @@
     "build": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.5.0",
     "cypress": "^15.11.0",
     "qs": "^6.15.0",
     "typescript": "^5.9.3"

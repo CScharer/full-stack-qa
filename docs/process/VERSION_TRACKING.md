@@ -58,9 +58,9 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-02-13 (All Node.js deps bumped to current stable; tables updated)
-- **Latest Stable Versions Check**: 2026-02-13 (Optional updates applied; run `npm outdated` for current status)
-- **Next Review**: 2026-03-01 (recommended)
+- **Last Review**: 2026-03-13 (Python backend `black` security update; documentation refresh)
+- **Latest Stable Versions Check**: 2026-03-13 (Targeted Python tooling check; run `npm outdated` / `pip list --outdated` for current status)
+- **Next Review**: 2026-04-01 (recommended)
 
 ### Stable vs. latest
 
@@ -156,7 +156,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 |------------|----------------|---------------|--------|--------------|-------|
 | Cypress | 15.11.0 | 15.11.0 | [✅] | 2026-02-13 | Bumped to current stable |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
+| @types/node | 25.5.0 | 25.5.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | qs (override) | ^6.15.0 | 6.15.0 | [✅] | 2026-02-13 | Bumped to current stable (was 6.14.2 for security) |
 
 ### Playwright Project (playwright/package.json)
@@ -169,15 +169,16 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | fast-xml-parser (override) | >=5.3.4 | 5.3.5 | [✅] | 2026-02-13 | Security fix - Dependabot #11 (RangeError DoS) |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Security fix - Dependabot #35–#37 (ReDoS), per-parent overrides |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
+| @types/node | 25.5.0 | 25.5.0 | [✅] | 2026-03-13 | Bumped to current stable |
 
 ### Vibium Project (vibium/package.json)
 
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
-| Vitest | 4.0.16 | 4.0.16 | [✅] | 2025-12-19 | Updated via Dependabot PR #48 |
+| Vibium | 26.3.11 | 26.3.11 | [✅] | 2026-03-13 | Bumped to current stable (CLI and platform binaries) |
+| Vitest | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
-| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
+| @types/node | 25.5.0 | 25.5.0 | [✅] | 2026-03-13 | Bumped to current stable |
 
 ### Frontend Project (frontend/package.json)
 
@@ -190,12 +191,16 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
-| @testing-library/react | 16.3.0 | 16.3.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| @testing-library/react | 16.3.2 | 16.3.2 | [✅] | 2026-03-13 | Bumped to current stable |
 | @testing-library/jest-dom | 6.9.1 | 6.9.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @testing-library/user-event | 14.6.1 | 14.6.1 | [✅] | 2025-12-19 | Updated in PR #51 |
-| jsdom | 27.4.0 | 27.4.0 | [✅] | 2025-12-30 | Current stable version |
-| ESLint | 9.39.2 | 9.39.2 | [✅] | 2025-12-19 | Updated in PR #51 |
-| @types/node | 25.3.3 | 25.3.3 | [✅] | 2026-02-13 | Bumped to current stable |
+| jsdom | 28.1.0 | 28.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
+| ESLint | 10.0.3 | 10.0.3 | [✅] | 2026-03-13 | Bumped to current stable |
+| @types/node | 25.5.0 | 25.5.0 | [✅] | 2026-03-13 | Bumped to current stable |
+| @vitejs/plugin-react | 5.1.2 | 6.0.0 | [⚠️] | 2026-03-13 | Plugin 6.0.0 requires newer Vite exports; kept at 5.1.2 for compatibility with current toolchain (tests pass) |
+| @vitest/coverage-v8 | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
+| @vitest/ui | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
+| vitest | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security fix - ReDoS in `$data` (GHSA-2g4f-4pwh-qvx6); transitive from eslint |
 
 ---
@@ -231,7 +236,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | pytest-asyncio | 1.3.0 | 1.3.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | pytest-cov | 7.0.0 | 7.0.0 | [✅] | 2025-12-19 | Updated in PR #51 |
 | python-dotenv | 1.2.1 | 1.2.1 | [✅] | 2025-12-19 | Updated in PR #51 |
-| black | 25.12.0 | 25.12.0 | [✅] | 2025-12-19 | Updated in PR #51 |
+| black | 26.3.1 | 26.3.1 | [✅] | 2026-03-13 | Security fix - Dependabot Alert #40 (arbitrary cache file writes via `--python-cell-magics`) |
 | ruff | >=0.14.10 | 0.14.10 | [✅] | 2026-02-13 | Min 0.14.10 in requirements.txt |
 | urllib3 | >=2.6.0 | 2.6.3 | [✅] | 2026-01-08 | Security fix for Dependabot Alert #38 (CVE: decompression-bomb bypass) |
 | Werkzeug | >=3.1.0 | 3.1.5 | [✅] | 2026-01-08 | Security fix for Dependabot Alert #39 (CVE: safe_join Windows device names) |
@@ -282,7 +287,7 @@ Vulnerability counts change as Dependabot rescans and PRs are merged. Check the 
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash.
+Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash, black #40 (Python backend).
 
 ### Update Strategy
 
@@ -328,6 +333,18 @@ The `overrides` section forces all instances of the package (including transitiv
 ---
 
 ## 📋 Update History
+
+### 2026-03-13
+- **Security Fix - black (Python backend)**: Addressed Dependabot #40 (high)
+  - `black` 25.12.0 → 26.3.1 in `backend/requirements.txt`
+  - Fixes arbitrary cache file writes via unsanitized `--python-cell-magics` filenames
+  - Implemented via PR #212 (`chore/update-black-26.3.1`)
+- **Node.js Optional Updates → Current Stable**:
+  - **Frontend**: `@testing-library/react` 16.3.1 → 16.3.2, `@types/node` 25.3.3 → 25.5.0, `@types/react` 19 → 19.2.14, `@vitest/coverage-v8` 4.0.16 → 4.1.0, `@vitest/ui` 4.0.16 → 4.1.0, `eslint` 9.39.2 → 10.0.3, `jsdom` 27.4.0 → 28.1.0, `vitest` 4.0.16 → 4.1.0 (kept `@vitejs/plugin-react` at 5.1.2 for compatibility with current Vite toolchain).
+  - **Cypress**: `@types/node` 25.3.3 → 25.5.0.
+  - **Playwright**: `@types/node` 25.3.3 → 25.5.0.
+  - **Vibium**: `vibium` 0.1.2 → 26.3.11, `@vibium/*` 0.1.2 → 26.3.11, `vitest` 4.0.16 → 4.1.0, `@types/node` 25.3.3 → 25.5.0.
+- **Documentation**: Updated Python backend and Node.js sections and review dates in `VERSION_TRACKING.md`
 
 ### 2026-02-13
 - **Security Fix - Jackson (Maven)**: Addressed Dependabot #26, #27 (high)
@@ -485,8 +502,8 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-02-13
-- **Next Review**: 2026-03-01 (recommended)
+- **Last Updated**: 2026-03-13
+- **Next Review**: 2026-04-01 (recommended)
 - **Maintainer**: Development Team
 
 **Remember**: This is a living document. Update it regularly to keep version information current!
