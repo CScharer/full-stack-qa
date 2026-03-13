@@ -58,9 +58,6 @@ on:
         description: 'Selenium Grid Docker image version (hub and nodes)'
         type: string
         default: '4.40.0'
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       # Test execution controls - Set to true to enable, false to disable
       enable_smoke_tests:
         description: 'Enable Smoke Tests'
@@ -184,6 +181,7 @@ env:
   MAVEN_OPTS: -Xmx${{ inputs.maven_memory || '4096m' }} -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
   # Default Selenium Grid hub URL for CI runs
   SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   # DISABLED: All test jobs temporarily disabled
