@@ -76,6 +76,7 @@ concurrency:
 env:
   JAVA_VERSION: '21'
   MAVEN_OPTS: -Xmx2048m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   # Environment URLs - Default ports per ONE_GOAL.md
   # APP: DEV=3003, TEST=3004, PROD=3005
   # API: DEV=8003, TEST=8004, PROD=8005
