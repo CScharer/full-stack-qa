@@ -197,7 +197,8 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | jsdom | 28.1.0 | 28.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | ESLint | 10.0.3 | 10.0.3 | [✅] | 2026-03-13 | Bumped to current stable |
 | @types/node | 25.5.0 | 25.5.0 | [✅] | 2026-03-13 | Bumped to current stable |
-| @vitejs/plugin-react | 5.1.2 | 6.0.0 | [⚠️] | 2026-03-13 | Plugin 6.0.0 requires newer Vite exports; kept at 5.1.2 for compatibility with current toolchain (tests pass) |
+| Vite | 8.0.0 | 8.0.0 | [✅] | 2026-03-13 | Added explicit Vite devDependency for frontend toolchain |
+| @vitejs/plugin-react | 6.0.0 | 6.0.0 | [✅] | 2026-03-13 | Bumped to current stable (requires Vite 8; tests passing) |
 | @vitest/coverage-v8 | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | @vitest/ui | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | vitest | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
@@ -340,7 +341,7 @@ The `overrides` section forces all instances of the package (including transitiv
   - Fixes arbitrary cache file writes via unsanitized `--python-cell-magics` filenames
   - Implemented via PR #212 (`chore/update-black-26.3.1`)
 - **Node.js Optional Updates → Current Stable**:
-  - **Frontend**: `@testing-library/react` 16.3.1 → 16.3.2, `@types/node` 25.3.3 → 25.5.0, `@types/react` 19 → 19.2.14, `@vitest/coverage-v8` 4.0.16 → 4.1.0, `@vitest/ui` 4.0.16 → 4.1.0, `eslint` 9.39.2 → 10.0.3, `jsdom` 27.4.0 → 28.1.0, `vitest` 4.0.16 → 4.1.0 (kept `@vitejs/plugin-react` at 5.1.2 for compatibility with current Vite toolchain).
+  - **Frontend**: `@testing-library/react` 16.3.1 → 16.3.2, `@types/node` 25.3.3 → 25.5.0, `@types/react` 19 → 19.2.14, `@vitejs/plugin-react` 5.1.2 → 6.0.0, `vite` added at 8.0.0, `@vitest/coverage-v8` 4.0.16 → 4.1.0, `@vitest/ui` 4.0.16 → 4.1.0, `eslint` 9.39.2 → 10.0.3, `jsdom` 27.4.0 → 28.1.0, `vitest` 4.0.16 → 4.1.0.
   - **Cypress**: `@types/node` 25.3.3 → 25.5.0.
   - **Playwright**: `@types/node` 25.3.3 → 25.5.0.
   - **Vibium**: `vibium` 0.1.2 → 26.3.11, `@vibium/*` 0.1.2 → 26.3.11, `vitest` 4.0.16 → 4.1.0, `@types/node` 25.3.3 → 25.5.0.
