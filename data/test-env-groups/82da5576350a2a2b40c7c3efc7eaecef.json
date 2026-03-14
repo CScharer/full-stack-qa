@@ -1,1 +1,1 @@
-{"id":"82da5576350a2a2b40c7c3efc7eaecef","fullName":"Cypress.['Wizard Tests', 'test_home - Click Home Navigation, Add Application button, then Cancel']","name":"Wizard Tests [PROD]","status":"passed","testResultsByEnv":{"default":"c7dfdbfd823fa13b99b16199c0ade8b0"}}
+{"id":"82da5576350a2a2b40c7c3efc7eaecef","fullName":"Cypress.['Wizard Tests', 'test_home - Click Home Navigation, Add Application button, then Cancel']","name":"Wizard Tests [TEST]","status":"passed","testResultsByEnv":{"default":"c2a75c0ca4b5e206b51d5e8084d2226f"}}
