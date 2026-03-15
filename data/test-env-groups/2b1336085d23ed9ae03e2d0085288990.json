@@ -1,1 +1,1 @@
-{"id":"2b1336085d23ed9ae03e2d0085288990","fullName":"com.cjs.qa.junit.tests.ScenariosTests.jenkinsPluralsight","name":"jenkinsPluralsight(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"ab34de521c92df024687d21c7d64c2d9"}}
+{"id":"2b1336085d23ed9ae03e2d0085288990","fullName":"com.cjs.qa.junit.tests.ScenariosTests.jenkinsPluralsight","name":"jenkinsPluralsight(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"16233be7d7878a0f33ac1a0b63c5dd63"}}
