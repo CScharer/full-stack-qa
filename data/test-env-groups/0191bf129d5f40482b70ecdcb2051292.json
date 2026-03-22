@@ -1,1 +1,1 @@
-{"id":"0191bf129d5f40482b70ecdcb2051292","fullName":"com.cjs.qa.junit.tests.ScenariosTests.vivitTest","name":"vivitTest(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"53de7005a70e8e371547ab3ecb690eb5"}}
+{"id":"0191bf129d5f40482b70ecdcb2051292","fullName":"com.cjs.qa.junit.tests.ScenariosTests.vivitTest","name":"vivitTest(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"9e1de3bc6c8863216f788a6e316ffb46"}}
