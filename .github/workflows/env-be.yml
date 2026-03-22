@@ -189,21 +189,33 @@ jobs:
             echo "❌ No comprehensive stats found at $CSV"
             exit 1
           fi
-          # Locust CSV: Type, Name, Request Count, Failure Count, ...; find Aggregated/Total row
-          TOTAL=$(awk -F',' 'NR>1 && ($1~/Aggregated/ || $1~/^Total$/) {gsub(/"/, "", $3); print int($3+0.5)}' "$CSV" 2>/dev/null | tail -1 || echo "0")
-          FAILURES=$(awk -F',' 'NR>1 && ($1~/Aggregated/ || $1~/^Total$/) {gsub(/"/, "", $4); print int($4+0.5)}' "$CSV" 2>/dev/null | tail -1 || echo "0")
-          if [ "$TOTAL" -eq 0 ]; then
-            echo "❌ No requests in comprehensive stats"
-            exit 1
-          fi
-          # Fail job if failure rate > 1%
-          FAIL_RATE=$(awk "BEGIN {printf \"%.4f\", $FAILURES/$TOTAL}")
-          THRESHOLD="0.0100"
-          if ! awk "BEGIN {exit ($FAIL_RATE <= $THRESHOLD) ? 0 : 1}"; then
-            echo "❌ Locust Comprehensive failure rate ${FAIL_RATE} exceeds 1% (${FAILURES}/${TOTAL} failed)"
-            exit 1
-          fi
-          echo "✅ Locust Comprehensive failure rate ${FAIL_RATE} (${FAILURES}/${TOTAL}) within 1% threshold"
+          # Locust 2.x: aggregate row has Name "Aggregated" (column 2), Type empty; legacy rows used Type "Total"
+          awk -F',' '
+            function strip(s) { gsub(/\r/, "", s); gsub(/^"|"$/, "", s); return s }
+            NR>1 {
+              n = strip($2)
+              t = strip($1)
+              if (n == "Aggregated" || t == "Total" || n == "Total") {
+                gsub(/"/, "", $3)
+                gsub(/"/, "", $4)
+                total = int($3 + 0.5)
+                failures = int($4 + 0.5)
+              }
+            }
+            END {
+              if (total <= 0) {
+                print "❌ No requests in comprehensive stats" > "/dev/stderr"
+                exit 2
+              }
+              rate = failures / total
+              if (rate > 0.01) {
+                printf "❌ Locust Comprehensive failure rate %.4f exceeds 1%% (%d/%d failed)\n", rate, failures, total > "/dev/stderr"
+                exit 1
+              }
+              printf "✅ Locust Comprehensive failure rate %.4f (%d/%d) within 1%% threshold\n", rate, failures, total
+              exit 0
+            }
+          ' "$CSV"
 
       - name: Run Locust Web Load Test
         if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only'
