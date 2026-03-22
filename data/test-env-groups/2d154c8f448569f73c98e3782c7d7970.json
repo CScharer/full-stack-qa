@@ -1,1 +1,1 @@
-{"id":"2d154c8f448569f73c98e3782c7d7970","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.fromStringToCanonicalXML","name":"fromStringToCanonicalXML() [DEV]","status":"skipped","testResultsByEnv":{"default":"fcc51fd1ecbeaafcea320c9c76ead5d5"}}
+{"id":"2d154c8f448569f73c98e3782c7d7970","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.fromStringToCanonicalXML","name":"fromStringToCanonicalXML() [PROD]","status":"skipped","testResultsByEnv":{"default":"eef3ea9c49f8ef40d3fc7793c0738499"}}
