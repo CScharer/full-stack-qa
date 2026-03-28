@@ -95,7 +95,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<mssql-jdbc.version>13.2.1.jre11</mssql-jdbc.version>
 		<objenesis.version>3.4</objenesis.version>
 		<pdfbox.version>3.0.6</pdfbox.version>
-		<plexus-utils.version>4.0.2</plexus-utils.version>
+		<plexus-utils.version>4.0.3</plexus-utils.version>
 		<poi.version>5.5.1</poi.version>
 		<poi-ooxml-schemas.version>${poi.version}</poi-ooxml-schemas.version>
 		<saucerest.version>2.5.3</saucerest.version>
