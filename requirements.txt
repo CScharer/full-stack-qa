@@ -1,8 +1,8 @@
 # Python Dependencies for Performance Testing
 # Install: pip install -r requirements.txt
 
-# Locust - Performance Testing Framework
-locust==2.42.6
+# Locust - Performance Testing Framework (2.43+ needed for requests>=2.32.5; 2.42.x pins requests<2.32.5)
+locust==2.43.3
 
 # Additional utilities
 requests==2.33.0
