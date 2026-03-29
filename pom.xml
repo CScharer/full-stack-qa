@@ -49,7 +49,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<commons-lang3.version>3.20.0</commons-lang3.version>
 		<commons-logging.version>1.3.5</commons-logging.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
-		<netty-codec-http.version>4.2.10.Final</netty-codec-http.version>
+		<netty-codec-http.version>4.2.11.Final</netty-codec-http.version>
 		<rhino.version>1.9.0</rhino.version>
 		<cucumber.version>7.33.0</cucumber.version>
 		<cucumber-core.version>${cucumber.version}</cucumber-core.version>
@@ -162,6 +162,19 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<xmlsec.version>4.0.4</xmlsec.version>
 		<xmlunit.version>1.6</xmlunit.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Align all io.netty artifacts (e.g. netty-codec-http2 from Selenium) for security fixes -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-bom</artifactId>
+				<version>${netty-codec-http.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/<groupId></groupId>/<artifactId></artifactId> -->
@@ -469,7 +482,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<artifactId>commons-beanutils</artifactId>
 			<version>${commons-beanutils.version}</version>
 		</dependency>
-		<!-- Explicitly add netty-codec-http 4.2.8.Final to override vulnerable 4.2.7.Final from transitive dependencies -->
+		<!-- Explicitly add netty-codec-http to override older Netty lines from transitive dependencies -->
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-codec-http</artifactId>
