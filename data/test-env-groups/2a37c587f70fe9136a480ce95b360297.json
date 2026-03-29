@@ -1,1 +1,1 @@
-{"id":"2a37c587f70fe9136a480ce95b360297","fullName":"com.cjs.qa.junit.tests.ScenariosTests.microsoft","name":"microsoft(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"24d44cd9cda67d514daad5f59b799824"}}
+{"id":"2a37c587f70fe9136a480ce95b360297","fullName":"com.cjs.qa.junit.tests.ScenariosTests.microsoft","name":"microsoft(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"5aac03c24720d1c9a50302567a41638f"}}
