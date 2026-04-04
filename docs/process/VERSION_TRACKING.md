@@ -58,9 +58,9 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-03-13 (Python backend `black` security update; documentation refresh)
-- **Latest Stable Versions Check**: 2026-03-13 (Targeted Python tooling check; run `npm outdated` / `pip list --outdated` for current status)
-- **Next Review**: 2026-04-01 (recommended)
+- **Last Review**: 2026-04-04 (npm security overrides: lodash, brace-expansion, socket.io-parser; Dependabot #75–#78)
+- **Latest Stable Versions Check**: 2026-04-04 (npm audit clean in frontend, cypress, playwright; run `npm outdated` / `pip list --outdated` for optional updates)
+- **Next Review**: 2026-05-01 (recommended)
 
 ### Stable vs. latest
 
@@ -158,6 +158,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
 | @types/node | 25.5.0 | 25.5.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | qs (override) | ^6.15.0 | 6.15.0 | [✅] | 2026-02-13 | Bumped to current stable (was 6.14.2 for security) |
+| lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Security fix - Overrides vulnerable 4.17.23 from Cypress (GHSA-r5fr-rjxr-66jc, GHSA-f23m-r3pf-42rh); Dependabot #75–#78 |
 
 ### Playwright Project (playwright/package.json)
 
@@ -165,7 +166,9 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 |------------|----------------|---------------|--------|--------------|-------|
 | Playwright | 1.58.2 | 1.58.2 | [✅] | 2026-02-13 | Bumped to current stable |
 | Artillery | 2.0.30 | 2.0.30 | [✅] | 2026-02-13 | Bumped to current stable |
-| lodash (override) | >=4.17.23 | 4.17.23 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 4.17.21 from artillery transitive dependency (CVE) |
+| lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Security fix - Overrides vulnerable transitive lodash (Artillery et al.); same advisories as Cypress row |
+| brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security fix - GHSA-f886-m6hf-6m8v (moderate, ReDoS / hang); Dependabot #75–#78 |
+| socket.io-parser (override) | ^4.2.6 | 4.2.6 | [✅] | 2026-04-04 | Security fix - GHSA-677m-j7p3-52f9 (high); transitive from Artillery |
 | fast-xml-parser (override) | >=5.3.4 | 5.3.5 | [✅] | 2026-02-13 | Security fix - Dependabot #11 (RangeError DoS) |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Security fix - Dependabot #35–#37 (ReDoS), per-parent overrides |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
@@ -185,7 +188,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 |------------|----------------|---------------|--------|--------------|-------|
 | React | 19.2.4 | 19.2.4 | [✅] | 2026-02-13 | Bumped to current stable |
-| Next.js | 16.1.6 | 16.1.6 | [✅] | 2026-02-13 | Bumped to current stable |
+| Next.js | 16.1.7 | 16.1.7 | [✅] | 2026-04-04 | Patch bump (package.json); align `eslint-config-next` when Next minor bumps |
 | @tanstack/react-query | 5.90.21 | 5.90.21 | [✅] | 2026-02-13 | Bumped to current stable |
 | eslint-config-next | 16.1.6 | 16.1.6 | [✅] | 2026-02-13 | Aligned with Next.js 16.1.6 |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
@@ -203,6 +206,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | @vitest/ui | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | vitest | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security fix - ReDoS in `$data` (GHSA-2g4f-4pwh-qvx6); transitive from eslint |
+| brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security fix - GHSA-f886-m6hf-6m8v (moderate); transitive from eslint / minimatch; Dependabot #75–#78 |
 
 ---
 
@@ -282,13 +286,13 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-02-13)
+### Current Status (as of 2026-04-04)
 
 Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash, black #40 (Python backend).
+Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash + **brace-expansion** + **socket.io-parser** (npm overrides, #75–#78), black #40 (Python backend).
 
 ### Update Strategy
 
@@ -307,22 +311,34 @@ When a vulnerability exists in a transitive dependency (not directly in your `pa
 ```json
 {
   "devDependencies": {
-    "qs": "^6.14.2"
+    "qs": "^6.15.0"
   },
   "overrides": {
-    "qs": "^6.14.2"
+    "qs": "^6.15.0"
   }
 }
 ```
 
-**Example 2**: Fixing `lodash` vulnerability in Playwright (Dependabot Alert #5)
+**Example 2**: Fixing `lodash` in Playwright and Cypress (transitive from Artillery / Cypress)
 ```json
 {
   "overrides": {
-    "lodash": ">=4.17.23"
+    "lodash": "^4.17.24"
   }
 }
 ```
+Use **^4.17.24** (or higher patched 4.x): **4.17.23** was still flagged; lockfiles resolve to **4.18.1** as of 2026-04-04.
+
+**Example 3**: Fixing `brace-expansion` (eslint / minimatch) and `socket.io-parser` (Artillery)
+```json
+{
+  "overrides": {
+    "brace-expansion": "^5.0.5",
+    "socket.io-parser": "^4.2.6"
+  }
+}
+```
+Apply `brace-expansion` in **frontend** and **playwright**; add `socket.io-parser` in **playwright** only (where Artillery pulls it). Regenerate lockfiles with `npm install` or `npm install --package-lock-only`, then confirm `npm audit` is clean.
 
 The `overrides` section forces all instances of the package (including transitive dependencies) to use the patched version. After adding the override:
 1. Run `npm install` to update `package-lock.json`
@@ -334,6 +350,13 @@ The `overrides` section forces all instances of the package (including transitiv
 ---
 
 ## 📋 Update History
+
+### 2026-04-04
+- **Security Fix - npm (Dependabot #75–#78)**: Cleared `npm audit` findings across **frontend**, **cypress**, and **playwright** using `overrides` and updated lockfiles.
+  - **brace-expansion** `^5.0.5` → resolved **5.0.5** (GHSA-f886-m6hf-6m8v, moderate) in `frontend/package.json` and `playwright/package.json`.
+  - **lodash** `^4.17.24` → resolved **4.18.1** in `cypress/package.json` and `playwright/package.json` (replaces vulnerable **4.17.23** from Cypress and older transitive lines; GHSA-r5fr-rjxr-66jc, GHSA-f23m-r3pf-42rh).
+  - **socket.io-parser** `^4.2.6` → resolved **4.2.6** in `playwright/package.json` only (GHSA-677m-j7p3-52f9, high; Artillery transitive).
+- **Documentation**: Refreshed Node.js override rows, security section, worked examples, and review dates in this file.
 
 ### 2026-03-13
 - **Security Fix - black (Python backend)**: Addressed Dependabot #40 (high)
@@ -503,8 +526,8 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-03-13
-- **Next Review**: 2026-04-01 (recommended)
+- **Last Updated**: 2026-04-04
+- **Next Review**: 2026-05-01 (recommended)
 - **Maintainer**: Development Team
 
 **Remember**: This is a living document. Update it regularly to keep version information current!

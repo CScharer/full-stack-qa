@@ -189,7 +189,7 @@ timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,
 
 ## 🔗 Related Documents
 
-- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (includes `black` 26.3.1 security update, 2026-03-13)
+- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (includes npm overrides for Dependabot #75–#78 and `black` 26.3.1; last doc refresh 2026-04-04)
 - [Pre-Pipeline Validation](PRE_PIPELINE_VALIDATION.md) - Local validation checklist
 - Next Steps After PR #53 (archived) - Work plan and status
 
@@ -215,4 +215,4 @@ Modify the workflow's "Comment on Issues" step to integrate with your notificati
 
 ---
 
-**Last Updated**: 2026-03-13
+**Last Updated**: 2026-04-04
