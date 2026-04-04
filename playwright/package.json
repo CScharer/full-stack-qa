@@ -26,7 +26,9 @@
     "artillery": "^2.0.30"
   },
   "overrides": {
-    "lodash": ">=4.17.23",
+    "brace-expansion": "^5.0.5",
+    "lodash": "^4.17.24",
+    "socket.io-parser": "^4.2.6",
     "fast-xml-parser": ">=5.3.4",
     "minimatch": "9.0.7",
     "glob": { "minimatch": "3.1.4" },
