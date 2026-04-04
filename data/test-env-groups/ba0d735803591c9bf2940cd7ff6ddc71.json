@@ -1,1 +1,1 @@
-{"id":"ba0d735803591c9bf2940cd7ff6ddc71","fullName":"com.cjs.qa.junit.tests.ScenariosTests.vivitCommutes","name":"vivitCommutes(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"db920f5e1f0981b0d28db8d25127842a"}}
+{"id":"ba0d735803591c9bf2940cd7ff6ddc71","fullName":"com.cjs.qa.junit.tests.ScenariosTests.vivitCommutes","name":"vivitCommutes(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"b27783ec6a494442fefd2175b76f883b"}}

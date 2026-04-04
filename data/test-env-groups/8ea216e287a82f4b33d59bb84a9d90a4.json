@@ -1,1 +1,1 @@
-{"id":"8ea216e287a82f4b33d59bb84a9d90a4","fullName":"com.cjs.qa.gt.GTWebinarDataTests.testAuth","name":"testAuth() [PROD]","status":"skipped","testResultsByEnv":{"default":"41cbde720c3906a4a981a31d36592846"}}
+{"id":"8ea216e287a82f4b33d59bb84a9d90a4","fullName":"com.cjs.qa.gt.GTWebinarDataTests.testAuth","name":"testAuth() [TEST]","status":"skipped","testResultsByEnv":{"default":"66a883b637b2d80098c18f22da86c8fb"}}
