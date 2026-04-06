@@ -1,5 +1,4 @@
-// Type declarations for the vibium package
-// Updated for vibium@0.1.2 - the actual released package
+// Type declarations for the vibium package (npm ^26.x; see vibium/package.json)
 
 declare module 'vibium' {
   interface ActionOptions {

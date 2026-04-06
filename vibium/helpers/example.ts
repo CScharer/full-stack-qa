@@ -184,12 +184,16 @@ async function syncAPIMocked(): Promise<void> {
 }
 
 /**
- * Placeholder handler - no longer needed since package is released
- * Kept for backward compatibility with tests
+ * Smoke log for tests that assert this helper loads without a static `vibium` import.
+ * Kept for backward compatibility with tests.
  */
 function handlePlaceholder(): void {
-  console.log('✅ Vibium package v0.1.2 is available!');
-  console.log('📦 Using real browserSync and browser APIs\n');
+  console.log(
+    '✅ Vibium is declared as an npm dependency (^26.x; see vibium/package.json).'
+  );
+  console.log(
+    '📦 Real browser examples load `vibium` via dynamic import when dist and the clicker binary are available.\n'
+  );
 }
 
 export {
