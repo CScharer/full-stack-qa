@@ -92,7 +92,10 @@ echo ""
 
 cd "$BACKEND_DIR"
 
-# Run pytest with coverage
+# Repo root on PYTHONPATH for config.port_config; backend/ for app + tests packages.
+export PYTHONPATH="${SCRIPT_DIR}:${BACKEND_DIR}"
+
+# Run pytest with coverage (backend/pyproject.toml also sets pythonpath for pytest)
 if pytest tests/ -v --tb=short --cov=app --cov-report=term-missing; then
     echo ""
     echo -e "${GREEN}✅ All backend tests passed!${NC}"

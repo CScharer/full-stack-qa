@@ -1,0 +1,3 @@
+[tool.pytest.ini_options]
+# Repo root: shared `config.port_config` (environments.json). This dir: `app`, `tests` packages.
+pythonpath = ["..", "."]

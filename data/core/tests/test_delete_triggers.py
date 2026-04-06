@@ -1,8 +1,6 @@
 """
 Tests for database delete triggers.
 """
-import pytest
-import sqlite3
 
 
 class TestDeleteTriggers:

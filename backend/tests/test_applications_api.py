@@ -1,10 +1,9 @@
 """
 Tests for Applications API endpoints.
 """
-import pytest
 from fastapi.testclient import TestClient
 from app.models import ApplicationCreate, ApplicationUpdate
-from conftest import api_url
+from tests.conftest import api_url
 
 ENDPOINT: str = "/applications"
 

@@ -1,12 +1,9 @@
 """
 Tests for database connection module.
 """
-import pytest
 import sqlite3
 from app.database.connection import get_db_connection, check_database_connection
 from pathlib import Path
-import tempfile
-import os
 
 
 def test_get_db_connection_creates_connection(test_db_path, test_database):

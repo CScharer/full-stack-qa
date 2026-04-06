@@ -1,8 +1,6 @@
 """
 Tests for entity relationships and data integrity.
 """
-import pytest
-import sqlite3
 
 
 class TestRelationships:

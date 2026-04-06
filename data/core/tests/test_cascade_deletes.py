@@ -1,8 +1,6 @@
 """
 Tests for CASCADE delete behavior.
 """
-import pytest
-import sqlite3
 
 
 class TestCascadeDeletes:
