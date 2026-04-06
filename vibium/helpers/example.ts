@@ -1,7 +1,7 @@
-// Example demonstrating the Vibium browser automation framework
-// Updated for vibium@0.1.2 - the actual released package
-
-import { browser, browserSync } from "vibium";
+// Example demonstrating the Vibium browser automation framework.
+// Do not import "vibium" at module load time: the npm package may omit dist/ until
+// postinstall/platform binaries run, and Vitest fails resolving the package entry.
+// Real API paths use dynamic import(); mock paths avoid the package entirely.
 
 // Type definitions matching the actual Vibium API
 interface VibiumElement {
@@ -36,7 +36,8 @@ interface VibiumBrowserSync {
 async function asyncAPIHandled(): Promise<void> {
   try {
     console.log('\n📝 Running asyncAPI() with real Vibium package...\n');
-    
+
+    const { browser } = await import("vibium");
     // Launch browser (headless by default in tests)
     const vibe = await browser.launch({ headless: true });
     
@@ -72,7 +73,8 @@ async function asyncAPIHandled(): Promise<void> {
 async function syncAPIHandled(): Promise<void> {
   try {
     console.log('\n📝 Running syncAPI() with real Vibium package...\n');
-    
+
+    const { browserSync } = await import("vibium");
     // Launch browser synchronously
     const vibe = browserSync.launch({ headless: true });
     
