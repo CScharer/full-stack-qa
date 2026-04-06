@@ -4,7 +4,9 @@ This directory contains Vibium test framework examples and research documentatio
 
 ## 📋 Overview
 
-**Vibium** is an AI-native test automation framework developed by Jason Huggins (creator of Selenium and Appium). The framework has been released and is available as `vibium@0.1.2`.
+**Vibium** is an AI-native test automation framework developed by Jason Huggins (creator of Selenium and Appium). This repo consumes it as an npm dependency (**`vibium` ^26.3.18**; see [`package.json`](./package.json) for the exact range).
+
+Optional platform packages (**`@vibium/darwin-arm64`**, **`@vibium/linux-x64`**, same major line) supply the clicker binary. The published `vibium` tarball may not include `dist/` until install/postinstall completes; **Vitest** and helpers avoid a static `import "vibium"` at load time so mock tests run in CI without a full binary layout.
 
 ## 📦 Installation
 
@@ -13,10 +15,11 @@ cd vibium
 npm install
 ```
 
-This will install:
-- `vibium@0.1.2` (released version)
-- `@vibium/darwin-arm64@0.1.2` (clicker binary for macOS ARM64)
-- TypeScript and type definitions
+This installs:
+
+- **`vibium`** (^26.3.18) — core package
+- **`@vibium/darwin-arm64`** / **`@vibium/linux-x64`** (^26.3.18) — optional; clicker binary for local OS when applicable
+- **TypeScript**, **Vitest**, **tsx**, and **`@types/node`**
 
 ## 🧪 Running Tests
 
@@ -49,156 +52,62 @@ npm run test:ui
 
 **Note**: The test script automatically handles dependency installation and provides better error messages.
 
-## 📝 Example Files
+## 📝 Example Code
 
-### `example_mock.js` - Mock Implementation
+### `helpers/example.ts` — Examples and mocks
 
-A fully functional mock implementation of the expected Vibium `browserSync` API. This file demonstrates the expected API structure and can be run immediately to see how the API will work.
+TypeScript examples for the async (`browser`) and sync (`browserSync`) APIs, plus mock implementations that do not require the real package at import time. Real API entry points use **dynamic** `import("vibium")` inside the functions that need a browser.
 
-**Features:**
-- ✅ Self-contained mock implementation
-- ✅ Demonstrates async and sync API patterns
-- ✅ Shows expected method signatures
-- ✅ Can be run without the full Vibium package
-
-**How to Run:**
-
-1. **Uncomment the function calls** at the bottom of the file:
-   ```javascript
-   // Change from:
-   // asyncAPI().catch(console.error);
-   // syncAPI();
-   
-   // To:
-   asyncAPI().catch(console.error);
-   syncAPI();
-   ```
-
-2. **Run the file:**
-   ```bash
-   node example_mock.js
-   ```
-
-   Or use npm script:
-   ```bash
-   npm run vibe
-   ```
-
-**Expected Output:**
-```
-📝 Running asyncAPI()...
-
-🔵 [MOCK] Launching browser...
-🔵 [MOCK] Navigating to: https://example.com
-🔵 [MOCK] Finding element: button.submit
-🔵 [MOCK] Clicking element: button.submit
-🔵 [MOCK] Typing text: "hello"
-🔵 [MOCK] Taking screenshot...
-📸 Screenshot data length: 118 characters
-🔵 [MOCK] Closing browser...
-
-✅ asyncAPI() completed successfully!
-```
-
-### `example_handle.js` - Vibium Handler
-
-An example that demonstrates how to work with the released Vibium framework.
-
-**Features:**
-- ✅ Works with `vibium@0.1.2` (released version)
-- ✅ Uses the full browserSync API
-- ✅ Demonstrates the framework structure
-
-**How to Run:**
-
-1. **Uncomment the function calls** at the bottom of the file:
-   ```javascript
-   // Change from:
-   // asyncAPI();
-   // syncAPI();
-   
-   // To:
-   asyncAPI();
-   syncAPI();
-   ```
-
-2. **Run the file:**
-   ```bash
-   node example_handle.js
-   ```
-
-**Expected Output:**
-```
-📝 asyncAPI() - Vibium Implementation
-
-✅ Vibium package is available (v0.1.2)
-📦 The browserSync API is available in npm
-🔗 See: https://github.com/VibiumDev/vibium for the latest development
-
-Welcome to Vibium!
-
-💡 You can now use:
-   import { browserSync } from "vibium";
-```
-
-## 🚀 Quick Start
-
-### Run Mock Example (Recommended for Testing)
+**Run the helper script (tsx):**
 
 ```bash
-# 1. Edit example_mock.js and uncomment the function calls
-# 2. Run it
-node example_mock.js
-```
-
-### Run Vibium Handler
-
-```bash
-# 1. Edit example_handle.js and uncomment the function calls
-# 2. Run it
-node example_handle.js
-```
-
-### Using npm Scripts
-
-```bash
-# Run the vibe script (configured in package.json)
+cd vibium
 npm run vibe
 ```
 
+### `tests/example.spec.ts` — Vitest suite
+
+Runs mock-based tests always; real-browser tests are **skipped** when the clicker binary or package layout is not available (see logs in CI/local).
+
+Legacy **`example_mock.js`** / **`example_handle.js`** referenced in older docs are **not** in this tree anymore; use **`helpers/example.ts`** and **`tests/example.spec.ts`** instead.
+
 ## 📚 API Structure
 
-Both example files demonstrate the expected Vibium API:
+Both patterns match the declarations in [`types/vibium.d.ts`](./types/vibium.d.ts):
 
 ### Async API (Promise-based)
-```javascript
-import { browserSync } from "vibium";
+
+```typescript
+import { browser } from "vibium";
 
 async function asyncAPI() {
-  const vibe = await browserSync.launch();
+  const vibe = await browser.launch({ headless: true });
   await vibe.go("https://example.com");
-  
+
   const el = await vibe.find("button.submit");
   await el.click();
   await el.type("hello");
-  
+
   const png = await vibe.screenshot();
   await vibe.quit();
 }
 ```
 
-### Sync API (Blocking)
-```javascript
+In this repo, prefer **dynamic** `const { browser } = await import("vibium")` inside functions when Vitest or partial installs must not resolve `vibium` at module load time.
+
+### Sync API (blocking)
+
+```typescript
 import { browserSync } from "vibium";
 
 function syncAPI() {
-  const vibe = browserSync.launch();
+  const vibe = browserSync.launch({ headless: true });
   vibe.go("https://example.com");
-  
+
   const el = vibe.find("button.submit");
   el.click();
   el.type("hello");
-  
+
   const png = vibe.screenshot();
   vibe.quit();
 }
@@ -206,25 +115,21 @@ function syncAPI() {
 
 ## 📖 Documentation
 
-- **Research Document**: `20251219_VIBIUM_FRAMEWORK_RESEARCH.md` - Comprehensive research and findings
+- **Research Document**: `20251219_VIBIUM_FRAMEWORK_RESEARCH.md` — research and findings
 - **Official Repository**: [https://github.com/VibiumDev/vibium](https://github.com/VibiumDev/vibium)
 - **Official Website**: [https://vibium.com](https://vibium.com)
 
 ## ✅ Current Status
 
-- **npm Package**: `vibium@0.1.2` (released)
-- **Full API**: Available in npm
-- **Status**: Framework has been released
-- **Version**: 0.1.2 (latest)
+- **npm Package**: `vibium` **^26.3.18** (see `package.json`; lockfile pins a concrete version)
+- **API**: Async **`browser`** and sync **`browserSync`** (see `types/vibium.d.ts`)
+- **CI**: Vibium Vitest job runs mock tests; real browser usage is optional when binary + `dist` are present
 
 ## 🔮 Future Integration
 
-When the full Vibium package is released:
-
-1. Update `package.json` to use the new version
-2. Replace mock implementations with real API calls
-3. The structure in both example files will work with minimal changes
-4. Add to CI/CD pipeline similar to Cypress and Playwright
+1. Add more specs under `tests/` as the app and Vibium evolve.
+2. Optionally enable stricter real-browser checks in CI where runners install **`@vibium/linux-x64`** and a compatible environment.
+3. Keep `import("vibium")` lazy in shared helpers if the npm layout remains “binary/dist after install” sensitive.
 
 ## 📦 Project Structure
 
@@ -232,47 +137,52 @@ When the full Vibium package is released:
 vibium/
 ├── README.md                          # This file
 ├── package.json                       # npm configuration
-├── example_mock.js                    # Mock implementation (runnable)
-├── example_handle.js                  # Placeholder handler (runnable)
-├── 20251219_VIBIUM_FRAMEWORK_RESEARCH.md  # Research documentation
+├── tsconfig.json
+├── vitest.config.ts
+├── types/vibium.d.ts                  # Local module typings for ^26.x
+├── helpers/example.ts                 # Examples + mocks (tsx: npm run vibe)
+├── tests/example.spec.ts              # Vitest tests
+├── config/port-config.ts
+├── 20251219_VIBIUM_FRAMEWORK_RESEARCH.md
 └── node_modules/                      # Dependencies (gitignored)
 ```
 
 ## 🛠️ Development
 
 ### Prerequisites
-- Node.js >= 18.0.0
-- npm >= 9.0.0
 
-### TypeScript Support
-TypeScript is installed as a dev dependency for future use when the full framework supports it.
+- **Node.js** >= 20.0.0
+- **npm** >= 9.0.0
+
+### TypeScript
+
+TypeScript **6.x** and Vitest **4.x** are configured for this package; run **`npm run type-check`** for `tsc --noEmit`.
 
 ### Cleaning Up Test Files
-
-To clean up test output files (coverage, test-results, etc.):
 
 ```bash
 npm run clean
 ```
 
-This will remove:
-- `dist/` - Compiled TypeScript output
-- `coverage/` - Test coverage reports
-- `test-results/` - Test result files
-- `.vitest/` - Vitest cache
+Removes:
+
+- `dist/` — compiled TypeScript output (if present)
+- `coverage/` — coverage reports
+- `test-results/` — Vitest JSON output
+- `.vitest/` — Vitest cache
 
 ### Ignored Files
 
-The following files/directories are ignored by git (see `.gitignore`):
-- `node_modules/` - npm dependencies
-- `test-results/` - Test output files
-- `coverage/` - Coverage reports
-- `dist/` - Build output
-- `*.log` - Log files
+Ignored by git (see `.gitignore`):
+
+- `node_modules/`
+- `test-results/`
+- `coverage/`
+- `dist/`
+- `*.log`
 
 ## 📝 Notes
 
-- The Vibium package (v0.1.2) is now available with the full API
-- The example files demonstrate the expected API structure based on the GitHub repository
-- Both files use ES modules (`import/export`) as configured in `package.json`
-- The package is now available - update imports to use the full API
+- Version numbers in docs drift; **`package.json`** and the lockfile are the source of truth for **`vibium`** / **`@vibium/*`**.
+- ES modules (`"type": "module"`) are used throughout; examples use `import` / `export`.
+- Official docs and releases may move faster than this README; cross-check [VibiumDev/vibium](https://github.com/VibiumDev/vibium) for breaking changes.
