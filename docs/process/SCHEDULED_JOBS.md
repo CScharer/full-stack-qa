@@ -35,7 +35,7 @@ This document provides a centralized reference for all scheduled jobs (cron jobs
 - Sends alerts if version mismatches are detected
 
 **What It Does**:
-1. Runs `scripts/validate-dependency-versions.sh`
+1. Runs `scripts/quality/validate-dependency-versions.sh`
 2. Validates Selenium versions across `pom.xml` and workflow files
 3. Checks TypeScript and `@types/node` versions across Node.js projects
 4. Validates Python requirements files
@@ -44,7 +44,7 @@ This document provides a centralized reference for all scheduled jobs (cron jobs
 
 **Manual Trigger**: 
 - Can be triggered manually via `workflow_dispatch` in GitHub Actions UI
-- Or run locally: `./scripts/validate-dependency-versions.sh --report-json --report-file results/report.json`
+- Or run locally: `./scripts/quality/validate-dependency-versions.sh --report-json --report-file results/report.json`
 
 **Accessing Reports**:
 1. Go to GitHub Actions tab

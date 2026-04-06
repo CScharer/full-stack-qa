@@ -221,7 +221,7 @@ STAGE 7: PIPELINE SUMMARY
 #### **Job 9: validate-versions**
 - **Dependencies**: `determine-schedule-type` only
 - **Action**: Validates dependency versions across the project (Selenium, TypeScript, Python) to ensure consistency.
-- **Script**: `scripts/validate-dependency-versions.sh`
+- **Script**: `scripts/quality/validate-dependency-versions.sh`
 - **Execution**: Runs in parallel with `code-quality` and other Stage 2 jobs immediately after `determine-schedule-type`
 - **Note**: Only reads configuration files (pom.xml, package.json, requirements.txt, workflow files) and doesn't require compiled classes.
 

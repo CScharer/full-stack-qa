@@ -6,7 +6,7 @@ This is a [Next.js](https://nextjs.org) project (App Router) with **TypeScript 6
 
 ### Prerequisites
 
-- **Node.js** 20+ (aligned with the main `full-stack-qa` repository)
+- **Node.js** 20+ (aligned with the main `full-stack-qa` repo; see root [README.md](../README.md))
 - **npm** 9+
 
 ### Development

@@ -5,7 +5,7 @@
 **Purpose**: Track dependency versions and schedule periodic updates  
 **Update Frequency**: Monthly review recommended
 
-> **💡 Automation**: Version validation is now automated via `scripts/validate-dependency-versions.sh` and CI/CD job `validate-versions`. This helps prevent version drift and ensures versions are aligned across the project.
+> **💡 Automation**: Version validation is now automated via `scripts/quality/validate-dependency-versions.sh` and CI/CD job `validate-dependency-versions` (see `.github/workflows/ci.yml`). This helps prevent version drift and ensures versions are aligned across the project.
 > 
 > **✅ Pre-Push Validation**: Pre-push version validation is now implemented! The pre-push hook automatically validates Selenium versions before code is pushed. See [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md) for details.
 
@@ -58,8 +58,8 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-04-06 (workspace-wide bump to current **stable** releases; see Update History **2026-04-06 (comprehensive)**)
-- **Latest Stable Versions Check**: 2026-04-06 (`npm outdated` clean in frontend/cypress/playwright/vibium after bumps; `./mvnw -DskipTests compile` OK; Maven Central pre-releases skipped)
+- **Last Review**: 2026-04-06 (workspace-wide bump to current **stable** releases; includes Jackson **3.1.1** / Vite **8.0.5** security pins from Dependabot #78, #80, #82, #84; see Update History **2026-04-06 (comprehensive stable bump)**)
+- **Latest Stable Versions Check**: 2026-04-06 (`npm outdated` clean in frontend/cypress/playwright/vibium after bumps; `./mvnw -DskipTests compile` OK; `mvn dependency:tree` shows `tools.jackson.core:jackson-core:3.1.1`; Maven Central pre-releases skipped)
 - **Next Review**: 2026-05-01 (recommended)
 
 ### Stable vs. latest
@@ -129,8 +129,8 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | WebDriverManager | 6.3.4 | 6.3.4 | [✅] | 2026-04-06 | Current stable |
 | Log4j 2 | 2.25.3 | 2.25.3 | [✅] | 2025-12-19 | Updated via Dependabot PR #52 - Current stable version (2.25.x series in Active Maintenance) |
 | Logback Core | 1.5.32 | 1.5.32 | [✅] | 2026-04-06 | Overrides Gatling transitive line |
-| Jackson Databind (3.x) | 3.1.1 | 3.1.1 | [✅] | 2026-04-06 | Latest stable `tools.jackson.core` on Central |
-| Jackson Core (2.x) | 2.21.2 | 2.21.2 | [✅] | 2026-04-06 | Explicit override for cucumber-reporting transitives |
+| Jackson Databind (3.x) | 3.1.1 | 3.1.1 | [✅] | 2026-04-06 | `jackson.version` in pom.xml; `tools.jackson.core:jackson-core` **3.1.1** (Dependabot #78) |
+| Jackson Core (2.x) | 2.21.2 | 2.21.2 | [✅] | 2026-04-06 | Explicit override for cucumber-reporting transitives (Dependabot #27) |
 | Jackson Annotations | 2.20 | 2.20 | [✅] | 2025-12-19 | 2.x annotations alongside Jackson 3 databind (REST Assured 6) |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | MSSQL JDBC | 13.4.0.jre11 | 13.4.0.jre11 | [✅] | 2026-04-06 | Current stable |
@@ -201,13 +201,13 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | jsdom | ^29.0.1 | 29.0.1 | [✅] | 2026-04-06 | Major 28→29 (Vitest 4 compatible) |
 | ESLint | ^10.2.0 | 10.2.0 | [✅] | 2026-04-06 | Current stable |
 | @types/node | ^25.5.2 | 25.5.2 | [✅] | 2026-04-06 | Current stable |
-| Vite | ^8.0.5 | 8.0.5 | [✅] | 2026-04-06 | Patched 8.0.x line |
+| Vite | ^8.0.5 | 8.0.5 | [✅] | 2026-04-06 | Patched 8.0.x line (Dependabot #80, #82, #84); minimum **8.0.5** |
 | @vitejs/plugin-react | ^6.0.1 | 6.0.1 | [✅] | 2026-04-06 | Current stable |
 | @vitest/coverage-v8 | ^4.1.2 | 4.1.2 | [✅] | 2026-04-06 | Current stable |
 | @vitest/ui | ^4.1.2 | 4.1.2 | [✅] | 2026-04-06 | Current stable |
 | vitest | ^4.1.2 | 4.1.2 | [✅] | 2026-04-06 | Current stable |
-| ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security override |
-| brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security override |
+| ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); transitive from eslint |
+| brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security override (GHSA-f886-m6hf-6m8v); Dependabot #75–#78 |
 
 ---
 
@@ -294,7 +294,7 @@ Vulnerability counts change as Dependabot rescans and PRs are merged. Check the 
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-04-06** comprehensive bump, re-run Dependabot and `npm audit` / `pip-audit` as needed. Prior fixes (Jackson, minimatch, qs, lodash, brace-expansion, etc.) remain documented in Update History.
+After the **2026-04-06** comprehensive bump, re-run Dependabot and `npm audit` / `pip-audit` as needed. Recent fixes (see Update History): **Jackson 3** `tools.jackson.core:jackson-core` **3.1.1** (#78), **Vite 8.0.5** (#80, #82, #84); plus Jackson 2.x #27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash + **brace-expansion** + **socket.io-parser** (npm overrides; see 2026-04-04 history), black #40 (Python backend).
 
 ### Update Strategy
 
@@ -354,7 +354,7 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 ### 2026-04-06 (comprehensive stable bump)
-- **Scope**: Raised Maven, npm, Python, and CI defaults to current **stable** releases. Skipped Maven Central **pre-releases** (alphas, betas, milestones, RCs). **DBUnit** intentionally left at **2.8.0** (3.x is a breaking migration for existing tests).
+- **Scope**: Raised Maven, npm, Python, and CI defaults to current **stable** releases. Skipped Maven Central **pre-releases** (alphas, betas, milestones, RCs). **DBUnit** intentionally left at **2.8.0** (3.x is a breaking migration for existing tests). Carries forward **main** security/doc work: Jackson **3.1.1** (Dependabot #78), Vite **^8.0.5** / lock **8.0.5** (#80, #82, #84), and README `config/` / `xml/` plus `scripts/quality/validate-dependency-versions.sh` references.
 - **Maven (`pom.xml`)**: Selenium **4.41.0**, Cucumber **7.34.3**, Netty BOM line **4.2.12.Final**, Jackson **3.1.1** + jackson-core **2.21.2**, Selenide **7.15.1**, Allure Java **2.33.0**, Gatling **3.15.0** + plugin **4.21.5**, Surefire **3.5.5**, Spotless **2.46.1**, PMD plugin **3.28.0**, SpotBugs plugin **4.9.8.3**, JMeter plugin **3.8.0**, Scala plugin **4.9.10**, Mockito **5.23.0**, Appium **10.1.0**, WebDriverManager **6.3.4**, Checkstyle **13.4.0**, Secret Manager **2.88.0**, MSSQL JDBC **13.4.0.jre11**, PostgreSQL JDBC **42.7.10**, SQLite JDBC **3.51.3.0**, htmlunit3-driver **4.41.0**, PDFBox **3.0.7**, Logback **1.5.32**, Allure Maven plugin **2.17.0**, plus additional patch bumps (ByteBuddy, Commons Logging, Joda, Objenesis, Rhino, etc.).
 - **npm**: Frontend **Next 16.2.2**, **TypeScript 6.0.2**, **Vitest/Vite toolchain 4.1.2 / 8.0.5**, **jsdom 29**, **ESLint 10.2**, **axios 1.14**, **@tanstack/react-query 5.96.x**; Cypress **15.13.x**; Playwright **1.59.x**; Vibium **26.3.18**; engines **Node >=20**. Regenerated all `package-lock.json` files (`npm install`).
 - **Python**: `backend/requirements.txt` floors for **FastAPI 0.135.x**, **uvicorn 0.44+**, **pydantic-settings 2.13+**, **ruff 0.15.9+**; root `requirements.txt` **Locust 2.43.4**, **requests 2.33.1**, **pandas 3.0.2**; `pyproject.toml` **numpy 2.4.4**, **mypy 1.20.0**, **pyright 1.1.408**; `data/core/tests/requirements.txt` pytest floors; `.github/workflows/env-be.yml` pip install aligned with Locust/requests.

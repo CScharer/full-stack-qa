@@ -776,6 +776,8 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<version>${jackson.version}</version>
 		</dependency>
 		<!-- jackson-annotations: remain on com.fasterxml.jackson.core 2.x with REST Assured 6 + Jackson 3 -->
+		<!-- It remains at com.fasterxml.jackson.core with version 2.20 (latest 2.x, NOT 2.20.0) -->
+		<!-- REST Assured 6.0.0 works with jackson-annotations 2.20 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>

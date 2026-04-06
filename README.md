@@ -139,6 +139,10 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 ### Recent Improvements (April 6, 2026)
 - ✅ **Dependency refresh (stable only)** — Bumped Maven, npm, and Python pins to current stable releases (e.g. Selenium **4.41.0**, Cucumber **7.34.3**, Jackson **3.1.1**, Netty **4.2.12.Final**, Next.js **16.2.2**, TypeScript **6.0.2**, Vitest **4.1.2**, Playwright **1.59.1**, Cypress **15.13.0**, Locust **2.43.4**, FastAPI **0.135.x** line). Pre-release Maven suggestions (alphas, milestones, betas) were skipped. **DBUnit** remains **2.8.0** (3.x is a breaking migration). See `docs/process/VERSION_TRACKING.md` for the full table.
 
+### Recent Improvements (April 6, 2026)
+- ✅ **Documentation** - Root README and guides now reference `config/` and `xml/` (not legacy `Configurations/` / `XML/`). [Version tracking](docs/process/VERSION_TRACKING.md) updated for Jackson **3.1.1** and Vite **8.0.5** (Dependabot-aligned).
+- ✅ **Validation script path** - Docs point to `scripts/quality/validate-dependency-versions.sh` (actual location).
+
 ### Recent Improvements (December 18, 2025)
 - ✅ **Performance Integration** - Re-targeted 100% of performance tests to hit internal app services (ports 8003/3003).
 - ✅ **Stability & Gating** - Implemented Fail-Fast Barrier Propagation across all 7 stages of the CI/CD pipeline.
@@ -236,7 +240,7 @@ gcloud secrets versions access latest --secret="AUTO_BTSQA_PASSWORD"
 # Copy template files to create working configurations
 cp xml/Companies.xml.template xml/Companies.xml
 cp xml/UserSettings.xml.template xml/UserSettings.xml
-cp Configurations/Environments.xml.template Configurations/Environments.xml
+cp config/Environments.xml.template config/Environments.xml
 ```
 
 ### 4. Verify Installation
@@ -332,13 +336,13 @@ gcloud secrets list | grep AUTO
 
 ### Environment Configuration
 
-Configure test execution in `Configurations/Environments.xml`:
+Configure test execution in `config/Environments.xml`:
 - Browser selection (Chrome, Firefox, Edge)
 - Timeouts (page, element, alert)
 - Grid settings (local vs remote)
 - Logging options
 
-See `Configurations/README.md` for details.
+See `config/README.md` for details.
 
 ---
 
@@ -704,7 +708,7 @@ full-stack-qa/
 ├── xml/                                    # Configuration files
 │   ├── Companies.xml.template              # Company config template
 │   └── UserSettings.xml.template           # User settings template
-├── Configurations/                         # Environment configs
+├── config/                                 # Environment configs (JSON + XML)
 ├── data/                                   # Test data and SQL scripts
 ├── .github/                                # GitHub templates
 │   ├── ISSUE_TEMPLATE/                     # Issue templates
@@ -809,7 +813,7 @@ String apiKey = EAPIKeys.VIVIT_GT_WEBINAR_CONSUMER_KEY.getValue();
 All sensitive configuration files are **protected by .gitignore** and never committed:
 - `xml/Companies.xml` - Company credentials
 - `xml/UserSettings.xml` - Test credentials
-- `Configurations/Environments.xml` - Environment configurations
+- `config/Environments.xml` - Environment configurations
 - Any `*-key.json` - Service account keys
 
 ### Security Documentation
@@ -1074,7 +1078,7 @@ Comprehensive documentation available in `/docs`:
 
 ### Configuration
 - **[xml/README.md](xml/README.md)** - XML configuration setup
-- **[Configurations/README.md](Configurations/README.md)** - Environment configuration
+- **[config/README.md](config/README.md)** - Environment configuration
 - **[scripts/README.md](scripts/README.md)** - Script usage guide
 
 ---
@@ -1286,7 +1290,7 @@ gcloud auth application-default login
 #### "Configuration file not found"
 ```bash
 # Solution: Copy template files
-cp XML/Companies.xml.template XML/Companies.xml
+cp xml/Companies.xml.template xml/Companies.xml
 ```
 
 **More help**: See `docs/` directory for comprehensive guides.
