@@ -94,7 +94,12 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 📈 Document History
 
-**Last Updated**: January 16, 2026
+**Last Updated**: April 6, 2026
+
+### April 6, 2026
+- ✅ **Documentation refresh** — Root [README.md](../README.md): `config/` and `xml/` paths (replacing stale `Configurations/` / `XML/` references); Jackson 3.1.1 and Vite 8.0.5 called out in Recent Improvements.
+- ✅ **Version tracking** — [VERSION_TRACKING.md](process/VERSION_TRACKING.md) and [VERSION_MONITORING.md](process/VERSION_MONITORING.md): `scripts/quality/validate-dependency-versions.sh`, Dependabot #78 / Vite alerts, review dates.
+- ✅ **Setup guides** — [QUICK_START.md](QUICK_START.md), [LOCAL_DEVELOPMENT.md](guides/setup/LOCAL_DEVELOPMENT.md), [NAVIGATION.md](NAVIGATION.md), [SECURITY.md](process/SECURITY.md), [frontend/README.md](../frontend/README.md), [backend/README.md](../backend/README.md): last-updated dates and prerequisites aligned with Node 20 / Python 3.13; local structure uses `data/core/`.
 
 ### January 16, 2026
 - ✅ **Quick Wins Analysis - All Items Completed** (Items 1.1-6.1)

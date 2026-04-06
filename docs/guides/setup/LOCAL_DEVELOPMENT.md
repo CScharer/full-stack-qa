@@ -1,6 +1,6 @@
 # Local Development Guide
 
-**Last Updated**: 2025-12-27  
+**Last Updated**: 2026-04-06  
 **Purpose**: Guide for running the ONE GOAL frontend and backend locally
 
 ---
@@ -9,8 +9,8 @@
 
 Before running the application locally, ensure you have:
 
-- **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
-- **Python** (v3.12 or higher) - [Download](https://www.python.org/downloads/)
+- **Node.js** (v20 or higher recommended; matches root QA stack) - [Download](https://nodejs.org/)
+- **Python** (v3.13 or higher recommended; matches root QA stack) - [Download](https://www.python.org/downloads/)
 - **Git** - [Download](https://git-scm.com/downloads)
 - **SQLite3** (usually included with Python)
 
@@ -368,15 +368,14 @@ full-stack-qa/
 │   ├── package.json        # Node.js dependencies
 │   └── .env.local          # Frontend environment variables
 │
-├── Data/
-│   └── Core/
-│       ├── full_stack_qa.db  # Schema database (template only)
-│       ├── full_stack_qa_dev.db  # Development database (default)
-│       └── full_stack_qa_test.db  # Test database
+├── data/core/              # SQLite databases (runtime)
+│   ├── full_stack_qa.db        # Schema reference (template only)
+│   ├── full_stack_qa_dev.db    # Development (default)
+│   └── full_stack_qa_test.db   # Test environment
 │
-└── scripts/                # Helper scripts
-    ├── start-be.sh
-    └── start-fe.sh
+├── config/                 # environments.json, Environments.xml, templates
+│
+└── scripts/services/       # start-be.sh, start-fe.sh, start-env.sh
 ```
 
 ---

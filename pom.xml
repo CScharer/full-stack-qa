@@ -124,7 +124,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<json-path.version>6.0.0</json-path.version>
 		<json-schema-validator.version>6.0.0</json-schema-validator.version>
 		<!-- Jackson 3 for REST Assured 6.0.0 (REST Assured 6.0.0 uses Jackson 3 with new package structure) -->
-		<jackson.version>3.1.0</jackson.version>
+		<jackson.version>3.1.1</jackson.version>
 
 		<!-- Performance Testing -->
 		<gatling.version>3.14.9</gatling.version>
@@ -769,13 +769,13 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<scope>test</scope>
 		</dependency>
 		<!-- Jackson 3 dependencies required for REST Assured 6.0.0 -->
-		<!-- Jackson 3.0.0 uses tools.jackson.core groupId for core and databind -->
+		<!-- Jackson 3.x uses tools.jackson.core groupId for core and databind (${jackson.version}) -->
 		<dependency>
 			<groupId>tools.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-		<!-- jackson-annotations: Jackson 3.0.0 does NOT include jackson-annotations 3.0.0 -->
+		<!-- jackson-annotations: remain on com.fasterxml.jackson.core 2.x with REST Assured 6 + Jackson 3 -->
 		<!-- It remains at com.fasterxml.jackson.core with version 2.20 (latest 2.x, NOT 2.20.0) -->
 		<!-- REST Assured 6.0.0 works with jackson-annotations 2.20 -->
 		<dependency>
