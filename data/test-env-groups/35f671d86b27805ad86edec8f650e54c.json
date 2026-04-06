@@ -1,1 +1,1 @@
-{"id":"35f671d86b27805ad86edec8f650e54c","fullName":"com.cjs.qa.jdbc.JDBCTest.getDatabaseTablesViewsFields","name":"getDatabaseTablesViewsFields() [DEV]","status":"skipped","testResultsByEnv":{"default":"ee45c1f5c3f45d90a7777e32fd1ed562"}}
+{"id":"35f671d86b27805ad86edec8f650e54c","fullName":"com.cjs.qa.jdbc.JDBCTest.getDatabaseTablesViewsFields","name":"getDatabaseTablesViewsFields() [TEST]","status":"skipped","testResultsByEnv":{"default":"90e3ce39b1e8e6811504676af5675bc8"}}

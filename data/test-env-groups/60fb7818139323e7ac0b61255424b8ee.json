@@ -1,1 +1,1 @@
-{"id":"60fb7818139323e7ac0b61255424b8ee","fullName":"com.cjs.qa.bts.BTSConvertDatabaseToXMLTests.readFromXML","name":"readFromXML() [DEV]","status":"skipped","testResultsByEnv":{"default":"89710e77cdbfa43cced81837165cb22b"}}
+{"id":"60fb7818139323e7ac0b61255424b8ee","fullName":"com.cjs.qa.bts.BTSConvertDatabaseToXMLTests.readFromXML","name":"readFromXML() [TEST]","status":"skipped","testResultsByEnv":{"default":"525cdf3c05929163d65fdaf7dd078f48"}}
