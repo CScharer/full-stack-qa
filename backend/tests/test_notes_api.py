@@ -1,9 +1,8 @@
 """
 Tests for Notes API endpoints.
 """
-import pytest
 from fastapi.testclient import TestClient
-from conftest import api_url
+from tests.conftest import api_url
 
 ENDPOINT: str = "/notes"
 ENDPOINT_APPLICATIONS: str = "/applications"

@@ -145,16 +145,23 @@ The API base path (e.g., `/api/v1`) is configured in `config/environments.json` 
 
 ## 🧪 Testing
 
+Run pytest from the **`backend/`** directory so `app` and `tests` resolve correctly. **`backend/pyproject.toml`** sets `pythonpath` to the repository root (`..`, for `config.port_config`) and the backend directory (`.`, for `app` and `tests`). API test modules import helpers with **`from tests.conftest import api_url`** (not `from conftest import …`).
+
 ```bash
+cd backend
+source venv/bin/activate   # if you use a venv
+
 # Run all tests
-pytest
+pytest tests/ -v
 
 # Run with coverage
-pytest --cov=app --cov-report=html
+pytest tests/ --cov=app --cov-report=html
 
-# Run specific test file
-pytest tests/test_applications.py
+# Run one file
+pytest tests/test_applications_api.py -v
 ```
+
+From the repository root you can use **`./scripts/tests/frameworks/run-backend-tests.sh`** (it runs `pytest` under `backend/` with the same layout).
 
 ## 📝 Development
 

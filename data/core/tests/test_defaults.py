@@ -1,8 +1,6 @@
 """
 Tests for default values and constraints.
 """
-import pytest
-import sqlite3
 
 
 class TestDefaults:

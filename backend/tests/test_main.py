@@ -1,9 +1,8 @@
 """
 Tests for main FastAPI application.
 """
-import pytest
 from fastapi.testclient import TestClient
-from conftest import api_url
+from tests.conftest import api_url
 
 
 def test_root_endpoint(client: TestClient):

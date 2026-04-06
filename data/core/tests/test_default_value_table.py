@@ -1,8 +1,6 @@
 """
 Tests for the default_value table functionality.
 """
-import pytest
-import sqlite3
 
 
 class TestDefaultValueTable:

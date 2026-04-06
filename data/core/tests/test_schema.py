@@ -1,8 +1,6 @@
 """
 Tests for database schema creation and structure.
 """
-import pytest
-import sqlite3
 
 
 class TestSchemaCreation:
