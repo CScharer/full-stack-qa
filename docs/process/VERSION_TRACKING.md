@@ -5,7 +5,7 @@
 **Purpose**: Track dependency versions and schedule periodic updates  
 **Update Frequency**: Monthly review recommended
 
-> **💡 Automation**: Version validation is now automated via `scripts/validate-dependency-versions.sh` and CI/CD job `validate-versions`. This helps prevent version drift and ensures versions are aligned across the project.
+> **💡 Automation**: Version validation is now automated via `scripts/quality/validate-dependency-versions.sh` and CI/CD job `validate-dependency-versions` (see `.github/workflows/ci.yml`). This helps prevent version drift and ensures versions are aligned across the project.
 > 
 > **✅ Pre-Push Validation**: Pre-push version validation is now implemented! The pre-push hook automatically validates Selenium versions before code is pushed. See [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md) for details.
 
@@ -58,8 +58,8 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-04-04 (npm security overrides: lodash, brace-expansion, socket.io-parser; Dependabot #75–#78)
-- **Latest Stable Versions Check**: 2026-04-04 (npm audit clean in frontend, cypress, playwright; run `npm outdated` / `pip list --outdated` for optional updates)
+- **Last Review**: 2026-04-06 (Maven: Jackson **3.1.1** `tools.jackson.core`; npm: Vite **8.0.5** frontend; Dependabot #78, #80, #82, #84)
+- **Latest Stable Versions Check**: 2026-04-06 (frontend `npm audit` clean; `mvn dependency:tree` shows `tools.jackson.core:jackson-core:3.1.1` with databind 3.1.1)
 - **Next Review**: 2026-05-01 (recommended)
 
 ### Stable vs. latest
@@ -97,7 +97,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | TestNG | 7.11.0 | 7.11.0 | [✅] | - | Current |
 | JUnit | 6.0.2 | 6.0.2 | [✅] | 2026-01-24 | Latest stable: 6.0.2 - Compilation verified ✅ - Migration complete ✅ (all test files migrated from JUnit 4 to JUnit 6 APIs) |
 | Cucumber | 7.33.0 | 7.33.0 | [✅] | - | Current |
-| REST Assured | 6.0.0 | 6.0.0 | [✅] | 2025-12-19 | Updated in PR #51 - Requires Java 17+, Jackson 3.1.0 |
+| REST Assured | 6.0.0 | 6.0.0 | [✅] | 2025-12-19 | Updated in PR #51 - Requires Java 17+, Jackson 3.1.x (`tools.jackson.core`) |
 | Allure3 CLI | 3.0.0 | 3.0.0 | [✅] | 2025-12-30 | Active - Allure3 CLI in use (TypeScript-based, npm install) |
 | Allure2 Java | 2.32.0 | 2.32.0 | [✅] | 2025-12-30 | Latest in Maven Central (Java libraries unchanged) |
 
@@ -129,9 +129,9 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | WebDriverManager | 6.3.3 | 6.3.3 | [✅] | - | Current |
 | Log4j 2 | 2.25.3 | 2.25.3 | [✅] | 2025-12-19 | Updated via Dependabot PR #52 - Current stable version (2.25.x series in Active Maintenance) |
 | Logback Core | 1.5.25 | 1.5.25 | [✅] | 2026-01-24 | Security fix - Overrides vulnerable 1.5.20 from Gatling transitive dependency (CVE) |
-| Jackson Databind | 3.1.0 | 3.1.0 | [✅] | 2026-02-13 | Security fix - Dependabot #26 (jackson.version in pom.xml) |
+| Jackson Databind (3.x) | 3.1.1 | 3.1.1 | [✅] | 2026-04-06 | `jackson.version` in pom.xml; pulls `tools.jackson.core:jackson-core` **3.1.1** (Dependabot #78, GHSA stack / nesting constraints) |
 | Jackson Core (2.x) | 2.21.1 | 2.21.1 | [✅] | 2026-02-13 | Security fix - Explicit override for Dependabot #27 (transitive from cucumber-reporting) |
-| Jackson Annotations | 2.20 | 2.20 | [✅] | 2025-12-19 | Compatible with Jackson 3.0.0 |
+| Jackson Annotations | 2.20 | 2.20 | [✅] | 2025-12-19 | Compatible with Jackson 3.x alongside REST Assured 6 |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | MSSQL JDBC | 13.2.1.jre11 | 13.2.1.jre11 | [✅] | 2025-12-30 | Current stable version |
 | PostgreSQL JDBC | 42.7.9 | 42.7.9 | [✅] | 2026-01-16 | Updated from 42.7.8 (Item 5.2) |
@@ -190,7 +190,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | React | 19.2.4 | 19.2.4 | [✅] | 2026-02-13 | Bumped to current stable |
 | Next.js | 16.1.7 | 16.1.7 | [✅] | 2026-04-04 | Patch bump (package.json); align `eslint-config-next` when Next minor bumps |
 | @tanstack/react-query | 5.90.21 | 5.90.21 | [✅] | 2026-02-13 | Bumped to current stable |
-| eslint-config-next | 16.1.6 | 16.1.6 | [✅] | 2026-02-13 | Aligned with Next.js 16.1.6 |
+| eslint-config-next | 16.1.6 | 16.2.2+ | [✅] | 2026-04-06 | Works with Next **16.1.7**; newer `eslint-config-next` exists on npm—bump with coordinated Next/eslint upgrades |
 | TypeScript | 5.9.3 | 5.9.3 | [✅] | 2025-12-30 | Current stable version |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -200,7 +200,7 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 | jsdom | 28.1.0 | 28.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | ESLint | 10.0.3 | 10.0.3 | [✅] | 2026-03-13 | Bumped to current stable |
 | @types/node | 25.5.0 | 25.5.0 | [✅] | 2026-03-13 | Bumped to current stable |
-| Vite | 8.0.0 | 8.0.0 | [✅] | 2026-03-13 | Added explicit Vite devDependency for frontend toolchain |
+| Vite | ^8.0.5 (lock 8.0.5) | 8.0.5 | [✅] | 2026-04-06 | Security fix - Vite 8.0.0–8.0.4 (Dependabot #80, #82, #84); minimum **8.0.5** |
 | @vitejs/plugin-react | 6.0.0 | 6.0.0 | [✅] | 2026-03-13 | Bumped to current stable (requires Vite 8; tests passing) |
 | @vitest/coverage-v8 | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
 | @vitest/ui | 4.1.0 | 4.1.0 | [✅] | 2026-03-13 | Bumped to current stable |
@@ -286,13 +286,13 @@ As of **2026-02-13** the optional Node.js updates listed below were applied; all
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-04-04)
+### Current Status (as of 2026-04-06)
 
 Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-Recent fixes (see Update History): Jackson #26/#27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash + **brace-expansion** + **socket.io-parser** (npm overrides, #75–#78), black #40 (Python backend).
+Recent fixes (see Update History): **Jackson 3** `tools.jackson.core:jackson-core` **3.1.1** (#78), **Vite 8.0.5** (#80, #82, #84); plus Jackson 2.x #27, minimatch #35–#37, qs #13, fast-xml-parser #11, ajv (frontend ReDoS), logback-core, lodash + **brace-expansion** + **socket.io-parser** (npm overrides; see 2026-04-04 history), black #40 (Python backend).
 
 ### Update Strategy
 
@@ -350,6 +350,11 @@ The `overrides` section forces all instances of the package (including transitiv
 ---
 
 ## 📋 Update History
+
+### 2026-04-06
+- **Security Fix - Jackson 3 (Maven, Dependabot #78)**: `jackson.version` **3.1.0 → 3.1.1** in `pom.xml`. Resolves HIGH advisory on `tools.jackson.core:jackson-core` (versions ≤ 3.1.0). Transitive `jackson-core` now **3.1.1** with `jackson-databind` **3.1.1**.
+- **Security Fix - Vite (npm, Dependabot #80, #82, #84)**: Frontend `vite` **^8.0.5** with lockfile **8.0.5** (patched range 8.0.0–8.0.4).
+- **Documentation**: Root `README.md` uses `config/` and `xml/` paths; validation script references updated to `scripts/quality/validate-dependency-versions.sh` across process docs.
 
 ### 2026-04-04
 - **Security Fix - npm (Dependabot #75–#78)**: Cleared `npm audit` findings across **frontend**, **cypress**, and **playwright** using `overrides` and updated lockfiles.
@@ -526,7 +531,7 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-06
 - **Next Review**: 2026-05-01 (recommended)
 - **Maintainer**: Development Team
 

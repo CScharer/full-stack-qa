@@ -387,7 +387,7 @@ System.out.println(status);
 **Solutions:**
 1. Check version mismatches:
    ```bash
-   ./scripts/validate-dependency-versions.sh
+   ./scripts/quality/validate-dependency-versions.sh
    ```
 
 2. Update mismatched versions:
