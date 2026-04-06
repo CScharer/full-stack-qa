@@ -97,8 +97,8 @@ This directory contains all project documentation and analysis reports for the C
 **Last Updated**: April 6, 2026
 
 ### April 6, 2026
-- ✅ **Documentation refresh** — Root [README.md](../README.md): `config/` and `xml/` paths (replacing stale `Configurations/` / `XML/` references); Jackson 3.1.1 and Vite 8.0.5 called out in Recent Improvements.
-- ✅ **Version tracking** — [VERSION_TRACKING.md](process/VERSION_TRACKING.md) and [VERSION_MONITORING.md](process/VERSION_MONITORING.md): `scripts/quality/validate-dependency-versions.sh`, Dependabot #78 / Vite alerts, review dates.
+- ✅ **Comprehensive stable dependency bump** — Maven, npm, Python, CI Selenium default, and regenerated lockfiles. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md) Update History **2026-04-06 (comprehensive stable bump)** and root [README.md](../README.md) “Recent Improvements”. Includes Dependabot-aligned pins (e.g. Jackson **3.1.1**, Vite **8.0.5**).
+- ✅ **Documentation** — Root README badges/tables and `config/` / `xml/` paths; `VERSION_TRACKING.md`, `VERSION_MONITORING.md`, Selenium Grid / Docker / CI troubleshooting / Allure guides; `scripts/quality/validate-dependency-versions.sh`; JavaDoc examples in `GridTestUtils` / `SeleniumGridVersionValidator`; `frontend/README.md` (TypeScript 6, Vitest 4.1.x, Node 20).
 - ✅ **Setup guides** — [QUICK_START.md](QUICK_START.md), [LOCAL_DEVELOPMENT.md](guides/setup/LOCAL_DEVELOPMENT.md), [NAVIGATION.md](NAVIGATION.md), [SECURITY.md](process/SECURITY.md), [frontend/README.md](../frontend/README.md), [backend/README.md](../backend/README.md): last-updated dates and prerequisites aligned with Node 20 / Python 3.13; local structure uses `data/core/`.
 
 ### January 16, 2026

@@ -13,20 +13,20 @@
     "clean": "rm -rf dist coverage test-results .vitest"
   },
   "dependencies": {
-    "vibium": "^26.3.11"
+    "vibium": "^26.3.18"
   },
   "optionalDependencies": {
-    "@vibium/darwin-arm64": "^26.3.11",
-    "@vibium/linux-x64": "^26.3.11"
+    "@vibium/darwin-arm64": "^26.3.18",
+    "@vibium/linux-x64": "^26.3.18"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0"
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "npm": ">=9.0.0"
   }
 }

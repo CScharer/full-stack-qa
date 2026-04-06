@@ -1,7 +1,7 @@
-// Example demonstrating the Vibium browser automation framework
-// Updated for vibium@0.1.2 - the actual released package
-
-import { browser, browserSync } from "vibium";
+// Example demonstrating the Vibium browser automation framework.
+// Do not import "vibium" at module load time: the npm package may omit dist/ until
+// postinstall/platform binaries run, and Vitest fails resolving the package entry.
+// Real API paths use dynamic import(); mock paths avoid the package entirely.
 
 // Type definitions matching the actual Vibium API
 interface VibiumElement {
@@ -36,7 +36,8 @@ interface VibiumBrowserSync {
 async function asyncAPIHandled(): Promise<void> {
   try {
     console.log('\n📝 Running asyncAPI() with real Vibium package...\n');
-    
+
+    const { browser } = await import("vibium");
     // Launch browser (headless by default in tests)
     const vibe = await browser.launch({ headless: true });
     
@@ -72,7 +73,8 @@ async function asyncAPIHandled(): Promise<void> {
 async function syncAPIHandled(): Promise<void> {
   try {
     console.log('\n📝 Running syncAPI() with real Vibium package...\n');
-    
+
+    const { browserSync } = await import("vibium");
     // Launch browser synchronously
     const vibe = browserSync.launch({ headless: true });
     
@@ -182,12 +184,16 @@ async function syncAPIMocked(): Promise<void> {
 }
 
 /**
- * Placeholder handler - no longer needed since package is released
- * Kept for backward compatibility with tests
+ * Smoke log for tests that assert this helper loads without a static `vibium` import.
+ * Kept for backward compatibility with tests.
  */
 function handlePlaceholder(): void {
-  console.log('✅ Vibium package v0.1.2 is available!');
-  console.log('📦 Using real browserSync and browser APIs\n');
+  console.log(
+    '✅ Vibium is declared as an npm dependency (^26.x; see vibium/package.json).'
+  );
+  console.log(
+    '📦 Real browser examples load `vibium` via dynamic import when dist and the clicker binary are available.\n'
+  );
 }
 
 export {

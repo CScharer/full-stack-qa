@@ -1,17 +1,12 @@
 # Python Dependencies for Performance Testing
 # Install: pip install -r requirements.txt
 
-# Locust - Performance Testing Framework (2.43+ needed for requests>=2.32.5; 2.42.x pins requests<2.32.5)
-locust==2.43.3
+locust==2.43.4
 
-# Additional utilities
-requests==2.33.0
+requests==2.33.1
 python-dotenv==1.2.1
 
-# Security updates for transitive dependencies
-urllib3>=2.6.0  # Fixes CVE: Decompression-bomb safeguards bypass (Alert #38)
+urllib3>=2.6.0
 
-# Reporting and visualization
 matplotlib==3.10.8
-pandas==2.3.3
-
+pandas==3.0.2
