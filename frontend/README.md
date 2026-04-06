@@ -1,13 +1,13 @@
 # Frontend Application
 
-This is a [Next.js](https://nextjs.org) project with TypeScript that provides the user interface for the job search application.
+This is a [Next.js](https://nextjs.org) project (App Router) with **TypeScript 6** and [Vitest](https://vitest.dev/) **4.1.x** (via [Vite](https://vite.dev/) **8.x**) for unit and component tests. It provides the user interface for the job search application.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
-- npm >= 9.0.0
+- **Node.js** 20+ (aligned with the main `full-stack-qa` repository)
+- **npm** 9+
 
 ### Development
 
@@ -90,5 +90,7 @@ frontend/
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API
+- [Vite Documentation](https://vite.dev/guide/) - dev server and test runner base (Vitest uses Vite 8.x in this project)
 - [Vitest Documentation](https://vitest.dev/) - testing framework
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/) - TypeScript 6
 - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) - component testing

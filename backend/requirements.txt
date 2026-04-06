@@ -2,22 +2,22 @@
 # ONE GOAL Project
 
 # Core Framework
-fastapi>=0.124.4  # Latest stable (0.125.0 does not exist)
-uvicorn[standard]>=0.38.0
-starlette>=0.50.0  # Updated for httpx 0.28+ compatibility
+fastapi>=0.135.3
+uvicorn[standard]>=0.44.0
+starlette>=0.46.0
 
 # Database
-aiosqlite>=0.22.1  # Async SQLite support (optional, can use sqlite3)
+aiosqlite>=0.22.1
 
 # Data Validation
 pydantic>=2.12.5
-pydantic-settings>=2.12.0
+pydantic-settings>=2.13.1
 
 # Environment Variables
 python-dotenv>=1.2.1
 
 # HTTP Client (for testing)
-httpx>=0.28.1  # Compatible with updated FastAPI/Starlette
+httpx>=0.28.1
 
 # Testing
 pytest>=9.0.2
@@ -26,8 +26,8 @@ pytest-cov>=7.0.0
 
 # Development
 black>=26.3.1
-ruff>=0.14.10
+ruff>=0.15.9
 
 # Security updates for transitive dependencies
-urllib3>=2.6.0  # Fixes CVE: Decompression-bomb safeguards bypass (Alert #38)
-Werkzeug>=3.1.0  # Fixes CVE: safe_join() Windows device names vulnerability (Alert #39)
+urllib3>=2.6.0
+Werkzeug>=3.1.0

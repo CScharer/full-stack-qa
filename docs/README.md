@@ -94,7 +94,11 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 📈 Document History
 
-**Last Updated**: January 16, 2026
+**Last Updated**: April 6, 2026
+
+### April 6, 2026
+- ✅ **Comprehensive stable dependency bump** (branch `chore/bump-all-stable-versions`, not yet committed): Maven, npm, Python, CI Selenium default, and regenerated lockfiles. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md) Update History **2026-04-06 (comprehensive stable bump)** and root [README.md](../README.md) “Recent Improvements”.
+- ✅ **Documentation** — Root README badges/tables; `VERSION_TRACKING.md`, `VERSION_MONITORING.md`, Selenium Grid / Docker / CI troubleshooting / Allure guides; JavaDoc examples in `GridTestUtils` / `SeleniumGridVersionValidator`; `validate-dependency-versions.sh` comment; `frontend/README.md` (TypeScript 6, Vitest 4.1.x, Node 20).
 
 ### January 16, 2026
 - ✅ **Quick Wins Analysis - All Items Completed** (Items 1.1-6.1)

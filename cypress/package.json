@@ -12,13 +12,13 @@
     "build": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0",
-    "cypress": "^15.11.0",
+    "@types/node": "^25.5.2",
+    "cypress": "^15.13.0",
     "qs": "^6.15.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "npm": ">=9.0.0"
   },
   "overrides": {

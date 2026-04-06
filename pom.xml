@@ -32,7 +32,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
 		<maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-		<maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
 		<!-- Cucumber Dependencies-->
 		<cucumber.features>src/test/resources</cucumber.features>
 		<cucumber.glue>com.cjs.qa.cucumber.steps</cucumber.glue>
@@ -41,17 +41,17 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<!-- Jar Dependencies-->
 		<activation.version>1.1.1</activation.version>
 		<asm.version>9.9.1</asm.version>
-		<byte-buddy.version>1.18.4</byte-buddy.version>
+		<byte-buddy.version>1.18.8</byte-buddy.version>
 		<byte-buddy-agent.version>${byte-buddy.version}</byte-buddy-agent.version>
 		<commons-collections.version>3.2.2</commons-collections.version>
 		<commons-csv.version>1.14.1</commons-csv.version>
 		<commons-io.version>2.21.0</commons-io.version>
 		<commons-lang3.version>3.20.0</commons-lang3.version>
-		<commons-logging.version>1.3.5</commons-logging.version>
+		<commons-logging.version>1.3.6</commons-logging.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
-		<netty-codec-http.version>4.2.11.Final</netty-codec-http.version>
-		<rhino.version>1.9.0</rhino.version>
-		<cucumber.version>7.33.0</cucumber.version>
+		<netty-codec-http.version>4.2.12.Final</netty-codec-http.version>
+		<rhino.version>1.9.1</rhino.version>
+		<cucumber.version>7.34.3</cucumber.version>
 		<cucumber-core.version>${cucumber.version}</cucumber-core.version>
 		<cucumber-java.version>${cucumber.version}</cucumber-java.version>
 		<cucumber-junit.version>${cucumber.version}</cucumber-junit.version>
@@ -71,7 +71,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<guava.version>33.5.0-jre</guava.version>
 		<hsqldb.version>2.7.4</hsqldb.version>
 		<htmlunit.version>4.21.0</htmlunit.version>
-		<htmlunit-driver.version>4.39.0</htmlunit-driver.version>
+		<htmlunit-driver.version>4.41.0</htmlunit-driver.version>
 		<httpclient.version>4.5.14</httpclient.version>
 		<httpmime.version>4.5.14</httpmime.version>
 		<ipp-v3-java.version>6.7.0</ipp-v3-java.version>
@@ -80,7 +80,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<javax.persistence-api>2.2</javax.persistence-api>
 		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 		<jface.version>3.5.2</jface.version>
-		<joda-time.version>2.14.0</joda-time.version>
+		<joda-time.version>2.14.1</joda-time.version>
 		<h2.version>2.4.240</h2.version>
 		<hibernate.version>5.6.15.Final</hibernate.version>
 		<eclipse-jface.version>3.5.2</eclipse-jface.version>
@@ -91,48 +91,48 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<jxl.version>2.6.12</jxl.version>
 		<lazy.version>1.0.1</lazy.version>
 		<mail.version>1.4.7</mail.version>
-		<mockito-core.version>5.21.0</mockito-core.version>
-		<mssql-jdbc.version>13.2.1.jre11</mssql-jdbc.version>
-		<objenesis.version>3.4</objenesis.version>
-		<pdfbox.version>3.0.6</pdfbox.version>
+		<mockito-core.version>5.23.0</mockito-core.version>
+		<mssql-jdbc.version>13.4.0.jre11</mssql-jdbc.version>
+		<objenesis.version>3.5</objenesis.version>
+		<pdfbox.version>3.0.7</pdfbox.version>
 		<plexus-utils.version>4.0.3</plexus-utils.version>
 		<poi.version>5.5.1</poi.version>
 		<poi-ooxml-schemas.version>${poi.version}</poi-ooxml-schemas.version>
 		<saucerest.version>2.5.3</saucerest.version>
-        <secretmanager.version>2.82.0</secretmanager.version>
-		<selenide.version>7.13.0</selenide.version>
-		<selenium.version>4.40.0</selenium.version>
-		<webdrivermanager.version>6.3.3</webdrivermanager.version>
-		<appium.version>10.0.0</appium.version>
-		<allure.version>2.32.0</allure.version>
+        <secretmanager.version>2.88.0</secretmanager.version>
+		<selenide.version>7.15.1</selenide.version>
+		<selenium.version>4.41.0</selenium.version>
+		<webdrivermanager.version>6.3.4</webdrivermanager.version>
+		<appium.version>10.1.0</appium.version>
+		<allure.version>2.33.0</allure.version>
 		<aspectj.version>1.9.25.1</aspectj.version>
 
 		<!-- Code Quality Tools -->
-		<checkstyle.version>13.0.0</checkstyle.version>
+		<checkstyle.version>13.4.0</checkstyle.version>
 		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-		<spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
+		<spotbugs-maven-plugin.version>4.9.8.3</spotbugs-maven-plugin.version>
 		<spotbugs.version>4.9.8</spotbugs.version>
-		<maven-pmd-plugin.version>3.27.0</maven-pmd-plugin.version>
-		<spotless-maven-plugin.version>2.40.0</spotless-maven-plugin.version>
+		<maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+		<spotless-maven-plugin.version>2.46.1</spotless-maven-plugin.version>
 
 		<!-- Logging -->
 		<log4j2.version>2.25.3</log4j2.version>
-		<logback-core.version>1.5.25</logback-core.version>
+		<logback-core.version>1.5.32</logback-core.version>
 
 		<!-- API Testing -->
 		<rest-assured.version>6.0.0</rest-assured.version>
 		<json-path.version>6.0.0</json-path.version>
 		<json-schema-validator.version>6.0.0</json-schema-validator.version>
 		<!-- Jackson 3 for REST Assured 6.0.0 (REST Assured 6.0.0 uses Jackson 3 with new package structure) -->
-		<jackson.version>3.1.0</jackson.version>
+		<jackson.version>3.1.1</jackson.version>
 
 		<!-- Performance Testing -->
-		<gatling.version>3.14.9</gatling.version>
-		<gatling-maven-plugin.version>4.3.6</gatling-maven-plugin.version>
+		<gatling.version>3.15.0</gatling.version>
+		<gatling-maven-plugin.version>4.21.5</gatling-maven-plugin.version>
 		<scala.version>2.13.18</scala.version>
-		<scala-maven-plugin.version>4.8.1</scala-maven-plugin.version>
+		<scala-maven-plugin.version>4.9.10</scala-maven-plugin.version>
 		<jmeter.version>5.6.3</jmeter.version>
-		<jmeter-maven-plugin.version>3.7.0</jmeter-maven-plugin.version>
+		<jmeter-maven-plugin.version>3.8.0</jmeter-maven-plugin.version>
 
 		<!-- Additional Testing Frameworks -->
 		<robotframework-maven-plugin.version>2.1.0</robotframework-maven-plugin.version>
@@ -153,7 +153,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<selenium-grid-hub.version>1.0.5</selenium-grid-hub.version>
 		<selenium-server-coreless.version>1.0.3</selenium-server-coreless.version>
 		<selenium-server-standalone.version>4.26.0</selenium-server-standalone.version>
-		<sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
+		<sqlite-jdbc.version>3.51.3.0</sqlite-jdbc.version>
 		<sqljdbc4.version>4.0</sqljdbc4.version>
 		<swt.version>4.6.1</swt.version>
 		<swt-win32.version>4.6.1</swt-win32.version>
@@ -276,7 +276,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.9</version>
+			<version>42.7.10</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -769,25 +769,23 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<scope>test</scope>
 		</dependency>
 		<!-- Jackson 3 dependencies required for REST Assured 6.0.0 -->
-		<!-- Jackson 3.0.0 uses tools.jackson.core groupId for core and databind -->
+		<!-- Jackson 3.x uses tools.jackson.core groupId for core and databind (${jackson.version}) -->
 		<dependency>
 			<groupId>tools.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-		<!-- jackson-annotations: Jackson 3.0.0 does NOT include jackson-annotations 3.0.0 -->
-		<!-- It remains at com.fasterxml.jackson.core with version 2.20 (latest 2.x, NOT 2.20.0) -->
-		<!-- REST Assured 6.0.0 works with jackson-annotations 2.20 -->
+		<!-- jackson-annotations: remain on com.fasterxml.jackson.core 2.x with REST Assured 6 + Jackson 3 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.20</version>
 		</dependency>
-		<!-- Explicit jackson-core 2.21.1 to override vulnerable 2.20.0 from cucumber-reporting (Dependabot #27) -->
+		<!-- Explicit jackson-core 2.x to override vulnerable lines from cucumber-reporting (Dependabot #27) -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.21.1</version>
+			<version>2.21.2</version>
 		</dependency>
 
 		<!-- Gatling for Performance Testing -->
@@ -919,7 +917,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<plugin>
 				<groupId>io.qameta.allure</groupId>
 				<artifactId>allure-maven</artifactId>
-				<version>2.16.1</version>
+				<version>2.17.0</version>
 				<configuration>
 					<reportVersion>${allure.version}</reportVersion>
 					<resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>

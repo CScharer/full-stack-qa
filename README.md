@@ -9,32 +9,32 @@
 [![JavaScript](https://img.shields.io/badge/logo-JavaScript-orange?logo=JavaScript)](https://www.JavaScriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 [![Python](https://img.shields.io/badge/Python-3.13-orange.svg)](https://www.python.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-orange.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.2-orange.svg)](https://www.typescriptlang.org/)
 
-[![Cucumber](https://img.shields.io/badge/Cucumber-7.33.0-brightgreen.svg)](https://cucumber.io/)
+[![Cucumber](https://img.shields.io/badge/Cucumber-7.34.3-brightgreen.svg)](https://cucumber.io/)
 [![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.0-blue.svg)](https://rest-assured.io/)
 
 [![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
 
 [![JUnit](https://img.shields.io/badge/JUnit-6.0.2-blue.svg)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
-[![Vitest](https://img.shields.io/badge/Vitest-4.1.0-blue.svg)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.1.2-blue.svg)](https://vitest.dev/)
 
 [![Performance](https://img.shields.io/badge/Performance-Artillery%20%7C%20Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
 [![Artillery](https://img.shields.io/badge/Artillery-2.0.30-blue.svg)](https://www.artillery.io/)
-[![Gatling.io](https://img.shields.io/badge/Gatling.io-3.14.9-blue.svg)](https://rest-gatling.io/)
+[![Gatling.io](https://img.shields.io/badge/Gatling.io-3.15.0-blue.svg)](https://rest-gatling.io/)
 [![JMeter](https://img.shields.io/badge/JMeter-5.6.3-blue.svg)](https://jmeter.apache.org/)
-[![Locust.io](https://img.shields.io/badge/Locust.io-2.42.6-blue.svg)](https://rest-locust.io/)
+[![Locust.io](https://img.shields.io/badge/Locust.io-2.43.4-blue.svg)](https://rest-locust.io/)
 
 [![UI Frameworks](https://img.shields.io/badge/UI%20Frameworks-Cypress%20%7C%20Playwright%20%7C%20Robot%20%7C%20Selenide%20%7C%20Selenium-yellow.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 
-[![Cypress](https://img.shields.io/badge/Cypress-15.11.0-blue.svg)](https://www.cypress.io)
-[![Playwright](https://img.shields.io/badge/Playwright-1.58.2-blue.svg)](https://playwright.dev/)
+[![Cypress](https://img.shields.io/badge/Cypress-15.13.0-blue.svg)](https://www.cypress.io)
+[![Playwright](https://img.shields.io/badge/Playwright-1.59.1-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
-[![Selenide](https://img.shields.io/badge/Selenide-7.13.0-blue.svg)](https://selenide.org/)
-[![Selenium](https://img.shields.io/badge/Selenium-4.40.0-blue.svg)](https://www.selenium.dev/)
-[![Vibium](https://img.shields.io/badge/Vibium-26.3.11-blue.svg)](https://vibium.com/) 🎄🎁
+[![Selenide](https://img.shields.io/badge/Selenide-7.15.1-blue.svg)](https://selenide.org/)
+[![Selenium](https://img.shields.io/badge/Selenium-4.41.0-blue.svg)](https://www.selenium.dev/)
+[![Vibium](https://img.shields.io/badge/Vibium-26.3.18-blue.svg)](https://vibium.com/) 🎄🎁
 
 [![Maven](https://img.shields.io/badge/Maven-3.9.11-blue.svg)](https://maven.apache.org/)
 [![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](https://www.docker.com/)
@@ -45,7 +45,7 @@
 
 [![Reporting](https://img.shields.io/badge/Reporting-Allure_Reports-yellow.svg)](docs/guides/testing/ALLURE_REPORTING.md)
 
-[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:3.0.0_Java:2.32.0-blue.svg)](https://allurereport.org/)
+[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:3.0.0_Java:2.33.0-blue.svg)](https://allurereport.org/)
 
 [![Coming Soon!!!](https://img.shields.io/badge/Coming%20Soon!!!-What's_Next!!!-cyan.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 <!-- [![Vibium](https://img.shields.io/badge/Vibium-0.1.2-cyan.svg)](https://vibium.com/) -->
@@ -120,21 +120,24 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Java 21** - Latest LTS version
 - **Python 3.13** - Latest stable version (for Robot Framework & Locust)
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
-- **TypeScript 5.9.3** - Type-safe JavaScript (for Cypress & Playwright)
-- **Selenium 4.40.0** - Modern WebDriver API with Grid support
-- **Playwright 1.58.2** - Fast and reliable end-to-end testing
-- **Cypress 15.11.0** - JavaScript end-to-end testing framework
+- **TypeScript 6.0.2** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
+- **Selenium 4.41.0** - Modern WebDriver API with Grid support
+- **Playwright 1.59.1** - Fast and reliable end-to-end testing
+- **Cypress 15.13.0** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
 - **REST Assured 6.0.0** - REST API testing & validation
-- **Cucumber 7.33.0** - BDD framework with Gherkin
+- **Cucumber 7.34.3** - BDD framework with Gherkin
 - **TestNG** - Advanced test framework with data providers
 - **Log4j 2.25.3** - Professional structured logging (updated via Dependabot PR #52)
 - **Maven 3.9.11** - Build management (wrapper included!)
 - **Docker & Docker Compose** - Complete containerization
-- **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.32.0** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
+- **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.33.0** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
-- **WebDriverManager 6.3.3** - Automatic driver management
+- **WebDriverManager 6.3.4** - Automatic driver management
+
+### Recent Improvements (April 6, 2026)
+- ✅ **Dependency refresh (stable only)** — Bumped Maven, npm, and Python pins to current stable releases (e.g. Selenium **4.41.0**, Cucumber **7.34.3**, Jackson **3.1.1**, Netty **4.2.12.Final**, Next.js **16.2.2**, TypeScript **6.0.2**, Vitest **4.1.2**, Playwright **1.59.1**, Cypress **15.13.0**, Locust **2.43.4**, FastAPI **0.135.x** line). Pre-release Maven suggestions (alphas, milestones, betas) were skipped. **DBUnit** remains **2.8.0** (3.x is a breaking migration). See `docs/process/VERSION_TRACKING.md` for the full table.
 
 ### Recent Improvements (December 18, 2025)
 - ✅ **Performance Integration** - Re-targeted 100% of performance tests to hit internal app services (ports 8003/3003).
@@ -1172,20 +1175,21 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 
 | Category | Library | Version |
 |----------|---------|---------|
-| **WebDriver** | Selenium | 4.40.0 |
-| **BDD** | Cucumber | 7.33.0 |
+| **WebDriver** | Selenium | 4.41.0 |
+| **BDD** | Cucumber | 7.34.3 |
 | **Testing** | JUnit | 6.0.2 |
 | **Testing** | TestNG | 7.11.0 |
-| **Testing** | Vitest | 4.1.0 |
+| **Testing** | Vitest | 4.1.2 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
 | **JSON** | Gson | 2.13.2 |
+| **JSON (Jackson 3)** | tools.jackson.core jackson-databind | 3.1.1 |
 | **Excel** | Apache POI | 5.5.1 |
-| **PDF** | PDFBox | 3.0.6 |
-| **Security** | Google Cloud Secret Manager | 2.82.0 |
-| **Driver Management** | WebDriverManager | 6.3.3 |
-| **UI Testing** | Playwright (TS) | 1.58.2 |
-| **UI Testing** | Cypress (TS) | 15.11.0 |
+| **PDF** | PDFBox | 3.0.7 |
+| **Security** | Google Cloud Secret Manager | 2.88.0 |
+| **Driver Management** | WebDriverManager | 6.3.4 |
+| **UI Testing** | Playwright (TS) | 1.59.1 |
+| **UI Testing** | Cypress (TS) | 15.13.0 |
 | **UI Testing** | Robot Framework | 2.1.0 |
 | **Database** | H2, SQLite, MSSQL | Various |
 | **Docker** | Docker Compose | 3.8 |
@@ -1220,7 +1224,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 - ARM64 (Apple Silicon) compatibility
 
 **✅ Allure Reporting with Screenshots**
-- Allure Framework integration (Allure3 CLI: 3.0.0, Allure2 Java: 2.32.0)
+- Allure Framework integration (Allure3 CLI: 3.0.0, Allure2 Java: 2.33.0)
 - Automatic screenshot capture on test failures only
 - Beautiful HTML dashboards with graphs
 - Epic/Feature/Story organization

@@ -190,4 +190,6 @@ ruff check app/ tests/
 
 ---
 
-**Last Updated**: 2025-12-14
+**Last Updated**: 2026-04-06
+
+Dependency floors in `requirements.txt` follow the current stable FastAPI / Starlette / Uvicorn line (see `docs/process/VERSION_TRACKING.md`).
