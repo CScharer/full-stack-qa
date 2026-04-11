@@ -116,7 +116,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<spotless-maven-plugin.version>2.46.1</spotless-maven-plugin.version>
 
 		<!-- Logging -->
-		<log4j2.version>2.25.3</log4j2.version>
+		<log4j2.version>2.25.4</log4j2.version>
 		<logback-core.version>1.5.32</logback-core.version>
 
 		<!-- API Testing -->
