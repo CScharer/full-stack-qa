@@ -82,9 +82,12 @@ jobs:
         if: inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only'
         env:
           BASE_URL: ${{ inputs.base_url }}
+          BACKEND_URL: ${{ steps.ports.outputs.backend_url }}
+          FRONTEND_URL: ${{ steps.ports.outputs.frontend_url }}
         run: |
           echo "⚡ Running Gatling BE Tests (${{ inputs.environment }})..."
-          echo "Base URL: $BASE_URL"
+          echo "Frontend (BASE_URL/FRONTEND_URL): $BASE_URL"
+          echo "Backend (BACKEND_URL): $BACKEND_URL"
           echo "Using Gatling profile (Scala-only compilation)..."
           ./mvnw -ntp gatling:test -Pgatling
 
