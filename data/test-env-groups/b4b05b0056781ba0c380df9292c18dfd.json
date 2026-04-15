@@ -1,1 +1,1 @@
-{"id":"b4b05b0056781ba0c380df9292c18dfd","fullName":"com.cjs.qa.junit.tests.MavenTests.dependencyTest","name":"dependencyTest() [DEV]","status":"passed","testResultsByEnv":{"default":"aa14d933f401286795613d430a0caf28"}}
+{"id":"b4b05b0056781ba0c380df9292c18dfd","fullName":"com.cjs.qa.junit.tests.MavenTests.dependencyTest","name":"dependencyTest() [TEST]","status":"passed","testResultsByEnv":{"default":"8474560dd8d68f741b50c8853f2a6582"}}

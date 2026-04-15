@@ -1,1 +1,1 @@
-{"id":"31b64399d9b8e0a149732fa37e3e61a8","fullName":"com.cjs.qa.junit.tests.ScenariosTests.dropbox","name":"dropbox(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"1e7d6c2ab986694ba6dcce6615a78a74"}}
+{"id":"31b64399d9b8e0a149732fa37e3e61a8","fullName":"com.cjs.qa.junit.tests.ScenariosTests.dropbox","name":"dropbox(TestInfo) [TEST]","status":"skipped","testResultsByEnv":{"default":"370dda2d16847fbc6cde738bc45241d5"}}
