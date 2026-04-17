@@ -101,5 +101,5 @@ RUN set -eux; \
 
 ### Notes
 
-- If the base image is always Ubuntu Noble, prefer `libasound2t64` only and fail fast if it cannot be installed.
+- If your resolved base image is confirmed Ubuntu Noble, prefer `libasound2t64` only and fail fast if it cannot be installed.
 - If supporting multiple Ubuntu variants, keep the explicit fallback as shown above.

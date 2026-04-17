@@ -48,22 +48,25 @@ LABEL maintainer="CJS Consulting, L.L.C"
 
 # Install required utilities and dependencies matching CI/CD environment
 # This ensures Docker runs the same way as the pipeline
-RUN apt-get update && apt-get install -y \
+RUN set -eux; \
+    apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 update; \
+    apt-get install -y --no-install-recommends \
     curl \
     bash \
     tzdata \
     wget \
     gnupg \
-    ca-certificates \
+    ca-certificates; \
     # Node.js 20 (for Cypress and Playwright)
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -; \
+    apt-get install -y --no-install-recommends nodejs; \
     # Update npm to latest version (suppress notice about new version)
-    && npm install -g npm@latest \
+    npm install -g npm@latest; \
     # Python 3.13 (for Robot Framework) - use python3 if 3.13 not available
-    && (apt-get install -y python3.13 python3.13-venv python3-pip || apt-get install -y python3 python3-venv python3-pip) \
+    (apt-get install -y --no-install-recommends python3.13 python3.13-venv python3-pip \
+    || apt-get install -y --no-install-recommends python3 python3-venv python3-pip); \
     # System dependencies for Cypress and Playwright (matching CI/CD)
-    && apt-get install -y \
+    apt-get install -y --no-install-recommends \
     xvfb \
     libgtk2.0-0 \
     libgtk-3-0 \
@@ -71,9 +74,18 @@ RUN apt-get update && apt-get install -y \
     libnotify-dev \
     libnss3 \
     libxss1 \
-    libasound2t64 || apt-get install -y libasound2 \
+    libasound2t64 \
+    || apt-get install -y --no-install-recommends \
+    xvfb \
+    libgtk2.0-0 \
+    libgtk-3-0 \
+    libgbm-dev \
+    libnotify-dev \
+    libnss3 \
+    libxss1 \
+    libasound2; \
     # Additional dependencies
-    && rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 # Set timezone
 ENV TZ=America/Chicago
