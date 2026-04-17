@@ -43,6 +43,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<asm.version>9.9.1</asm.version>
 		<byte-buddy.version>1.18.8</byte-buddy.version>
 		<byte-buddy-agent.version>${byte-buddy.version}</byte-buddy-agent.version>
+		<bouncycastle.version>1.84</bouncycastle.version>
 		<commons-collections.version>3.2.2</commons-collections.version>
 		<commons-csv.version>1.14.1</commons-csv.version>
 		<commons-io.version>2.21.0</commons-io.version>
@@ -172,6 +173,22 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<version>${netty-codec-http.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<!-- Pin Bouncy Castle to patched version for Selenium transitive deps -->
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcpkix-jdk18on</artifactId>
+				<version>${bouncycastle.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcutil-jdk18on</artifactId>
+				<version>${bouncycastle.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk18on</artifactId>
+				<version>${bouncycastle.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
