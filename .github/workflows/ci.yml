@@ -949,6 +949,7 @@ jobs:
       always() &&
       !cancelled() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
+      needs.gate-setup.result == 'success' &&
       needs.determine-test-execution.outputs.run_be_tests == 'true' &&
       needs.determine-test-execution.outputs.be_env_dev == 'true'
     with:
@@ -990,6 +991,7 @@ jobs:
       always() &&
       !cancelled() &&
       needs.determine-schedule-type.outputs.code-changed == 'true' &&
+      needs.gate-setup.result == 'success' &&
       needs.determine-test-execution.outputs.run_fs_tests == 'true' &&
       needs.determine-test-execution.outputs.be_env_dev == 'true'
     with:
