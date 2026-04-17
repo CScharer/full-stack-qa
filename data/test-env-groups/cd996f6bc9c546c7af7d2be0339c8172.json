@@ -1,1 +1,1 @@
-{"id":"cd996f6bc9c546c7af7d2be0339c8172","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromNumberToLetter","name":"fromNumberToLetter() [DEV]","status":"passed","testResultsByEnv":{"default":"270c4b66ea0bf8efb91b3a2ded6241cd"}}
+{"id":"cd996f6bc9c546c7af7d2be0339c8172","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromNumberToLetter","name":"fromNumberToLetter() [TEST]","status":"passed","testResultsByEnv":{"default":"b50c4a95bfad19c7d56feac54a9c604e"}}

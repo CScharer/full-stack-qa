@@ -1,1 +1,1 @@
-{"id":"fecf16ff4d51cce5a528fbdd504e5e31","fullName":"com.cjs.qa.junit.tests.TestSets.emptyTest","name":"emptyTest() [TEST]","status":"passed","testResultsByEnv":{"default":"8d66c2cc3b7a43a27d098d73db2011be"}}
+{"id":"fecf16ff4d51cce5a528fbdd504e5e31","fullName":"com.cjs.qa.junit.tests.TestSets.emptyTest","name":"emptyTest() [PROD]","status":"passed","testResultsByEnv":{"default":"660e4329ce29a4c8300410213ee369cc"}}
