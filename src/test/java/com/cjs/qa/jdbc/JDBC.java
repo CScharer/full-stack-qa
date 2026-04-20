@@ -2,6 +2,7 @@ package com.cjs.qa.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -322,6 +323,23 @@ public class JDBC {
     return recordsUpdated;
   }
 
+  public int executeUpdatePrepared(String sql, List<Object> parameters, boolean autoCommit)
+      throws Exception {
+    connect(dbParameters);
+    int recordsUpdated = 0;
+    connection.setAutoCommit(autoCommit);
+    try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+      bindParameters(preparedStatement, parameters);
+      recordsUpdated = preparedStatement.executeUpdate();
+      connection.commit();
+    } catch (final SQLException e) {
+      throw e;
+    } finally {
+      closeConnectionQuietly();
+    }
+    return recordsUpdated;
+  }
+
   public int executeUpdates(List<String> sqls, boolean autoCommit) {
     connect(dbParameters);
     int recordsUpdated = 0;
@@ -634,6 +652,44 @@ public class JDBC {
     }
   }
 
+  public List<Map<String, String>> queryResultsStringPrepared(
+      String sql, List<Object> parameters, boolean includeColumnNames) {
+    LOG.debug("sql: [{}]", sql);
+    final List<Map<String, String>> listResults = new ArrayList<>();
+    connect(dbParameters);
+    try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+      bindParameters(preparedStatement, parameters);
+      try (ResultSet localResultSet = preparedStatement.executeQuery()) {
+        final ResultSetMetaData localResultSetMetaData = localResultSet.getMetaData();
+        final int columns = localResultSetMetaData.getColumnCount();
+        Map<String, String> mapHeadings = new HashMap<>();
+        List<String> listHeadings = new ArrayList<>();
+        for (int index = 1; index <= columns; index++) {
+          mapHeadings.put(
+              localResultSetMetaData.getColumnName(index),
+              localResultSetMetaData.getColumnName(index));
+          listHeadings.add(localResultSetMetaData.getColumnName(index));
+        }
+        if (includeColumnNames) {
+          listResults.add(listResults.size(), mapHeadings);
+        }
+        while (localResultSet.next()) {
+          Map<String, String> mapRecord = new HashMap<>();
+          for (int index = 1; index <= columns; index++) {
+            mapRecord.put(listHeadings.get(index - 1), localResultSet.getString(index));
+          }
+          listResults.add(listResults.size(), mapRecord);
+        }
+      }
+      return listResults;
+    } catch (final Exception e) {
+      LOG.error("Error in JDBC operation", e);
+      return Collections.emptyList();
+    } finally {
+      closeConnectionQuietly();
+    }
+  }
+
   public boolean renameTable(String tableNameOld, String tableNameNew) throws Exception {
     LOG.info("{}]", Constants.CLASS_METHOD_DEBUG + JavaHelpers.getCurrentClassMethodDebugName());
     StringBuilder stringBuilder =
@@ -649,5 +705,25 @@ public class JDBC {
 
   private void setDatabase(String database) {
     this.database = database;
+  }
+
+  private void bindParameters(PreparedStatement preparedStatement, List<Object> parameters)
+      throws SQLException {
+    if (parameters == null) {
+      return;
+    }
+    for (int index = 0; index < parameters.size(); index++) {
+      preparedStatement.setObject(index + 1, parameters.get(index));
+    }
+  }
+
+  private void closeConnectionQuietly() {
+    try {
+      if (connection != null) {
+        connection.close();
+      }
+    } catch (final Exception e) {
+      LOG.error("Error in JDBC operation", e);
+    }
   }
 }
