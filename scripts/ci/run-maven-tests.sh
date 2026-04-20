@@ -61,6 +61,21 @@ if [ -z "$ENVIRONMENT" ] || [ -z "$SUITE_FILE" ]; then
   exit 1
 fi
 
+# Resolve suite file path for Surefire. CI passes filenames like
+# "testng-smoke-suite.xml", while files live under src/test/resources.
+RESOLVED_SUITE_FILE="$SUITE_FILE"
+if [ ! -f "$RESOLVED_SUITE_FILE" ] && [ -f "src/test/resources/$SUITE_FILE" ]; then
+  RESOLVED_SUITE_FILE="src/test/resources/$SUITE_FILE"
+fi
+
+if [ ! -f "$RESOLVED_SUITE_FILE" ]; then
+  echo "❌ Error: Suite file not found: $SUITE_FILE"
+  echo "   Looked for:"
+  echo "   - $SUITE_FILE"
+  echo "   - src/test/resources/$SUITE_FILE"
+  exit 1
+fi
+
 # Solution 1: Reuse compiled classes from build-and-compile job if available
 # The artifact is uploaded as "path: target/" and downloaded to "path: pre-compiled-classes"
 # GitHub Actions behavior: When you upload a directory, it preserves the directory structure
@@ -135,7 +150,9 @@ fi
 MAVEN_CMD="./mvnw -ntp test"
 MAVEN_CMD="$MAVEN_CMD -Dtest.environment=$ENVIRONMENT"
 MAVEN_CMD="$MAVEN_CMD -Dtest.retry.max.count=$RETRY_COUNT"
-MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$SUITE_FILE"
+MAVEN_CMD="$MAVEN_CMD -Dsurefire.suiteXmlFiles=$RESOLVED_SUITE_FILE"
+# Keep legacy property for compatibility with any custom plugin wiring.
+MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$RESOLVED_SUITE_FILE"
 
 # Skip compilation if we successfully reused classes
 if [ -d "target/classes" ] && [ -n "$(ls -A target/classes 2>/dev/null)" ] && [ -d "target/test-classes" ] && [ -n "$(ls -A target/test-classes 2>/dev/null)" ]; then
@@ -164,7 +181,7 @@ fi
 # Execute Maven command
 echo "🚀 Running Maven tests..."
 echo "   Environment: $ENVIRONMENT"
-echo "   Suite: $SUITE_FILE"
+echo "   Suite: $RESOLVED_SUITE_FILE"
 echo "   Retry Count: $RETRY_COUNT"
 [ -n "$BROWSER" ] && echo "   Browser: $BROWSER"
 [ -n "$ADDITIONAL_ARGS" ] && echo "   Additional Args: $ADDITIONAL_ARGS"
