@@ -218,15 +218,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
@@ -247,14 +247,14 @@ jobs:
             "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Download compiled classes from build-and-compile job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           name: compiled-classes
@@ -290,7 +290,7 @@ jobs:
 
       - name: Upload Smoke Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: smoke-results-${{ inputs.environment }}
           path: |
@@ -347,7 +347,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Pre-pull Selenium Docker images with retry
         continue-on-error: true
@@ -392,12 +392,12 @@ jobs:
           echo "✅ Pre-pull step completed (images may be cached for service containers)"
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
@@ -418,7 +418,7 @@ jobs:
             "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
@@ -475,7 +475,7 @@ jobs:
 
       - name: Upload Grid Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: grid-results-${{ matrix.browser }}-${{ inputs.environment }}
           path: |
@@ -507,15 +507,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
@@ -536,14 +536,14 @@ jobs:
             "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Download compiled classes from build-and-compile job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           name: compiled-classes
@@ -591,7 +591,7 @@ jobs:
 
       - name: Upload Mobile Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mobile-results-${{ inputs.environment }}
           path: |
@@ -623,15 +623,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
@@ -652,14 +652,14 @@ jobs:
             "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Download compiled classes from build-and-compile job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           name: compiled-classes
@@ -707,7 +707,7 @@ jobs:
 
       - name: Upload Responsive Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: responsive-results-${{ inputs.environment }}
           path: |
@@ -724,15 +724,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
           cache: 'npm'
@@ -813,7 +813,7 @@ jobs:
 
       - name: Upload Cypress Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: cypress-results-${{ inputs.environment }}
           path: |
@@ -831,15 +831,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
           cache: 'npm'
@@ -919,7 +919,7 @@ jobs:
 
       - name: Upload Playwright Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-results-${{ inputs.environment }}
           path: |
@@ -953,15 +953,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
@@ -986,7 +986,7 @@ jobs:
           ./scripts/ci/install-robot-framework.sh
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
@@ -1070,7 +1070,7 @@ jobs:
 
       - name: Upload Robot Framework Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: robot-results-${{ inputs.environment }}
           path: |
@@ -1103,15 +1103,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
 
@@ -1132,14 +1132,14 @@ jobs:
             "${{ inputs.service_wait_timeout_seconds || 5 }}"
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ inputs.java_version || '21' }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Download compiled classes from build-and-compile job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           name: compiled-classes
@@ -1185,7 +1185,7 @@ jobs:
 
       - name: Upload Selenide Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: selenide-results-${{ inputs.environment }}
           path: |
@@ -1202,15 +1202,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python_version || '3.11' }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node_version || '20' }}
           cache: 'npm'
@@ -1270,7 +1270,7 @@ jobs:
 
       - name: Upload Vibium Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vibium-results-${{ inputs.environment }}
           path: |
@@ -1288,7 +1288,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: List available artifacts (debug)
         if: always()
@@ -1309,7 +1309,7 @@ jobs:
       - name: Download all test results for this environment
         id: download-results
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: |
             *-results-${{ inputs.environment }}
@@ -1340,7 +1340,7 @@ jobs:
           echo "✅ Report generated!"
 
       - name: Upload Allure Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: allure-report-${{ inputs.environment }}
@@ -1356,7 +1356,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: List available artifacts (debug)
         if: always()
@@ -1374,7 +1374,7 @@ jobs:
           echo "  - vibium-results-${{ inputs.environment }}"
 
       - name: Download test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "*-results-${{ inputs.environment }}"

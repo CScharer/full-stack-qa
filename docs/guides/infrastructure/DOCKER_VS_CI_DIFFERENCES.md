@@ -65,12 +65,12 @@ RUN apt-get update && apt-get install -y \
 #### CI/CD Environment
 ```yaml
 # Node.js installed
-- uses: actions/setup-node@v4
+- uses: actions/setup-node@v6
   with:
     node-version: '20'
 
 # Python installed
-- uses: actions/setup-python@v5
+- uses: actions/setup-python@v6
   with:
     python-version: '3.13'
 
