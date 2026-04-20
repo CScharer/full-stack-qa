@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Determine Ports and URLs
         id: ports
@@ -38,7 +38,7 @@ jobs:
 
       - name: Set up JDK 21
         if: inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only' || inputs.be_test_type == 'jmeter-only'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
@@ -46,7 +46,7 @@ jobs:
 
       - name: Set up Python
         if: inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only' || inputs.be_test_type == 'smoke'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -106,7 +106,7 @@ jobs:
 
       - name: Upload Gatling Results
         if: (success() || failure()) && (inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: gatling-be-results-${{ inputs.environment }}
           path: target/gatling/
@@ -158,7 +158,7 @@ jobs:
 
       - name: Upload JMeter Results
         if: (success() || failure()) && (inputs.be_test_type == 'all' || inputs.be_test_type == 'jmeter-only')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: jmeter-be-results-${{ inputs.environment }}
           path: target/jmeter/
@@ -251,7 +251,7 @@ jobs:
 
       - name: Upload Locust Results
         if: (success() || failure()) && (inputs.be_test_type == 'all' || inputs.be_test_type == 'locust-only')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: locust-be-results-${{ inputs.environment }}
           path: target/locust/
@@ -279,7 +279,7 @@ jobs:
 
       - name: Upload Smoke Results
         if: (success() || failure()) && inputs.be_test_type == 'smoke'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: locust-be-results-${{ inputs.environment }}
           path: target/locust/
