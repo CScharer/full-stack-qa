@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Validate Dependency Versions
         id: validate
@@ -29,7 +29,7 @@ jobs:
           
       - name: Upload Version Validation Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: version-validation-report
           path: results/version-validation-report.json

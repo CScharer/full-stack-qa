@@ -112,7 +112,7 @@ jobs:
       code-changed: ${{ steps.filter.outputs.code-changed }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
@@ -203,7 +203,7 @@ jobs:
       base_url_prod: ${{ steps.set-urls.outputs.base_url_prod }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set Base URLs
         id: set-urls
@@ -240,7 +240,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Determine which environments to run
         id: set-envs
@@ -286,7 +286,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Determine what tests to run
         id: set-execution
@@ -345,13 +345,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build and load Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./Dockerfile
@@ -385,7 +385,7 @@ jobs:
 
       - name: Upload compiled classes from Docker build
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: compiled-classes-from-docker
           path: docker-compiled-classes/target/
@@ -400,10 +400,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
@@ -412,7 +412,7 @@ jobs:
       - name: Download compiled classes from Docker build
         id: download-docker-classes
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: compiled-classes-from-docker
           path: docker-compiled-classes
@@ -423,7 +423,7 @@ jobs:
           ./scripts/ci/reuse-or-compile.sh "docker-compiled-classes/target"
 
       - name: Upload compiled classes
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: compiled-classes
           path: target/
@@ -443,7 +443,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
@@ -461,7 +461,7 @@ jobs:
 
       - name: Upload Analysis Reports
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: code-quality-reports
           path: |
@@ -482,7 +482,7 @@ jobs:
     if: needs.determine-schedule-type.outputs.code-changed == 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Validate Dependency Versions
         run: |
@@ -497,10 +497,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
 
@@ -530,7 +530,7 @@ jobs:
       !cancelled()
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check Setup Jobs Status
         run: |
@@ -563,10 +563,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
 
@@ -624,10 +624,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "*-results-dev"
@@ -655,7 +655,7 @@ jobs:
     if: always() && !cancelled()
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check DEV Testing Jobs Status
         run: |
@@ -721,10 +721,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
 
@@ -758,10 +758,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "*-results-test"
@@ -790,7 +790,7 @@ jobs:
     if: always() && !cancelled()
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check TEST Testing Jobs Status
         run: |
@@ -856,10 +856,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
 
@@ -891,10 +891,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "*-results-prod"
@@ -923,7 +923,7 @@ jobs:
     if: always() && !cancelled()
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check PROD Testing Jobs Status
         run: |
@@ -1034,7 +1034,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: List available be artifacts (debug)
         if: always()
@@ -1049,7 +1049,7 @@ jobs:
           echo "  - locust-be-results-test"
 
       - name: Download BE Test Results (DEV)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: |
@@ -1058,7 +1058,7 @@ jobs:
           merge-multiple: true
 
       - name: Download BE Test Results (TEST)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: |
@@ -1067,7 +1067,7 @@ jobs:
           merge-multiple: true
 
       - name: Download BE Test Results (PROD)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: |
@@ -1112,7 +1112,7 @@ jobs:
           fi
 
       - name: Upload BE Allure Results (DEV)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always() && steps.convert-be-dev.outputs.has_be_results_dev == 'true'
         with:
           name: be-allure-results-dev
@@ -1121,7 +1121,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload BE Allure Results (TEST)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always() && steps.convert-be-test.outputs.has_be_results_test == 'true'
         with:
           name: be-allure-results-test
@@ -1130,7 +1130,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload BE Allure Results (PROD)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always() && steps.convert-be-prod.outputs.has_be_results_prod == 'true'
         with:
           name: be-allure-results-prod
@@ -1168,7 +1168,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: List available test result artifacts (debug)
         if: always()
@@ -1184,7 +1184,7 @@ jobs:
           echo "      We need the raw JSON results from *-results-* artifacts"
 
       - name: Download test results (DEV)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "*-results-dev"
@@ -1192,7 +1192,7 @@ jobs:
           merge-multiple: true
 
       - name: Download test results (TEST)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "*-results-test"
@@ -1200,7 +1200,7 @@ jobs:
           merge-multiple: true
 
       - name: Download test results (PROD)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "*-results-prod"
@@ -1208,7 +1208,7 @@ jobs:
           merge-multiple: true
 
       - name: Download be allure results (DEV)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "be-allure-results-dev"
@@ -1216,7 +1216,7 @@ jobs:
           merge-multiple: true
 
       - name: Download be allure results (TEST)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "be-allure-results-test"
@@ -1224,7 +1224,7 @@ jobs:
           merge-multiple: true
 
       - name: Download be allure results (PROD)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "be-allure-results-prod"
@@ -1232,7 +1232,7 @@ jobs:
           merge-multiple: true
 
       - name: Download Cypress results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "cypress-results-*"
@@ -1240,7 +1240,7 @@ jobs:
           merge-multiple: true
 
       - name: Download Playwright results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "playwright-results-*"
@@ -1248,7 +1248,7 @@ jobs:
           merge-multiple: true
 
       - name: Download Robot Framework results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "robot-results-*"
@@ -1256,7 +1256,7 @@ jobs:
           merge-multiple: true
 
       - name: Download Selenide results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "selenide-results-*"
@@ -1264,7 +1264,7 @@ jobs:
           merge-multiple: true
 
       - name: Download Vibium results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "vibium-results-*"
@@ -1272,7 +1272,7 @@ jobs:
           merge-multiple: true
 
       - name: Download FS results (DEV)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "fs-results-dev"
@@ -1280,7 +1280,7 @@ jobs:
           merge-multiple: true
 
       - name: Download FS results (TEST)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: "fs-results-test"
@@ -1558,7 +1558,7 @@ jobs:
           fi
           
       - name: Upload Allure History Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always() && github.ref == 'refs/heads/main' && steps.upload-history-check.outcome == 'success'
         with:
           name: allure-history
@@ -1567,7 +1567,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Combined Allure Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: allure-report-combined-all-environments
@@ -1576,7 +1576,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Combined Allure Results (for analysis)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: allure-results-combined-all-environments
@@ -1722,11 +1722,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download Combined Allure Results (for test counts)
         if: always() && needs.combined-allure-report.result == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           name: allure-results-combined-all-environments
@@ -1734,7 +1734,7 @@ jobs:
 
       - name: Download Test Results for DEV (for accurate counts)
         if: always() && needs.determine-envs.outputs.run_dev == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: '*-results-dev'
@@ -1743,7 +1743,7 @@ jobs:
 
       - name: Download Test Results for TEST (for accurate counts)
         if: always() && needs.determine-envs.outputs.run_test == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: '*-results-test'
@@ -1752,7 +1752,7 @@ jobs:
 
       - name: Download Test Results for PROD (for accurate counts)
         if: always() && needs.determine-envs.outputs.run_prod == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: '*-results-prod'
