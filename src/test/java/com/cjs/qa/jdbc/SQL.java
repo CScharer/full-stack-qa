@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -49,15 +50,13 @@ public class SQL {
             + Environment.getEnvironment()
             + "].[dbo].[SSOUser] "
             + JDBCConstants.WHERE
-            + "[UserName] = '"
-            + eMail
-            + "'), 'Admin');";
+            + "[UserName] = ?), 'Admin');";
     sql = AutGui.updateSQL(sql);
     LOG.debug("SQL: {}", sql);
     int recordsUpdated = 0;
     final JDBC jdbc = new JDBC("TST", "Jira");
     try {
-      recordsUpdated = jdbc.executeUpdate(sql, true);
+      recordsUpdated = jdbc.executeUpdatePrepared(sql, Arrays.asList(eMail), true);
       jdbc.close();
     } catch (final Exception e) {
       LOG.error("Error in SQL operation", e);
@@ -77,15 +76,13 @@ public class SQL {
             + Environment.getEnvironment()
             + "].[dbo].[SSOUser] "
             + JDBCConstants.WHERE
-            + "[UserName] = '"
-            + eMail
-            + "')";
+            + "[UserName] = ?)";
     sql = AutGui.updateSQL(sql);
     LOG.debug("SQL: {}", sql);
     int recordsUpdated = 0;
     final JDBC jdbc = new JDBC("TST", "Jira");
     try {
-      recordsUpdated = jdbc.executeUpdate(sql, true);
+      recordsUpdated = jdbc.executeUpdatePrepared(sql, Arrays.asList(eMail), true);
       jdbc.close();
     } catch (final Exception e) {
       LOG.error("Error in SQL operation", e);
@@ -103,16 +100,16 @@ public class SQL {
             + Environment.getEnvironment()
             + "].[dbo].[SSOUser] "
             + JDBCConstants.WHERE
-            + "[UserName] = '"
-            + eMail
-            + "'";
+            + "[UserName] = ?";
     sql = AutGui.updateSQL(sql);
     final JDBC jdbc = new JDBC("TST", "Jira");
-    try (ResultSet resultSet = jdbc.queryResults(sql)) {
-      if (resultSet != null && resultSet.next()) {
-        partyID = resultSet.getInt("PartyId");
+    try {
+      List<Map<String, String>> rows =
+          jdbc.queryResultsStringPrepared(sql, Arrays.asList(eMail), false);
+      if (!rows.isEmpty() && rows.get(0).get("PartyId") != null) {
+        partyID = Integer.parseInt(rows.get(0).get("PartyId"));
       }
-    } catch (final SQLException e) {
+    } catch (final Exception e) {
       LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     } finally {
       jdbc.close();
@@ -466,16 +463,17 @@ public class SQL {
             + JDBCConstants.WHERE
             + "UPPER(["
             + TABLE_COMPANY
-            + "].[Abbreviation]) = '"
-            + company.toUpperCase(Locale.ENGLISH)
-            + "';";
+            + "].[Abbreviation]) = ?;";
     String companyNumber = "";
     final JDBC jdbc = new JDBC("", DATABASE_DEFINITION);
-    try (ResultSet resultSet = jdbc.queryResults(sql)) {
-      if (resultSet != null) {
-        companyNumber = resultSet.getString("Number");
+    try {
+      List<Map<String, String>> rows =
+          jdbc.queryResultsStringPrepared(
+              sql, Arrays.asList(company.toUpperCase(Locale.ENGLISH)), false);
+      if (!rows.isEmpty()) {
+        companyNumber = rows.get(0).get("Number");
       }
-    } catch (final SQLException e) {
+    } catch (final Exception e) {
       LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     } finally {
       jdbc.close();
@@ -518,14 +516,16 @@ public class SQL {
             + JDBCConstants.WHERE
             + "["
             + TABLE_COMPANY
-            + "].[Abbreviation]='"
-            + company
-            + "';";
-    try (ResultSet resultSet = jdbc.queryResults(sql)) {
-      if (resultSet != null) {
-        map.put("CompanyNumber", resultSet.getString("Number"));
-        map.put("FilenetSplit", resultSet.getString("FilenetSplit"));
+            + "].[Abbreviation]=?;";
+    try {
+      List<Map<String, String>> companyRows =
+          jdbc.queryResultsStringPrepared(sql, Arrays.asList(company), false);
+      if (!companyRows.isEmpty()) {
+        map.put("CompanyNumber", companyRows.get(0).get("Number"));
+        map.put("FilenetSplit", companyRows.get(0).get("FilenetSplit"));
       }
+    } catch (final Exception e) {
+      LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     }
     // Get the WSDL.
     sql =
@@ -540,17 +540,23 @@ public class SQL {
             + JDBCConstants.WHERE
             + "["
             + TABLE_ENVIRONMENTS
-            + "].[Environment]='"
-            + environment
-            + "'";
+            + "].[Environment]=?";
     if (!"".equals(environment)) {
-      sql +=
-          " " + JDBCConstants.AND + "[" + TABLE_ENVIRONMENTS + "].[Abbreviation]='" + company + "'";
+      sql += " " + JDBCConstants.AND + "[" + TABLE_ENVIRONMENTS + "].[Abbreviation]=?";
     }
-    try (ResultSet resultSet2 = jdbc.queryResults(sql)) {
-      if (resultSet2 != null) {
-        map.put("WSDL", resultSet2.getString("WSDL"));
+    try {
+      List<Object> parameters = new ArrayList<>();
+      parameters.add(environment);
+      if (!"".equals(environment)) {
+        parameters.add(company);
       }
+      List<Map<String, String>> environmentRows =
+          jdbc.queryResultsStringPrepared(sql, parameters, false);
+      if (!environmentRows.isEmpty()) {
+        map.put("WSDL", environmentRows.get(0).get("WSDL"));
+      }
+    } catch (final Exception e) {
+      LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     } finally {
       jdbc.close();
     }
@@ -577,27 +583,30 @@ public class SQL {
     sql += "c.[Abbreviation] = p.[Abbreviation] ";
     sql += "LEFT JOIN [" + TABLE_FILENET + "] f " + JDBCConstants.ON;
     sql += "c.[FilenetSplit] = f.[FilenetSplit] ";
-    sql += JDBCConstants.WHERE + "c.[Abbreviation]='" + company.toUpperCase(Locale.ENGLISH) + "';";
-    try (ResultSet resultSet = jdbc.queryResults(sql)) {
-      if (resultSet != null) {
-        map.put("FilenetSplit", resultSet.getString("FilenetSplit"));
+    sql += JDBCConstants.WHERE + "c.[Abbreviation]=?;";
+    try {
+      List<Map<String, String>> rows =
+          jdbc.queryResultsStringPrepared(
+              sql, Arrays.asList(company.toUpperCase(Locale.ENGLISH)), false);
+      if (!rows.isEmpty()) {
+        map.put("FilenetSplit", rows.get(0).get("FilenetSplit"));
         LOG.debug("FilenetSplit: [{}]", map.get("FilenetSplit"));
-        map.put("Number", resultSet.getString("Number"));
+        map.put("Number", rows.get(0).get("Number"));
         LOG.debug("Company Number: [{}]", map.get("Number"));
-        map.put("Service_Account", resultSet.getString("Service_Account"));
+        map.put("Service_Account", rows.get(0).get("Service_Account"));
         LOG.debug("Service_Account: [{}]", map.get("Service_Account"));
-        map.put("pPassword", resultSet.getString("pPassword"));
-        map.put("UserID", resultSet.getString("UserID"));
+        map.put("pPassword", rows.get(0).get("pPassword"));
+        map.put("UserID", rows.get(0).get("UserID"));
         LOG.debug("UserID: [{}]", map.get("UserID"));
         if (map.get("UserID") == null) {
           map.put("UserID", "");
           LOG.debug("UserID: [{}]", map.get("UserID"));
           map.put("fPassword", "");
         } else {
-          map.put("fPassword", resultSet.getString("fPassword"));
+          map.put("fPassword", rows.get(0).get("fPassword"));
         }
       }
-    } catch (final SQLException e) {
+    } catch (final Exception e) {
       LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     } finally {
       jdbc.close();
@@ -614,7 +623,7 @@ public class SQL {
     // Java 17: Text block for cleaner SQL query construction
     String sql =
         """
-      %s[%s].[URL] %s[%s] %s[%s].[Environment]='%s'%s
+      %s[%s].[URL] %s[%s] %s[%s].[Environment]=?%s
         """
             .formatted(
                 JDBCConstants.SELECT,
@@ -623,27 +632,26 @@ public class SQL {
                 TABLE_ENVIRONMENTS,
                 JDBCConstants.WHERE,
                 TABLE_ENVIRONMENTS,
-                environment,
                 // NOTE: Using Environment.noPMDUselessParentheses to avoid PMD violation
                 // while maintaining code clarity
                 Environment.noPMDUselessParentheses(
                     !"".equals(company)
-                        ? " "
-                            + JDBCConstants.AND
-                            + "["
-                            + TABLE_ENVIRONMENTS
-                            + "].[Abbreviation]='"
-                            + company
-                            + "'"
+                        ? " " + JDBCConstants.AND + "[" + TABLE_ENVIRONMENTS + "].[Abbreviation]=?"
                         : ""))
             .trim();
     String url = null;
     final JDBC jdbc = new JDBC("", DATABASE_DEFINITION);
-    try (ResultSet resultSet = jdbc.queryResults(sql)) {
-      if (resultSet != null) {
-        url = resultSet.getString("URL");
+    try {
+      List<Object> parameters = new ArrayList<>();
+      parameters.add(environment);
+      if (!"".equals(company)) {
+        parameters.add(company);
       }
-    } catch (final SQLException e) {
+      List<Map<String, String>> rows = jdbc.queryResultsStringPrepared(sql, parameters, false);
+      if (!rows.isEmpty()) {
+        url = rows.get(0).get("URL");
+      }
+    } catch (final Exception e) {
       LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     } finally {
       jdbc.close();
@@ -657,7 +665,7 @@ public class SQL {
     // Java 17: Text block for cleaner SQL query construction
     String sql =
         """
-      %s[%s].[UserName] %s[%s] %s[%s].[Environment]='%s'%s
+      %s[%s].[UserName] %s[%s] %s[%s].[Environment]=?%s
         """
             .formatted(
                 JDBCConstants.SELECT,
@@ -666,27 +674,26 @@ public class SQL {
                 TABLE_ENVIRONMENTS,
                 JDBCConstants.WHERE,
                 TABLE_ENVIRONMENTS,
-                environment,
                 // NOTE: Using Environment.noPMDUselessParentheses to avoid PMD violation
                 // while maintaining code clarity
                 Environment.noPMDUselessParentheses(
                     !"".equals(company)
-                        ? " "
-                            + JDBCConstants.AND
-                            + "["
-                            + TABLE_ENVIRONMENTS
-                            + "].[Abbreviation]='"
-                            + company
-                            + "'"
+                        ? " " + JDBCConstants.AND + "[" + TABLE_ENVIRONMENTS + "].[Abbreviation]=?"
                         : ""))
             .trim();
     String userName = null;
     final JDBC jdbc = new JDBC("", DATABASE_DEFINITION);
-    try (ResultSet resultSet = jdbc.queryResults(sql)) {
-      if (resultSet != null) {
-        userName = resultSet.getString("UserName");
+    try {
+      List<Object> parameters = new ArrayList<>();
+      parameters.add(environment);
+      if (!"".equals(company)) {
+        parameters.add(company);
       }
-    } catch (final SQLException e) {
+      List<Map<String, String>> rows = jdbc.queryResultsStringPrepared(sql, parameters, false);
+      if (!rows.isEmpty()) {
+        userName = rows.get(0).get("UserName");
+      }
+    } catch (final Exception e) {
       LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     } finally {
       jdbc.close();
@@ -752,17 +759,13 @@ public class SQL {
     final String sql =
         "UPDATE ["
             + TABLE_SUBMISSIONLOG
-            + "] SET [Status] = '"
-            + status
-            + "' "
+            + "] SET [Status] = ? "
             + JDBCConstants.WHERE
-            + "[FileNameNew]) = '"
-            + fileName
-            + "', ;";
+            + "[FileNameNew] = ?;";
     final JDBC jdbc = new JDBC("", "QATOOLSWEB");
     int recordsUpdated = 0;
     try {
-      recordsUpdated = jdbc.executeUpdate(sql, true);
+      recordsUpdated = jdbc.executeUpdatePrepared(sql, Arrays.asList(status, fileName), true);
       jdbc.close();
     } catch (final Exception e) {
       LOG.error("Error in SQL operation", e);
@@ -788,9 +791,7 @@ public class SQL {
             + JDBCConstants.WHERE
             + "LOWER(["
             + TABLE_DOM_USERS
-            + "].[EMail])='"
-            + eMail.toLowerCase(Locale.ENGLISH)
-            + "' "
+            + "].[EMail])=? "
             + JDBCConstants.AND
             + "["
             + TABLE_DOM_USERS
@@ -802,12 +803,15 @@ public class SQL {
     // LOWER([QATOOLS_USERS_AUTHORIZED].[EMail])='" + eMail.toLowerCase(Locale.ENGLISH) +
     // "';"
     final JDBC jdbc = new JDBC("", DATABASE_DEFINITION);
-    try (ResultSet resultSet = jdbc.queryResults(sql)) {
+    try {
       LOG.debug("Searching EMail [{}]", sql);
-      if (resultSet != null && resultSet.next()) {
+      List<Map<String, String>> rows =
+          jdbc.queryResultsStringPrepared(
+              sql, Arrays.asList(eMail.toLowerCase(Locale.ENGLISH)), false);
+      if (!rows.isEmpty()) {
         validEmail = true;
       }
-    } catch (final SQLException e) {
+    } catch (final Exception e) {
       LOG.error("Error in SQL operation: {}", e.getMessage(), e);
     } finally {
       jdbc.close();

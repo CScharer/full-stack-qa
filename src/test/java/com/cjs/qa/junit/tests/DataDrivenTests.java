@@ -213,14 +213,27 @@ public class DataDrivenTests {
     if (driver != null) {
       if (result.getStatus() == ITestResult.FAILURE) {
         LOGGER.error("❌ Data-driven test failed");
-        AllureHelper.captureScreenshot(driver, "FAILURE-" + result.getName());
-        AllureHelper.attachPageSource(driver);
+        try {
+          AllureHelper.captureScreenshot(driver, "FAILURE-" + result.getName());
+        } catch (Exception e) {
+          LOGGER.warn("⚠️ Could not capture screenshot during teardown: {}", e.getMessage());
+        }
+        try {
+          AllureHelper.attachPageSource(driver);
+        } catch (Exception e) {
+          LOGGER.warn("⚠️ Could not attach page source during teardown: {}", e.getMessage());
+        }
       } else if (result.getStatus() == ITestResult.SUCCESS) {
         LOGGER.info("✅ Data-driven test passed");
       }
 
       LOGGER.info("Closing browser...");
-      driver.quit();
+      try {
+        driver.quit();
+      } catch (Exception e) {
+        // Browser/session may already be gone; do not convert cleanup issues into test failures.
+        LOGGER.warn("⚠️ Browser already unavailable during quit: {}", e.getMessage());
+      }
       LOGGER.info("========================================\n");
     }
   }
