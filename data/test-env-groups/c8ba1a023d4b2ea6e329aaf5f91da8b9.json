@@ -1,1 +1,1 @@
-{"id":"c8ba1a023d4b2ea6e329aaf5f91da8b9","fullName":"com.cjs.qa.junit.tests.ScenariosTests.google","name":"google(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"f066dc93a52c20027425fc4809a358ae"}}
+{"id":"c8ba1a023d4b2ea6e329aaf5f91da8b9","fullName":"com.cjs.qa.junit.tests.ScenariosTests.google","name":"google(TestInfo) [TEST]","status":"skipped","testResultsByEnv":{"default":"e265e755a7d190d60b1d2cb33dad77d0"}}
