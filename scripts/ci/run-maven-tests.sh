@@ -135,6 +135,8 @@ fi
 MAVEN_CMD="./mvnw -ntp test"
 MAVEN_CMD="$MAVEN_CMD -Dtest.environment=$ENVIRONMENT"
 MAVEN_CMD="$MAVEN_CMD -Dtest.retry.max.count=$RETRY_COUNT"
+MAVEN_CMD="$MAVEN_CMD -Dsurefire.suiteXmlFiles=$SUITE_FILE"
+# Keep legacy property for compatibility with any custom plugin wiring.
 MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$SUITE_FILE"
 
 # Skip compilation if we successfully reused classes
