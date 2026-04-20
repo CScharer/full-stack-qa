@@ -1,1 +1,1 @@
-{"id":"59b8fc6a0feebe44312d7637477aa1b5","fullName":"com.cjs.qa.utilities.CommandLineTests.testCommandLine","name":"testCommandLine() [PROD]","status":"passed","testResultsByEnv":{"default":"e6a9b8e816f30af9ab4423e8c27de1f9"}}
+{"id":"59b8fc6a0feebe44312d7637477aa1b5","fullName":"com.cjs.qa.utilities.CommandLineTests.testCommandLine","name":"testCommandLine() [TEST]","status":"passed","testResultsByEnv":{"default":"285c92ce11b1648363c707e4c3b045e5"}}

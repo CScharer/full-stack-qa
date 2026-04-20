@@ -1,1 +1,1 @@
-{"id":"d9df62e9420596b950745a6d6eecf337","fullName":"com.cjs.qa.gt.api.services.GTWebinarServiceTests.gtwWebinarServiceTest","name":"gtwWebinarServiceTest() [PROD]","status":"skipped","testResultsByEnv":{"default":"c8f25c3be5fae539609ca814963541aa"}}
+{"id":"d9df62e9420596b950745a6d6eecf337","fullName":"com.cjs.qa.gt.api.services.GTWebinarServiceTests.gtwWebinarServiceTest","name":"gtwWebinarServiceTest() [TEST]","status":"skipped","testResultsByEnv":{"default":"f3dfc3c6cdebf4a924b82466729d05cc"}}
