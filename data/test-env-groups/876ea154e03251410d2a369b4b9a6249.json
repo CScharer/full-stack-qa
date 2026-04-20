@@ -1,1 +1,1 @@
-{"id":"876ea154e03251410d2a369b4b9a6249","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromDataTableToMap","name":"fromDataTableToMap() [PROD]","status":"passed","testResultsByEnv":{"default":"03970230cffe6e1d8314ab0a24e7b1f9"}}
+{"id":"876ea154e03251410d2a369b4b9a6249","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromDataTableToMap","name":"fromDataTableToMap() [TEST]","status":"passed","testResultsByEnv":{"default":"7b83cd618dd8eeb1855fd73ebdb1b1e7"}}
