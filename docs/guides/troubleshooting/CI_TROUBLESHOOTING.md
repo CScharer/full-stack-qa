@@ -594,7 +594,7 @@ strategy:
 ### **3. Cache Dependencies**
 
 ```yaml
-- uses: actions/setup-java@v4
+- uses: actions/setup-java@v5
   with:
     cache: 'maven'  # Caches ~/.m2/repository
 ```
