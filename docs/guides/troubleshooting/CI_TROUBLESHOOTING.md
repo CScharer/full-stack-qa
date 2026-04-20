@@ -197,7 +197,7 @@ path: target/allure-results/
 **B) Job Failed Before Upload**
 ```yaml
 # ✅ Always upload, even on failure
-- uses: actions/upload-artifact@v4
+- uses: actions/upload-artifact@v6
   if: always()  # ← Important!
   with:
     name: test-results
@@ -576,7 +576,7 @@ Before committing workflow changes:
 ```yaml
 - name: Upload logs
   if: failure()  # Only on failure
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v6
   with:
     name: failure-logs
     path: target/surefire-reports/

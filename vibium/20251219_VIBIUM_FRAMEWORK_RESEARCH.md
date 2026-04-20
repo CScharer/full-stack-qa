@@ -348,7 +348,7 @@ vibium-tests:
   runs-on: ubuntu-latest
   steps:
     - uses: actions/checkout@v6
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
         node-version: '20'
     - name: Install Vibium dependencies
