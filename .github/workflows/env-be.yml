@@ -78,7 +78,7 @@ jobs:
             "30" \
             "${{ inputs.environment }}"
 
-      - name: Run Gatling Simulations
+      - name: Run Gatling API Simulation
         if: inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only'
         env:
           BASE_URL: ${{ inputs.base_url }}
@@ -88,8 +88,21 @@ jobs:
           echo "⚡ Running Gatling BE Tests (${{ inputs.environment }})..."
           echo "Frontend (BASE_URL/FRONTEND_URL): $BASE_URL"
           echo "Backend (BACKEND_URL): $BACKEND_URL"
-          echo "Using Gatling profile (Scala-only compilation)..."
-          ./mvnw -ntp gatling:test -Pgatling
+          echo "Running ApiLoadSimulation explicitly to avoid classpath auto-scan recursion..."
+          ./mvnw -ntp gatling:test -Pgatling -Dgatling.simulationClass=simulations.ApiLoadSimulation
+
+      - name: Run Gatling Web Simulation
+        if: inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only'
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          BACKEND_URL: ${{ steps.ports.outputs.backend_url }}
+          FRONTEND_URL: ${{ steps.ports.outputs.frontend_url }}
+        run: |
+          echo "⚡ Running Gatling Web Simulation (${{ inputs.environment }})..."
+          echo "Frontend (BASE_URL/FRONTEND_URL): $BASE_URL"
+          echo "Backend (BACKEND_URL): $BACKEND_URL"
+          echo "Running WebLoadSimulation explicitly to avoid classpath auto-scan recursion..."
+          ./mvnw -ntp gatling:test -Pgatling -Dgatling.simulationClass=simulations.WebLoadSimulation
 
       - name: Upload Gatling Results
         if: (success() || failure()) && (inputs.be_test_type == 'all' || inputs.be_test_type == 'gatling-only')
