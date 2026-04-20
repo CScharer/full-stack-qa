@@ -1,1 +1,1 @@
-{"id":"f0fd9d5524594063bc05c6787aeb2448","fullName":"com.cjs.qa.utilities.SecureConfigTest.testSecretRetrieval","name":"testSecretRetrieval() [TEST]","status":"passed","testResultsByEnv":{"default":"e4865d8a7eb4bde73618bef99aab50ef"}}
+{"id":"f0fd9d5524594063bc05c6787aeb2448","fullName":"com.cjs.qa.utilities.SecureConfigTest.testSecretRetrieval","name":"testSecretRetrieval() [PROD]","status":"passed","testResultsByEnv":{"default":"e4865d8a7eb4bde73618bef99aab50ef"}}
