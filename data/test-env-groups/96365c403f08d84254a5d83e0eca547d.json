@@ -1,1 +1,1 @@
-{"id":"96365c403f08d84254a5d83e0eca547d","fullName":"com.cjs.qa.bts.CompanyEnvironmentSetupTests.testCompanyEnvironmentData","name":"testCompanyEnvironmentData() [PROD]","status":"passed","testResultsByEnv":{"default":"0a09ed1054ddee5406e6b0d9cf1e7524"}}
+{"id":"96365c403f08d84254a5d83e0eca547d","fullName":"com.cjs.qa.bts.CompanyEnvironmentSetupTests.testCompanyEnvironmentData","name":"testCompanyEnvironmentData() [TEST]","status":"passed","testResultsByEnv":{"default":"238310b79b67c12e825f291e18c02939"}}
