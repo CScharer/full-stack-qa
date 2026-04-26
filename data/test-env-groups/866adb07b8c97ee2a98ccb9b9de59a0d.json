@@ -1,1 +1,1 @@
-{"id":"866adb07b8c97ee2a98ccb9b9de59a0d","fullName":"com.cjs.qa.autocoder.CoderTests.testCodeCreation","name":"testCodeCreation() [DEV]","status":"skipped","testResultsByEnv":{"default":"d17095ba69b2e8f66e81239cffa43f24"}}
+{"id":"866adb07b8c97ee2a98ccb9b9de59a0d","fullName":"com.cjs.qa.autocoder.CoderTests.testCodeCreation","name":"testCodeCreation() [PROD]","status":"skipped","testResultsByEnv":{"default":"77bc3ed4272ba911493f2c75163c5d39"}}

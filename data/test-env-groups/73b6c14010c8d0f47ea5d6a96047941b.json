@@ -1,1 +1,1 @@
-{"id":"73b6c14010c8d0f47ea5d6a96047941b","fullName":"com.cjs.qa.junit.tests.WebElementTableTests.tBoxOfficeLists","name":"tBoxOfficeLists(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"e9061f2947eaddc16a1e1fc939df503b"}}
+{"id":"73b6c14010c8d0f47ea5d6a96047941b","fullName":"com.cjs.qa.junit.tests.WebElementTableTests.tBoxOfficeLists","name":"tBoxOfficeLists(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"ca4e9a219e755438ecd7e4fba45f5036"}}
