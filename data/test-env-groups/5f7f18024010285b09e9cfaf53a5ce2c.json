@@ -1,1 +1,1 @@
-{"id":"5f7f18024010285b09e9cfaf53a5ce2c","fullName":"com.cjs.qa.junit.tests.GridConnectionTest.testNavigateToGitHub","name":"testNavigateToGitHub(TestInfo) [TEST]","status":"skipped","testResultsByEnv":{"default":"4ce0277f446b2a268439d4ed24711cec"}}
+{"id":"5f7f18024010285b09e9cfaf53a5ce2c","fullName":"com.cjs.qa.junit.tests.GridConnectionTest.testNavigateToGitHub","name":"testNavigateToGitHub(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"a33e353d1e6ca595c38983ef1b5a8911"}}
