@@ -20,7 +20,7 @@ on:
         required: true
         type: string
       test_suite:
-        description: 'Test suite to run (smoke, ci, extended, all)'
+        description: 'Suite label for CI (smoke, ci, extended, all). Grid maps the value all to the smoke TestNG XML to match push defaults; other FE jobs use fixed suite paths.'
         required: false
         type: string
         default: 'smoke'
@@ -453,6 +453,12 @@ jobs:
           echo "Suite: ${{ inputs.test_suite }}"
           echo ""
 
+          # test_suite=all is a CI-wide selector (e.g. scheduled runs), not a TestNG filename.
+          # Only this job builds suite XML from test_suite; map all -> smoke (same as push default).
+          GRID_SUITE_SLUG="${{ inputs.test_suite == 'all' && 'smoke' || inputs.test_suite }}"
+          GRID_SUITE_FILE="testng-${GRID_SUITE_SLUG}-suite.xml"
+          echo "Grid TestNG suite file: ${GRID_SUITE_FILE} (from test_suite=${{ inputs.test_suite }})"
+
           # Create Allure environment properties file
           ./scripts/ci/create-allure-env-properties.sh \
             "${{ inputs.environment }}" \
@@ -464,7 +470,7 @@ jobs:
 
           ./scripts/ci/run-maven-tests.sh \
             "${{ inputs.environment }}" \
-            "testng-${{ inputs.test_suite }}-suite.xml" \
+            "${GRID_SUITE_FILE}" \
             "${{ inputs.test_retry_count || 1 }}" \
             "${{ matrix.browser }}"
 
