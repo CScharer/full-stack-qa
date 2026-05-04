@@ -1,1 +1,1 @@
-{"id":"5873c838dd517d08ddc087ed1d182e63","fullName":"Cypress.['Wizard Tests', 'test_contacts - Click Contacts Navigation, Add button, populate all fields, then Cancel']","name":"Wizard Tests [PROD]","status":"passed","testResultsByEnv":{"default":"f6ed2ae4b17180589c6f3b0bd2fd2850"}}
+{"id":"5873c838dd517d08ddc087ed1d182e63","fullName":"Cypress.['Wizard Tests', 'test_contacts - Click Contacts Navigation, Add button, populate all fields, then Cancel']","name":"Wizard Tests [TEST]","status":"passed","testResultsByEnv":{"default":"bbcebfe015ea79de07c37f5ac9ea8238"}}
