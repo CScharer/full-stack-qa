@@ -1,1 +1,1 @@
-{"id":"ae7cbbeb3a5e84b26d4e9502a210ec5a","fullName":"com.cjs.qa.ym.xml.objects.MarshallTests.testSaEventsEventRegistrationGet","name":"testSaEventsEventRegistrationGet() [DEV]","status":"skipped","testResultsByEnv":{"default":"35023330bda8b9198c35804a20b40800"}}
+{"id":"ae7cbbeb3a5e84b26d4e9502a210ec5a","fullName":"com.cjs.qa.ym.xml.objects.MarshallTests.testSaEventsEventRegistrationGet","name":"testSaEventsEventRegistrationGet() [TEST]","status":"skipped","testResultsByEnv":{"default":"3ffb30aa8bb8fecac16cf28ec02da029"}}
