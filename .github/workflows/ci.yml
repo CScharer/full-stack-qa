@@ -246,9 +246,10 @@ jobs:
         id: set-envs
         run: |
           chmod +x scripts/ci/determine-environments.sh
-          # For scheduled runs, always use 'dev' environment and 'all' test suites
+          # For scheduled runs, use dev only and suite label 'all' (breadth/metadata).
+          # Grid resolves test_suite=all to testng-smoke-suite.xml in env-fe.yml (no testng-all-suite.xml).
           if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo "⏰ Scheduled run - using dev environment with all test suites"
+            echo "⏰ Scheduled run - using dev environment with full test matrix (test_suite=all)"
             ENV_INPUT="dev"
             SUITE_INPUT="all"
           else
