@@ -74,6 +74,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<htmlunit.version>4.21.0</htmlunit.version>
 		<htmlunit-driver.version>4.41.0</htmlunit-driver.version>
 		<httpclient.version>4.5.14</httpclient.version>
+		<httpclient5.version>5.6.1</httpclient5.version>
 		<httpmime.version>4.5.14</httpmime.version>
 		<ipp-v3-java.version>6.7.0</ipp-v3-java.version>
 		<jackcess.version>4.0.10</jackcess.version>
@@ -189,6 +190,12 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk18on</artifactId>
 				<version>${bouncycastle.version}</version>
+			</dependency>
+			<!-- Force patched HttpClient 5 line for WebDriverManager transitive dependency -->
+			<dependency>
+				<groupId>org.apache.httpcomponents.client5</groupId>
+				<artifactId>httpclient5</artifactId>
+				<version>${httpclient5.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
