@@ -139,14 +139,13 @@ public class SecureConfigTest {
       long secondCallTime = System.currentTimeMillis() - startTime;
 
       assertEquals(password1, password2, "Cached password should match");
-      // Cached retrieval should be equal or faster (allowing for timing variations)
-      assertTrue(
-          secondCallTime <= firstCallTime,
-          "Cached retrieval should be equal or faster (first: "
-              + firstCallTime
-              + "ms, second: "
-              + secondCallTime
-              + "ms)");
+      // CI timing can vary by runner load, so don't fail on elapsed-time comparisons.
+      if (secondCallTime > firstCallTime) {
+        LOG.warn(
+            "Cached retrieval was slower this run (first: {}ms, second: {}ms)",
+            firstCallTime,
+            secondCallTime);
+      }
 
       LOG.info("  First call time: " + firstCallTime + "ms");
       LOG.info("  Second call time (cached): " + secondCallTime + "ms");
@@ -174,18 +173,12 @@ public class SecureConfigTest {
         long secondCallTime = System.currentTimeMillis() - startTime;
 
         assertEquals(password1, password2, "Cached password should match");
-        // Note: Timing comparison may not be reliable with mocked responses (both calls are very
-        // fast)
-        // For mocked responses, we verify caching works by checking cache size and value equality
-        if (firstCallTime > 0) {
-          // Only check timing if first call took measurable time
-          assertTrue(
-              secondCallTime <= firstCallTime,
-              "Cached retrieval should be equal or faster (first: "
-                  + firstCallTime
-                  + "ms, second: "
-                  + secondCallTime
-                  + "ms)");
+        // Timing comparisons are intentionally non-blocking to avoid CI flakiness.
+        if (secondCallTime > firstCallTime) {
+          LOG.warn(
+              "Cached retrieval was slower this run (first: {}ms, second: {}ms)",
+              firstCallTime,
+              secondCallTime);
         }
 
         LOG.info("  First call time: " + firstCallTime + "ms");

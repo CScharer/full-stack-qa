@@ -37,6 +37,7 @@ import io.qameta.allure.Story;
  */
 @Epic("Mobile Testing")
 @Feature("Responsive Design Validation")
+@Test(singleThreaded = true)
 public class ResponsiveDesignTests {
 
   private static final GuardedLogger LOG =
