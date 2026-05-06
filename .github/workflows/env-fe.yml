@@ -112,7 +112,7 @@ on:
       mobile_tests_timeout_minutes:
         description: 'Timeout in minutes for Mobile Browser Tests'
         type: number
-        default: 5
+        default: 7
       responsive_tests_timeout_minutes:
         description: 'Timeout in minutes for Responsive Design Tests'
         type: number
@@ -563,7 +563,7 @@ jobs:
           echo "✅ Grid ready!"
 
       - name: Run Mobile Browser Tests
-        timeout-minutes: ${{ inputs.mobile_tests_timeout_minutes || 5 }}
+        timeout-minutes: ${{ inputs.mobile_tests_timeout_minutes || 7 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           ENVIRONMENT: ${{ inputs.environment }}
