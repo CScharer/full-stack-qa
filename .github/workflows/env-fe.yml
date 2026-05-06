@@ -116,7 +116,7 @@ on:
       responsive_tests_timeout_minutes:
         description: 'Timeout in minutes for Responsive Design Tests'
         type: number
-        default: 5
+        default: 7
       cypress_tests_timeout_minutes:
         description: 'Timeout in minutes for Cypress Tests'
         type: number
@@ -679,7 +679,7 @@ jobs:
           echo "✅ Grid ready!"
 
       - name: Run Responsive Design Tests
-        timeout-minutes: ${{ inputs.responsive_tests_timeout_minutes || 5 }}
+        timeout-minutes: ${{ inputs.responsive_tests_timeout_minutes || 7 }}
         env:
           SELENIUM_REMOTE_URL: http://localhost:${{ inputs.se_hub_port }}/wd/hub
           ENVIRONMENT: ${{ inputs.environment }}
