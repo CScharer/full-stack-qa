@@ -1,1 +1,1 @@
-{"id":"ac40123dd5373e595c006b3ee7ecc4f6","fullName":"com.cjs.qa.junit.tests.AtlassianTests.addTestCucumberScenario","name":"addTestCucumberScenario() [TEST]","status":"passed","testResultsByEnv":{"default":"bedabc87e28e1cf023e9cc0f5a64bc16"}}
+{"id":"ac40123dd5373e595c006b3ee7ecc4f6","fullName":"com.cjs.qa.junit.tests.AtlassianTests.addTestCucumberScenario","name":"addTestCucumberScenario() [PROD]","status":"passed","testResultsByEnv":{"default":"bfcb8622049765c29e18f4e04cf84651"}}

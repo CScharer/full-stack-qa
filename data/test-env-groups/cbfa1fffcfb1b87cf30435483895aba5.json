@@ -1,1 +1,1 @@
-{"id":"cbfa1fffcfb1b87cf30435483895aba5","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.assertXMLEqualsFail","name":"assertXMLEqualsFail() [TEST]","status":"skipped","testResultsByEnv":{"default":"030028509a9ff14821916e7f900212b5"}}
+{"id":"cbfa1fffcfb1b87cf30435483895aba5","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.assertXMLEqualsFail","name":"assertXMLEqualsFail() [PROD]","status":"skipped","testResultsByEnv":{"default":"2f9fe95bcef6721277aa67c0aeaba2fd"}}
