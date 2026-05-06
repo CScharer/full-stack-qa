@@ -300,7 +300,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.10</version>
+			<version>42.7.11</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
