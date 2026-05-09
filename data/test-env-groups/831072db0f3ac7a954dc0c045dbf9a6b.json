@@ -1,1 +1,1 @@
-{"id":"831072db0f3ac7a954dc0c045dbf9a6b","fullName":"com.cjs.qa.utilities.PageObjectGeneratorCodeValidationTest.testStaticGenerateMethodExists","name":"testStaticGenerateMethodExists() [PROD]","status":"passed","testResultsByEnv":{"default":"390511a0688e89f058eea3a99d1aa12e"}}
+{"id":"831072db0f3ac7a954dc0c045dbf9a6b","fullName":"com.cjs.qa.utilities.PageObjectGeneratorCodeValidationTest.testStaticGenerateMethodExists","name":"testStaticGenerateMethodExists() [TEST]","status":"passed","testResultsByEnv":{"default":"b4ac03611438528c03c60cbf84c9cf18"}}
