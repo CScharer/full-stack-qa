@@ -1,1 +1,1 @@
-{"id":"c870f8214578ae61ed26ff03b186f776","fullName":"com.cjs.qa.bts.BTSConvertDatabaseToXMLTests.testCompanyEnvironmentData","name":"testCompanyEnvironmentData() [DEV]","status":"skipped","testResultsByEnv":{"default":"6e246c7aa8b73caa6c0c4b57c322fb67"}}
+{"id":"c870f8214578ae61ed26ff03b186f776","fullName":"com.cjs.qa.bts.BTSConvertDatabaseToXMLTests.testCompanyEnvironmentData","name":"testCompanyEnvironmentData() [TEST]","status":"skipped","testResultsByEnv":{"default":"75dc373b01e5ea698b0972f23780b8a4"}}

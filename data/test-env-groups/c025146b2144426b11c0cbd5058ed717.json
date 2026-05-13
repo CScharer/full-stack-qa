@@ -1,1 +1,1 @@
-{"id":"c025146b2144426b11c0cbd5058ed717","fullName":"com.cjs.qa.junit.tests.BitcoinTests.mining","name":"mining(TestInfo) [TEST]","status":"skipped","testResultsByEnv":{"default":"bf11132bbbce6a3b76322b8aeeabe542"}}
+{"id":"c025146b2144426b11c0cbd5058ed717","fullName":"com.cjs.qa.junit.tests.BitcoinTests.mining","name":"mining(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"c7e1d3102bd64e9bd2f0b46aba195c0a"}}

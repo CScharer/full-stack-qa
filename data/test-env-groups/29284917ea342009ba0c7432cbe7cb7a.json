@@ -1,1 +1,1 @@
-{"id":"29284917ea342009ba0c7432cbe7cb7a","fullName":"com.cjs.qa.junit.tests.ExcelFormulaSumTests.testExcelSum","name":"testExcelSum() [TEST]","status":"passed","testResultsByEnv":{"default":"4069f95360573449ec4bdfd0ba0b79cf"}}
+{"id":"29284917ea342009ba0c7432cbe7cb7a","fullName":"com.cjs.qa.junit.tests.ExcelFormulaSumTests.testExcelSum","name":"testExcelSum() [PROD]","status":"passed","testResultsByEnv":{"default":"fcc10daeafb394538fdcd92c2602ec13"}}
