@@ -1,1 +1,1 @@
-{"id":"d8aa4f5744fa8d5774e8eda311ecb6a4","fullName":"com.cjs.qa.junit.tests.ScenariosTests.testClassSetup03","name":"testClassSetup03(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"4d7b48cf4ba3466b6543efc33e182c44"}}
+{"id":"d8aa4f5744fa8d5774e8eda311ecb6a4","fullName":"com.cjs.qa.junit.tests.ScenariosTests.testClassSetup03","name":"testClassSetup03(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"6b7a3db26809b93251038721feeca736"}}
