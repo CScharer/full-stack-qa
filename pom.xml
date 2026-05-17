@@ -51,6 +51,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<commons-logging.version>1.3.6</commons-logging.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<netty-codec-http.version>4.2.13.Final</netty-codec-http.version>
+		<opentelemetry.version>1.62.0</opentelemetry.version>
 		<rhino.version>1.9.1</rhino.version>
 		<cucumber.version>7.34.3</cucumber.version>
 		<cucumber-core.version>${cucumber.version}</cucumber-core.version>
@@ -167,6 +168,14 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- Align OpenTelemetry from Selenium transitive deps (Dependabot #144 / CVE-2026-45292) -->
+			<dependency>
+				<groupId>io.opentelemetry</groupId>
+				<artifactId>opentelemetry-bom</artifactId>
+				<version>${opentelemetry.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<!-- Align all io.netty artifacts (e.g. netty-codec-http2 from Selenium) for security fixes -->
 			<dependency>
 				<groupId>io.netty</groupId>
