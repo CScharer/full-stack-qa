@@ -1,1 +1,1 @@
-{"id":"e3d8d7598de3d716a2235e8158e9b1b7","fullName":"com.cjs.qa.bts.BTSConvertDatabaseToXMLTests.convertDBToXML","name":"convertDBToXML() [PROD]","status":"skipped","testResultsByEnv":{"default":"1e72a250af37c8c03b1d086c1ffcc431"}}
+{"id":"e3d8d7598de3d716a2235e8158e9b1b7","fullName":"com.cjs.qa.bts.BTSConvertDatabaseToXMLTests.convertDBToXML","name":"convertDBToXML() [TEST]","status":"skipped","testResultsByEnv":{"default":"7a4eee8811294042f12a36c624fb78bb"}}
