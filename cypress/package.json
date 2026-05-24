@@ -14,7 +14,7 @@
   "devDependencies": {
     "@types/node": "^25.5.2",
     "cypress": "^15.13.0",
-    "qs": "^6.15.0",
+    "qs": "^6.15.2",
     "typescript": "^6.0.2"
   },
   "engines": {
@@ -23,7 +23,7 @@
   },
   "overrides": {
     "lodash": "^4.17.24",
-    "qs": "^6.15.0",
+    "qs": "^6.15.2",
     "uuid": "^14.0.0",
     "yauzl": ">=3.2.1"
   }
