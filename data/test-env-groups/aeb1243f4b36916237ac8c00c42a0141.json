@@ -1,1 +1,1 @@
-{"id":"aeb1243f4b36916237ac8c00c42a0141","fullName":"com.cjs.qa.gt.GTWAPIMethodsTests.createGTWNamespaceClasses","name":"createGTWNamespaceClasses() [PROD]","status":"skipped","testResultsByEnv":{"default":"194fec0db181b265b9bdc6b7f7ab270e"}}
+{"id":"aeb1243f4b36916237ac8c00c42a0141","fullName":"com.cjs.qa.gt.GTWAPIMethodsTests.createGTWNamespaceClasses","name":"createGTWNamespaceClasses() [DEV]","status":"skipped","testResultsByEnv":{"default":"e25acad09b585ac0aa62a28f6309a65a"}}
