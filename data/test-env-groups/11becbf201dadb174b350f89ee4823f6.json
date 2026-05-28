@@ -1,1 +1,1 @@
-{"id":"11becbf201dadb174b350f89ee4823f6","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.formatPretty","name":"formatPretty() [PROD]","status":"skipped","testResultsByEnv":{"default":"8bd2c99ac03cd5148c4371f95ff84810"}}
+{"id":"11becbf201dadb174b350f89ee4823f6","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.formatPretty","name":"formatPretty() [DEV]","status":"skipped","testResultsByEnv":{"default":"8672a0771441a9b1a6a9c9c3b902a0a8"}}
