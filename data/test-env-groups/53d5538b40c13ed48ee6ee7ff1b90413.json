@@ -1,1 +1,1 @@
-{"id":"53d5538b40c13ed48ee6ee7ff1b90413","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.assertXMLEqualPass","name":"assertXMLEqualPass() [DEV]","status":"skipped","testResultsByEnv":{"default":"3f603edcce68395e42ff62fd488e48cf"}}
+{"id":"53d5538b40c13ed48ee6ee7ff1b90413","fullName":"com.cjs.qa.junit.tests.XMLUtilsTests.assertXMLEqualPass","name":"assertXMLEqualPass() [TEST]","status":"skipped","testResultsByEnv":{"default":"7becac41b893f6e167ffb0ceb4a6c05e"}}

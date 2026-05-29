@@ -1,1 +1,1 @@
-{"id":"3022cd27e1b21a51f73170d2cc30fab8","fullName":"com.cjs.qa.utilities.SecureConfigTest.testGetSecretKey","name":"testGetSecretKey() [PROD]","status":"passed","testResultsByEnv":{"default":"2162ef5cd2ba756efc4186789e017947"}}
+{"id":"3022cd27e1b21a51f73170d2cc30fab8","fullName":"com.cjs.qa.utilities.SecureConfigTest.testGetSecretKey","name":"testGetSecretKey() [TEST]","status":"passed","testResultsByEnv":{"default":"9def629e29335b66f0b5c683f5e12ac1"}}
