@@ -1,1 +1,1 @@
-{"id":"c22f17549379c273953000b3796c8af6","fullName":"com.cjs.qa.junit.tests.AtlassianTests.addTestManual","name":"addTestManual() [PROD]","status":"passed","testResultsByEnv":{"default":"009805b553e4df05b664ec8141d2637e"}}
+{"id":"c22f17549379c273953000b3796c8af6","fullName":"com.cjs.qa.junit.tests.AtlassianTests.addTestManual","name":"addTestManual() [DEV]","status":"passed","testResultsByEnv":{"default":"2acf670017d2096b82a4dceeaaf5d26f"}}
