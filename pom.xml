@@ -51,7 +51,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<commons-logging.version>1.3.6</commons-logging.version>
 		<commons-beanutils.version>1.11.0</commons-beanutils.version>
 		<commons-configuration2.version>2.15.0</commons-configuration2.version>
-		<netty-codec-http.version>4.2.13.Final</netty-codec-http.version>
+		<netty-codec-http.version>4.2.15.Final</netty-codec-http.version>
 		<opentelemetry.version>1.62.0</opentelemetry.version>
 		<rhino.version>1.9.1</rhino.version>
 		<cucumber.version>7.34.3</cucumber.version>
