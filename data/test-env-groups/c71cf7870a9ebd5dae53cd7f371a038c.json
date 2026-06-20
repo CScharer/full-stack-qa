@@ -1,1 +1,1 @@
-{"id":"c71cf7870a9ebd5dae53cd7f371a038c","fullName":"com.cjs.qa.junit.dbunit.H2DBUtilDemoTests.t001","name":"t001(TestInfo) [TEST]","status":"skipped","testResultsByEnv":{"default":"2654099ee1284928d9666ea1d3d0de01"}}
+{"id":"c71cf7870a9ebd5dae53cd7f371a038c","fullName":"com.cjs.qa.junit.dbunit.H2DBUtilDemoTests.t001","name":"t001(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"79dd26653a4c69ff0f5311212101f157"}}
