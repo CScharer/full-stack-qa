@@ -1,1 +1,1 @@
-{"id":"32d0b05756316424a00693d01e9103ad","fullName":"com.cjs.qa.junit.tests.ScenariosTests.jenkinsTestSendEMail","name":"jenkinsTestSendEMail(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"1f321c18fb774d68394c224c673307b3"}}
+{"id":"32d0b05756316424a00693d01e9103ad","fullName":"com.cjs.qa.junit.tests.ScenariosTests.jenkinsTestSendEMail","name":"jenkinsTestSendEMail(TestInfo) [TEST]","status":"skipped","testResultsByEnv":{"default":"fb8a69448433aad2abcd739b8193a1d1"}}

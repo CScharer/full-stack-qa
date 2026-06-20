@@ -1,1 +1,1 @@
-{"id":"5821144fb2e776ff60d2b4720c6759c5","fullName":"com.cjs.qa.utilities.PageObjectGeneratorCodeValidationTest.testGeneratorIsNotAbstract","name":"testGeneratorIsNotAbstract() [TEST]","status":"passed","testResultsByEnv":{"default":"6b91d7e23ec142f348bf012b9fdf725a"}}
+{"id":"5821144fb2e776ff60d2b4720c6759c5","fullName":"com.cjs.qa.utilities.PageObjectGeneratorCodeValidationTest.testGeneratorIsNotAbstract","name":"testGeneratorIsNotAbstract() [PROD]","status":"passed","testResultsByEnv":{"default":"231b3b62c696d5e876e11b576c2bc22b"}}
