@@ -121,7 +121,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 
 		<!-- Logging -->
 		<log4j2.version>2.25.4</log4j2.version>
-		<logback-core.version>1.5.32</logback-core.version>
+		<logback-core.version>1.5.33</logback-core.version>
 
 		<!-- API Testing -->
 		<rest-assured.version>6.0.0</rest-assured.version>
