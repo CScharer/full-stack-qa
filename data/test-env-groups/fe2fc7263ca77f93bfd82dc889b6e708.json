@@ -1,1 +1,1 @@
-{"id":"fe2fc7263ca77f93bfd82dc889b6e708","fullName":"com.cjs.qa.junit.tests.AtlassianTests.addTestGeneric","name":"addTestGeneric() [PROD]","status":"passed","testResultsByEnv":{"default":"09b2e8cec18b7b1c749424f52cf175a9"}}
+{"id":"fe2fc7263ca77f93bfd82dc889b6e708","fullName":"com.cjs.qa.junit.tests.AtlassianTests.addTestGeneric","name":"addTestGeneric() [DEV]","status":"passed","testResultsByEnv":{"default":"55d32fc9b3f1274efdc5b1dea74ac691"}}

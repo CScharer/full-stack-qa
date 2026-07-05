@@ -1,1 +1,1 @@
-{"id":"98721a5a3a16e6be8dd26764264a1b84","fullName":"com.cjs.qa.junit.tests.ScenariosTests.wellmark","name":"wellmark(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"008e19b4781739a8331b7db904a34483"}}
+{"id":"98721a5a3a16e6be8dd26764264a1b84","fullName":"com.cjs.qa.junit.tests.ScenariosTests.wellmark","name":"wellmark(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"575bcfa49e337d4ad53110a2f1dfa701"}}
