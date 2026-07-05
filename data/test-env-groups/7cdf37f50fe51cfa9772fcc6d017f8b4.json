@@ -1,1 +1,1 @@
-{"id":"7cdf37f50fe51cfa9772fcc6d017f8b4","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileFormInput","name":"testMobileFormInput [DEV]","status":"passed","testResultsByEnv":{"default":"b555ad2697402809e62b48f0c230ef63"}}
+{"id":"7cdf37f50fe51cfa9772fcc6d017f8b4","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileFormInput","name":"testMobileFormInput [DEV]","status":"broken","testResultsByEnv":{"default":"65882256ef2c2ac8005aad0848706229"}}
