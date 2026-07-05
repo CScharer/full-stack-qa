@@ -1,1 +1,1 @@
-{"id":"9ecde80eb544559b266aa79d7b331888","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.tearDown","name":"tearDown [DEV]","status":"broken","testResultsByEnv":{"default":"1f24bac5c92bb34f96411a403806c9e3"}}
+{"id":"9ecde80eb544559b266aa79d7b331888","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.tearDown","name":"tearDown [PROD]","status":"broken","testResultsByEnv":{"default":"4db0d727a1d242ca1c58c51d042ec99b"}}
