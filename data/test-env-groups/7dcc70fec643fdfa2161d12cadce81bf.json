@@ -1,1 +1,1 @@
-{"id":"7dcc70fec643fdfa2161d12cadce81bf","fullName":"com.cjs.qa.junit.tests.ScenariosTests.testQueryAccess","name":"testQueryAccess(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"5c50b0d8cf42c063c52dac07c222f44e"}}
+{"id":"7dcc70fec643fdfa2161d12cadce81bf","fullName":"com.cjs.qa.junit.tests.ScenariosTests.testQueryAccess","name":"testQueryAccess(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"2560a7805d915dd63aad635b24d6fbba"}}
