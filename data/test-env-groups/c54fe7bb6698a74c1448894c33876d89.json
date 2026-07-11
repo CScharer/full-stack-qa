@@ -1,1 +1,1 @@
-{"id":"c54fe7bb6698a74c1448894c33876d89","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testMobileImageOptimization","name":"testMobileImageOptimization [DEV]","status":"passed","testResultsByEnv":{"default":"815e87af26ecb469762ff8d95e0f3c8e"}}
+{"id":"c54fe7bb6698a74c1448894c33876d89","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testMobileImageOptimization","name":"testMobileImageOptimization [PROD]","status":"passed","testResultsByEnv":{"default":"40f9b191f55d37b598bad243057250b1"}}
