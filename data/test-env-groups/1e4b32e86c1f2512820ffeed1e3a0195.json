@@ -1,1 +1,1 @@
-{"id":"1e4b32e86c1f2512820ffeed1e3a0195","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testMobileFontLegibility","name":"testMobileFontLegibility [DEV]","status":"passed","testResultsByEnv":{"default":"93502c3a1072ea881f5118637aa4c897"}}
+{"id":"1e4b32e86c1f2512820ffeed1e3a0195","fullName":"com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests.testMobileFontLegibility","name":"testMobileFontLegibility [PROD]","status":"passed","testResultsByEnv":{"default":"bb8fe40c1e68bcc2301c3c9361703d8c"}}
