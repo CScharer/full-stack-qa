@@ -15,7 +15,7 @@
     "@types/node": "^26.1.1",
     "cypress": "^15.18.1",
     "qs": "^6.15.3",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=20.0.0",

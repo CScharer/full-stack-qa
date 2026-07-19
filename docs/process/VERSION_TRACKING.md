@@ -80,6 +80,7 @@ As of **2026-07-19** (after deferred major bumps):
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
 | -- | -- | -- | -- |
+| TypeScript | 6.0.3 | 7.0.2 | TS 7 (native rewrite) breaks Next 16 type-check + eslint-config-next (`<6.1.0`); revisit when supported |
 | Hibernate | 6.6.54.Final | 7.4.5.Final | On Hibernate ORM **6.6** (Jakarta); 7.x available later |
 <!-- prettier-ignore-end -->
 
@@ -173,7 +174,7 @@ As of **2026-07-19** (after deferred major bumps):
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
 | Cypress | ^15.18.1 | 15.18.1 | [✅] | 2026-07-19 | Current stable |
-| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
+| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 | qs (override) | ^6.15.3 | 6.15.3 | [✅] | 2026-07-19 | Security override |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
@@ -194,7 +195,7 @@ As of **2026-07-19** (after deferred major bumps):
 | js-yaml (override) | ^5.2.1 | 5.2.1 | [✅] | 2026-07-19 | Major bump from 3.x (Dependabot #200 line) |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #176 |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Per-parent overrides |
-| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
+| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 <!-- prettier-ignore-end -->
 
@@ -205,7 +206,7 @@ As of **2026-07-19** (after deferred major bumps):
 | -- | -- | -- | -- | -- | -- |
 | Vibium | ^26.5.31 | 26.5.31 | [✅] | 2026-07-19 | CLI + optional platform packages |
 | Vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
-| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
+| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 <!-- prettier-ignore-end -->
 
@@ -218,7 +219,7 @@ As of **2026-07-19** (after deferred major bumps):
 | Next.js | 16.2.10 | 16.2.10 | [✅] | 2026-07-19 | Current stable |
 | @tanstack/react-query | ^5.101.2 | 5.101.2 | [✅] | 2026-07-19 | Current stable |
 | eslint-config-next | 16.2.10 | 16.2.10 | [✅] | 2026-07-19 | Matched to Next 16.2.x |
-| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
+| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | axios | ^1.18.1 | 1.18.1 | [✅] | 2026-07-19 | Current stable |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -406,7 +407,7 @@ The `overrides` section forces all instances of the package (including transitiv
 
 ### 2026-07-19 (deferred major bumps)
 - **Maven**: Jackson 2.x **2.21.5 → 2.22.1** (annotations **2.22**); Hibernate **5.6.15.Final → 6.6.54.Final** (`org.hibernate.orm:hibernate-core`, Jakarta Persistence **3.1**, dropped `hibernate-entitymanager`); migrated test JPA bootstrap (`javax.persistence` → `jakarta.persistence`, `persistence.xml` 3.0).
-- **npm**: TypeScript **6.0.3 → 7.0.2** and `@types/node` **25.9.5 → 26.1.1** across frontend/cypress/playwright/vibium; Playwright `js-yaml` override **3.15.0 → 5.2.1**; frontend `@babel/core` override **7.29.6 → 8.0.1**. Regenerated lockfiles. Migrated tsconfigs for TS 7 (`moduleResolution: bundler`, removed `baseUrl` / `ignoreDeprecations`).
+- **npm**: `@types/node` **25.9.5 → 26.1.1** across frontend/cypress/playwright/vibium; Playwright `js-yaml` override **3.15.0 → 5.2.1**; frontend `@babel/core` override **7.29.6 → 8.0.1**. Regenerated lockfiles. Modernized tsconfigs (`moduleResolution: bundler`, removed `baseUrl` / `ignoreDeprecations`). **TypeScript 7 attempted but reverted to 6.0.3** — the native TS 7 package breaks Next 16's built-in type-check step and `eslint-config-next` (typescript-eslint peer `>=4.8.4 <6.1.0`), which hung the CI frontend startup.
 - **Python**: `pyproject.toml` mypy **1.20.0 → 2.3.0**, structlog **25.5.0 → 26.1.0**.
 - **Docs**: VERSION_TRACKING / README / SECURITY / monitoring / worklog refreshed for the majors above. Hibernate 7.x left for a later pass.
 

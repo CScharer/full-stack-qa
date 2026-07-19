@@ -97,13 +97,13 @@ This directory contains all project documentation and analysis reports for the C
 **Last Updated**: July 19, 2026
 
 ### July 19, 2026
-- ✅ **Deferred major dependency bumps** — TypeScript **7.0.2**, `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate **6.6.54.Final** (Jakarta; Dependabot #93), `js-yaml` **5.2.1**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
+- ✅ **Deferred major dependency bumps** — `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate **6.6.54.Final** (Jakarta; Dependabot #93), `js-yaml` **5.2.1**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. TypeScript stays **6.0.3** (TS 7 breaks Next 16 / eslint-config-next). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 - ✅ **Safe dependency bump + mobile tearDown fix** — Selenium **4.46.0**, Jackson **3.2.1**, Next **16.2.10**, Cypress **15.18.1**, Playwright **1.61.1**, and related pins; `MobileBrowserTests` ThreadLocal driver.
 - ✅ **Security / dependency doc refresh** — Aligned living docs with PRs #282–#284 and the July bumps; Dockerfile **npm@11**.
 
 ### April 6, 2026
 - ✅ **Comprehensive stable dependency bump** — Maven, npm, Python, CI Selenium default, and regenerated lockfiles. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md) Update History **2026-04-06 (comprehensive stable bump)** and root [README.md](../README.md) “Recent Improvements”. Includes Dependabot-aligned pins (e.g. Jackson **3.1.1**, Vite **8.0.5**).
-- ✅ **Documentation** — Root README badges/tables and `config/` / `xml/` paths; `VERSION_TRACKING.md`, `VERSION_MONITORING.md`, Selenium Grid / Docker / CI troubleshooting / Allure guides; `scripts/quality/validate-dependency-versions.sh`; JavaDoc examples in `GridTestUtils` / `SeleniumGridVersionValidator`; `frontend/README.md` (TypeScript 7, Vitest 4.1.x, Node 20).
+- ✅ **Documentation** — Root README badges/tables and `config/` / `xml/` paths; `VERSION_TRACKING.md`, `VERSION_MONITORING.md`, Selenium Grid / Docker / CI troubleshooting / Allure guides; `scripts/quality/validate-dependency-versions.sh`; JavaDoc examples in `GridTestUtils` / `SeleniumGridVersionValidator`; `frontend/README.md` (TypeScript 6, Vitest 4.1.x, Node 20).
 - ✅ **Setup guides** — [QUICK_START.md](QUICK_START.md), [LOCAL_DEVELOPMENT.md](guides/setup/LOCAL_DEVELOPMENT.md), [NAVIGATION.md](NAVIGATION.md), [SECURITY.md](process/SECURITY.md), [frontend/README.md](../frontend/README.md), [backend/README.md](../backend/README.md): last-updated dates and prerequisites aligned with Node 20 / Python 3.13; local structure uses `data/core/`.
 
 ### January 16, 2026
