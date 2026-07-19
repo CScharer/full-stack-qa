@@ -34,9 +34,16 @@
     "uuid": "^14.0.0",
     "minimatch": "9.0.7",
     "js-yaml": "^3.15.0",
-    "glob": { "minimatch": "3.1.4" },
-    "filelist": { "minimatch": "5.1.8" },
-    "matcher-collection": { "minimatch": "3.1.4" }
+    "glob": {
+      "minimatch": "3.1.4"
+    },
+    "filelist": {
+      "minimatch": "5.1.8"
+    },
+    "matcher-collection": {
+      "minimatch": "3.1.4"
+    },
+    "form-data": "^4.0.6"
   },
   "engines": {
     "node": ">=20.0.0",
