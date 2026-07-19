@@ -41,9 +41,19 @@ function walk(dir, out = []) {
   return out;
 }
 
+function stripHtmlTags(text) {
+  // Repeat until stable: a single pass can leave nested/malformed tags
+  // (e.g. <scrip<script>t>) and reintroduce the unsafe sequence.
+  let previous;
+  do {
+    previous = text;
+    text = text.replace(/<[^>]*>/g, "");
+  } while (text !== previous);
+  return text;
+}
+
 function slugifyHeading(text) {
-  return text
-    .replace(/<[^>]+>/g, "")
+  return stripHtmlTags(text)
     .trim()
     .toLowerCase()
     .replace(/[^\w\s-]/g, "")
