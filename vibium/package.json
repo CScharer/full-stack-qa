@@ -4,7 +4,7 @@
   "description": "Vibium tests for full-stack-qa framework",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --noEmit",
     "test": "npx vitest run",
     "test:watch": "npx vitest",
     "test:ui": "npx vitest --ui",
@@ -20,7 +20,7 @@
     "@vibium/linux-x64": "^26.3.18"
   },
   "devDependencies": {
-    "@types/node": "^25.9.5",
+    "@types/node": "^26.1.1",
     "tsx": "^4.23.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"

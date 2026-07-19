@@ -16,7 +16,7 @@
 
 [![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
 
-[![JUnit](https://img.shields.io/badge/JUnit-6.1.2-blue.svg)](https://junit.org/junit5/)
+[![JUnit](https://img.shields.io/badge/JUnit-6.1.2-blue.svg?style=flat)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
 [![Vitest](https://img.shields.io/badge/Vitest-4.1.2-blue.svg)](https://vitest.dev/)
 
@@ -137,9 +137,10 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **WebDriverManager 6.3.4** - Automatic driver management
 
 ### Recent Improvements (July 19, 2026)
-- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, TypeScript **6.0.3**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.10 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Deferred major bumps** — `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate ORM **6.6.54.Final** (Jakarta Persistence; clears Dependabot #93), `js-yaml` **5.2.1**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. TypeScript stays **6.0.3** (TS 7 breaks Next 16 / eslint-config-next). See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.10 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**.
 - ✅ **Mobile Browser CI fix** — `MobileBrowserTests` uses per-thread WebDriver + defensive `quit()` so parallel Surefire tearDown no longer fails on a shared/dead Grid session.
-- ✅ **Security / Dependabot refresh** — Jackson 2.x **2.21.5**, npm overrides for **form-data**, **js-yaml**, **@babel/core**. Dockerfile pins **npm@11** on Node 20. Hibernate **5.6.15.Final** left as-is (Dependabot #93).
+- ✅ **Security / Dependabot refresh** — Jackson 2.x security line, npm overrides for **form-data**, **js-yaml**, **@babel/core**. Dockerfile pins **npm@11** on Node 20.
 
 ### Recent Improvements (April 6, 2026)
 - ✅ **Dependency refresh (stable only)** — Bumped Maven, npm, and Python pins to current stable releases (e.g. Selenium **4.41.0**, Cucumber **7.34.3**, Jackson **3.1.1**, Netty **4.2.12.Final**, Next.js **16.2.2**, TypeScript **6.0.2**, Vitest **4.1.2**, Playwright **1.59.1**, Cypress **15.13.0**, Locust **2.43.4**, FastAPI **0.135.x** line). Pre-release Maven suggestions (alphas, milestones, betas) were skipped. **DBUnit** remains **2.8.0** (3.x is a breaking migration). See `docs/process/VERSION_TRACKING.md` for the full table.
