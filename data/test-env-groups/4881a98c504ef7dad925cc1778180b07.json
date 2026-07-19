@@ -1,1 +1,1 @@
-{"id":"4881a98c504ef7dad925cc1778180b07","fullName":"com.cjs.qa.junit.tests.ExcelStatisticalTests.getStatisticalTimings","name":"getStatisticalTimings() [DEV]","status":"passed","testResultsByEnv":{"default":"ac4be617433262c84c678e718b437a46"}}
+{"id":"4881a98c504ef7dad925cc1778180b07","fullName":"com.cjs.qa.junit.tests.ExcelStatisticalTests.getStatisticalTimings","name":"getStatisticalTimings() [PROD]","status":"passed","testResultsByEnv":{"default":"7fd73db58f89cc743dcc54ca9932bad4"}}
