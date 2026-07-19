@@ -16,7 +16,7 @@
 
 [![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
 
-[![JUnit](https://img.shields.io/badge/JUnit-6.1.2-blue.svg)](https://junit.org/junit5/)
+[![JUnit](https://img.shields.io/badge/JUnit-6.1.2-blue.svg?style=flat)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
 [![Vitest](https://img.shields.io/badge/Vitest-4.1.2-blue.svg)](https://vitest.dev/)
 
