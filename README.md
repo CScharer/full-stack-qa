@@ -9,7 +9,7 @@
 [![JavaScript](https://img.shields.io/badge/logo-JavaScript-orange?logo=JavaScript)](https://www.JavaScriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 [![Python](https://img.shields.io/badge/Python-3.13-orange.svg)](https://www.python.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-orange.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7.0.2-orange.svg)](https://www.typescriptlang.org/)
 
 [![Cucumber](https://img.shields.io/badge/Cucumber-7.34.3-brightgreen.svg)](https://cucumber.io/)
 [![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.0-blue.svg)](https://rest-assured.io/)
@@ -120,7 +120,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Java 21** - Latest LTS version
 - **Python 3.13** - Latest stable version (for Robot Framework & Locust)
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
-- **TypeScript 6.0.3** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
+- **TypeScript 7.0.2** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
 - **Selenium 4.46.0** - Modern WebDriver API with Grid support
 - **Playwright 1.61.1** - Fast and reliable end-to-end testing
 - **Cypress 15.18.1** - JavaScript end-to-end testing framework
@@ -137,9 +137,10 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **WebDriverManager 6.3.4** - Automatic driver management
 
 ### Recent Improvements (July 19, 2026)
-- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, TypeScript **6.0.3**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.10 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Deferred major bumps** — TypeScript **7.0.2**, `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate ORM **6.6.54.Final** (Jakarta Persistence; clears Dependabot #93), `js-yaml` **5.2.1**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.10 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**.
 - ✅ **Mobile Browser CI fix** — `MobileBrowserTests` uses per-thread WebDriver + defensive `quit()` so parallel Surefire tearDown no longer fails on a shared/dead Grid session.
-- ✅ **Security / Dependabot refresh** — Jackson 2.x **2.21.5**, npm overrides for **form-data**, **js-yaml**, **@babel/core**. Dockerfile pins **npm@11** on Node 20. Hibernate **5.6.15.Final** left as-is (Dependabot #93).
+- ✅ **Security / Dependabot refresh** — Jackson 2.x security line, npm overrides for **form-data**, **js-yaml**, **@babel/core**. Dockerfile pins **npm@11** on Node 20.
 
 ### Recent Improvements (April 6, 2026)
 - ✅ **Dependency refresh (stable only)** — Bumped Maven, npm, and Python pins to current stable releases (e.g. Selenium **4.41.0**, Cucumber **7.34.3**, Jackson **3.1.1**, Netty **4.2.12.Final**, Next.js **16.2.2**, TypeScript **6.0.2**, Vitest **4.1.2**, Playwright **1.59.1**, Cypress **15.13.0**, Locust **2.43.4**, FastAPI **0.135.x** line). Pre-release Maven suggestions (alphas, milestones, betas) were skipped. **DBUnit** remains **2.8.0** (3.x is a breaking migration). See `docs/process/VERSION_TRACKING.md` for the full table.

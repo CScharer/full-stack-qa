@@ -189,7 +189,7 @@ timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,
 
 ## 🔗 Related Documents
 
-- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Jackson **3.2.1** / 2.x **2.21.5**, Vite **8.1.5**, TypeScript **6.0.3**, npm overrides including form-data / js-yaml / @babel/core; Dockerfile **npm@11**; last doc refresh 2026-07-19)
+- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Jackson **3.2.1** / 2.x **2.22.1**, Vite **8.1.5**, TypeScript **7.0.2**, Hibernate **6.6.54.Final**, npm overrides including form-data / js-yaml **5.x** / @babel/core **8.x**; Dockerfile **npm@11**; last doc refresh 2026-07-19)
 - [Pre-Pipeline Validation](PRE_PIPELINE_VALIDATION.md) - Local validation checklist
 - Next Steps After PR #53 (archived) - Work plan and status
 

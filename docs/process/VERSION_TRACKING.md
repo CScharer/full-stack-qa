@@ -75,19 +75,12 @@ When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`,
 
 ### Known available updates
 
-As of **2026-07-19** (after second safe-bump pass):
+As of **2026-07-19** (after deferred major bumps):
 
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
 | -- | -- | -- | -- |
-| TypeScript | 6.0.3 | 7.0.2 | Major — schedule separately |
-| @types/node | 25.9.5 | 26.1.1 | Major — schedule separately |
-| Jackson 2.x (core/databind) | 2.21.5 | 2.22.1 | Deferred minor |
-| Hibernate | 5.6.15.Final | 6.6.x / 8.x | Jakarta migration; Dependabot #93 |
-| js-yaml (override) | 3.15.0 | 5.x | Major — keep 3.x |
-| @babel/core (override) | 7.29.7 | 8.x | Major — keep 7.x |
-| mypy | 1.20.0 | 2.x | Major — schedule separately |
-| structlog | 25.5.0 | 26.x | Major — schedule separately |
+| Hibernate | 6.6.54.Final | 7.4.5.Final | On Hibernate ORM **6.6** (Jakarta); 7.x available later |
 <!-- prettier-ignore-end -->
 
 
@@ -108,7 +101,7 @@ As of **2026-07-19** (after second safe-bump pass):
 | -- | -- | -- | -- | -- | -- |
 | Selenium | 4.46.0 | 4.46.0 | [✅] | 2026-07-19 | Aligned with Grid workflow default |
 | Selenide | 7.17.0 | 7.17.0 | [✅] | 2026-07-19 | Current stable |
-| TestNG | 7.11.0 | 7.11.0 | [✅] | - | Current |
+| TestNG | 7.11.0 | 7.11.0 | [✅] | 2025-12-25 | Current |
 | JUnit | 6.1.2 | 6.1.2 | [✅] | 2026-07-19 | Current stable |
 | Cucumber | 7.34.4 | 7.34.4 | [✅] | 2026-07-19 | Current stable |
 | REST Assured | 6.0.1 | 6.0.1 | [✅] | 2026-07-19 | Requires Java 17+; Jackson **3.2.1** (`tools.jackson.core`) |
@@ -122,10 +115,10 @@ As of **2026-07-19** (after second safe-bump pass):
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
 | Maven | 3.9.11 | 3.9.11 | [✅] | 2025-12-19 | Updated in PR #51 |
-| Java | 21 | 21 (LTS) | [✅] | - | Current LTS version |
+| Java | 21 | 21 (LTS) | [✅] | 2025-12-25 | Current LTS version |
 | Maven Compiler Plugin | 3.15.0 | 3.15.0 | [✅] | 2026-07-19 | Current stable version |
 | Maven Surefire Plugin | 3.5.6 | 3.5.6 | [✅] | 2026-07-19 | Current stable |
-| Maven Checkstyle Plugin | 3.6.0 | 3.6.0 | [✅] | - | Current |
+| Maven Checkstyle Plugin | 3.6.0 | 3.6.0 | [✅] | 2025-12-25 | Current |
 | Checkstyle Tool | 13.8.0 | 13.8.0 | [✅] | 2026-07-19 | Current stable |
 | SpotBugs | 4.10.3 | 4.10.3 | [✅] | 2026-07-19 | Current stable |
 | PMD | 3.28.0 | 3.28.0 | [✅] | 2026-07-19 | maven-pmd-plugin |
@@ -137,7 +130,7 @@ As of **2026-07-19** (after second safe-bump pass):
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
 | Gatling | 3.15.1 | 3.15.1 | [✅] | 2026-07-19 | With gatling-maven-plugin 4.21.5 |
-| JMeter | 5.6.3 | 5.6.3 | [✅] | - | Current |
+| JMeter | 5.6.3 | 5.6.3 | [✅] | 2025-12-25 | Current |
 | Scala | 2.13.18 | 2.13.18 | [✅] | 2025-12-19 | Updated in PR #51 - For Gatling |
 <!-- prettier-ignore-end -->
 
@@ -150,11 +143,11 @@ As of **2026-07-19** (after second safe-bump pass):
 | Log4j 2 | 2.26.1 | 2.26.1 | [✅] | 2026-07-19 | `log4j2.version` (2.x Active Maintenance) |
 | Logback Core | 1.5.38 | 1.5.38 | [✅] | 2026-07-19 | Overrides Gatling transitive line |
 | Jackson Databind (3.x) | 3.2.1 | 3.2.1 | [✅] | 2026-07-19 | `jackson.version`; tools.jackson.core jackson-databind |
-| Jackson Core (2.x) | 2.21.5 | 2.22.1 | [⚠️] | 2026-07-19 | `jackson2.version` — stay on 2.21.5 patched line; 2.22.1 available |
-| Jackson Databind (2.x) | 2.21.5 | 2.22.1 | [⚠️] | 2026-07-19 | Explicit com.fasterxml pin; 2.22.1 available |
-| Jackson Annotations | 2.21 | 2.21 | [✅] | 2026-07-19 | 2.x annotations alongside Jackson 3 databind (REST Assured 6) |
+| Jackson Core (2.x) | 2.22.1 | 2.22.1 | [✅] | 2026-07-19 | `jackson2.version` |
+| Jackson Databind (2.x) | 2.22.1 | 2.22.1 | [✅] | 2026-07-19 | Explicit com.fasterxml pin |
+| Jackson Annotations | 2.22 | 2.22 | [✅] | 2026-07-19 | 2.x annotations alongside Jackson 3 databind (REST Assured 6) |
 | Netty BOM | 4.2.16.Final | 4.2.16.Final | [✅] | 2026-07-19 | `netty-codec-http.version` / netty-bom import |
-| Hibernate | 5.6.15.Final | 5.6.15.Final | [⚠️] | 2026-07-19 | Dependabot #93 / CVE-2026-0603; no patched 5.x; 6.x is Jakarta migration |
+| Hibernate | 6.6.54.Final | 6.6.54.Final | [✅] | 2026-07-19 | `org.hibernate.orm:hibernate-core`; Jakarta Persistence 3.1; clears Dependabot #93 (5.x-only CVE) |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | MSSQL JDBC | 13.4.0.jre11 | 13.4.0.jre11 | [✅] | 2026-04-06 | Current stable |
 | PostgreSQL JDBC | 42.7.13 | 42.7.13 | [✅] | 2026-07-19 | Explicit pin in pom.xml |
@@ -180,8 +173,8 @@ As of **2026-07-19** (after second safe-bump pass):
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
 | Cypress | ^15.18.1 | 15.18.1 | [✅] | 2026-07-19 | Current stable |
-| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | Current pin **6.0.3** (latest 6.x); TypeScript **7.0.2** available (major — deferred) |
-| @types/node | ^25.9.5 | 26.1.1 | [⚠️] | 2026-07-19 | Pinned on **25.9.5**; Node types **26.x** available (major — deferred) |
+| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
+| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 | qs (override) | ^6.15.3 | 6.15.3 | [✅] | 2026-07-19 | Security override |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #170 |
@@ -198,11 +191,11 @@ As of **2026-07-19** (after second safe-bump pass):
 | brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security override |
 | socket.io-parser (override) | ^4.2.6 | 4.2.6 | [✅] | 2026-04-04 | Artillery transitive |
 | fast-xml-parser (override) | ^5.10.1 | 5.10.1 | [✅] | 2026-07-19 | DoS hardening |
-| js-yaml (override) | ^3.15.0 | 3.15.0 | [✅] | 2026-07-19 | Dependabot #200 |
+| js-yaml (override) | ^5.2.1 | 5.2.1 | [✅] | 2026-07-19 | Major bump from 3.x (Dependabot #200 line) |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #176 |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Per-parent overrides |
-| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | Current pin **6.0.3** (latest 6.x); TypeScript **7.0.2** available (major — deferred) |
-| @types/node | ^25.9.5 | 26.1.1 | [⚠️] | 2026-07-19 | Pinned on **25.9.5**; Node types **26.x** available (major — deferred) |
+| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
+| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 <!-- prettier-ignore-end -->
 
 ### Vibium Project (vibium/package.json)
@@ -212,8 +205,8 @@ As of **2026-07-19** (after second safe-bump pass):
 | -- | -- | -- | -- | -- | -- |
 | Vibium | ^26.5.31 | 26.5.31 | [✅] | 2026-07-19 | CLI + optional platform packages |
 | Vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
-| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | Current pin **6.0.3** (latest 6.x); TypeScript **7.0.2** available (major — deferred) |
-| @types/node | ^25.9.5 | 26.1.1 | [⚠️] | 2026-07-19 | Pinned on **25.9.5**; Node types **26.x** available (major — deferred) |
+| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
+| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 <!-- prettier-ignore-end -->
 
 ### Frontend Project (frontend/package.json)
@@ -225,7 +218,7 @@ As of **2026-07-19** (after second safe-bump pass):
 | Next.js | 16.2.10 | 16.2.10 | [✅] | 2026-07-19 | Current stable |
 | @tanstack/react-query | ^5.101.2 | 5.101.2 | [✅] | 2026-07-19 | Current stable |
 | eslint-config-next | 16.2.10 | 16.2.10 | [✅] | 2026-07-19 | Matched to Next 16.2.x |
-| TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | Current pin **6.0.3** (latest 6.x); TypeScript **7.0.2** available (major — deferred) |
+| TypeScript | ^7.0.2 | 7.0.2 | [✅] | 2026-07-19 | Major bump from 6.x |
 | axios | ^1.18.1 | 1.18.1 | [✅] | 2026-07-19 | Current stable |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -234,7 +227,7 @@ As of **2026-07-19** (after second safe-bump pass):
 | @testing-library/user-event | 14.6.1 | 14.6.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | jsdom | ^29.1.1 | 29.1.1 | [✅] | 2026-07-19 | Vitest 4 compatible |
 | ESLint | ^10.7.0 | 10.7.0 | [✅] | 2026-07-19 | Current stable |
-| @types/node | ^25.9.5 | 26.1.1 | [⚠️] | 2026-07-19 | Pinned on **25.9.5**; Node types **26.x** available (major — deferred) |
+| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 | Vite | ^8.1.5 | 8.1.5 | [✅] | 2026-07-19 | Current stable 8.x |
 | @vitejs/plugin-react | ^6.0.3 | 6.0.3 | [✅] | 2026-07-19 | Current stable |
 | @vitest/coverage-v8 | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
@@ -242,7 +235,7 @@ As of **2026-07-19** (after second safe-bump pass):
 | vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
 | ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); transitive from eslint |
 | brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security override (GHSA-f886-m6hf-6m8v); Dependabot #75–#78 |
-| @babel/core (override) | ^7.29.6 | 7.29.7 | [✅] | 2026-07-19 | Dependabot #171 |
+| @babel/core (override) | ^8.0.1 | 8.0.1 | [✅] | 2026-07-19 | Major bump from 7.x (Dependabot #171 line) |
 | flatted (override) | >=3.4.2 | 3.4.2 | [✅] | 2026-07-19 | Security override |
 | postcss (override) | ^8.5.10 | 8.5.12 | [✅] | 2026-07-19 | Security override |
 <!-- prettier-ignore-end -->
@@ -263,8 +256,8 @@ As of **2026-07-19** (after second safe-bump pass):
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
 | numpy | 2.5.1 | 2.5.1 | [✅] | 2026-07-19 | Pinned in pyproject.toml |
-| structlog | 25.5.0 | 25.5.0 | [✅] | 2025-12-19 | Updated in PR #51 |
-| mypy | 1.20.0 | 1.20.0 | [✅] | 2026-04-06 | Pinned in pyproject.toml |
+| structlog | 26.1.0 | 26.1.0 | [✅] | 2026-07-19 | Major bump from 25.x |
+| mypy | 2.3.0 | 2.3.0 | [✅] | 2026-07-19 | Major bump from 1.x |
 | pyright | 1.1.411 | 1.1.411 | [✅] | 2026-07-19 | Pinned in pyproject.toml |
 <!-- prettier-ignore-end -->
 
@@ -352,7 +345,7 @@ Vulnerability counts change as Dependabot rescans and PRs are merged. Check the 
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-07-19** security refresh (PRs #282–#283), open alerts should be limited to **Hibernate #93** (CVE-2026-0603; no patched 5.x release). Closed in that pass: Jackson 2.x databind (#201–#204), js-yaml (#200), form-data (#170, #176), @babel/core (#171). Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
+After the **2026-07-19** deferred major bumps, Dependabot **#93** (Hibernate 5.x CVE-2026-0603) should clear once the scanner sees `org.hibernate.orm:hibernate-core` **6.6.54.Final** (advisory range is 5.x-only). Earlier same-day security refresh (PRs #282–#283) closed Jackson 2.x databind (#201–#204), js-yaml (#200), form-data (#170, #176), @babel/core (#171). Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
 
 ### Update Strategy
 
@@ -410,6 +403,12 @@ The `overrides` section forces all instances of the package (including transitiv
 ---
 
 ## 📋 Update History
+
+### 2026-07-19 (deferred major bumps)
+- **Maven**: Jackson 2.x **2.21.5 → 2.22.1** (annotations **2.22**); Hibernate **5.6.15.Final → 6.6.54.Final** (`org.hibernate.orm:hibernate-core`, Jakarta Persistence **3.1**, dropped `hibernate-entitymanager`); migrated test JPA bootstrap (`javax.persistence` → `jakarta.persistence`, `persistence.xml` 3.0).
+- **npm**: TypeScript **6.0.3 → 7.0.2** and `@types/node` **25.9.5 → 26.1.1** across frontend/cypress/playwright/vibium; Playwright `js-yaml` override **3.15.0 → 5.2.1**; frontend `@babel/core` override **7.29.6 → 8.0.1**. Regenerated lockfiles. Migrated tsconfigs for TS 7 (`moduleResolution: bundler`, removed `baseUrl` / `ignoreDeprecations`).
+- **Python**: `pyproject.toml` mypy **1.20.0 → 2.3.0**, structlog **25.5.0 → 26.1.0**.
+- **Docs**: VERSION_TRACKING / README / SECURITY / monitoring / worklog refreshed for the majors above. Hibernate 7.x left for a later pass.
 
 ### 2026-07-19 (safe stable bump + mobile tearDown fix)
 - **Maven**: Selenium/Selenide **4.46.0 / 7.17.0**; Jackson 3 **3.2.1**; Netty **4.2.16.Final**; Log4j **2.26.1**; Logback **1.5.38**; Cucumber **7.34.4**; REST Assured **6.0.1**; Gatling **3.15.1**; JUnit **6.1.2**; Allure Java **2.35.3**; Checkstyle **13.8.0**; SpotBugs **4.10.3** (+ plugin **4.10.3.0**); OpenTelemetry **1.64.0**; PostgreSQL JDBC **42.7.13**; htmlunit3-driver **4.46.0**; Surefire **3.5.6**; Compiler plugin **3.15.0**; Secret Manager **2.94.0**; Appium **10.1.1**. Hibernate remains **5.6.15.Final**. Jackson 2.x remains **2.21.5** (2.22.1 available).

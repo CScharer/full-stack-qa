@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 import org.apache.logging.log4j.LogManager;
 import org.dbunit.database.DatabaseConnection;
@@ -120,7 +120,7 @@ public class BaseDBUnitTestForJPADao {
       }
 
       final Map<Object, Object> mapProperties = new HashMap<>();
-      mapProperties.put("javax.persistence.jdbc.url", DBInfo.URL);
+      mapProperties.put("jakarta.persistence.jdbc.url", DBInfo.URL);
       // mapProperties.put("hibernate.hbm2dll.auto", "create-drop");
       entityManagerFactory =
           Persistence.createEntityManagerFactory("orderPersistenceUnit", mapProperties);

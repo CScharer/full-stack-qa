@@ -3,7 +3,6 @@
   "compilerOptions": {
     "module": "commonjs",
     "types": ["node", "@playwright/test"],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./tests/*"]
     }
@@ -11,4 +10,3 @@
   "include": ["tests/**/*.ts", "config/**/*.ts", "../config/**/*.json", "../config/port-config.ts"],
   "exclude": ["node_modules"]
 }
-

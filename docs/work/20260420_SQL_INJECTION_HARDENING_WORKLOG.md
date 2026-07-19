@@ -26,6 +26,8 @@ Conclusion: alert remains open; practical risk appears low in current usage, but
 
 **Status update (2026-07-19)**: Still on `hibernate.version` **5.6.15.Final**. GitHub advisory GHSA-2p5w-cvg5-gc5c still reports no `first_patched_version` for the 5.x line. Intentionally left as-is after Dependabot cleanup PRs #282–#283.
 
+**Status update (2026-07-19, deferred majors)**: Migrated to Hibernate ORM **6.6.54.Final** (`org.hibernate.orm:hibernate-core`) with Jakarta Persistence **3.1**. Advisory #93 applies only to `org.hibernate:hibernate-core` **5.2.8–5.6.15**, so this coordinate/version change is the remediation path. Test JPA bootstrap and `persistence.xml` updated accordingly.
+
 ### 2) Raw JDBC SQL injection review
 
 High-risk query construction patterns identified in:

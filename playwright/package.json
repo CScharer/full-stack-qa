@@ -21,8 +21,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
-    "@types/node": "^25.9.5",
-    "typescript": "^6.0.3",
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2",
     "artillery": "^2.0.33"
   },
   "overrides": {
@@ -33,7 +33,7 @@
     "postcss": "^8.5.10",
     "uuid": "^14.0.0",
     "minimatch": "9.0.7",
-    "js-yaml": "^3.15.0",
+    "js-yaml": "^5.2.1",
     "glob": {
       "minimatch": "3.1.4"
     },

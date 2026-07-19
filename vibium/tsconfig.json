@@ -3,11 +3,10 @@
   "compilerOptions": {
     "module": "ES2020",
     "typeRoots": ["./types", "./node_modules/@types"],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./helpers/*"]
     },
-    "outDir": "./dist"
+    "noEmit": true
   },
   "include": ["helpers/**/*.ts", "types/**/*.d.ts", "tests/**/*.ts", "vitest.config.ts", "config/**/*.ts"],
   "exclude": ["node_modules", "dist"]

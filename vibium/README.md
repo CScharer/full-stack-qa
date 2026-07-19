@@ -156,7 +156,7 @@ vibium/
 
 ### TypeScript
 
-TypeScript **6.x** and Vitest **4.x** are configured for this package; run **`npm run type-check`** for `tsc --noEmit`.
+TypeScript **7.x** and Vitest **4.x** are configured for this package; run **`npm run type-check`** for `tsc --noEmit`.
 
 ### Cleaning Up Test Files
 

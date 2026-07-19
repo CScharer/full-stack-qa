@@ -81,12 +81,12 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<ipp-v3-java.version>6.7.0</ipp-v3-java.version>
 		<jackcess.version>4.0.10</jackcess.version>
 		<javax.mail-api.version>1.6.2</javax.mail-api.version>
-		<javax.persistence-api>2.2</javax.persistence-api>
+		<jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
 		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 		<jface.version>3.5.2</jface.version>
 		<joda-time.version>2.14.1</joda-time.version>
 		<h2.version>2.4.240</h2.version>
-		<hibernate.version>5.6.15.Final</hibernate.version>
+		<hibernate.version>6.6.54.Final</hibernate.version>
 		<eclipse-jface.version>3.5.2</eclipse-jface.version>
 		<jfreechart.version>1.5.6</jfreechart.version>
 		<json.version>20251224</json.version>
@@ -130,7 +130,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<!-- Jackson 3 for REST Assured 6.0.0 (REST Assured 6.0.0 uses Jackson 3 with new package structure) -->
 		<jackson.version>3.2.1</jackson.version>
 		<!-- Jackson 2.x still pulled transitively (cucumber-reporting, docker-java, etc.) -->
-		<jackson2.version>2.21.5</jackson2.version>
+		<jackson2.version>2.22.1</jackson2.version>
 
 		<!-- Performance Testing -->
 		<gatling.version>3.15.1</gatling.version>
@@ -391,18 +391,13 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<version>${javax.mail-api.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>javax.persistence-api</artifactId>
-			<version>${javax.persistence-api}</version>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>${jakarta.persistence-api.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
 		<dependency>
@@ -821,7 +816,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.21</version>
+			<version>2.22</version>
 		</dependency>
 		<!-- Explicit Jackson 2.x to override vulnerable transitive lines (Dependabot #201–#204) -->
 		<dependency>
