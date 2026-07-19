@@ -92,8 +92,9 @@ CREATE TABLE "default_value_history" (
 
 All initial defaults use `user_id = 'system'` to serve as fallback defaults for all users.
 
+<!-- prettier-ignore-start -->
 | Table Name | Field Name | Default Value | Data Type | User ID | Description |
-|------------|------------|---------------|-----------|---------|-------------|
+| -- | -- | -- | -- | -- | -- |
 | application | status | Pending | TEXT | system | Application status |
 | application | work_setting | Remote | TEXT | system | Work setting (Remote, Hybrid, On-site) |
 | application | entered_iwd | 0 | INTEGER | system | Flag for entered into IWD system |
@@ -104,6 +105,7 @@ All initial defaults use `user_id = 'system'` to serve as fallback defaults for 
 | contact_email | is_primary | 0 | INTEGER | system | Boolean: 1 for primary email, 0 for others |
 | contact_phone | phone_type | Work | TEXT | system | Phone type (Home, Cell, Work, Other) |
 | contact_phone | is_primary | 0 | INTEGER | system | Boolean: 1 for primary phone, 0 for others |
+<!-- prettier-ignore-end -->
 
 **User-Specific Defaults Example**:
 - User `john@example.com` prefers `work_setting = 'Hybrid'` → Creates user-specific default

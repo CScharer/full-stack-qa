@@ -39,8 +39,9 @@ The frontend test workflow (`.github/workflows/env-fe.yml`) organizes test jobs 
 
 The CI/CD pipeline uses three reusable workflows for environment-specific testing. Each serves a distinct purpose:
 
+<!-- prettier-ignore-start -->
 | Aspect | BE Reusable<br/>(`env-be.yml`) | FE Reusable<br/>(`env-fe.yml`) | FS Reusable<br/>(`env-fs.yml`) |
-|--------|-------------------------------|-------------------------------|--------------------------------------|
+| -- | -- | -- | -- |
 | **Purpose** | Protocol-Level Performance Testing | Functional Testing | Browser-Based Load Testing |
 | **Workflow Name** | Test Single Environment (BE Reusable) | Test Single Environment (FE Reusable) | Test Single Environment (FS Reusable) |
 | **Uses Browsers?** | ❌ No | ✅ Yes (for functionality) | ✅ Yes (for performance) |
@@ -52,6 +53,7 @@ The CI/CD pipeline uses three reusable workflows for environment-specific testin
 | **Service Requirements** | Frontend + Backend | Frontend + Backend + Selenium Grid (for some tests) | Frontend + Backend |
 | **Environments** | dev, test | dev, test, prod | dev, test |
 | **Language/Runtime** | Java (Gatling/JMeter), Python (Locust) | Java (TestNG), Node.js, Python | Node.js (Artillery + Playwright) |
+<!-- prettier-ignore-end -->
 
 ### Key Distinctions
 
@@ -153,21 +155,25 @@ While all frontend tests appear in the same visual group (Group 3), they have di
 
 ### 1. Execution Method
 
+<!-- prettier-ignore-start -->
 | Category | Test Types | Execution Tool | Language/Runtime |
-|----------|-----------|---------------|------------------|
+| -- | -- | -- | -- |
 | Category A (Selenium Grid + Maven) | Smoke, Mobile, Responsive, Selenide, Vibium | Maven (`run-maven-tests.sh`) | Java (TestNG) |
 | Category B - Cypress | Cypress | npm (`npm run cypress:run`) | Node.js/JavaScript |
 | Category B - Playwright | Playwright | npm (`npm test`) | Node.js/TypeScript |
 | Category B - Robot | Robot Framework | Python (`python -m robot.run`) | Python |
+<!-- prettier-ignore-end -->
 
 ### 2. Selenium Grid Dependency
 
+<!-- prettier-ignore-start -->
 | Test Type | Uses Selenium Grid? | Grid Configuration |
-|-----------|-------------------|-------------------|
+| -- | -- | -- |
 | Smoke, Mobile, Responsive, Selenide, Vibium | ✅ Yes | `services:` section with `selenium-hub` and `chrome-node` |
 | Cypress | ❌ No | N/A - Uses built-in browser automation |
 | Playwright | ❌ No | N/A - Uses built-in browser automation |
 | Robot | ✅ Yes | `services:` section with `selenium-hub` and `chrome-node` |
+<!-- prettier-ignore-end -->
 
 ### 3. Resource Requirements
 

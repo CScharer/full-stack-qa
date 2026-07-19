@@ -126,8 +126,9 @@ Project Structure:
 
 ### By Task/Goal:
 
+<!-- prettier-ignore-start -->
 | What You Want To Do | Where To Look |
-|---------------------|---------------|
+| -- | -- |
 | **Set up project for first time** | `guides/setup/` → `README.md` |
 | **Run tests** | `guides/testing/TEST_EXECUTION_GUIDE.md` |
 | **Run tests locally (no Docker)** | `guides/testing/LOCAL_TESTING.md` |
@@ -144,6 +145,7 @@ Project Structure:
 | **See what's been done** | `archive/` |
 | **Understand decisions** | `architecture/decisions/` |
 | **Know team standards** | `process/` |
+<!-- prettier-ignore-end -->
 
 ---
 

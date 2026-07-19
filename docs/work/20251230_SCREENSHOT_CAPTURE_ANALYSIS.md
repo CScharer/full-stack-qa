@@ -122,8 +122,9 @@ The tests that capture screenshots during execution appear to be:
 
 ## Current Status
 
+<!-- prettier-ignore-start -->
 | Test Class | Screenshots on Success | Screenshots on Failure | Total Screenshots per Test |
-|------------|----------------------|----------------------|---------------------------|
+| -- | -- | -- | -- |
 | MobileBrowserTests | ❌ No | ✅ Yes | 0-1 |
 | ResponsiveDesignTests | ❌ No | ✅ Yes | 0-1 |
 | SimpleGridTest | ❌ No | ✅ Yes | 0-1 |
@@ -132,6 +133,7 @@ The tests that capture screenshots during execution appear to be:
 | NegativeTests | ✅ Yes (8) | ✅ Yes | 8-9 |
 | DataDrivenTests | ✅ Yes (3) | ✅ Yes | 3-4 |
 | AdvancedFeaturesTests | ✅ Yes (10) | ✅ Yes | 10-11 |
+<!-- prettier-ignore-end -->
 
 ---
 

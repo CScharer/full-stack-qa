@@ -20,16 +20,16 @@
     "load:test:applications": "artillery run artillery/scenarios/applications-flow.yml"
   },
   "devDependencies": {
-    "@playwright/test": "^1.59.1",
-    "@types/node": "^25.5.2",
-    "typescript": "^6.0.2",
-    "artillery": "^2.0.30"
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^25.9.5",
+    "typescript": "^6.0.3",
+    "artillery": "^2.0.33"
   },
   "overrides": {
     "brace-expansion": "^5.0.5",
     "lodash": "^4.17.24",
     "socket.io-parser": "^4.2.6",
-    "fast-xml-parser": "^5.7.0",
+    "fast-xml-parser": "^5.10.1",
     "postcss": "^8.5.10",
     "uuid": "^14.0.0",
     "minimatch": "9.0.7",

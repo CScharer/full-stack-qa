@@ -8,13 +8,15 @@ This guide covers all GUI testing frameworks available in this project: **Seleni
 
 This framework supports **5 different UI testing tools**, each with unique strengths:
 
+<!-- prettier-ignore-start -->
 | Framework | Language | Best For | Speed | Learning Curve |
-|-----------|----------|----------|-------|----------------|
+| -- | -- | -- | -- | -- |
 | **Selenium** | Java | Legacy support, Grid | Medium | Medium |
 | **Playwright** | TypeScript | Modern apps, reliability | Fast | Medium |
 | **Cypress** | TypeScript | Frontend-heavy apps | Fast | Easy |
 | **Vibium** | TypeScript | AI-native automation | Fast | Easy |
 | **Robot Framework** | Python | Non-technical testers | Medium | Easy |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -680,8 +682,9 @@ const newSuite = getTestSuite('new_suite');
 
 ## 📊 Comparison Matrix
 
+<!-- prettier-ignore-start -->
 | Feature | Selenium | Playwright | Cypress | Vibium | Robot Framework |
-|---------|----------|------------|---------|--------|-----------------|
+| -- | -- | -- | -- | -- | -- |
 | **Language** | Java | TypeScript | TypeScript | TypeScript | Python |
 | **Browser Support** | All major | Chromium, Firefox, WebKit | Chrome, Firefox, Edge | Chrome | All via Selenium |
 | **Auto-waiting** | Manual | ✅ Automatic | ✅ Automatic | ✅ Automatic | Manual |
@@ -694,6 +697,7 @@ const newSuite = getTestSuite('new_suite');
 | **Speed** | Medium | Fast | Fast | Medium |
 | **Debugging** | Good | Excellent | Excellent | Good |
 | **Reports** | Allure | HTML | HTML | HTML |
+<!-- prettier-ignore-end -->
 
 ---
 

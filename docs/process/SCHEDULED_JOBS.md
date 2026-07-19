@@ -123,11 +123,13 @@ This document provides a centralized reference for all scheduled jobs (cron jobs
 
 ## 📊 Scheduled Jobs Summary
 
+<!-- prettier-ignore-start -->
 | Job Name | Workflow File | Schedule | Status | Purpose |
-|----------|--------------|----------|--------|---------|
+| -- | -- | -- | -- | -- |
 | Version Monitoring | `version-monitoring.yml` | Daily at 9 AM UTC | `[✅]` Active | Dependency version validation |
 | CI/CD Nightly Run | `ci.yml` | Daily at 9 AM UTC | `[✅]` Active | Full test suite (smoke performance) |
 | CI/CD Weekly Run | `ci.yml` | Sunday at 9 AM UTC | `[✅]` Active | Full test suite (all performance) |
+<!-- prettier-ignore-end -->
 
 ---
 

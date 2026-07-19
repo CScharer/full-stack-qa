@@ -113,14 +113,16 @@ docker-compose down -v
 
 ### Services
 
+<!-- prettier-ignore-start -->
 | Service | Port | Description |
-|---------|------|-------------|
+| -- | -- | -- |
 | **selenium-hub** | 4444 | Central hub for test distribution |
 | **chrome-node-1** | 5900, 7900 | Chrome browser (instance 1) |
 | **chrome-node-2** | 5901, 7901 | Chrome browser (instance 2) |
 | **firefox-node** | 5902, 7902 | Firefox browser |
 | **edge-node** | 5903, 7903 | Microsoft Edge browser |
 | **tests** | - | Test execution container |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -429,7 +431,7 @@ Enable video recording in `docker-compose.yml`:
 
 ```yaml
 chrome-node-1:
-  image: selenium/node-chrome:4.41.0
+  image: selenium/node-chrome:4.46.0
   environment:
     - SE_VIDEO_RECORD=true
     - SE_VIDEO_FOLDER=/videos
@@ -643,10 +645,10 @@ alias dcr="docker-compose restart"
 
 ## 🔗 Related Documentation
 
-- [Main README](../../README.md)
-- [Installation Guide](../../README.md#installation)
-- [Running Tests](../../README.md#running-tests)
-- [Troubleshooting](../../README.md#troubleshooting)
+- [Main README](../../../README.md)
+- [Installation Guide](../../../README.md#-installation)
+- [Running Tests](../../../README.md#-running-tests)
+- [Troubleshooting](../../../README.md#-troubleshooting)
 
 ---
 
@@ -675,6 +677,7 @@ This section tracks the status of running all tests in Docker to match the CI/CD
 
 #### 1. Dockerfile Updates
 - ✅ Installed Node.js 20 (for Cypress and Playwright)
+- ✅ Pinned global npm to **npm@11** (do not use `npm@latest` / npm 12+ on Node 20)
 - ✅ Installed Python 3.13 (with fallback to python3)
 - ✅ Installed all system dependencies matching CI/CD:
   - `xvfb`, `libgtk2.0-0`, `libgtk-3-0`, `libgbm-dev`

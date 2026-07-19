@@ -6,8 +6,9 @@
 
 ### Status Icons
 
+<!-- prettier-ignore-start -->
 | Icon | Meaning | Description |
-|------|---------|-------------|
+| -- | -- | -- |
 | ✅ | Enabled/Yes | Feature is enabled or value is set |
 | ❌ | Disabled/No | Feature is disabled or not set |
 | ⚠️ | Warning | Requires attention or has limitations |
@@ -16,24 +17,29 @@
 | 🔄 | Override | Can override parent configuration |
 | ⏱️ | Time-sensitive | Affects execution time |
 | 🚀 | Performance | Affects performance |
+<!-- prettier-ignore-end -->
 
 ### Configuration Types
 
+<!-- prettier-ignore-start -->
 | Type | Description | Location |
-|------|-------------|----------|
+| -- | -- | -- |
 | **TestNG Suite** | XML configuration file for TestNG test execution | `src/test/resources/testng-*.xml` |
 | **Maven Config** | Maven Surefire Plugin configuration | `pom.xml` |
 | **Framework Config** | Framework-specific configuration files | Framework directories |
 | **CI/CD Config** | GitHub Actions workflow configuration | `.github/workflows/*.yml` |
+<!-- prettier-ignore-end -->
 
 ### Parallel Execution Levels
 
+<!-- prettier-ignore-start -->
 | Level | Description | Scope |
-|-------|-------------|-------|
+| -- | -- | -- |
 | **Job Level** | Multiple test jobs run simultaneously | GitHub Actions |
 | **Suite Level** | Multiple test groups/classes run simultaneously | TestNG suite XML |
 | **Method Level** | Multiple test methods run simultaneously | Maven Surefire |
 | **Framework Level** | Framework's internal parallel execution | Playwright, Cypress, etc. |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -53,29 +59,34 @@
 
 ### TestNG Suite XML Attributes
 
+<!-- prettier-ignore-start -->
 | Attribute | Values | Effect | Example |
-|-----------|--------|--------|---------|
+| -- | -- | -- | -- |
 | `parallel` | `none`, `methods`, `tests`, `classes`, `instances` | Parallel execution strategy | `parallel="tests"` |
 | `thread-count` | Integer (1+) | Number of parallel threads | `thread-count="4"` |
 | `preserve-order` | `true`, `false` | Maintain test execution order | `preserve-order="true"` |
 | `verbose` | Integer (0-10) | Logging verbosity level | `verbose="1"` |
 | `name` | String | Suite/test name | `name="Smoke Test Suite"` |
+<!-- prettier-ignore-end -->
 
 ### Maven Surefire Configuration
 
+<!-- prettier-ignore-start -->
 | Property | Values | Effect | Location |
-|----------|--------|--------|----------|
+| -- | -- | -- | -- |
 | `<parallel>` | `methods`, `classes`, `suites`, `both`, `all` | Parallel execution level | `pom.xml` |
 | `<threadCount>` | Integer | Number of threads | `pom.xml` |
 | `<perCoreThreadCount>` | `true`, `false` | Scale threads per CPU core | `pom.xml` |
 | `<dataproviderthreadcount>` | Integer | Threads for data providers | `pom.xml` |
+<!-- prettier-ignore-end -->
 
 ### CI/CD Timeout Settings
 
 > **Standard**: All test timeouts default to **5 minutes** for consistency. Tests should be optimized to complete within this timeframe.
 
+<!-- prettier-ignore-start -->
 | Job | Current Timeout | Standard Default | Location |
-|-----|----------------|------------------|----------|
+| -- | -- | -- | -- |
 | `smoke-tests` | 5 minutes | 5 minutes ✅ | `.github/workflows/env-fe.yml:168` |
 | `grid-tests` | 5 minutes | 5 minutes ✅ | `.github/workflows/env-fe.yml:287` |
 | `mobile-browser-tests` | 5 minutes | 5 minutes ✅ | `.github/workflows/env-fe.yml:397` |
@@ -85,6 +96,7 @@
 | `robot-tests` | 5 minutes | 5 minutes ✅ | `.github/workflows/env-fe.yml:836` |
 | `selenide-tests` | 5 minutes | 5 minutes ✅ | `.github/workflows/env-fe.yml:968` |
 | `vibium-tests` | 5 minutes | 5 minutes ✅ | `.github/workflows/env-fe.yml:1065` |
+<!-- prettier-ignore-end -->
 
 **Legend**:
 - ✅ All timeouts are now standardized to 5 minutes
@@ -121,8 +133,9 @@
 **Parallel Execution Configuration** (🔧 Planned):
 **New Input Structure** (to be added):
 
+<!-- prettier-ignore-start -->
 | Input Name | Type | Default | Description | Example |
-|------------|------|---------|-------------|---------|
+| -- | -- | -- | -- | -- |
 | `smoke_tests_timeout_minutes` | number | 5 | Timeout in minutes for smoke tests | `7` |
 | `smoke_tests_parallel` | string | `none` | Parallel execution strategy for smoke tests | `tests` |
 | `smoke_tests_thread_count` | number | 1 | Number of threads for parallel execution | `4` |
@@ -143,6 +156,7 @@
 | `selenide_tests_parallel` | string | `none` | Parallel execution strategy for Selenide tests | `tests` |
 | `selenide_tests_thread_count` | number | 1 | Number of threads for parallel execution | `4` |
 | `vibium_tests_timeout_minutes` | number | 5 | Timeout in minutes for Vibium tests | `5` |
+<!-- prettier-ignore-end -->
 
 **⚠️ Tests That Cannot Use Timeout/Parallel Configuration**:
 

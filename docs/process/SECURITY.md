@@ -171,7 +171,7 @@ Most CI/CD pipelines include:
 - **Weekly schedule** - All ecosystems checked weekly (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
 - **Auto-merge for security updates** - Security patches automatically merged after CI/CD passes
 - **Monthly dependency audits** - Comprehensive review on first day of each month
-- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including recent security bumps such as Jackson 3.1.1 for `tools.jackson.core` and Vite 8.0.5 in the frontend)
+- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including Jackson **3.2.1**, Vite **8.1.5**, TypeScript **6.0.3**, Selenium **4.46.0**, Dockerfile **npm@11**)
 
 #### Code Security Scanning
 - **CodeQL Analysis** - Automated security scanning for Java, JavaScript/TypeScript, and Python
@@ -352,8 +352,9 @@ Standard monitoring includes:
 
 ### Current Security Posture
 
+<!-- prettier-ignore-start -->
 | Metric | Status | Industry Standard | Our Standard |
-|--------|--------|-------------------|--------------|
+| -- | -- | -- | -- |
 | **Credentials in Code** | 0 | Variable | ✅ Zero |
 | **Secret Management** | Google Cloud Secret Manager | Environment variables | ✅ Enterprise-grade |
 | **Encryption at Rest** | AES-256 | AES-128 typical | ✅ Stronger |
@@ -365,6 +366,7 @@ Standard monitoring includes:
 | **Pre-commit Security** | Enforced | Optional | ✅ Mandatory |
 | **Secret Scanning (GitGuardian)** | Integrated | Not common | ✅ Continuous |
 | **Dependency Scanning** | Automated | Manual | ✅ Automated |
+<!-- prettier-ignore-end -->
 
 **Result**: All security metrics exceed industry standards.
 

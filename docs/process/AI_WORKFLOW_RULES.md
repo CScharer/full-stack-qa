@@ -101,8 +101,9 @@ git push origin feature/your-branch-name  # Push to FEATURE BRANCH, NOT main!
 
 ## 📋 RULE INDEX (Quick Find)
 
+<!-- prettier-ignore-start -->
 | Rule | Topic | Section | Priority |
-|------|-------|---------|----------|
+| -- | -- | -- | -- |
 | 0 | NEVER Commit to Main | Mandatory | 🚨 **CRITICAL** |
 | 1 | Pre-Flight Verification | Mandatory | 🔴 Critical |
 | 2 | Batch Size Limits | Mandatory | 🔴 Critical |
@@ -123,23 +124,26 @@ git push origin feature/your-branch-name  # Push to FEATURE BRANCH, NOT main!
 | 15 | Pull Request Workflow | Collaboration | 🟡 Medium |
 | 16 | Dependency Updates | Maintenance | 🟡 Medium |
 | 17 | Code Review Checklist | Quality | 🟡 Medium |
+<!-- prettier-ignore-end -->
 
 ---
 
 ## 🎯 COMMAND CHEAT SHEET
 
+<!-- prettier-ignore-start -->
 | Task | Command | Duration | When |
-|------|---------|----------|------|
+| -- | -- | -- | -- |
 | **Pre-flight check** | `docker-compose run --rm tests compile test-compile` | 1-2 min | Before any work |
 | **Smoke tests** | `docker-compose run --rm tests test -Dtest=SmokeTests -Dcheckstyle.skip=true` | 2-3 min | Before every batch |
 | **Format code** | `./scripts/quality/format-code.sh` | 1-2 min | **REQUIRED before every commit** |
 | **Checkstyle** | `docker-compose run --rm tests checkstyle:checkstyle -DskipTests` | 20-30 sec | Optional, monitor progress |
 | **Verify changes** | `git status --short` | 5 sec | After any edits |
-| **Check docs-only** | `git status --short | grep -v -E '\.(md|log|txt|rst|adoc)$'` | 5 sec | Before commit |
+| **Check docs-only** | `git status --short | grep -v -E '\.(md | log | txt | rst | adoc)$'` | 5 sec | Before commit |
 | **Full test suite** | `docker-compose run --rm tests test -Dcheckstyle.skip=true` | 10-15 min | Every 5-10 batches |
 | **Docker build** | `docker-compose build tests` | 3-5 min | Every 3-5 batches |
 | **Get timestamp** | `date "+%Y-%m-%d %H:%M:%S"` | 1 sec | Before commit |
 | **Get commit hash** | `git log -1 --format=%h` | 1 sec | Before commit |
+<!-- prettier-ignore-end -->
 
 ---
 

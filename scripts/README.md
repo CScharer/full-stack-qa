@@ -120,6 +120,9 @@ For starting, stopping, and verifying application services (Backend and Frontend
 **Location**: `scripts/quality/`
 
 - **`quality/format-code.sh`** - Format code (Prettier, Spotless, Google Java Format)
+- **`quality/normalize-md-tables.mjs`** - Normalize Markdown pipe tables (prettier-ignore wrappers + spacing)
+- **`quality/wrap-md-tables-prettier-ignore.mjs`** - Wrap Markdown pipe tables with prettier-ignore markers only
+- **`quality/check-markdown-links.mjs`** - Validate relative Markdown links and heading anchors
 - **`quality/validate-pre-commit.sh`** - Validate code before commit
 - **`quality/validate-dependency-versions.sh`** - Validate dependency versions
 - **`quality/check_unused_imports.py`** - Check for unused imports
@@ -128,6 +131,15 @@ For starting, stopping, and verifying application services (Backend and Frontend
 ```bash
 # Format code (required before commit)
 ./scripts/quality/format-code.sh
+
+# Normalize Markdown tables (docs / README / scripts)
+node scripts/quality/normalize-md-tables.mjs
+
+# Wrap Markdown tables with prettier-ignore only
+node scripts/quality/wrap-md-tables-prettier-ignore.mjs
+
+# Check relative Markdown links
+node scripts/quality/check-markdown-links.mjs
 
 # Validate before commit
 ./scripts/quality/validate-pre-commit.sh
@@ -163,6 +175,8 @@ For starting, stopping, and verifying application services (Backend and Frontend
 - **`utils/install-git-hooks.sh`** - Install Git pre-commit hooks
 - **`utils/cleanup-disk-space.sh`** - Clean up disk space (remove old test results, etc.)
 - **`utils/test-page-object-generator.sh`** - Generate page objects for tests
+- **`utils/zip-staged-post-commit-tree.sh`** - Zip staged git paths (as they would exist after commit)
+- **`utils/zip-staged-post-commit-tree-merge.sh`** - Unpack a staged-tree zip back into the repo
 
 **Usage**:
 ```bash
@@ -171,6 +185,12 @@ For starting, stopping, and verifying application services (Backend and Frontend
 
 # Clean up disk space
 ./scripts/utils/cleanup-disk-space.sh
+
+# Zip currently staged files
+bash ./scripts/utils/zip-staged-post-commit-tree.sh
+
+# Merge a zip from ~/Downloads into the repo
+./scripts/utils/zip-staged-post-commit-tree-merge.sh
 ```
 
 ---

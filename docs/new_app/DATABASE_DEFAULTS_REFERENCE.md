@@ -12,8 +12,9 @@ This table lists all default values that should be managed in the `default_value
 
 **User Support**: The `default_value` table supports user-specific defaults. Use `user_id = 'system'` for system-wide defaults that apply to all users. Individual users can override these with their own defaults.
 
+<!-- prettier-ignore-start -->
 | Table Name | Field Name | Default Value | Data Type | User ID | Description | Notes |
-|------------|------------|---------------|-----------|---------|-------------|-------|
+| -- | -- | -- | -- | -- | -- | -- |
 | application | status | Pending | TEXT | system | Application status | Required field |
 | application | work_setting | Remote | TEXT | system | Work setting (Remote, Hybrid, On-site) | Required field |
 | application | entered_iwd | 0 | INTEGER | system | Flag for entered into IWD system | Optional field |
@@ -24,6 +25,7 @@ This table lists all default values that should be managed in the `default_value
 | contact_email | is_primary | 0 | INTEGER | system | Boolean: 1 for primary email, 0 for others | Optional field |
 | contact_phone | phone_type | Work | TEXT | system | Phone type (Home, Cell, Work, Other) | Required field |
 | contact_phone | is_primary | 0 | INTEGER | system | Boolean: 1 for primary phone, 0 for others | Optional field |
+<!-- prettier-ignore-end -->
 
 **Lookup Logic**:
 1. Check for user-specific default (`user_id = current_user`)
@@ -126,8 +128,9 @@ WHERE "table_name" = 'application'
 
 Use this table to track review decisions:
 
+<!-- prettier-ignore-start -->
 | Table | Field | Current Default | Decision | New Value | Notes |
-|-------|-------|----------------|----------|-----------|-------|
+| -- | -- | -- | -- | -- | -- |
 | application | status | Pending | ⏸️ Pending | - | - |
 | application | work_setting | Remote | ⏸️ Pending | - | - |
 | application | entered_iwd | 0 | ⏸️ Pending | - | - |
@@ -138,6 +141,7 @@ Use this table to track review decisions:
 | contact_email | is_primary | 0 | ⏸️ Pending | - | - |
 | contact_phone | phone_type | Work | ⏸️ Pending | - | - |
 | contact_phone | is_primary | 0 | ⏸️ Pending | - | - |
+<!-- prettier-ignore-end -->
 
 **Decision Options**:
 - ✅ Keep Default

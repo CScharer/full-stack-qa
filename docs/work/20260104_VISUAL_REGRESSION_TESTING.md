@@ -339,8 +339,9 @@ While Vibium provides visual regression capabilities, Percy/Applitools offer add
 
 ## 📊 Comparison Summary
 
+<!-- prettier-ignore-start -->
 | Feature | Vibium (Current) | Percy | Applitools |
-|---------|------------------|-------|------------|
+| -- | -- | -- | -- |
 | **Account Required** | ❌ No | ✅ Yes (free) | ✅ Yes (free) |
 | **Cloud Baselines** | ❌ No | ✅ Yes | ✅ Yes |
 | **Team Collaboration** | ❌ No | ✅ Yes | ✅ Yes |
@@ -348,6 +349,7 @@ While Vibium provides visual regression capabilities, Percy/Applitools offer add
 | **Setup Complexity** | Low | Medium | Medium-High |
 | **Free Tier** | N/A | 100-500/month | 100/month |
 | **Best For** | Local testing | Simple setup | Advanced features |
+<!-- prettier-ignore-end -->
 
 ---
 

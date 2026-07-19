@@ -287,14 +287,16 @@ STAGE 7: PIPELINE SUMMARY
 
 ## 📦 ARTIFACT MANAGEMENT
 
+<!-- prettier-ignore-start -->
 | Artifact Name | Produced By | Retention | Purpose |
-|---------------|-------------|-----------|---------|
+| -- | -- | -- | -- |
 | `compiled-classes` | build-and-compile | 1 day | Shared classes for test jobs |
 | `code-quality-reports` | code-quality | 1 day | Checkstyle/PMD results |
 | `*-results-{env}` | test-{env} | 7 days | UI test result JSON/PNG |
 | `*-performance-results` | performance-{env} | 7 days | Raw performance metrics |
 | `performance-allure-results` | allure-conversion | 7 days | Processed performance JSON |
 | `allure-report-combined-*` | combined-report | 7 days | Consolidated HTML report |
+<!-- prettier-ignore-end -->
 
 ---
 

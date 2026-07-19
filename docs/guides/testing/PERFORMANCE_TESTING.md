@@ -8,12 +8,14 @@ Comprehensive performance testing framework using four industry-standard tools, 
 
 ## 🎯 Tool Allocation
 
+<!-- prettier-ignore-start -->
 | Tool | Allocation | Purpose | Language | Strength |
-|------|------------|---------|----------|----------|
+| -- | -- | -- | -- | -- |
 | **Artillery + Playwright** | **20%** | Browser load testing | JavaScript | Real browser rendering, Core Web Vitals |
 | **Gatling** | **25%** | Detailed analysis | Scala | Beautiful reports, metrics |
 | **JMeter** | **25%** | Industry standard | Java | Protocol support, mature |
 | **Locust** | **30%** | API load testing | Python | Real-time UI, flexible scripting |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -514,12 +516,14 @@ locust -f src/test/locust/api_load_test.py --headless \
 
 ### Response Time Comparison
 
+<!-- prettier-ignore-start -->
 | Tool | API (avg) | Web (avg) | Browser | Format |
-|------|-----------|-----------|---------|--------|
+| -- | -- | -- | -- | -- |
 | Locust | Real-time | Real-time | ❌ | Web UI + HTML |
 | Gatling | Post-test | Post-test | ❌ | HTML Dashboard |
 | JMeter | Post-test | Post-test | ❌ | HTML + CSV |
 | Artillery + Playwright | N/A | Real-time | ✅ | JSON + Allure |
+<!-- prettier-ignore-end -->
 
 ### Use Cases
 
@@ -1040,8 +1044,9 @@ This provides flexibility to run performance tests:
 
 ## ✅ Quick Reference
 
+<!-- prettier-ignore-start -->
 | Task | Command |
-|------|---------|
+| -- | -- |
 | **Run Locust (Interactive)** | `./scripts/tests/performance/run-locust-tests.sh` |
 | **Run Locust (Headless)** | `locust -f src/test/locust/api_load_test.py --headless --users 100 --run-time 2m` |
 | **Run Gatling** | `./scripts/tests/performance/run-gatling-tests.sh` |
@@ -1051,6 +1056,7 @@ This provides flexibility to run performance tests:
 | **View Locust UI** | http://localhost:8089 |
 | **Gatling Reports** | `target/gatling/*/index.html` |
 | **JMeter Reports** | `target/jmeter/reports/index.html` |
+<!-- prettier-ignore-end -->
 
 ---
 

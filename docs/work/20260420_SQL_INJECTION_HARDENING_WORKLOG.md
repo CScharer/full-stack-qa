@@ -24,6 +24,8 @@ This worklog captures the security analysis completed for:
 
 Conclusion: alert remains open; practical risk appears low in current usage, but version must be upgraded when a fixed release is published.
 
+**Status update (2026-07-19)**: Still on `hibernate.version` **5.6.15.Final**. GitHub advisory GHSA-2p5w-cvg5-gc5c still reports no `first_patched_version` for the 5.x line. Intentionally left as-is after Dependabot cleanup PRs #282–#283.
+
 ### 2) Raw JDBC SQL injection review
 
 High-risk query construction patterns identified in:

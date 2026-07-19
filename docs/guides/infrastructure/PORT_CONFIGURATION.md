@@ -10,11 +10,13 @@ Port assignments are documented in `docs/new_app/ONE_GOAL.md` and enforced via `
 
 ### Environment Port Mapping
 
+<!-- prettier-ignore-start -->
 | Environment | Frontend Port | Backend Port | Frontend URL | Backend URL |
-|------------|---------------|--------------|-------------|-------------|
-| **DEV**    | 3003          | 8003         | http://localhost:3003 | http://localhost:8003 |
-| **TEST**   | 3004          | 8004         | http://localhost:3004 | http://localhost:8004 |
-| **PROD**   | 3005          | 8005         | http://localhost:3005 | http://localhost:8005 |
+| -- | -- | -- | -- | -- |
+| **DEV** | 3003 | 8003 | http://localhost:3003 | http://localhost:8003 |
+| **TEST** | 3004 | 8004 | http://localhost:3004 | http://localhost:8004 |
+| **PROD** | 3005 | 8005 | http://localhost:3005 | http://localhost:8005 |
+<!-- prettier-ignore-end -->
 
 ## Centralized Configuration
 
@@ -211,8 +213,9 @@ Different frameworks detect the environment using different methods, but all fol
 
 > **Note**: The frameworks below are listed alphabetically. The order does not indicate priority or importance. Each framework's environment detection method is independent.
 
+<!-- prettier-ignore-start -->
 | Framework | Method | Default |
-|-----------|--------|---------|
+| -- | -- | -- |
 | Artillery | Separate config files (`dev.yml`, `test.yml`, `prod.yml`) | N/A |
 | Backend Python | `ENVIRONMENT` env var → 'dev' | 'dev' |
 | Cypress | `Cypress.env('ENVIRONMENT')` → `process.env.ENVIRONMENT` → 'dev' | 'dev' |
@@ -225,6 +228,7 @@ Different frameworks detect the environment using different methods, but all fol
 | Shell Scripts | `--env` arg → `$ENVIRONMENT` → 'dev' | 'dev' |
 | TypeScript/JS (Shared) | `process.env.ENVIRONMENT` → 'dev' | 'dev' |
 | Vibium | `process.env.ENVIRONMENT` → 'dev' (via shared config) | 'dev' |
+<!-- prettier-ignore-end -->
 
 ### Configuration Override Examples
 

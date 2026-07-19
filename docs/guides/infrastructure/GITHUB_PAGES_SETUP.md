@@ -259,13 +259,15 @@ The `keep_files: false` setting ensures each deployment is fresh, but Allure's b
 
 ## 🎯 Quick Reference
 
+<!-- prettier-ignore-start -->
 | Item | URL/Command |
-|------|-------------|
+| -- | -- |
 | **Live Report** | https://cscharer.github.io/full-stack-qa/ |
 | **GitHub Actions** | https://github.com/CScharer/full-stack-qa/actions |
 | **Settings** | https://github.com/CScharer/full-stack-qa/settings/pages |
 | **Local Report** | `./mvnw allure:serve` (after running tests) |
 | **Manual Deploy** | Handled by CI/CD automatically |
+<!-- prettier-ignore-end -->
 
 ---
 

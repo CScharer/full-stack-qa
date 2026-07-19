@@ -268,8 +268,9 @@ A shared test specification format would allow defining test scenarios **once** 
 
 ### Implementation Costs
 
+<!-- prettier-ignore-start -->
 | Task | Effort | Risk |
-|------|--------|------|
+| -- | -- | -- |
 | Design specification format | Medium | Low |
 | Build code generators (6 frameworks) | Very High | High |
 | Convert existing tests | Very High | High |
@@ -277,18 +278,21 @@ A shared test specification format would allow defining test scenarios **once** 
 | Write documentation | Medium | Low |
 | Train team | Medium | Medium |
 | Maintain generators | Ongoing | Medium |
+<!-- prettier-ignore-end -->
 
 **Total Estimated Effort**: **6-12 months** for full implementation
 
 ### Benefits Realized
 
+<!-- prettier-ignore-start -->
 | Benefit | Value | Already Achieved? |
-|---------|-------|-------------------|
+| -- | -- | -- |
 | Single source of truth for scenarios | High | ❌ No |
 | Reduced test duplication | Medium | ⚠️ Partial (data only) |
 | Business-readable tests | Medium | ⚠️ Partial (Java/Cucumber only) |
 | Easier maintenance | Medium | ⚠️ Partial (data/config) |
 | Consistent coverage | Low | ⚠️ Partial |
+<!-- prettier-ignore-end -->
 
 **Net Benefit**: **Low to Medium** - Most benefits already achieved through test data centralization
 
@@ -408,8 +412,9 @@ A shared test specification format would allow defining test scenarios **once** 
 
 ## Decision Matrix
 
+<!-- prettier-ignore-start -->
 | Criteria | Current Approach | Shared Specifications | Winner |
-|----------|-----------------|----------------------|--------|
+| -- | -- | -- | -- |
 | **Implementation Effort** | ✅ Low (already done) | ❌ Very High | Current |
 | **Maintenance Overhead** | ✅ Low | ❌ High | Current |
 | **Risk** | ✅ Low | ❌ High | Current |
@@ -419,6 +424,7 @@ A shared test specification format would allow defining test scenarios **once** 
 | **Business Readability** | ⚠️ Partial | ✅ High | Shared Specs |
 | **Time to Implement** | ✅ Done | ❌ 6-12 months | Current |
 | **Debugging Ease** | ✅ Easy | ❌ Harder | Current |
+<!-- prettier-ignore-end -->
 
 **Overall Winner**: **Current Approach** (5 wins vs. 2 wins)
 

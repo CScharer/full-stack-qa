@@ -16,10 +16,12 @@ This guide explains the database architecture for the full-stack-qa project, inc
 
 ### Schema Database vs Environment Databases
 
+<!-- prettier-ignore-start -->
 | Type | Purpose | Location | Usage |
-|------|---------|----------|-------|
+| -- | -- | -- | -- |
 | **Schema Database** | Single source of truth for database structure | `data/core/full_stack_qa.db` | Reference template only - **NEVER used for runtime** |
 | **Environment Databases** | Runtime databases for specific environments | `data/core/full_stack_qa_{env}.db` | Used for actual application data (dev/test/prod) |
+<!-- prettier-ignore-end -->
 
 ### Important Rules
 
@@ -42,13 +44,15 @@ This guide explains the database architecture for the full-stack-qa project, inc
 
 ### Complete Database Inventory
 
+<!-- prettier-ignore-start -->
 | Database File | Type | Status | Purpose | Used By |
-|---------------|------|--------|---------|---------|
+| -- | -- | -- | -- | -- |
 | `full_stack_qa.db` | 📐 Schema | ✅ Exists | Schema template (read-only) | Schema reference only |
 | `pytest_temp_full_stack_qa_{env}.db` | 🧪 Test | 🗑️ Temporary | Auto-created during pytest (environment-aware) | `backend/tests/conftest.py`, `data/core/tests/conftest.py` |
 | `full_stack_qa_dev.db` | 🔧 Environment | ✅ Exists | Development runtime data | Backend API (dev), Local scripts |
 | `full_stack_qa_test.db` | 🔧 Environment | ✅ Exists | Test runtime data | Integration tests, CI/CD |
 | `full_stack_qa_prod.db` | 🔧 Environment | ⏭️ Planned | Production runtime data | Production deployments |
+<!-- prettier-ignore-end -->
 
 ### Note on Temporary Test Database
 

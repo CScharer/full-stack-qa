@@ -1053,8 +1053,9 @@ When multiple fields fail validation:
 
 ## 📊 Response Codes
 
+<!-- prettier-ignore-start -->
 | Code | Meaning | Usage |
-|------|---------|-------|
+| -- | -- | -- |
 | 200 | OK | Successful GET, PUT, DELETE |
 | 201 | Created | Successful POST |
 | 400 | Bad Request | Validation error, invalid input |
@@ -1062,6 +1063,7 @@ When multiple fields fail validation:
 | 409 | Conflict | Unique constraint violation |
 | 422 | Unprocessable Entity | Foreign key constraint violation |
 | 500 | Internal Server Error | Server error |
+<!-- prettier-ignore-end -->
 
 ---
 

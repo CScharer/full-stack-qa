@@ -830,14 +830,16 @@ Use Maven profiles to run specific frameworks:
 
 ### Framework Selection Matrix
 
+<!-- prettier-ignore-start -->
 | Framework | Language | Maven Profile | Script | Best For |
-|-----------|----------|---------------|--------|----------|
+| -- | -- | -- | -- | -- |
 | Selenium | Java | `selenium` (default) | `scripts/tests/run-tests.sh` | Legacy, Grid |
 | Playwright | TypeScript | N/A | `run-playwright-tests.sh` | Modern apps |
 | Cypress | TypeScript | N/A | `run-cypress-tests.sh` | Frontend-heavy |
 | Robot Framework | Python | `robot` | `run-robot-tests.sh` | Non-technical |
 | Selenide | Java | `selenium` | `run-maven-tests.sh` | Concise syntax |
 | Vibium | TypeScript | N/A | `run-vibium-tests.sh` | AI-native |
+<!-- prettier-ignore-end -->
 
 ---
 

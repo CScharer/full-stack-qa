@@ -123,12 +123,14 @@ driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
 ## Timeout Comparison Table
 
+<!-- prettier-ignore-start -->
 | Framework | Command/Element | Page Load | Request/API | Notes |
-|-----------|----------------|-----------|-------------|-------|
+| -- | -- | -- | -- | -- |
 | **Cypress** | 15s (default) | 30s | 15s | Can override per command |
 | **Playwright** | 30s (default) | 120s | N/A | Uses shared webServer timeout |
 | **Robot Framework** | 10s | 10s | N/A | Uses Selenium under the hood |
 | **Selenium/Java** | 5-10s | 10s | N/A | Varies by test class |
+<!-- prettier-ignore-end -->
 
 ---
 
