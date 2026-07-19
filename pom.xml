@@ -129,6 +129,8 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<json-schema-validator.version>6.0.0</json-schema-validator.version>
 		<!-- Jackson 3 for REST Assured 6.0.0 (REST Assured 6.0.0 uses Jackson 3 with new package structure) -->
 		<jackson.version>3.1.4</jackson.version>
+		<!-- Jackson 2.x still pulled transitively (cucumber-reporting, docker-java, etc.) -->
+		<jackson2.version>2.21.5</jackson2.version>
 
 		<!-- Performance Testing -->
 		<gatling.version>3.15.0</gatling.version>
@@ -816,18 +818,21 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 			<version>${jackson.version}</version>
 		</dependency>
 		<!-- jackson-annotations: remain on com.fasterxml.jackson.core 2.x with REST Assured 6 + Jackson 3 -->
-		<!-- It remains at com.fasterxml.jackson.core with version 2.20 (latest 2.x, NOT 2.20.0) -->
-		<!-- REST Assured 6.0.0 works with jackson-annotations 2.20 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.20</version>
+			<version>2.21</version>
 		</dependency>
-		<!-- Explicit jackson-core 2.x to override vulnerable lines from cucumber-reporting (Dependabot #27) -->
+		<!-- Explicit Jackson 2.x to override vulnerable transitive lines (Dependabot #201–#204) -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.21.2</version>
+			<version>${jackson2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson2.version}</version>
 		</dependency>
 
 		<!-- Gatling for Performance Testing -->

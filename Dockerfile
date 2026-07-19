@@ -60,8 +60,8 @@ RUN set -eux; \
     # Node.js 20 (for Cypress and Playwright)
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash -; \
     apt-get install -y --no-install-recommends nodejs; \
-    # Update npm to latest version (suppress notice about new version)
-    npm install -g npm@latest; \
+    # Pin npm to latest 11.x — npm@latest (12+) requires Node 22+
+    npm install -g npm@11; \
     # Python 3.13 (for Robot Framework) - use python3 if 3.13 not available
     (apt-get install -y --no-install-recommends python3.13 python3.13-venv python3-pip \
     || apt-get install -y --no-install-recommends python3 python3-venv python3-pip); \
