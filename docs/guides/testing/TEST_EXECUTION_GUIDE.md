@@ -164,13 +164,15 @@ docker-compose down
 
 ## 📊 Test Suite Files
 
+<!-- prettier-ignore-start -->
 | Suite File | Tests Included | Count | Purpose |
-|------------|----------------|-------|---------|
+| -- | -- | -- | -- |
 | `testng-smoke-suite.xml` | SmokeTests | 5 | Fast critical path |
 | `testng-ci-suite.xml` | SimpleGridTest, EnhancedGridTests | 11 | CI/CD Grid tests |
 | `testng-grid-suite.xml` | SimpleGridTest, EnhancedGridTests (multi-browser) | 22 | Parallel multi-browser |
 | `testng-extended-suite.xml` | DataDrivenTests, NegativeTests, AdvancedFeaturesTests | 30+ | Comprehensive coverage |
 | `testng-api-suite.xml` | All API tests | 31 | REST API testing |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -251,13 +253,15 @@ curl http://localhost:4444/wd/hub/status | jq '.'
 
 ## 📈 Test Execution Times
 
+<!-- prettier-ignore-start -->
 | Test Suite | Time | Tests |
-|------------|------|-------|
+| -- | -- | -- |
 | API Tests | 30-40 sec | 31 |
 | Smoke Tests | 2-3 min | 5 |
 | CI Grid Tests | 5-8 min | 11 |
 | Extended Tests | 10-15 min | 30 |
 | **Everything** | **20-25 min** | **77** |
+<!-- prettier-ignore-end -->
 
 ---
 

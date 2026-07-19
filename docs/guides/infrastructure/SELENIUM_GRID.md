@@ -45,12 +45,14 @@ Version validation ensures that the Selenium Grid server version matches the cli
 
 **Version Tolerance Levels:**
 
+<!-- prettier-ignore-start -->
 | Tolerance | Description | Example |
-|-----------|-------------|---------|
-| `EXACT` | Must match exactly (default) | `4.41.0` == `4.41.0` ✅ |
-| `MINOR` | Allow minor version differences | `4.41.0` == `4.41.0` ✅ |
-| `PATCH` | Allow patch version differences | `4.41.0` == `4.40.1` ✅ |
+| -- | -- | -- |
+| `EXACT` | Must match exactly (default) | `4.46.0` == `4.46.0` ✅ |
+| `MINOR` | Allow minor version differences | `4.46.0` == `4.46.0` ✅ |
+| `PATCH` | Allow patch version differences | `4.46.0` == `4.40.1` ✅ |
 | `NONE` | Skip version validation | Always passes |
+<!-- prettier-ignore-end -->
 
 **Set Tolerance:**
 
@@ -84,13 +86,13 @@ driver.initializeWebDriver(); // Version validation runs automatically
 SeleniumGridConfig.validateGridVersion("http://localhost:4444/wd/hub");
 
 // Using test utilities
-GridTestUtils.validateGridVersion(gridUrl, "4.41.0");
+GridTestUtils.validateGridVersion(gridUrl, "4.46.0");
 ```
 
 **In Bash Scripts:**
 ```bash
 # With version validation
-SELENIUM_VERSION="4.41.0" ./scripts/ci/wait-for-grid.sh
+SELENIUM_VERSION="4.46.0" ./scripts/ci/wait-for-grid.sh
 
 # Skip version check
 SKIP_VERSION_CHECK=true ./scripts/ci/wait-for-grid.sh
@@ -115,12 +117,14 @@ The retry logic automatically retries Grid connections when transient errors occ
 
 **Retry Parameters:**
 
+<!-- prettier-ignore-start -->
 | Parameter | Default | Description |
-|-----------|---------|-------------|
+| -- | -- | -- |
 | `SELENIUM_GRID_MAX_RETRIES` | `5` | Maximum number of retry attempts |
 | `SELENIUM_GRID_RETRY_BASE_DELAY_MS` | `1000` | Base delay for exponential backoff (milliseconds) |
 | `SELENIUM_GRID_RETRY_MAX_DELAY_MS` | `10000` | Maximum delay cap (milliseconds) |
 | `SELENIUM_GRID_RETRY_TIMEOUT_MS` | `30000` | Total timeout for all retries (milliseconds) |
+<!-- prettier-ignore-end -->
 
 **Set Retry Configuration:**
 
@@ -174,33 +178,39 @@ RemoteWebDriver driver = RetryableGridConnection.connectWithRetry(
 
 ### Version Validation
 
+<!-- prettier-ignore-start -->
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -- | -- | -- |
 | `SELENIUM_GRID_VERSION_TOLERANCE` | `EXACT` | Version matching tolerance |
 | `SELENIUM_VERSION` | (from pom.xml) | Expected Selenium version |
 | `SKIP_VERSION_CHECK` | `false` | Skip version validation |
+<!-- prettier-ignore-end -->
 
 ### Retry Configuration
 
+<!-- prettier-ignore-start -->
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -- | -- | -- |
 | `SELENIUM_GRID_MAX_RETRIES` | `5` | Maximum retry attempts |
 | `SELENIUM_GRID_RETRY_BASE_DELAY_MS` | `1000` | Base delay (milliseconds) |
 | `SELENIUM_GRID_RETRY_MAX_DELAY_MS` | `10000` | Maximum delay (milliseconds) |
 | `SELENIUM_GRID_RETRY_TIMEOUT_MS` | `30000` | Total timeout (milliseconds) |
+<!-- prettier-ignore-end -->
 
 ### Grid Connection
 
+<!-- prettier-ignore-start -->
 | Variable | Default | Description |
-|----------|---------|-------------|
+| -- | -- | -- |
 | `SELENIUM_REMOTE_URL` | `http://localhost:4444/wd/hub` | Grid hub URL |
+<!-- prettier-ignore-end -->
 
 ### Example Configuration
 
 ```bash
 # Complete configuration example
 export SELENIUM_REMOTE_URL="http://localhost:4444/wd/hub"
-export SELENIUM_VERSION="4.41.0"
+export SELENIUM_VERSION="4.46.0"
 export SELENIUM_GRID_VERSION_TOLERANCE="EXACT"
 export SELENIUM_GRID_MAX_RETRIES="5"
 export SELENIUM_GRID_RETRY_BASE_DELAY_MS="1000"
@@ -214,20 +224,22 @@ export SELENIUM_GRID_RETRY_TIMEOUT_MS="30000"
 
 All environment variables can also be set as system properties with dot notation:
 
+<!-- prettier-ignore-start -->
 | Property | Equivalent Environment Variable |
-|----------|----------------------------------|
+| -- | -- |
 | `selenium.grid.version.tolerance` | `SELENIUM_GRID_VERSION_TOLERANCE` |
 | `selenium.version` | `SELENIUM_VERSION` |
 | `selenium.grid.max.retries` | `SELENIUM_GRID_MAX_RETRIES` |
 | `selenium.grid.retry.base.delay.ms` | `SELENIUM_GRID_RETRY_BASE_DELAY_MS` |
 | `selenium.grid.retry.max.delay.ms` | `SELENIUM_GRID_RETRY_MAX_DELAY_MS` |
 | `selenium.grid.retry.timeout.ms` | `SELENIUM_GRID_RETRY_TIMEOUT_MS` |
+<!-- prettier-ignore-end -->
 
 **Usage:**
 ```bash
 mvn test -Dselenium.grid.max.retries=3 \
          -Dselenium.grid.retry.base.delay.ms=500 \
-         -Dselenium.version=4.41.0
+         -Dselenium.version=4.46.0
 ```
 
 ---
@@ -249,7 +261,7 @@ public void setUp() {
 **Bash Script:**
 ```bash
 # Wait for Grid with version validation
-SELENIUM_VERSION="4.41.0" ./scripts/ci/wait-for-grid.sh
+SELENIUM_VERSION="4.46.0" ./scripts/ci/wait-for-grid.sh
 ```
 
 ### Advanced Configuration
@@ -271,7 +283,7 @@ System.setProperty("selenium.grid.retry.base.delay.ms", "500");
 GridTestUtils.waitForGridReady(gridUrl, 60); // 60 second timeout
 
 // Validate version
-GridTestUtils.validateGridVersion(gridUrl, "4.41.0");
+GridTestUtils.validateGridVersion(gridUrl, "4.46.0");
 
 // Check Grid health (comprehensive check)
 if (GridTestUtils.isGridHealthy(gridUrl)) {
@@ -289,14 +301,14 @@ System.out.println(status);
 ```yaml
 - name: Wait for Selenium Grid
   env:
-    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.41.0' }}
+    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.46.0' }}
   run: |
     ./scripts/ci/wait-for-grid.sh "http://localhost:4444/wd/hub/status" 10
 
 - name: Run Grid Tests
   env:
     SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
-    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.41.0' }}
+    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.46.0' }}
     SELENIUM_GRID_MAX_RETRIES: '5'
     SELENIUM_GRID_RETRY_BASE_DELAY_MS: '1000'
     SELENIUM_GRID_RETRY_MAX_DELAY_MS: '10000'
@@ -317,12 +329,12 @@ System.out.println(status);
 1. Update Grid Docker images to match client version:
    ```bash
    # Update docker-compose.yml
-   image: selenium/hub:4.41.0  # Match pom.xml version
+   image: selenium/hub:4.46.0  # Match pom.xml version
    ```
 
 2. Update `pom.xml` to match Grid version:
    ```xml
-   <selenium.version>4.41.0</selenium.version>
+   <selenium.version>4.46.0</selenium.version>
    ```
 
 3. Use version tolerance (if appropriate):
@@ -410,7 +422,7 @@ When running in CI/CD pipelines, look for these log messages to verify the enhan
 
 **Version Validation:**
 ```
-✅ Version validation passed: 4.41.0
+✅ Version validation passed: 4.46.0
 🔍 Validating Grid version...
 ```
 
@@ -425,7 +437,7 @@ Transient error on attempt 1/5: Connection refused. Retrying in 1000ms...
 ```
 Phase 4: Docker Compose Version Validation
 Checking docker-compose.yml...
-✅ Version matches pom.xml: 4.41.0
+✅ Version matches pom.xml: 4.46.0
 ```
 
 ### Key Test Scenarios

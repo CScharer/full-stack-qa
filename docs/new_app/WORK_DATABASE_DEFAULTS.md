@@ -41,11 +41,13 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### 2. `application` Table
 
+<!-- prettier-ignore-start -->
 | Field | Type | Current Default | Required | Notes |
-|-------|------|----------------|----------|-------|
+| -- | -- | -- | -- | -- |
 | `status` | TEXT | `'Pending'` | Yes (NOT NULL) | Application status |
 | `work_setting` | TEXT | `'Remote'` | Yes (NOT NULL) | Work setting (Remote, Hybrid, On-site) |
 | `entered_iwd` | INTEGER | `0` | No | Flag for entered into IWD system |
+<!-- prettier-ignore-end -->
 
 **Current Defaults**:
 - `status`: `'Pending'` - New applications start as Pending
@@ -61,10 +63,12 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### 3. `company` Table
 
+<!-- prettier-ignore-start -->
 | Field | Type | Current Default | Required | Notes |
-|-------|------|----------------|----------|-------|
+| -- | -- | -- | -- | -- |
 | `country` | TEXT | `'United States'` | Yes (NOT NULL) | Country name |
 | `job_type` | TEXT | `'Technology'` | Yes (NOT NULL) | Industry/Job type |
+<!-- prettier-ignore-end -->
 
 **Current Defaults**:
 - `country`: `'United States'` - Assumes US companies by default
@@ -84,9 +88,11 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### 5. `contact` Table
 
+<!-- prettier-ignore-start -->
 | Field | Type | Current Default | Required | Notes |
-|-------|------|----------------|----------|-------|
+| -- | -- | -- | -- | -- |
 | `title` | TEXT | `'Recruiter'` | Yes (NOT NULL) | Contact title/role |
+<!-- prettier-ignore-end -->
 
 **Current Defaults**:
 - `title`: `'Recruiter'` - Assumes Recruiter by default
@@ -100,10 +106,12 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### 6. `contact_email` Table
 
+<!-- prettier-ignore-start -->
 | Field | Type | Current Default | Required | Notes |
-|-------|------|----------------|----------|-------|
+| -- | -- | -- | -- | -- |
 | `email_type` | TEXT | `'Work'` | Yes (NOT NULL) | Email type (Personal, Work, Other) |
 | `is_primary` | INTEGER | `0` | No | Boolean: 1 for primary email, 0 for others |
+<!-- prettier-ignore-end -->
 
 **Current Defaults**:
 - `email_type`: `'Work'` - Assumes Work email by default
@@ -117,10 +125,12 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### 7. `contact_phone` Table
 
+<!-- prettier-ignore-start -->
 | Field | Type | Current Default | Required | Notes |
-|-------|------|----------------|----------|-------|
+| -- | -- | -- | -- | -- |
 | `phone_type` | TEXT | `'Work'` | Yes (NOT NULL) | Phone type (Home, Cell, Work, Other) |
 | `is_primary` | INTEGER | `0` | No | Boolean: 1 for primary phone, 0 for others |
+<!-- prettier-ignore-end -->
 
 **Current Defaults**:
 - `phone_type`: `'Work'` - Assumes Work phone by default
@@ -148,11 +158,13 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### Application Defaults
 
+<!-- prettier-ignore-start -->
 | Field | Default | Required |
-|-------|---------|----------|
+| -- | -- | -- |
 | `status` | `'Pending'` | Yes |
 | `work_setting` | `'Remote'` | Yes |
 | `entered_iwd` | `0` | No |
+<!-- prettier-ignore-end -->
 
 **Questions**:
 - Should `status` require explicit value?
@@ -163,10 +175,12 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### Company Defaults
 
+<!-- prettier-ignore-start -->
 | Field | Default | Required |
-|-------|---------|----------|
+| -- | -- | -- |
 | `country` | `'United States'` | Yes |
 | `job_type` | `'Technology'` | Yes |
+<!-- prettier-ignore-end -->
 
 **Questions**:
 - Should `country` require explicit value?
@@ -176,9 +190,11 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### Contact Defaults
 
+<!-- prettier-ignore-start -->
 | Field | Default | Required |
-|-------|---------|----------|
+| -- | -- | -- |
 | `title` | `'Recruiter'` | Yes |
+<!-- prettier-ignore-end -->
 
 **Questions**:
 - Should `title` require explicit value?
@@ -188,10 +204,12 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### Contact Email Defaults
 
+<!-- prettier-ignore-start -->
 | Field | Default | Required |
-|-------|---------|----------|
+| -- | -- | -- |
 | `email_type` | `'Work'` | Yes |
 | `is_primary` | `0` | No |
+<!-- prettier-ignore-end -->
 
 **Questions**:
 - Should `email_type` require explicit value?
@@ -201,10 +219,12 @@ Instead of hardcoding defaults in the schema, we can use a **centralized default
 
 ### Contact Phone Defaults
 
+<!-- prettier-ignore-start -->
 | Field | Default | Required |
-|-------|---------|----------|
+| -- | -- | -- |
 | `phone_type` | `'Work'` | Yes |
 | `is_primary` | `0` | No |
+<!-- prettier-ignore-end -->
 
 **Questions**:
 - Should `phone_type` require explicit value?

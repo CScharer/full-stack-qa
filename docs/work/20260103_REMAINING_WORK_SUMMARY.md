@@ -8,21 +8,25 @@
 
 ## 🔑 Status Legend
 ### Progress
+<!-- prettier-ignore-start -->
 | Symbol | Status | Meaning |
-|--------|--------|---------|
+| -- | -- | -- |
 | ⚠️ | Warning | Needs attention or has issues |
 | ❌ | Not Started | Task has not been started |
 | ⏳ | Pending | Waiting on external factors or scheduled |
 | 🔍 | In Progress | Task is currently being worked on |
 | 🔧 | Fix Implemented | Fix is in place, pending validation (deprecated - use ✅ for completed fixes) |
 | ✅ | Completed | Task is complete and verified |
+<!-- prettier-ignore-end -->
 
 ### Priority
+<!-- prettier-ignore-start -->
 | Symbol | Status | Meaning |
-|--------|--------|---------|
+| -- | -- | -- |
 | 🔴 | High Priority | Requires immediate action |
 | 🟡 | Medium Priority | Important but not urgent |
 | 🟢 | Low Priority | Future enhancement or nice-to-have |
+<!-- prettier-ignore-end -->
 
 ---
 

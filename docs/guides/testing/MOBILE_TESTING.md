@@ -175,11 +175,13 @@ IOSDriver driver = MobileTestsConfiguration.createIosDriver(
 
 ### System Properties
 
+<!-- prettier-ignore-start -->
 | Property | Description | Default |
-|----------|-------------|---------|
+| -- | -- | -- |
 | `selenium.grid.url` | Selenium Grid URL | `http://selenium-hub:4444/wd/hub` |
 | `appium.server.url` | Appium server URL | `http://localhost:4723` |
 | `mobile.device` | Default device for tests | `IPHONE_14_PRO` |
+<!-- prettier-ignore-end -->
 
 ### Example Configuration
 

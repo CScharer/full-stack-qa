@@ -94,7 +94,11 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 📈 Document History
 
-**Last Updated**: April 6, 2026
+**Last Updated**: July 19, 2026
+
+### July 19, 2026
+- ✅ **Safe dependency bump + mobile tearDown fix** — Selenium **4.46.0**, Jackson **3.2.1**, Next **16.2.10**, Cypress **15.18.1**, Playwright **1.61.1**, TypeScript **6.0.3**, and related pins; `MobileBrowserTests` ThreadLocal driver. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
+- ✅ **Security / dependency doc refresh** — Aligned living docs with PRs #282–#283 and the July stable bump; Dockerfile **npm@11**. Hibernate **5.6.15.Final** remains open (Dependabot #93).
 
 ### April 6, 2026
 - ✅ **Comprehensive stable dependency bump** — Maven, npm, Python, CI Selenium default, and regenerated lockfiles. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md) Update History **2026-04-06 (comprehensive stable bump)** and root [README.md](../README.md) “Recent Improvements”. Includes Dependabot-aligned pins (e.g. Jackson **3.1.1**, Vite **8.0.5**).
@@ -149,8 +153,9 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 🔍 Document Status
 
+<!-- prettier-ignore-start -->
 | Document | Status | Last Updated |
-|----------|--------|--------------|
+| -- | -- | -- |
 | ANALYSIS.md | ✅ Complete | Nov 8, 2025 |
 | ANALYSIS_SUGGESTIONS.md | 🔄 Active | Nov 8, 2025 |
 | ANALYSIS_PS_RESULTS.md | ✅ Complete | Nov 8, 2025 |
@@ -160,6 +165,7 @@ This directory contains all project documentation and analysis reports for the C
 | COMMIT_SAFETY_REPORT.md | ✅ Complete | Nov 8, 2025 |
 | 20251108_NEXT_STEPS.md | ✅ Complete | Nov 8, 2025 |
 | CODE_OF_CONDUCT.md | ✅ Complete | Nov 8, 2025 |
+<!-- prettier-ignore-end -->
 
 ---
 

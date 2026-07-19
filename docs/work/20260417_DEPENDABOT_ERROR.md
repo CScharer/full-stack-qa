@@ -62,7 +62,7 @@ RUN apt-get update || apt-get update || apt-get update && apt-get install -y \
     ca-certificates \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g npm@latest \
+    && npm install -g npm@11 \
     && (apt-get install -y python3.13 python3.13-venv python3-pip || apt-get install -y python3 python3-venv python3-pip) \
     && apt-get install -y \
     xvfb \
@@ -103,3 +103,4 @@ RUN set -eux; \
 
 - If your resolved base image is confirmed Ubuntu Noble, prefer `libasound2t64` only and fail fast if it cannot be installed.
 - If supporting multiple Ubuntu variants, keep the explicit fallback as shown above.
+- **Superseded (2026-07-19)**: production `Dockerfile` pins global npm to **`npm@11`**, not `npm@latest`. npm 12+ (`npm@latest`) requires Node 22+ and breaks the Node 20 image build (`EBADENGINE`).

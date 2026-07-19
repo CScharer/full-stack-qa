@@ -23,7 +23,7 @@ This project maintains high code quality standards through automated tools and b
 ### PMD
 - **Status**: ✅ **0 violations** (1 UnnecessaryImport violation remains, unrelated to logging)
 - **Configuration**: Custom ruleset `pmd-ruleset.xml` (excludes GuardLogStatement rule)
-- **Maven Plugin**: `maven-pmd-plugin:3.27.0`
+- **Maven Plugin**: `maven-pmd-plugin:3.28.0`
 - **Execution**: Runs in CI pipeline via `scripts/ci/verify-pmd.sh`
 
 ### Spotless
@@ -267,7 +267,7 @@ All Checkstyle violations have been resolved:
 ### Maven Plugins
 
 - `maven-checkstyle-plugin:3.6.0` - Checkstyle verification
-- `maven-pmd-plugin:3.27.0` - PMD verification
+- `maven-pmd-plugin:3.28.0` - PMD verification
 - `prettier-maven-plugin` - Prettier Java formatting
 - `spotless-maven-plugin` - Import management
 - `fmt-maven-plugin:2.29` - Google Java Format

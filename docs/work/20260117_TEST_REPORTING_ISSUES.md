@@ -208,14 +208,16 @@ But only "Playwright Tests" appears in the Suites tab.
 
 #### Key Differences Between Allure2 and Allure3
 
+<!-- prettier-ignore-start -->
 | Aspect | Allure2 | Allure3 |
-|--------|---------|---------|
+| -- | -- | -- |
 | **Type** | Java-based binary | TypeScript-based (npm) |
 | **Installation** | Download from GitHub releases | `npm install -g allure` |
 | **History Format** | Individual `{md5-hash}.json` files | `history.jsonl` (JSON Lines) |
 | **Container Processing** | May have limitation (only shows first container) | Unknown (may process differently) |
 | **Maturity** | Mature, stable | Newer, still evolving |
 | **Result Files** | Same format (backward compatible) | Same format (backward compatible) |
+<!-- prettier-ignore-end -->
 
 #### Previous Allure3 Experience
 

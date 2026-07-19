@@ -30,7 +30,7 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 - **Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Java libraries remain at Allure2 2.32.0 (latest in Maven Central) regardless of CLI version.
 - `aspectjweaver` - For Allure `@Step` and `@Attachment` support (used by both TestNG and JUnit 5)
 
-**Important (JUnit Platform version alignment):** `allure-junit5` pulls `junit-platform-launcher` transitively. If your project is on JUnit 6.x, ensure `junit-platform-launcher` is pinned to the same `${junit.version}` (e.g., `6.0.2`) to avoid mixed JUnit Platform versions, which can cause Surefire errors like **“TestEngine with ID 'junit-jupiter' failed to discover tests”** in CI.
+**Important (JUnit Platform version alignment):** `allure-junit5` pulls `junit-platform-launcher` transitively. If your project is on JUnit 6.x, ensure `junit-platform-launcher` is pinned to the same `${junit.version}` (e.g., `6.1.2`) to avoid mixed JUnit Platform versions, which can cause Surefire errors like **“TestEngine with ID 'junit-jupiter' failed to discover tests”** in CI.
 
 ### Maven Plugins
 - `maven-surefire-plugin` - Configured with Allure listener
@@ -319,11 +319,13 @@ allure.link.tms.pattern=https://github.com/CScharer/full-stack-qa/issues/{}
 ```
 
 ### Test Breakdown
+<!-- prettier-ignore-start -->
 | Test Suite | Tests | Status |
-|------------|-------|--------|
+| -- | -- | -- |
 | SimpleGridTest | 3 | ✅ All Passing |
 | EnhancedGridTests | 8 | ✅ All Passing |
 | **Total** | **11** | **100%** |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -478,7 +480,7 @@ Create `target/allure-results/environment.properties`:
 ```properties
 Browser=Chrome
 Browser.Version=120
-Selenium.Version=4.41.0
+Selenium.Version=4.46.0
 Grid.URL=http://selenium-hub:4444
 Java.Version=21
 ```
@@ -1042,14 +1044,16 @@ All test result converters now include verification metadata to prove results ar
 
 ### Key Differences
 
+<!-- prettier-ignore-start -->
 | Aspect | Environment Summaries | Pipeline Summary | Allure Reports |
-|--------|----------------------|------------------|----------------|
+| -- | -- | -- | -- |
 | **Data Source** | Original test files | Original test files | Allure JSON files |
 | **Counts** | Pre-conversion | Pre-conversion | Post-conversion |
 | **Deduplication** | No | No | Yes (retries) |
 | **Skipped Tests** | Framework-dependent | Framework-dependent | Included (if reported) |
 | **Environment Scope** | Single environment | All environments | All environments |
 | **Accuracy** | Exact execution count | Exact execution count | May differ due to conversion |
+<!-- prettier-ignore-end -->
 
 ### Why Counts May Differ
 
@@ -1364,30 +1368,36 @@ Both **Allure2** and **Allure3** are supported in this project. **Allure2** is t
 
 #### 1. **Architecture & Technology**
 
+<!-- prettier-ignore-start -->
 | Aspect | Allure2 | Allure3 |
-|--------|---------|---------|
+| -- | -- | -- |
 | **Type** | Java-based | TypeScript-based |
 | **Installation** | Download binary from GitHub releases | Install via npm (`npm install -g allure`) |
 | **Version** | 2.36.0 (default) | 3.0.0 (optional) |
 | **Repository** | `allure-framework/allure2` | `allure-framework/allure3` |
 | **Dependencies** | Requires Java runtime | Requires Node.js/npm |
+<!-- prettier-ignore-end -->
 
 #### 2. **Configuration**
 
+<!-- prettier-ignore-start -->
 | Aspect | Allure2 | Allure3 |
-|--------|---------|---------|
+| -- | -- | -- |
 | **Config File** | No config file (command-line options) | `allure.config.ts` or `allure.config.js` |
 | **History Path** | Automatic (default behavior) | `historyPath: "./history/history.jsonl"` in config |
 | **Append History** | Automatic (default behavior) | `appendHistory: true` in config |
+<!-- prettier-ignore-end -->
 
 #### 3. **History Format**
 
+<!-- prettier-ignore-start -->
 | Aspect | Allure2 | Allure3 |
-|--------|---------|---------|
+| -- | -- | -- |
 | **Format** | Individual `{md5-hash}.json` files | `history.jsonl` (JSON Lines) |
 | **Location** | `history/{md5-hash}.json` | `history/history.jsonl` |
 | **Structure** | Multiple files, one per test | Single file with all history |
 | **Trend Files** | Generated automatically | `history-trend.json`, `duration-trend.json` |
+<!-- prettier-ignore-end -->
 
 #### 4. **What Stays the Same**
 

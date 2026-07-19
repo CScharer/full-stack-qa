@@ -18,8 +18,9 @@
 
 **Breakdown by Type**:
 
+<!-- prettier-ignore-start -->
 | Type | Count | Files | Notes |
-|------|-------|-------|-------|
+| -- | -- | -- | -- |
 | `"unused"` | 7 | 7 files | All documented - required for API compatibility/Gson deserialization |
 | `"unchecked"` | 3 | 3 files | All documented - necessary type casts from external APIs |
 | `"rawtypes"` | 3 | 3 files | All documented - required by TestNG/Apache POI APIs |
@@ -31,6 +32,7 @@
 | `PMD.UnnecessaryImport` | 1 | 1 file | All documented - wildcard import for many classes |
 | `PMD.CloseResource` | 2 | 2 files | All documented - connections managed by DatabaseConnection |
 | `java:S2068` (SonarQube) | 1 | 1 file | All documented - intentional placeholder |
+<!-- prettier-ignore-end -->
 
 **Files with @SuppressWarnings** (22 total):
 
@@ -86,36 +88,43 @@
 
 ### Java Compiler Warnings
 
+<!-- prettier-ignore-start -->
 | Type | Description | Typical Use Case |
-|------|-------------|------------------|
+| -- | -- | -- |
 | `"unused"` | Suppresses warnings about unused variables, parameters, or methods | Parameters required by interfaces/APIs but not used in implementation, fields reserved for future use, constructors for serialization |
 | `"unchecked"` | Suppresses warnings about unchecked type conversions | Generic type casts that cannot be verified at compile time (e.g., casting to `List<String>` from raw types) |
 | `"rawtypes"` | Suppresses warnings about raw type usage | Using generic types without type parameters (e.g., `List` instead of `List<String>`) |
 | `"deprecation"` | Suppresses warnings about deprecated API usage | Using deprecated methods/classes that are still required for compatibility |
+<!-- prettier-ignore-end -->
 
 ### PMD Rule Suppressions
 
+<!-- prettier-ignore-start -->
 | Type | Description | Typical Use Case |
-|------|-------------|------------------|
+| -- | -- | -- |
 | `PMD.ClassNamingConventions` | Suppresses PMD rule about class naming conventions | Example/documentation files that intentionally don't match Test* naming pattern |
 | `PMD.GuardLogStatement` | Suppresses PMD rule requiring log statements to check log level before logging | Wrapper classes (like GuardedLogger) that handle guards internally |
 | `PMD.DoNotExtendJavaLangThrowable` | Suppresses PMD rule against extending Throwable directly | Custom exception classes that extend Throwable for specific design reasons |
 | `PMD.SingularField` | Suppresses PMD rule about fields that could be local variables | Fields that are reused across multiple methods as temporary variables |
 | `PMD.CloseResource` | Suppresses PMD rule requiring resources to be closed | Resources that are managed by other classes (e.g., connections transferred to DatabaseConnection) |
 | `PMD.UnnecessaryImport` | Suppresses PMD rule about unnecessary wildcard imports | Wildcard imports that are actually used for many classes from a package |
+<!-- prettier-ignore-end -->
 
 ### SonarQube Rule Suppressions
 
+<!-- prettier-ignore-start -->
 | Type | Description | Typical Use Case |
-|------|-------------|------------------|
+| -- | -- | -- |
 | `java:S2068` | Suppresses SonarQube rule about hard-coded credentials | Intentional placeholder values that are not actual credentials |
+<!-- prettier-ignore-end -->
 
 ---
 
 ## Complete Inventory Table
 
+<!-- prettier-ignore-start -->
 | # | File | Line | Type | Context | Notes |
-|---|------|------|------|---------|-------|
+| -- | -- | -- | -- | -- | -- |
 | 1 | `src/test/java/com/cjs/qa/ym/xml/objects/DataSet.java` | 12 | `PMD.UnnecessaryImport` | Class-level | Wildcard import used for many classes from dataset package |
 | 2 | `src/test/java/com/cjs/qa/utilities/GuardedLogger.java` | 23 | `PMD.GuardLogStatement` | Class-level | Intentional - wrapper class handles guards internally |
 | 3 | `src/test/java/com/cjs/qa/core/QAException.java` | 10 | `PMD.DoNotExtendJavaLangThrowable` | Class-level | Custom exception design - extends Throwable |
@@ -147,6 +156,7 @@
 | ~~28~~ | ~~`src/test/java/com/cjs/qa/soap/SOAP.java`~~ | ~~125~~ | ~~`"unused"`~~ | ~~Variable: `soapMessageString`~~ | ✅ **REMOVED** - Unused code removed |
 | ~~29~~ | ~~`src/test/java/com/cjs/qa/everyonesocial/EveryoneSocial.java`~~ | ~~99~~ | ~~`"unchecked"`~~ | ~~Variable: `webElementListShare`~~ | ✅ **REMOVED** - Bug fixed (findElement → findElements) |
 | ~~30~~ | ~~`src/test/java/com/cjs/qa/everyonesocial/EveryoneSocial.java`~~ | ~~108~~ | ~~`"unchecked"`~~ | ~~Variable: `result`~~ | ✅ **REMOVED** - Bug fixed (findElement → findElements) |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -154,8 +164,9 @@
 
 ### By Type
 
+<!-- prettier-ignore-start -->
 | Type | Count | Percentage |
-|------|-------|------------|
+| -- | -- | -- |
 | `"unused"` | 7 | 25.9% |
 | `"unchecked"` | 3 | 11.1% |
 | `"rawtypes"` | 3 | 11.1% |
@@ -168,22 +179,27 @@
 | `PMD.CloseResource` | 2 | 6.7% |
 | `java:S2068` (SonarQube) | 1 | 3.3% |
 | **Total** | **30** | **100%** |
+<!-- prettier-ignore-end -->
 
 ### By Category
 
+<!-- prettier-ignore-start -->
 | Category | Count | Files |
-|----------|-------|-------|
+| -- | -- | -- |
 | **Java Compiler Warnings** | 20 | 13 files |
 | **PMD Rule Suppressions** | 9 | 7 files |
 | **SonarQube Rule Suppressions** | 1 | 1 file |
 | **Total** | **30** | **22 files** |
+<!-- prettier-ignore-end -->
 
 ### By File (Files with Multiple Annotations)
 
+<!-- prettier-ignore-start -->
 | File | Count | Types |
-|------|-------|-------|
+| -- | -- | -- |
 | `AIHelper.java` | 4 | `"unused"` (4x) |
 | `XlsReader.java` | 3 | `PMD.SingularField` (3x) |
+<!-- prettier-ignore-end -->
 
 ---
 

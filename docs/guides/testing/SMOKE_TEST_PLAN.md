@@ -274,13 +274,15 @@ jobs:
 
 ## ⏱️ Performance Targets
 
+<!-- prettier-ignore-start -->
 | Metric | Target | Current Full Suite |
-|--------|--------|-------------------|
+| -- | -- | -- |
 | **Total Time** | < 2 minutes | 15+ minutes |
 | **Per Test** | < 15 seconds | varies |
 | **Setup** | < 10 seconds | ~10 seconds |
 | **Teardown** | < 5 seconds | ~5 seconds |
 | **Tests** | 5 tests | 11 tests |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -650,8 +652,9 @@ docker-compose down
 
 ### **Smoke Tests vs Full Tests:**
 
+<!-- prettier-ignore-start -->
 | Aspect | Smoke Tests | Full Tests |
-|--------|-------------|------------|
+| -- | -- | -- |
 | **Purpose** | Quick verification | Comprehensive coverage |
 | **Tests** | 5 critical | 11+ comprehensive |
 | **Time** | < 2 minutes | 15+ minutes |
@@ -659,6 +662,7 @@ docker-compose down
 | **Coverage** | Critical paths | All functionality |
 | **Browsers** | Chrome only | Chrome + Firefox |
 | **When** | Pre-push, on every push | PR merge, scheduled |
+<!-- prettier-ignore-end -->
 
 ---
 

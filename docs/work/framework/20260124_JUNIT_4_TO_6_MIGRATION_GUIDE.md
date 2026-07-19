@@ -14,8 +14,9 @@ This document outlines the code changes required to migrate from JUnit 4 to JUni
 
 ### Key Differences
 
+<!-- prettier-ignore-start -->
 | Aspect | JUnit 4 | JUnit 6 |
-|--------|---------|---------|
+| -- | -- | -- |
 | **Package** | `org.junit.*` | `org.junit.jupiter.api.*` |
 | **Test Annotation** | `@Test` | `@Test` (different package) |
 | **Assertions** | `Assert.assertEquals()` | `Assertions.assertEquals()` |
@@ -25,6 +26,7 @@ This document outlines the code changes required to migrate from JUnit 4 to JUni
 | **Rules** | `@Rule`, `@ClassRule` | `@ExtendWith` or Extension API |
 | **Runners** | `@RunWith` | `@ExtendWith` |
 | **Assumptions** | `AssumptionViolatedException` | `TestAbortedException` |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -480,8 +482,9 @@ Most IDEs (IntelliJ IDEA, Eclipse) have built-in refactoring tools:
 
 The following table lists all test files that were previously marked with `@Disabled` annotations:
 
+<!-- prettier-ignore-start -->
 | # | Package | Test Class | File Path | Disabled | Grid |
-|---|---------|------------|-----------|----------|------|
+| -- | -- | -- | -- | -- | -- |
 | 1 | `com.cjs.qa.junit.tests` | `GridConnectionTest` | `src/test/java/com/cjs/qa/junit/tests/GridConnectionTest.java` | ✅ | ✅ |
 | 2 | `com.cjs.qa.junit.tests` | `ScenariosTests` | `src/test/java/com/cjs/qa/junit/tests/ScenariosTests.java` | ✅ | ✅ |
 | 3 | `com.cjs.qa.junit.tests` | `WebElementTableTests` | `src/test/java/com/cjs/qa/junit/tests/WebElementTableTests.java` | ✅ | ✅ |
@@ -521,6 +524,7 @@ The following table lists all test files that were previously marked with `@Disa
 | 37 | `com.cjs.qa.utilities` | `FSOTests` | `src/test/java/com/cjs/qa/utilities/FSOTests.java` | ❌ | ❌ |
 | 38 | `com.cjs.qa.utilities` | `PageObjectGeneratorCodeValidationTest` | `src/test/java/com/cjs/qa/utilities/PageObjectGeneratorCodeValidationTest.java` | ❌ | ❌ |
 | 39 | `com.cjs.qa.utilities` | `SecureConfigTest` | `src/test/java/com/cjs/qa/utilities/SecureConfigTest.java` | ❌ | ❌ |
+<!-- prettier-ignore-end -->
 
 **Total**: 41 test files listed (19 disabled, 22 enabled)
 
@@ -528,11 +532,13 @@ The following table lists all test files that were previously marked with `@Disa
 
 The following tests are **actively configured** to run in TestNG suite XML files and have been verified to **NOT** have `@Disabled` annotations:
 
+<!-- prettier-ignore-start -->
 | Test Class | Test Suite(s) | Status |
-|------------|---------------|--------|
+| -- | -- | -- |
 | `com.cjs.qa.junit.tests.AdvancedFeaturesTests` | `testng-extended-suite.xml` | ✅ Active, Not Disabled |
 | `com.cjs.qa.junit.tests.mobile.MobileBrowserTests` | `testng-extended-suite.xml`, `testng-mobile-suite.xml`, `testng-mobile-browser-suite.xml` | ✅ Active, Not Disabled |
 | `com.cjs.qa.junit.tests.mobile.ResponsiveDesignTests` | `testng-extended-suite.xml`, `testng-mobile-suite.xml`, `testng-responsive-suite.xml` | ✅ Active, Not Disabled |
+<!-- prettier-ignore-end -->
 
 **Note**: API tests (`com.cjs.qa.api.tests.*`) are referenced in `testng-api-suite.xml`, but the test directory does not exist, so these tests will not execute.
 
@@ -555,11 +561,13 @@ The following tests are **commented out** in their respective suite XML files an
 
 The following tests failed in the latest pipeline run ([21335754826](https://github.com/CScharer/full-stack-qa/actions/runs/21335754826)):
 
+<!-- prettier-ignore-start -->
 | Test Class | Failed Test Methods | Error Count | Status |
-|------------|---------------------|-------------|--------|
+| -- | -- | -- | -- |
 | `com.cjs.qa.microsoft.sharepoint.services.SharepointServiceTests` | `sharepointServiceTest` | 1 | ✅ **RESOLVED** |
 | `com.cjs.qa.utilities.SecureConfigTest` | `testEPasswordsIntegration`<br>`testSecretRetrieval`<br>`testMultiplePasswords`<br>`testCaching`<br>`testGetSecretKey` | 5 | ✅ **RESOLVED** |
 | `com.cjs.qa.utilities.CommandLineTests` | `testCommandLine`<br>`testGetJpsProcesses`<br>`testProcesses` | 3 | ✅ **RESOLVED** |
+<!-- prettier-ignore-end -->
 
 **Total Failures**: ~~8 errors across 3 test classes~~ **All resolved** ✅
 

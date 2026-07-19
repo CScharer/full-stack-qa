@@ -21,14 +21,16 @@
 
 This project uses multiple testing frameworks, each with different test suites and execution strategies:
 
+<!-- prettier-ignore-start -->
 | Framework | Test Suites | Execution Type | CI/CD Job |
-|-----------|-------------|----------------|-----------|
+| -- | -- | -- | -- |
 | **TestNG** | 9 suites | Maven Surefire | Multiple jobs |
 | **Playwright** | Integration tests | npm test | `playwright-tests` |
 | **Cypress** | E2E tests | npm run cypress:run | `cypress-tests` |
 | **Robot Framework** | Acceptance tests | Python robot.run | `robot-tests` |
 | **Selenide** | 1 suite | Maven Surefire | `selenide-tests` |
 | **Vibium** | Visual regression | npm scripts | `vibium-tests` |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -592,8 +594,9 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 > **Note**: This table shows jobs that run by default in CI/CD. Some TestNG suites (`testng-ci-suite.xml`, `testng-extended-suite.xml`, `testng-api-suite.xml`, `testng-mobile-suite.xml`) are only used conditionally when `test_suite` input is set to `ci`, `extended`, or `all` in workflow_dispatch. See individual suite sections above for details.
 
+<!-- prettier-ignore-start -->
 | Job | Framework | Timeout | Parallel in CI? | Parallel Within? | Notes |
-|-----|-----------|---------|----------------|------------------|-------|
+| -- | -- | -- | -- | -- | -- |
 | `smoke-tests` | TestNG | 5 min ✅ | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-smoke-suite.xml` |
 | `grid-tests` | TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-grid-suite.xml` (or `testng-ci-suite.xml` if `test_suite=ci`) |
 | `mobile-browser-tests` | TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-mobile-browser-suite.xml` |
@@ -603,6 +606,7 @@ While all tests can have timeout configured, some have limitations for parallel 
 | `robot-tests` | Robot Framework | 5 min 🔧 | ✅ Yes | ❌ No | Will update to 5 min |
 | `selenide-tests` | Selenide/TestNG | 5 min 🔧 | ✅ Yes | ✅ Yes (4 threads) | Uses `testng-selenide-suite.xml` |
 | `vibium-tests` | Vibium | 5 min 🔧 | ✅ Yes | ❓ Unknown | Will update to 5 min |
+<!-- prettier-ignore-end -->
 
 **Legend**:
 - ✅ Already at standard (5 minutes)
@@ -616,8 +620,9 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 > **Note**: This table shows ALL TestNG suite files and their parallel configuration. Some suites are only used conditionally (see "CI/CD Usage" in individual suite sections above). The "Job Configuration Summary" table above shows which jobs run by default in CI/CD.
 
+<!-- prettier-ignore-start -->
 | Suite | Parallel | Thread Count | CI/CD Usage | Notes |
-|-------|----------|--------------|-------------|-------|
+| -- | -- | -- | -- | -- |
 | `testng-smoke-suite.xml` | ✅ Yes | 4 | ✅ Always (`smoke-tests` job) | `parallel="tests"` |
 | `testng-grid-suite.xml` | ✅ Yes | 4 | ✅ Always (`grid-tests` job) | `parallel="tests"` |
 | `testng-mobile-browser-suite.xml` | ✅ Yes | 4 | ✅ Always (`mobile-browser-tests` job) | `parallel="tests"` |
@@ -627,6 +632,7 @@ While all tests can have timeout configured, some have limitations for parallel 
 | `testng-extended-suite.xml` | ✅ Yes | 4 | ⚠️ Conditional (`test_suite=extended`) | `parallel="tests"` |
 | `testng-api-suite.xml` | ✅ Yes | 4 | ⚠️ Conditional (not directly used in CI/CD) | `parallel="tests"` |
 | `testng-mobile-suite.xml` | ✅ Yes | 4 | ⚠️ Conditional (not directly used in CI/CD) | `parallel="tests"` |
+<!-- prettier-ignore-end -->
 
 ### Maven Surefire Default
 
@@ -636,14 +642,16 @@ While all tests can have timeout configured, some have limitations for parallel 
 
 ### Framework-Level Parallel Execution
 
+<!-- prettier-ignore-start -->
 | Framework | Local | CI | Configuration |
-|-----------|-------|----|--------------| 
+| -- | -- | -- | -- |
 | **TestNG** | ✅ Yes (methods, 5 threads/core) | ✅ Yes (if suite allows) | `pom.xml` + suite XML |
 | **Playwright** | ✅ Yes (fully parallel) | ❌ No (workers: 1) | `playwright.config.ts` |
 | **Cypress** | ❌ No | ❌ No | Not configured |
 | **Robot Framework** | ❌ No | ❌ No | Not configured |
 | **Selenide** | ✅ Yes (via Maven) | ✅ Yes (if suite allows) | TestNG suite |
 | **Vibium** | ❓ Unknown | ❓ Unknown | Framework-dependent |
+<!-- prettier-ignore-end -->
 
 ---
 

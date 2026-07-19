@@ -23,20 +23,22 @@ SARA Plus™ is a comprehensive business management application designed for dea
 
 **Interview Date**: 2026-01-11
 ### SARA Plus Contacts
+<!-- prettier-ignore-start -->
 | Name | Position | Email | LinkedIn | Location |
-|---| ---| ---| ---| ---| 
-| Chris Ollila | President | ChrisOllila@saraplus.com | https://www.linkedin.com/in/chris-ollila-39b7832aa/ |  |
+| -- | -- | -- | -- | -- |
+| Chris Ollila | President | ChrisOllila@saraplus.com | https://www.linkedin.com/in/chris-ollila-39b7832aa/ | |
 | Greg Strub | Senior Director of Development | GregStrub@saraplus.com | https://www.linkedin.com/in/greg-strub-42608318/ | Ankeny, IA |
 | Jon Roberts | Senior Software Engineer | Jon.Roberts@saraplus.com | https://www.linkedin.com/in/jon-roberts-b88a3117/ | Des Moines, IA |
 | Jesse White | Software Engineer | Jesse.White@saraplus.com | https://www.linkedin.com/in/jesse-white-isu95/ | Ames, IA |
-| Ryan Velo | QA Manager | RyanVelo@saraplus.com |  | West Des Moines, IA |
-| Sai Mekala | Architect | SaiMekala@saraplus.com |  | West Des Moines, IA |
+| Ryan Velo | QA Manager | RyanVelo@saraplus.com | | West Des Moines, IA |
+| Sai Mekala | Architect | SaiMekala@saraplus.com | | West Des Moines, IA |
 | James Harsha | QA Lead | JamesHarsha@saraplus.com | https://www.linkedin.com/in/james-harsha-b97701191/ | Des Moines, IA |
-| Cristian Baker | QA Specailist | CristianBaker@saraplus.com |  | West Des Moines, IA |
-| Ian Lunen | QA Specailist | IanLunen@saraplus.com |  | West Des Moines, IA |
+| Cristian Baker | QA Specailist | CristianBaker@saraplus.com | | West Des Moines, IA |
+| Ian Lunen | QA Specailist | IanLunen@saraplus.com | | West Des Moines, IA |
 | Brent Anderson | SDET | BrentAnderson@saraplus.com | https://www.linkedin.com/in/brent-david-anderson-992555a/ | West Des Moines, IA |
 | Shelli Duane | Senior Recruiter – Human Resources | ShelliDuane@saraplus.com | https://www.linkedin.com/in/shelli-duane/ | Dallas, TX |
-| Susan Reynolds | Training Manager | SusanReynolds@saraplus.com |  |  |
+| Susan Reynolds | Training Manager | SusanReynolds@saraplus.com | | |
+<!-- prettier-ignore-end -->
 
 ### Platform and Service Partners
 - AT&T

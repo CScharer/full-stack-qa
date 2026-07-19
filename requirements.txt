@@ -1,12 +1,12 @@
 # Python Dependencies for Performance Testing
 # Install: pip install -r requirements.txt
 
-locust==2.43.4
+locust==2.45.0
 
-requests==2.33.1
+requests==2.34.2
 python-dotenv==1.2.2
 
-urllib3>=2.6.0
+urllib3>=2.7.0
 
-matplotlib==3.10.8
-pandas==3.0.2
+matplotlib==3.11.1
+pandas==3.0.3

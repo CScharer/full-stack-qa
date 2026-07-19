@@ -41,13 +41,23 @@ public class MobileBrowserTests {
   private static final GuardedLogger LOG =
       new GuardedLogger(LogManager.getLogger(MobileBrowserTests.class));
 
-  private WebDriver driver;
+  /** Per-thread driver — Surefire runs TestNG methods in parallel (pom parallel=methods). */
+  private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
+
   private static final String GRID_URL =
       System.getProperty(
           "selenium.grid.url",
           System.getenv("SELENIUM_REMOTE_URL") != null
               ? System.getenv("SELENIUM_REMOTE_URL")
               : "http://localhost:4444/wd/hub");
+
+  private WebDriver driver() {
+    return DRIVER.get();
+  }
+
+  private void setDriver(WebDriver driver) {
+    DRIVER.set(driver);
+  }
 
   @BeforeMethod
   public void setUp() {
@@ -57,27 +67,36 @@ public class MobileBrowserTests {
     LOG.info("========================================");
   }
 
-  @AfterMethod
+  @AfterMethod(alwaysRun = true)
   public void tearDown(ITestResult result) {
-    if (driver != null) {
+    WebDriver driver = DRIVER.get();
+    if (driver == null) {
+      return;
+    }
+    try {
+      // Capture screenshot on test failure only
+      if (result.isSuccess()) {
+        LOG.info("✅ Test passed");
+      } else {
+        LOG.info("❌ Test failed - capturing failure screenshot...");
+        AllureHelper.captureScreenshot(driver, "FAILURE-" + result.getMethod().getMethodName());
+        AllureHelper.attachPageSource(driver);
+        AllureHelper.logBrowserInfo(driver);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to capture screenshot: " + e.getMessage());
+    } finally {
+      LOG.info("\nClosing browser...");
       try {
-        // Capture screenshot on test failure only
-        if (result.isSuccess()) {
-          LOG.info("✅ Test passed");
-        } else {
-          LOG.info("❌ Test failed - capturing failure screenshot...");
-          AllureHelper.captureScreenshot(driver, "FAILURE-" + result.getMethod().getMethodName());
-          AllureHelper.attachPageSource(driver);
-          AllureHelper.logBrowserInfo(driver);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to capture screenshot: " + e.getMessage());
-      } finally {
-        LOG.info("\nClosing browser...");
         driver.quit();
         LOG.info("Browser closed successfully");
-        LOG.info("========================================\n");
+      } catch (Exception e) {
+        // Parallel Grid sessions can already be dead; never fail a passed test in tearDown
+        LOG.warn("Browser quit failed (session may already be closed): {}", e.getMessage());
+      } finally {
+        DRIVER.remove();
       }
+      LOG.info("========================================\n");
     }
   }
 
@@ -99,25 +118,25 @@ public class MobileBrowserTests {
     LOG.info(">>> Test: Mobile Device Emulation");
 
     // Create mobile Chrome driver with iPhone 14 Pro emulation
-    driver =
-        MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.IPHONE_14_PRO);
+    setDriver(
+        MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.IPHONE_14_PRO));
     LOG.info("✅ Mobile Chrome driver initialized (iPhone 14 Pro emulation)");
 
     // Navigate to a mobile-friendly site
-    driver.get("https://www.google.com/");
-    LOG.info("Navigated to: " + driver.getCurrentUrl());
+    driver().get("https://www.google.com/");
+    LOG.info("Navigated to: " + driver().getCurrentUrl());
 
     // Verify viewport size (may not match exactly in Grid/headless - just verify it's set)
-    Dimension windowSize = driver.manage().window().getSize();
+    Dimension windowSize = driver().manage().window().getSize();
     LOG.info("Window size: " + windowSize.getWidth() + "x" + windowSize.getHeight());
 
     // Mobile emulation may not work exactly in Grid - verify driver was created successfully
-    Assert.assertNotNull(driver, "Driver should be initialized");
+    Assert.assertNotNull(driver(), "Driver should be initialized");
     LOG.info("ℹ️ Note: Exact viewport matching may vary in Grid/headless mode");
 
     // Verify mobile user agent
     String userAgent =
-        (String) ((JavascriptExecutor) driver).executeScript("return navigator.userAgent");
+        (String) ((JavascriptExecutor) driver()).executeScript("return navigator.userAgent");
     LOG.info("User agent: " + userAgent);
     Assert.assertTrue(userAgent.contains("Mobile"), "User agent should contain 'Mobile'");
 
@@ -133,7 +152,7 @@ public class MobileBrowserTests {
     LOG.info(">>> Test: Responsive Design - " + device.getDeviceName());
 
     // Create mobile driver for specific device
-    driver = MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, device);
+    setDriver(MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, device));
     LOG.info(
         "✅ Testing on: "
             + device.getDeviceName()
@@ -144,16 +163,16 @@ public class MobileBrowserTests {
             + ")");
 
     // Test responsive site
-    driver.get("https://www.wikipedia.org/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    driver().get("https://www.wikipedia.org/");
+    WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(5));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.id("searchInput")));
 
     // Verify content adapts to mobile
-    WebElement searchInput = driver.findElement(By.id("searchInput"));
+    WebElement searchInput = driver().findElement(By.id("searchInput"));
     Assert.assertTrue(searchInput.isDisplayed(), "Search input should be visible on mobile");
 
     // Check for mobile-specific elements
-    boolean hasMobileNav = !driver.findElements(By.className("central-featured")).isEmpty();
+    boolean hasMobileNav = !driver().findElements(By.className("central-featured")).isEmpty();
     LOG.info("Mobile navigation detected: " + hasMobileNav);
 
     LOG.info("✅ Responsive design verified for " + device.getDeviceName());
@@ -167,14 +186,14 @@ public class MobileBrowserTests {
   public void testMobileTouchInteractions() throws Exception {
     LOG.info(">>> Test: Mobile Touch Interactions");
 
-    driver =
+    setDriver(
         MobileTestsConfiguration.createMobileChromeDriver(
-            GRID_URL, MobileDevice.SAMSUNG_GALAXY_S21);
+            GRID_URL, MobileDevice.SAMSUNG_GALAXY_S21));
     LOG.info("✅ Mobile driver initialized for touch testing");
 
     // Navigate to a page with clickable elements
-    driver.get("https://www.github.com/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    driver().get("https://www.github.com/");
+    WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(5));
 
     // Test tap/click on mobile
     WebElement searchButton =
@@ -209,19 +228,19 @@ public class MobileBrowserTests {
   public void testMobilePageLoadPerformance() throws Exception {
     LOG.info(">>> Test: Mobile Page Load Performance");
 
-    driver = MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.PIXEL_7);
+    setDriver(MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.PIXEL_7));
     LOG.info("✅ Mobile driver initialized for performance testing");
 
     // Measure page load time
     long startTime = System.currentTimeMillis();
-    driver.get("https://www.google.com/");
+    driver().get("https://www.google.com/");
     long loadTime = System.currentTimeMillis() - startTime;
 
     LOG.info("Page load time: " + loadTime + "ms");
     Assert.assertTrue(loadTime < 5000, "Page should load in under 5 seconds on mobile");
 
     // Check performance metrics using Navigation Timing API
-    JavascriptExecutor js = (JavascriptExecutor) driver;
+    JavascriptExecutor js = (JavascriptExecutor) driver();
     Long domContentLoaded =
         (Long)
             js.executeScript(
@@ -241,15 +260,15 @@ public class MobileBrowserTests {
   public void testMobileViewportConfiguration() throws Exception {
     LOG.info(">>> Test: Mobile Viewport Configuration");
 
-    driver = MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.IPHONE_SE);
+    setDriver(MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.IPHONE_SE));
     LOG.info("✅ Mobile driver initialized for viewport testing");
 
-    driver.get("https://www.github.com/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    driver().get("https://www.github.com/");
+    WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(5));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
     // Check viewport meta tag
-    JavascriptExecutor js = (JavascriptExecutor) driver;
+    JavascriptExecutor js = (JavascriptExecutor) driver();
     String viewportContent =
         (String)
             js.executeScript(
@@ -279,12 +298,12 @@ public class MobileBrowserTests {
   public void testMobileFormInput() throws Exception {
     LOG.info(">>> Test: Mobile Form Input");
 
-    driver =
-        MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.IPHONE_14_PRO);
+    setDriver(
+        MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.IPHONE_14_PRO));
     LOG.info("✅ Mobile driver initialized for form testing");
 
-    driver.get("https://www.google.com/");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    driver().get("https://www.google.com/");
+    WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(5));
 
     // Find and interact with search input
     WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("q")));
@@ -300,7 +319,7 @@ public class MobileBrowserTests {
     // Check if keyboard would be shown (in real device testing)
     boolean isInputFocused =
         (Boolean)
-            ((JavascriptExecutor) driver)
+            ((JavascriptExecutor) driver())
                 .executeScript("return document.activeElement === arguments[0];", searchBox);
     LOG.info("Input is focused: " + isInputFocused);
 

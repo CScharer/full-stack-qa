@@ -4,7 +4,7 @@ This directory contains Cypress end-to-end tests written in **TypeScript** for t
 
 ## Prerequisites
 
-- Node.js >= 18.0.0
+- Node.js >= 20.0.0
 - npm >= 9.0.0
 - **Backend and Frontend services must be running** (see [Service Setup](#service-setup) below)
 

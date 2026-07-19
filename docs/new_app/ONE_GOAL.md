@@ -26,8 +26,9 @@ CREATE TABLE "" (
 
 ## Reference Tables
 ### Acronyms
+<!-- prettier-ignore-start -->
 | Acronym | Description |
-|---| ---| 
+| -- | -- |
 | APP | Application |
 | API | Application Programming Interface |
 | DB | Database |
@@ -39,27 +40,32 @@ CREATE TABLE "" (
 | TBD | To Be Determined |
 | TEST | Test |
 | UI | User Interface |
+<!-- prettier-ignore-end -->
 
 ### Item Locations
 <a id="my-target-location"></a>
+<!-- prettier-ignore-start -->
 | Item | Location | Link |
-|---| ---| ---| 
+| -- | -- | -- |
 | [This Repo](#this-repo) | /Users/christopherscharer/dev/full-stack-qa | [../../full-stack-qa/](../../) |
-| [The Current APP](#the-current-app) | /Users/christopherscharer/dev/apis/next-add-job | [../../../apis/next-add-job/](../../../apis/next-add-job) |
-| [The Current Service Endpoints](##the-current-services--endpoints) | /Users/christopherscharer/dev/apis/job_search_api_fast_api.py | [../../../apis/job_search_api_fast_api.py](../../../apis/job_search_api_fast_api.py) |
+| [The Current APP](#the-current-app) | /Users/christopherscharer/dev/apis/next-add-job | `../../../apis/next-add-job/` |
+| [The Current Service Endpoints](##the-current-services--endpoints) | /Users/christopherscharer/dev/apis/job_search_api_fast_api.py | `../../../apis/job_search_api_fast_api.py` |
 | [The Current Database](#the-current-database) | /Users/christopherscharer/dev/CScharer.db | [../../../CScharer.db](../../../CScharer.db) |
 | [The New APP](#the-new-app) | TBD | TBD |
 | [The New Service Endpoints](##the-new-services--endpoints) | TBD | TBD |
 | [The New Database](#the-new-database) | TBD | TBD |
+<!-- prettier-ignore-end -->
 
 # Hosts and Ports (Standard)
 - NOTE: The hostname you use depends on your network configuration
 
 ### Hosts
+<!-- prettier-ignore-start -->
 | Type | Description |
-|---| ---| 
+| -- | -- |
 | localhost | This is a universal standard hostname that always refers to "this computer" (the local machine itself) via the loopback IP address 127.0.0.1 (for IPv4) or ::1 (for IPv6). It's primarily used during local development or for a service running on the same physical server. |
 | Network Hostnames/Ips | In production environments, you use specific server names (database-server-01.internal, api.mycompany.com) or IP addresses (10.0.0.5) that are assigned by network administrators. |
+<!-- prettier-ignore-end -->
 
 ## Ports
 - NOTE: Ports 0 through 1023 are known as "well-known ports" and are reserved system processes and widely used services.
@@ -67,19 +73,22 @@ CREATE TABLE "" (
 ### Ports APPs & APIs (Web Traffic)
 - NOTE: These services primarily use standard HTTP/HTTPS ports, though alternative ports are common in development or for internal applications
 
+<!-- prettier-ignore-start -->
 | Port Number | Service/Protocol | Description |
-|---| ---| ---| 
+| -- | -- | -- |
 | 80 | HTTP | Default for unencrypted web traffic and web applications/APIs. |
 | 443 | HTTPS | Default for secure, encrypted web traffic (SSL/TLS) for applications/APIs. |
 | 8080 | HTTP (Alternate) | A common alternative port used for development servers, proxies, or application servers like Tomcat to avoid conflicts with port 80. |
 | 3000 | Development | Common default ports for local application development (e.g., Node.js, React, Django, Flask). |
 | 8000 | Development | Common default ports for local application development (e.g., Node.js, React, Django, Flask). |
+<!-- prettier-ignore-end -->
 
 ### Ports Databases
 - NOTE: Database systems have specific, registered default ports for client-to-server communication.  While these are the standard ports, network administrators often change them for security reasons or to run multiple instances of the same service on one server.
 
+<!-- prettier-ignore-start -->
 | Port Number | Database System | Protocol |
-|---| ---| ---| 
+| -- | -- | -- |
 | 1433 | Microsoft SQL Server | TCP |
 | 1521 | Oracle Database | TCP (TNS Listener port) |
 | 3306 | MySQL / MariaDB | TCP |
@@ -87,40 +96,47 @@ CREATE TABLE "" (
 | 27017 | MongoDB | TCP (Default access port) |
 | 6379 | Redis | TCP |
 | 9200 | Elasticsearch | TCP (REST API port) |
+<!-- prettier-ignore-end -->
 
 
 ## Databases (Recommendations for Mapping)
 ### Recommended Table Names
+<!-- prettier-ignore-start -->
 | Name Option | Example Name | Explanation |
-|---| ---| ---| 
+| -- | -- | -- |
 | Cross-Reference (XRef) | related_tables_xref | Very common in enterprise systems; clearly indicates linking records across systems. |
 | Mapping Table | related_tables_map | Explicitly describes that this table maps IDs between the two databases. |
 | Linkage Table | related_tables_link | A clear, descriptive name for linking related records. |
 | Synchronization Table | related_tables_sync | Implies the purpose of keeping records in sync or linked together. |
+<!-- prettier-ignore-end -->
 
 ### Standard Column Naming
 - NOTE: The columns within this new table should clearly identify which database/system each ID belongs to:
 - If you choose the name application_xref, the table structure might look like this:
 
+<!-- prettier-ignore-start -->
 | Column Name | Data Type | Description |
-|---| ---| ---| 
+| -- | -- | -- |
 | mongodb_id | String/ObjectID | Stores the primary key from the MongoDB application table. |
 | sqlite_id | Integer | Stores the primary key from the SQLite application table. |
+<!-- prettier-ignore-end -->
 
 ## Hosts and Ports (Default)
 - NOTE: http://127.0.0.1 is the same as http://localhost when running on my local machine.
 ### Defaults
+<!-- prettier-ignore-start -->
 | Item | Environment | Host | Port |
-|---| ---| ---| ---| 
+| -- | -- | -- | -- |
 | APP | DEV | http://localhost | 3003 |
-| APP | TEST |  http://localhost | 3004 |
-| APP | PROD |  http://localhost | 3005 |
-| API | DEV |  http://localhost | 8003 |
-| API | TEST |  http://localhost | 8004 |
-| API | PROD |  http://localhost | 8005 |
-| DB | DEV |  http://localhost | N/A |
-| DB | TEST |  http://localhost | N/A |
-| DB | PROD |  http://localhost | N/A |
+| APP | TEST | http://localhost | 3004 |
+| APP | PROD | http://localhost | 3005 |
+| API | DEV | http://localhost | 8003 |
+| API | TEST | http://localhost | 8004 |
+| API | PROD | http://localhost | 8005 |
+| DB | DEV | http://localhost | N/A |
+| DB | TEST | http://localhost | N/A |
+| DB | PROD | http://localhost | N/A |
+<!-- prettier-ignore-end -->
 
 ## Repo
 * [see Reference Tables - Item-Locations](#item-locations)

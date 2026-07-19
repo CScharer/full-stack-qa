@@ -11,10 +11,12 @@ This guide covers all scripts used for managing application services (Backend an
 
 ### Service Types
 
+<!-- prettier-ignore-start -->
 | Service Type | Description | Scripts |
-|--------------|-------------|---------|
+| -- | -- | -- |
 | **Application Services** | Backend and Frontend services (the application itself) | `start-services-for-ci.sh`, `stop-services.sh`, `verify-services.sh`, `wait-for-services.sh` |
 | **Test Infrastructure** | Selenium Grid (test execution infrastructure) | `wait-for-grid.sh` |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -337,26 +339,32 @@ eval "$PORT_VARS"
 
 ### Starting Services
 
+<!-- prettier-ignore-start -->
 | Scenario | Script | Example |
-|----------|--------|---------|
+| -- | -- | -- |
 | **CI/CD Pipeline** | `start-services-for-ci.sh` | `ENVIRONMENT=test ./scripts/services/start-services-for-ci.sh` |
 | **Local Development** | `start-be.sh`, `start-fe.sh` | `./scripts/services/start-be.sh --env dev` |
 | **Both Services Together** | `start-env.sh` | `./scripts/services/start-env.sh --env test` |
+<!-- prettier-ignore-end -->
 
 ### Stopping Services
 
+<!-- prettier-ignore-start -->
 | Scenario | Script | Example |
-|----------|--------|---------|
+| -- | -- | -- |
 | **Stop All Services** | `stop-services.sh` | `./scripts/services/stop-services.sh` |
 | **Stop by Environment** | `stop-services.sh` | `ENVIRONMENT=test ./scripts/services/stop-services.sh` |
+<!-- prettier-ignore-end -->
 
 ### Verifying Services
 
+<!-- prettier-ignore-start -->
 | Scenario | Script | Example |
-|----------|--------|---------|
+| -- | -- | -- |
 | **Verify Services Are Running** | `verify-services.sh` | `./scripts/ci/verify-services.sh http://localhost:3003` |
 | **Wait for Services to Be Ready** | `wait-for-services.sh` | `./scripts/ci/wait-for-services.sh http://localhost:3003 http://localhost:8003` |
 | **Wait for Selenium Grid** | `wait-for-grid.sh` | `./scripts/ci/wait-for-grid.sh http://localhost:4444/wd/hub/status 90` |
+<!-- prettier-ignore-end -->
 
 ---
 

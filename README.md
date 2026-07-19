@@ -9,14 +9,14 @@
 [![JavaScript](https://img.shields.io/badge/logo-JavaScript-orange?logo=JavaScript)](https://www.JavaScriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 [![Python](https://img.shields.io/badge/Python-3.13-orange.svg)](https://www.python.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.2-orange.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-orange.svg)](https://www.typescriptlang.org/)
 
 [![Cucumber](https://img.shields.io/badge/Cucumber-7.34.3-brightgreen.svg)](https://cucumber.io/)
 [![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.0-blue.svg)](https://rest-assured.io/)
 
 [![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
 
-[![JUnit](https://img.shields.io/badge/JUnit-6.0.2-blue.svg)](https://junit.org/junit5/)
+[![JUnit](https://img.shields.io/badge/JUnit-6.1.2-blue.svg)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
 [![Vitest](https://img.shields.io/badge/Vitest-4.1.2-blue.svg)](https://vitest.dev/)
 
@@ -33,7 +33,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-1.59.1-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
 [![Selenide](https://img.shields.io/badge/Selenide-7.15.1-blue.svg)](https://selenide.org/)
-[![Selenium](https://img.shields.io/badge/Selenium-4.41.0-blue.svg)](https://www.selenium.dev/)
+[![Selenium](https://img.shields.io/badge/Selenium-4.46.0-blue.svg)](https://www.selenium.dev/)
 [![Vibium](https://img.shields.io/badge/Vibium-26.3.18-blue.svg)](https://vibium.com/) 🎄🎁
 
 [![Maven](https://img.shields.io/badge/Maven-3.9.11-blue.svg)](https://maven.apache.org/)
@@ -120,21 +120,26 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Java 21** - Latest LTS version
 - **Python 3.13** - Latest stable version (for Robot Framework & Locust)
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
-- **TypeScript 6.0.2** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
-- **Selenium 4.41.0** - Modern WebDriver API with Grid support
-- **Playwright 1.59.1** - Fast and reliable end-to-end testing
-- **Cypress 15.13.0** - JavaScript end-to-end testing framework
+- **TypeScript 6.0.3** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
+- **Selenium 4.46.0** - Modern WebDriver API with Grid support
+- **Playwright 1.61.1** - Fast and reliable end-to-end testing
+- **Cypress 15.18.1** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
 - **REST Assured 6.0.0** - REST API testing & validation
 - **Cucumber 7.34.3** - BDD framework with Gherkin
 - **TestNG** - Advanced test framework with data providers
-- **Log4j 2.25.3** - Professional structured logging (updated via Dependabot PR #52)
+- **Log4j 2.26.1** - Professional structured logging
 - **Maven 3.9.11** - Build management (wrapper included!)
 - **Docker & Docker Compose** - Complete containerization
 - **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.33.0** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.4** - Automatic driver management
+
+### Recent Improvements (July 19, 2026)
+- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, TypeScript **6.0.3**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.10 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Mobile Browser CI fix** — `MobileBrowserTests` uses per-thread WebDriver + defensive `quit()` so parallel Surefire tearDown no longer fails on a shared/dead Grid session.
+- ✅ **Security / Dependabot refresh** — Jackson 2.x **2.21.5**, npm overrides for **form-data**, **js-yaml**, **@babel/core**. Dockerfile pins **npm@11** on Node 20. Hibernate **5.6.15.Final** left as-is (Dependabot #93).
 
 ### Recent Improvements (April 6, 2026)
 - ✅ **Dependency refresh (stable only)** — Bumped Maven, npm, and Python pins to current stable releases (e.g. Selenium **4.41.0**, Cucumber **7.34.3**, Jackson **3.1.1**, Netty **4.2.12.Final**, Next.js **16.2.2**, TypeScript **6.0.2**, Vitest **4.1.2**, Playwright **1.59.1**, Cypress **15.13.0**, Locust **2.43.4**, FastAPI **0.135.x** line). Pre-release Maven suggestions (alphas, milestones, betas) were skipped. **DBUnit** remains **2.8.0** (3.x is a breaking migration). See `docs/process/VERSION_TRACKING.md` for the full table.
@@ -523,12 +528,14 @@ Keyword-driven test automation with human-readable syntax:
 
 **Framework Comparison:**
 
+<!-- prettier-ignore-start -->
 | Framework | Language | Best For | Speed | Learning Curve |
-|-----------|----------|----------|-------|----------------|
+| -- | -- | -- | -- | -- |
 | **Selenium** | Java | Legacy support, Grid | Medium | Medium |
 | **Playwright** | TypeScript | Modern apps, reliability | Fast | Medium |
 | **Cypress** | TypeScript | Frontend-heavy apps | Fast | Easy |
 | **Robot Framework** | Python | Non-technical testers | Medium | Easy |
+<!-- prettier-ignore-end -->
 
 ### Performance Testing (⚡ 3 Tools)
 
@@ -550,12 +557,14 @@ Load and stress testing with industry-leading tools:
 
 **Tool Comparison:**
 
+<!-- prettier-ignore-start -->
 | Tool | Language | Best For | Output |
-|------|----------|----------|--------|
+| -- | -- | -- | -- |
 | **Artillery + Playwright** (20%) | JavaScript | Browser load testing, Core Web Vitals | JSON + Allure |
 | **Gatling** (25%) | Scala | Detailed analysis, beautiful reports | HTML Dashboard |
 | **JMeter** (25%) | Java | Industry standard, protocol support | HTML + CSV |
 | **Locust** (30%) | Python | Real-time monitoring, flexible scripting | Web UI + HTML |
+<!-- prettier-ignore-end -->
 
 **What it includes:**
 
@@ -724,8 +733,9 @@ full-stack-qa/
 
 ## 🎯 Test Suites
 
+<!-- prettier-ignore-start -->
 | Suite | Files | Description |
-|-------|-------|-------------|
+| -- | -- | -- |
 | **Google** | 5 | Search, Maps, Flights |
 | **Microsoft** | 33 | Azure, Office365, OneDrive, Rewards |
 | **LinkedIn** | 8 | Profile, Connections, Jobs |
@@ -738,6 +748,7 @@ full-stack-qa/
 | **Wellmark** | 8 | Healthcare portal |
 | **YourMembership** | 61 | API testing suite |
 | ... | ... | 25+ more domains |
+<!-- prettier-ignore-end -->
 
 **Total**: 394+ test files across 30+ domains
 
@@ -1177,27 +1188,29 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 
 ### Dependencies (Key Libraries)
 
+<!-- prettier-ignore-start -->
 | Category | Library | Version |
-|----------|---------|---------|
-| **WebDriver** | Selenium | 4.41.0 |
+| -- | -- | -- |
+| **WebDriver** | Selenium | 4.46.0 |
 | **BDD** | Cucumber | 7.34.3 |
-| **Testing** | JUnit | 6.0.2 |
+| **Testing** | JUnit | 6.1.2 |
 | **Testing** | TestNG | 7.11.0 |
-| **Testing** | Vitest | 4.1.2 |
+| **Testing** | Vitest | 4.1.10 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
 | **JSON** | Gson | 2.13.2 |
-| **JSON (Jackson 3)** | tools.jackson.core jackson-databind | 3.1.1 |
+| **JSON (Jackson 3)** | tools.jackson.core jackson-databind | 3.2.1 |
 | **Excel** | Apache POI | 5.5.1 |
 | **PDF** | PDFBox | 3.0.7 |
-| **Security** | Google Cloud Secret Manager | 2.88.0 |
+| **Security** | Google Cloud Secret Manager | 2.94.0 |
 | **Driver Management** | WebDriverManager | 6.3.4 |
-| **UI Testing** | Playwright (TS) | 1.59.1 |
-| **UI Testing** | Cypress (TS) | 15.13.0 |
+| **UI Testing** | Playwright (TS) | 1.61.1 |
+| **UI Testing** | Cypress (TS) | 15.18.1 |
 | **UI Testing** | Robot Framework | 2.1.0 |
 | **Database** | H2, SQLite, MSSQL | Various |
 | **Docker** | Docker Compose | 3.8 |
 | **CI/CD** | GitHub Actions | Latest |
+<!-- prettier-ignore-end -->
 
 **Total**: 50+ dependencies, all managed via Maven
 

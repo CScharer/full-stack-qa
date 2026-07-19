@@ -336,8 +336,9 @@ ORDER BY is_primary DESC;
 
 ## 📋 Relationship Summary Table
 
+<!-- prettier-ignore-start -->
 | Parent Entity | Child Entity | Relationship Type | FK Column | Cascade Delete | Optional |
-|--------------|--------------|-------------------|-----------|----------------|----------|
+| -- | -- | -- | -- | -- | -- |
 | company | application | One-to-Many | `company_id` | No | Yes |
 | client | application | One-to-Many | `client_id` | No | Yes |
 | application | note | One-to-Many | `application_id` | Yes | No |
@@ -348,6 +349,7 @@ ORDER BY is_primary DESC;
 | contact | contact_email | One-to-Many | `contact_id` | Yes | No |
 | contact | contact_phone | One-to-Many | `contact_id` | Yes | No |
 | job_search_site | (none) | Standalone | N/A | N/A | N/A |
+<!-- prettier-ignore-end -->
 
 ---
 

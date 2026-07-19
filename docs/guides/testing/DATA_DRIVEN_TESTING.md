@@ -53,11 +53,13 @@ public class LoginTests {
 
 **Excel File Format** (`test-data/login-scenarios.xlsx`):
 
+<!-- prettier-ignore-start -->
 | email | password | expectedResult |
-|-------|----------|----------------|
+| -- | -- | -- |
 | user1@test.com | password1 | success |
 | user2@test.com | password2 | success |
 | invalid@test.com | wrongpass | failure |
+<!-- prettier-ignore-end -->
 
 **Features**:
 - Supports multiple sheets

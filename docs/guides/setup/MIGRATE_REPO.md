@@ -78,8 +78,9 @@
 ## 🔑 Status Legend
 
 ### Progress Status
+<!-- prettier-ignore-start -->
 | Symbol | Status | Meaning |
-|--------|--------|---------|
+| -- | -- | -- |
 | ✅ | Completed | Task is complete and verified |
 | ❌ | Not Started | Task has not been started |
 | 🔍 | In Progress | Task is currently being worked on |
@@ -87,19 +88,24 @@
 | ⏳ | Pending | Waiting on external factors or scheduled |
 | ⏭️ | Skipped | Skipped with justification |
 | 🔒 | Locked | Do not update without approval |
+<!-- prettier-ignore-end -->
 
 ### Priority Level
+<!-- prettier-ignore-start -->
 | Symbol | Priority | Meaning |
-|--------|----------|---------|
+| -- | -- | -- |
 | 🔴 | High Priority | Requires immediate action |
 | 🟡 | Medium Priority | Important but not urgent |
 | 🟢 | Low Priority | Future enhancement or nice-to-have |
+<!-- prettier-ignore-end -->
 
 ### Migration Requirements
+<!-- prettier-ignore-start -->
 | Symbol | Requirement | Meaning |
-|--------|-------------|---------|
+| -- | -- | -- |
 | ⚡ | Required | Must be done to match current repo setup exactly |
 | 💡 | Optional | Can be skipped or done later for future benefit |
+<!-- prettier-ignore-end -->
 
 ### Migration Phase Status
 - Use status symbols to track progress through each phase

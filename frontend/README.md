@@ -1,6 +1,6 @@
 # Frontend Application
 
-This is a [Next.js](https://nextjs.org) project (App Router) with **TypeScript 6** and [Vitest](https://vitest.dev/) **4.1.x** (via [Vite](https://vite.dev/) **8.x**) for unit and component tests. It provides the user interface for the job search application.
+This is a [Next.js](https://nextjs.org) project (App Router) with **TypeScript 6.0.3** and [Vitest](https://vitest.dev/) **4.1.x** (via [Vite](https://vite.dev/) **8.x**) for unit and component tests. It provides the user interface for the job search application.
 
 ## Getting Started
 

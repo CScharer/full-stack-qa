@@ -10,9 +10,9 @@ This document explains why tests might pass in Docker but fail in the CI/CD pipe
 
 #### Docker Environment
 - ✅ **Selenium/Java tests** - Fully supported
-- ❌ **Cypress tests** - NOT installed (no Node.js)
-- ❌ **Playwright tests** - NOT installed (no Node.js)
-- ❌ **Robot Framework tests** - NOT installed (no Python)
+- ✅ **Cypress tests** - Node.js 20 + npm@11; deps installed via `npm ci` in image
+- ✅ **Playwright tests** - Node.js 20 + npm@11; browsers installed with Chromium
+- ✅ **Robot Framework tests** - Python 3 + pip packages installed in image
 
 #### CI/CD Environment
 - ✅ **Selenium/Java tests** - Fully supported
@@ -20,14 +20,14 @@ This document explains why tests might pass in Docker but fail in the CI/CD pipe
 - ✅ **Playwright tests** - Installed and configured
 - ✅ **Robot Framework tests** - Installed and configured
 
-**Why this matters**: When you run tests in Docker, you're only running Selenium/Java tests. The other frameworks aren't even available in the Docker container!
+**Why this matters**: Docker and CI now both support the multi-framework stack. Prefer matching env vars (`BASE_URL`, `SELENIUM_REMOTE_URL`, `CI`) so results stay comparable.
 
 ---
 
 ### 2. **Operating System & Architecture**
 
 #### Docker Environment
-- **Base Image**: `eclipse-temurin:21-jdk` (Debian-based)
+- **Base Image**: `eclipse-temurin:21-jre` runtime (build stage: `maven:3.9.9-eclipse-temurin-21`)
 - **Architecture**: ARM64 (Apple Silicon) or x86_64
 - **Selenium Images**: `seleniarm/*` (ARM64) or `selenium/*` (x86_64)
 - **OS Version**: Debian (varies by base image)
@@ -49,18 +49,19 @@ This document explains why tests might pass in Docker but fail in the CI/CD pipe
 
 #### Docker Environment
 ```dockerfile
-# Only basic utilities installed
-RUN apt-get update && apt-get install -y \
-    curl \
-    bash \
-    tzdata
+# Node 20 + npm@11, Python, and browser system libs (see Dockerfile)
+# Pin npm to latest 11.x — npm@latest (12+) requires Node 22+
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt-get install -y --no-install-recommends nodejs
+npm install -g npm@11
+# plus xvfb, libgtk*, libgbm, libnss3, libasound2t64|libasound2, etc.
 ```
 
-**Missing in Docker**:
-- ❌ Node.js (needed for Cypress/Playwright)
-- ❌ Python (needed for Robot Framework)
-- ❌ System libraries for Cypress (xvfb, libgtk, libasound2, etc.)
-- ❌ Playwright browsers
+**Installed in Docker**:
+- ✅ Node.js 20 + npm@11 (Cypress/Playwright)
+- ✅ Python 3 (Robot Framework; prefers 3.13 when available)
+- ✅ System libraries for Cypress/Playwright (xvfb, libgtk, libasound2t64, etc.)
+- ✅ Playwright Chromium (installed during image build)
 
 #### CI/CD Environment
 ```yaml
@@ -269,21 +270,23 @@ RUN apt-get update && apt-get install -y \
 
 ## 📊 Summary Table
 
+<!-- prettier-ignore-start -->
 | Aspect | Docker | CI/CD |
-|-------|--------|-------|
+| -- | -- | -- |
 | **OS** | Debian (varies) | Ubuntu 24.04 |
 | **Architecture** | ARM64/x86_64 | x86_64 |
 | **Selenium Images** | seleniarm/* or selenium/* | selenium/* |
-| **Node.js** | ❌ Not installed | ✅ Node.js 20 |
-| **Python** | ❌ Not installed | ✅ Python 3.13 |
-| **Cypress** | ❌ Not available | ✅ Installed |
-| **Playwright** | ❌ Not available | ✅ Installed |
-| **Robot Framework** | ❌ Not available | ✅ Installed |
-| **System Deps** | Minimal (curl, bash) | Full (xvfb, libgtk, etc.) |
+| **Node.js** | ✅ Node.js 20 + npm@11 | ✅ Node.js 20 |
+| **Python** | ✅ Python 3 (3.13 when available) | ✅ Python 3.13 |
+| **Cypress** | ✅ Installed (`npm ci`) | ✅ Installed |
+| **Playwright** | ✅ Installed + Chromium | ✅ Installed |
+| **Robot Framework** | ✅ Installed via pip | ✅ Installed |
+| **System Deps** | Full (xvfb, libgtk, libasound2t64, …) | Full (xvfb, libgtk, etc.) |
 | **Network** | Docker network | localhost |
 | **Service Discovery** | DNS (service names) | localhost |
 | **Resource Limits** | Configurable | Limited (2 CPU, ~7GB RAM) |
 | **Package Versions** | Varies by base image | Latest Ubuntu 24.04 |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -307,6 +310,6 @@ RUN apt-get update && apt-get install -y \
 
 ---
 
-**Last Updated**: 2025-01-XX
+**Last Updated**: 2026-07-19
 **Maintained By**: CJS QA Team
 

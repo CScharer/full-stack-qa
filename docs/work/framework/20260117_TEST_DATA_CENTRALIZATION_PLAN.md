@@ -14,13 +14,15 @@ Currently, test data is hardcoded directly in test files across multiple framewo
 
 ## 🧙 Wizard Test Files Status
 
+<!-- prettier-ignore-start -->
 | Framework | Has Wizard Tests? | Test File Location | Test Cases | Hardcoded Test Data | Notes |
-|----------|-------------------|-------------------|------------|---------------------|-------|
+| -- | -- | -- | -- | -- | -- |
 | **Cypress** | ✅ Yes | `cypress/cypress/e2e/wizard.cy.ts` | 8 test cases | 3 instances (company, contact, client) | Covers navigation and form cancellation |
 | **Playwright** | ✅ Yes | `playwright/tests/wizard.spec.ts` | 8 test cases | 3 instances (company, contact, client) | Matches Cypress implementation |
 | **Robot Framework** | ❌ No | N/A | N/A | N/A | Current tests: `HomePageTests.robot`, `APITests.robot`. No wizard-related test files exist |
 | **Java/Selenide** | ❌ No | N/A | N/A | N/A | Uses Selenide wrapper (e.g., `HomePageTests.java`). Tests Job Search Application but only has basic homepage tests, not wizard suite |
 | **Java/Selenium** | ❌ No | N/A | N/A | N/A | Uses direct Selenium WebDriver (e.g., `DataDrivenTests.java`, `SmokeTests.java`, `EnhancedGridTests.java`). No wizard tests found |
+<!-- prettier-ignore-end -->
 
 ### Summary
 

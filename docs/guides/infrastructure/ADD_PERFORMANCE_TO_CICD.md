@@ -336,13 +336,15 @@ Each job:
 
 ## 🎓 **Quick Reference**
 
+<!-- prettier-ignore-start -->
 | What | When | How |
-|------|------|-----|
+| -- | -- | -- |
 | **Functional Tests** | Every push (automatic) | GitHub Actions CI/CD |
 | **Performance Tests** | Optional in CI/CD | Main CI pipeline (when enabled) |
 | **Performance Tests** | Scheduled/Manual | Separate performance.yml workflow |
 | **API Tests** | Every push (automatic) | GitHub Actions CI/CD |
 | **Smoke Tests** | Every push (automatic) | GitHub Actions CI/CD |
+<!-- prettier-ignore-end -->
 
 **Performance tests are now fully integrated into CI/CD with flexible execution options!**
 

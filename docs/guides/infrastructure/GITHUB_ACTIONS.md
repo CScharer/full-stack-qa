@@ -55,11 +55,13 @@ Performance tests are now a first-class citizen of the CI pipeline:
 
 ## ✅ Artifacts & Reporting
 
+<!-- prettier-ignore-start -->
 | Artifact Name | Produced By | Purpose |
-|---------------|-------------|---------|
+| -- | -- | -- |
 | `*-results-{env}` | UI Tests | XML/JSON results and failure screenshots |
 | `*-performance-results` | Performance Tests | Raw metrics from Locust/JMeter/Gatling |
 | `allure-report-combined-*` | Reporting Job | Consolidated HTML report for all environments |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -166,13 +168,15 @@ The pipeline has been optimized for faster test execution through several improv
 
 ### Current Timeout Values
 
+<!-- prettier-ignore-start -->
 | Component | Timeout | Location |
-|-----------|---------|----------|
+| -- | -- | -- |
 | Grid Wait | 5 seconds | `scripts/ci/wait-for-grid.sh` |
 | Service Wait | 5 seconds | `scripts/ci/wait-for-service.sh` |
 | Element Wait | 5 seconds | Test code (Environment.java) |
 | Page Load | 10 seconds | Test code (Environment.java) |
 | Test Execution | 5 minutes | Workflow job timeout |
+<!-- prettier-ignore-end -->
 
 ### Performance Impact
 

@@ -628,13 +628,15 @@ public void test_clients() {
 
 ### Standard Framework Names
 
+<!-- prettier-ignore-start -->
 | Framework | Prefix | Notes |
-|-----------|--------|-------|
+| -- | -- | -- |
 | Cypress | `Cypress` | TypeScript framework |
 | Playwright | `Playwright` | TypeScript framework |
 | Robot Framework | `Robot` | Python-based framework |
 | Java/Selenide | `Selenide` | Java framework using Selenide |
 | Java/Selenium | `Selenium` | Java framework using direct WebDriver |
+<!-- prettier-ignore-end -->
 
 ### Prefix Rules
 
@@ -895,12 +897,14 @@ created_on: new Date().toISOString()
 
 ### Summary Table
 
+<!-- prettier-ignore-start -->
 | Field Type | Current Usage | Uniqueness Strategy | Example |
-|------------|---------------|---------------------|---------|
+| -- | -- | -- | -- |
 | **String** (name, first_name, etc.) | ✅ Used in wizard tests | Framework prefix + UUID4 | `Cypress_Test Company_a1b2c3d4...` |
 | **Numeric** (company_id, etc.) | ⚠️ Not currently used in wizard tests | Framework base + random offset | `1000000 + random(0-999999)` |
 | **Boolean** (is_primary) | ⚠️ Not currently used in wizard tests | Fixed value or framework pattern | `0` or `1` |
 | **Date/DateTime** | ⚠️ Not currently used in wizard tests | Current timestamp or auto-generated | `new Date().toISOString()` |
+<!-- prettier-ignore-end -->
 
 ### Future Considerations
 
@@ -1001,14 +1005,16 @@ If wizard tests are extended to actually **create** data (not just cancel), cons
 
 ## 📊 Comparison Table
 
+<!-- prettier-ignore-start -->
 | Approach | Uniqueness | Readability | Implementation Complexity | Collision Risk |
-|----------|-----------|-------------|--------------------------|----------------|
+| -- | -- | -- | -- | -- |
 | **Date.now() only** | Low | High | Low | High |
 | **Framework Prefix** | Medium | High | Low | Low |
 | **UUID** | Very High | Low | Medium | Very Low |
 | **Process ID + Timestamp** | Medium | Medium | Medium | Low |
 | **Test Run ID + Timestamp** | High | Medium | High | Very Low |
 | **Hybrid (Recommended)** | Very High | Medium | Medium | Very Low |
+<!-- prettier-ignore-end -->
 
 ---
 

@@ -207,8 +207,9 @@ All delete operations should:
 
 ## 📊 Delete Impact Summary Table
 
+<!-- prettier-ignore-start -->
 | Entity Deleted | Records Deleted | Records Modified (FK set to NULL) | Records Unaffected |
-|----------------|-----------------|-----------------------------------|---------------------|
+| -- | -- | -- | -- |
 | **Application** | • Notes<br>• Application Sync | • Contact.application_id | • Contacts<br>• Company<br>• Client |
 | **Contact** | • Contact Emails<br>• Contact Phones | None | • Applications<br>• Company<br>• Client |
 | **Company** | None | • Application.company_id<br>• Contact.company_id | • Applications<br>• Contacts |
@@ -216,6 +217,7 @@ All delete operations should:
 | **Note** | None | None | All other records |
 | **Contact Email** | None | None | All other records |
 | **Contact Phone** | None | None | All other records |
+<!-- prettier-ignore-end -->
 
 ---
 

@@ -8,14 +8,16 @@
 
 ## 🎯 Quick Reference
 
+<!-- prettier-ignore-start -->
 | Issue | Quick Fix | Details |
-|-------|-----------|---------|
+| -- | -- | -- |
 | Docker Compose not found | Use `docker compose` (V2) | [Link](#docker-compose-not-found) |
 | Allure report fails | Check test results exist | [Link](#allure-report-generation-fails) |
 | Tests don't run | Check Surefire config | [Link](#tests-not-running) |
 | Grid connection fails | Wait for health checks | [Link](#grid-connection-timeout) |
 | Artifacts not uploading | Check paths exist | [Link](#artifacts-not-found) |
 | Docker Hub timeout | Pre-pull images with retry | [Link](#docker-hub-timeout) |
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -215,7 +217,7 @@ retention-days: 3  # Check if expired
 
 **Error:**
 ```
-Error response from daemon: Head "https://registry-1.docker.io/v2/selenium/hub/manifests/4.41.0": 
+Error response from daemon: Head "https://registry-1.docker.io/v2/selenium/hub/manifests/4.46.0": 
 Get "https://auth.docker.io/token?account=githubactions&scope=repository%3Aselenium%2Fhub%3Apull&service=registry.docker.io": 
 net/http: request canceled (Client.Timeout exceeded while awaiting headers)
 ```
@@ -234,7 +236,7 @@ Pre-pull images with retry logic before service containers start:
   timeout-minutes: 2
   run: |
     echo "🐳 Pre-pulling Selenium Docker images with retry logic..."
-    SELENIUM_VERSION="${{ inputs.selenium_version || '4.41.0' }}"
+    SELENIUM_VERSION="${{ inputs.selenium_version || '4.46.0' }}"
     
     # Function to pull with retry
     pull_with_retry() {
@@ -297,7 +299,7 @@ Health check failing
 ```yaml
 services:
   selenium-hub:
-    image: selenium/hub:4.41.0
+    image: selenium/hub:4.46.0
     options: >-
       --health-cmd "curl -f http://localhost:4444/wd/hub/status || exit 1"
       --health-interval 10s

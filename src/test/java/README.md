@@ -88,8 +88,8 @@ This directory (`src/test/java/`) contains **protected legacy test code** that r
 
 ## 📚 Related Documentation
 
-- **[AI_WORKFLOW_RULES.md](../../docs/process/AI_WORKFLOW_RULES.md)** - Contains detailed rules about this directory
-- **[QUICK_REFERENCE.md](../../docs/process/QUICK_REFERENCE.md)** - Quick reference for critical rules
+- **[AI_WORKFLOW_RULES.md](../../../docs/process/AI_WORKFLOW_RULES.md)** - Contains detailed rules about this directory
+- **[QUICK_REFERENCE.md](../../../docs/process/QUICK_REFERENCE.md)** - Quick reference for critical rules
 
 ---
 
