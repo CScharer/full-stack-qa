@@ -1,1 +1,1 @@
-{"id":"0b89c5c8fe68a7a23aef73bd7886a3cd","fullName":"com.cjs.qa.junit.tests.ScenariosTests.marlboro","name":"marlboro(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"f64aefd5043cf02c63213be7bde1d1f8"}}
+{"id":"0b89c5c8fe68a7a23aef73bd7886a3cd","fullName":"com.cjs.qa.junit.tests.ScenariosTests.marlboro","name":"marlboro(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"c4dc49b8ac0a50ebfaa22d1860f358e3"}}
