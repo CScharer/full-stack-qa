@@ -2,6 +2,8 @@
 
 This is a [Next.js](https://nextjs.org) project (App Router) with **TypeScript 6.0.3** and [Vitest](https://vitest.dev/) **4.1.x** (via [Vite](https://vite.dev/) **8.x**) for unit and component tests. It provides the user interface for the job search application.
 
+> **Note:** TypeScript **7.x** is deferred. The native TS 7 package breaks Next 16's built-in type-check step and `eslint-config-next` (typescript-eslint peer `>=4.8.4 <6.1.0`), which prevented `next dev` from binding in CI. Stay on **6.0.3** until Next / eslint-config-next support TS 7. See [VERSION_TRACKING.md](../docs/process/VERSION_TRACKING.md).
+
 ## Getting Started
 
 ### Prerequisites

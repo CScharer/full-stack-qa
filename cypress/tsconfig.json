@@ -3,7 +3,6 @@
   "compilerOptions": {
     "module": "commonjs",
     "types": ["node", "cypress"],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./cypress/*"]
     }

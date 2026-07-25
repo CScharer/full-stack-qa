@@ -171,7 +171,7 @@ Most CI/CD pipelines include:
 - **Weekly schedule** - All ecosystems checked weekly (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
 - **Auto-merge for security updates** - Security patches automatically merged after CI/CD passes
 - **Monthly dependency audits** - Comprehensive review on first day of each month
-- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including Jackson **3.2.1**, Vite **8.1.5**, TypeScript **6.0.3**, Selenium **4.46.0**, Dockerfile **npm@11**)
+- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including Jackson **3.2.1** / 2.x **2.22.1**, Vite **8.1.5**, TypeScript **6.0.3**, Hibernate **6.6.54.Final**, Selenium **4.46.0**, Dockerfile **npm@11**)
 
 #### Code Security Scanning
 - **CodeQL Analysis** - Automated security scanning for Java, JavaScript/TypeScript, and Python
