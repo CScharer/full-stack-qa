@@ -136,9 +136,12 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.4** - Automatic driver management
 
+### Recent Improvements (July 26, 2026)
+- ✅ **Dependabot npm security overrides** — `brace-expansion` **^5.0.8**, `postcss` **^8.5.18** (lock **8.5.23**), Playwright `js-yaml` **^5.2.2**, frontend `sharp` **^0.35.3** (outside Next optional `^0.34.5`; `next build` verified). Clears Dependabot #208/#209/#211/#222/#224. See `docs/process/VERSION_TRACKING.md`.
+
 ### Recent Improvements (July 19, 2026)
-- ✅ **Deferred major bumps** — `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate ORM **6.6.54.Final** (Jakarta Persistence; clears Dependabot #93), `js-yaml` **5.2.1**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. TypeScript stays **6.0.3** (TS 7 breaks Next 16 / eslint-config-next). See `docs/process/VERSION_TRACKING.md`.
-- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.10 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**.
+- ✅ **Deferred major bumps** — `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate ORM **6.6.54.Final** (Jakarta Persistence; clears Dependabot #93), `js-yaml` **5.2.2**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. TypeScript stays **6.0.3** (TS 7 breaks Next 16 / eslint-config-next). See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.11 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**.
 - ✅ **Mobile Browser CI fix** — `MobileBrowserTests` uses per-thread WebDriver + defensive `quit()` so parallel Surefire tearDown no longer fails on a shared/dead Grid session.
 - ✅ **Security / Dependabot refresh** — Jackson 2.x security line, npm overrides for **form-data**, **js-yaml**, **@babel/core**. Dockerfile pins **npm@11** on Node 20.
 

@@ -75,7 +75,7 @@ When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`,
 
 ### Known available updates
 
-As of **2026-07-19** (after deferred major bumps):
+As of **2026-07-26** (after Dependabot npm security override refresh):
 
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
@@ -189,10 +189,11 @@ As of **2026-07-19** (after deferred major bumps):
 | Playwright | ^1.61.1 | 1.61.1 | [✅] | 2026-07-19 | Current stable |
 | Artillery | ^2.0.33 | 2.0.33 | [✅] | 2026-07-19 | Current stable on npm |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
-| brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security override |
+| brace-expansion (override) | ^5.0.8 | 5.0.8 | [✅] | 2026-07-26 | Security override (Dependabot #208/#209; also clears 5.0.8 line) |
 | socket.io-parser (override) | ^4.2.6 | 4.2.6 | [✅] | 2026-04-04 | Artillery transitive |
 | fast-xml-parser (override) | ^5.10.1 | 5.10.1 | [✅] | 2026-07-19 | DoS hardening |
-| js-yaml (override) | ^5.2.1 | 5.2.1 | [✅] | 2026-07-19 | Major bump from 3.x (Dependabot #200 line) |
+| js-yaml (override) | ^5.2.2 | 5.2.2 | [✅] | 2026-07-26 | Security patch (Dependabot #224) |
+| postcss (override) | ^8.5.18 | 8.5.23 | [✅] | 2026-07-26 | Security override (aligned with frontend) |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #176 |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Per-parent overrides |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
@@ -208,6 +209,7 @@ As of **2026-07-19** (after deferred major bumps):
 | Vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
+| postcss (override) | ^8.5.18 | 8.5.23 | [✅] | 2026-07-26 | Security override (lock resolves 8.5.20) |
 <!-- prettier-ignore-end -->
 
 ### Frontend Project (frontend/package.json)
@@ -216,9 +218,9 @@ As of **2026-07-19** (after deferred major bumps):
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
 | React | 19.2.7 | 19.2.7 | [✅] | 2026-07-19 | Current stable |
-| Next.js | 16.2.10 | 16.2.10 | [✅] | 2026-07-19 | Current stable |
+| Next.js | 16.2.11 | 16.2.12 | [✅] | 2026-07-25 | Security bump (Dependabot #213–#221); 16.2.12 available |
 | @tanstack/react-query | ^5.101.2 | 5.101.2 | [✅] | 2026-07-19 | Current stable |
-| eslint-config-next | 16.2.10 | 16.2.10 | [✅] | 2026-07-19 | Matched to Next 16.2.x |
+| eslint-config-next | 16.2.10 | 16.2.12 | [✅] | 2026-07-19 | Matched near Next 16.2.x |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | axios | ^1.18.1 | 1.18.1 | [✅] | 2026-07-19 | Current stable |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -235,10 +237,11 @@ As of **2026-07-19** (after deferred major bumps):
 | @vitest/ui | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
 | vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
 | ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); transitive from eslint |
-| brace-expansion (override) | ^5.0.5 | 5.0.5 | [✅] | 2026-04-04 | Security override (GHSA-f886-m6hf-6m8v); Dependabot #75–#78 |
+| brace-expansion (override) | ^5.0.8 | 5.0.8 | [✅] | 2026-07-26 | Security override (Dependabot #208; also clears 5.0.8 line) |
 | @babel/core (override) | ^8.0.1 | 8.0.1 | [✅] | 2026-07-19 | Major bump from 7.x (Dependabot #171 line) |
 | flatted (override) | >=3.4.2 | 3.4.2 | [✅] | 2026-07-19 | Security override |
-| postcss (override) | ^8.5.10 | 8.5.12 | [✅] | 2026-07-19 | Security override |
+| postcss (override) | ^8.5.18 | 8.5.23 | [✅] | 2026-07-26 | Security override (Dependabot #222; lock resolves 8.5.23) |
+| sharp (override) | ^0.35.3 | 0.35.3 | [✅] | 2026-07-26 | Security override (Dependabot #211); outside Next optional `^0.34.5` — verified `next build` |
 <!-- prettier-ignore-end -->
 
 ---
@@ -346,7 +349,7 @@ Vulnerability counts change as Dependabot rescans and PRs are merged. Check the 
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-07-19** deferred major bumps, Dependabot **#93** (Hibernate 5.x CVE-2026-0603) should clear once the scanner sees `org.hibernate.orm:hibernate-core` **6.6.54.Final** (advisory range is 5.x-only). Earlier same-day security refresh (PRs #282–#283) closed Jackson 2.x databind (#201–#204), js-yaml (#200), form-data (#170, #176), @babel/core (#171). Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
+After the **2026-07-26** npm security override refresh, Dependabot **#208/#209** (`brace-expansion`), **#211** (`sharp`), **#222** (`postcss`), and **#224** (`js-yaml`) should clear. Earlier **2026-07-19** deferred major bumps cleared Dependabot **#93** (Hibernate 5.x CVE-2026-0603) via `org.hibernate.orm:hibernate-core` **6.6.54.Final**. Same-week Next **16.2.11** / fast-uri bumps closed **#210–#221**. Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
 
 ### Update Strategy
 
@@ -387,7 +390,7 @@ Use **^4.17.24** (or higher patched 4.x): **4.17.23** was still flagged; lockfil
 ```json
 {
   "overrides": {
-    "brace-expansion": "^5.0.5",
+    "brace-expansion": "^5.0.8",
     "socket.io-parser": "^4.2.6"
   }
 }
@@ -404,6 +407,10 @@ The `overrides` section forces all instances of the package (including transitiv
 ---
 
 ## 📋 Update History
+
+### 2026-07-26 (Dependabot npm security overrides)
+- **npm**: Raised overrides — `brace-expansion` **^5.0.5 → ^5.0.8** (frontend + playwright), `postcss` **^8.5.10 → ^8.5.18** (frontend + playwright + vibium; lock **8.5.23** / **8.5.20**), Playwright `js-yaml` **^5.2.1 → ^5.2.2**, frontend `sharp` **^0.35.3** (clears Dependabot #211; Next still declares optional `^0.34.5`). Regenerated lockfiles; `next build` verified with sharp 0.35.3.
+- **Docs**: VERSION_TRACKING / README / SECURITY / monitoring refreshed for the pins above.
 
 ### 2026-07-19 (deferred major bumps)
 - **Maven**: Jackson 2.x **2.21.5 → 2.22.1** (annotations **2.22**); Hibernate **5.6.15.Final → 6.6.54.Final** (`org.hibernate.orm:hibernate-core`, Jakarta Persistence **3.1**, dropped `hibernate-entitymanager`); migrated test JPA bootstrap (`javax.persistence` → `jakarta.persistence`, `persistence.xml` 3.0).
