@@ -1,1 +1,1 @@
-{"id":"ec0f8622cda972e81996307eec64dd4d","fullName":"com.cjs.qa.junit.tests.EDBDriverTests.edbDrivers","name":"edbDrivers() [DEV]","status":"passed","testResultsByEnv":{"default":"926f81302006b76a03543dece20a378b"}}
+{"id":"ec0f8622cda972e81996307eec64dd4d","fullName":"com.cjs.qa.junit.tests.EDBDriverTests.edbDrivers","name":"edbDrivers() [PROD]","status":"passed","testResultsByEnv":{"default":"12cfec32986e0342e6c680281c71b9f5"}}
