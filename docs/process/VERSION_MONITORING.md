@@ -189,7 +189,7 @@ timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,
 
 ## 🔗 Related Documents
 
-- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Jackson **3.2.1** / 2.x **2.22.1**, Vite **8.1.5**, TypeScript **6.0.3** (TS 7 deferred), Hibernate **6.6.54.Final**, npm overrides including form-data / js-yaml **5.x** / @babel/core **8.x**; Dockerfile **npm@11**; last doc refresh 2026-07-19)
+- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Jackson **3.2.1** / 2.x **2.22.1**, Vite **8.1.5**, TypeScript **6.0.3** (TS 7 deferred), Hibernate **6.6.54.Final**, Next **16.2.11**, npm overrides including form-data / js-yaml **5.2.2** / postcss **8.5.18+** / brace-expansion **5.0.8** / sharp **0.35.3** / @babel/core **8.x**; Dockerfile **npm@11**; last doc refresh 2026-07-26)
 - [Pre-Pipeline Validation](PRE_PIPELINE_VALIDATION.md) - Local validation checklist
 - Next Steps After PR #53 (archived) - Work plan and status
 
@@ -215,4 +215,4 @@ Modify the workflow's "Comment on Issues" step to integrate with your notificati
 
 ---
 
-**Last Updated**: 2026-07-19
+**Last Updated**: 2026-07-26
