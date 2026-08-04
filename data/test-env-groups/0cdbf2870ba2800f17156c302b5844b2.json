@@ -1,1 +1,1 @@
-{"id":"0cdbf2870ba2800f17156c302b5844b2","fullName":"com.cjs.qa.utilities.CommandLineTests.testGetJpsProcesses","name":"testGetJpsProcesses() [PROD]","status":"passed","testResultsByEnv":{"default":"954879d8c84d68feeaceec39c88d6669"}}
+{"id":"0cdbf2870ba2800f17156c302b5844b2","fullName":"com.cjs.qa.utilities.CommandLineTests.testGetJpsProcesses","name":"testGetJpsProcesses() [TEST]","status":"passed","testResultsByEnv":{"default":"b618a9879e32c2068d90f80a88798ae1"}}

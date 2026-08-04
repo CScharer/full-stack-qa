@@ -1,1 +1,1 @@
-{"id":"de12b7fa844035a77ec724ea0f7c7c03","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromListToDataTable","name":"fromListToDataTable() [PROD]","status":"passed","testResultsByEnv":{"default":"6bea4c9f5ce2414668b7435e57edaf13"}}
+{"id":"de12b7fa844035a77ec724ea0f7c7c03","fullName":"com.cjs.qa.junit.tests.ConvertTests.fromListToDataTable","name":"fromListToDataTable() [TEST]","status":"passed","testResultsByEnv":{"default":"b47d34b776b689a138180ee74c39a1d0"}}
