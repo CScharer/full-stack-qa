@@ -1,1 +1,1 @@
-{"id":"6b7ae6fe422953cf2d5cc900cd9620de","fullName":"com.cjs.qa.bts.policy.PolicyTestCase.mainTest","name":"mainTest() [PROD]","status":"skipped","testResultsByEnv":{"default":"918f4ae4d8d695d96c71d4c17e6aad6d"}}
+{"id":"6b7ae6fe422953cf2d5cc900cd9620de","fullName":"com.cjs.qa.bts.policy.PolicyTestCase.mainTest","name":"mainTest() [DEV]","status":"skipped","testResultsByEnv":{"default":"bfed227048912ab8d74a02f2622d0c9c"}}

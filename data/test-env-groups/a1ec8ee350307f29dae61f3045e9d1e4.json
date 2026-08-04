@@ -1,1 +1,1 @@
-{"id":"a1ec8ee350307f29dae61f3045e9d1e4","fullName":"com.cjs.qa.junit.tests.ScenariosTests.jenkinsColors","name":"jenkinsColors(TestInfo) [DEV]","status":"skipped","testResultsByEnv":{"default":"3b3d91d8b05142e95b01d34927fb31dd"}}
+{"id":"a1ec8ee350307f29dae61f3045e9d1e4","fullName":"com.cjs.qa.junit.tests.ScenariosTests.jenkinsColors","name":"jenkinsColors(TestInfo) [PROD]","status":"skipped","testResultsByEnv":{"default":"955e70c8174ca9e3caf16fa7ef5886cc"}}
