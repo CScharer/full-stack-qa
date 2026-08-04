@@ -1,1 +1,1 @@
-{"id":"6d4964a17562d32dd7f1787eee23c7d0","fullName":"com.cjs.qa.ym.YMAPIMethodsTests.createClassesTest","name":"createClassesTest() [DEV]","status":"skipped","testResultsByEnv":{"default":"2332d6267a579d4fd5c32d974bdb1165"}}
+{"id":"6d4964a17562d32dd7f1787eee23c7d0","fullName":"com.cjs.qa.ym.YMAPIMethodsTests.createClassesTest","name":"createClassesTest() [PROD]","status":"skipped","testResultsByEnv":{"default":"42c6a23874af723fda94b056a5b8f7c7"}}
