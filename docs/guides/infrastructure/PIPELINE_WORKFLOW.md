@@ -119,13 +119,13 @@ STAGE 7: PIPELINE SUMMARY
 ### **STAGE 1: DETECTION & DETERMINATION**
 
 #### **Job 1: detect-changes**
-- **Purpose**: Detects if code files changed (skips tests if only documentation changed) and whether the change is Maven-deps/CI-infra only (narrow CI).
+- **Purpose**: Detects if code files changed (skips tests if only documentation changed).
 - **Dependencies**: None (runs first)
-- **Outputs**: `code-changed` (true/false), `maven-deps-only` (true/false)
+- **Output**: `code-changed` (true/false)
 - **Logic**: 
-  - For scheduled runs: Always returns `code-changed=true` and `maven-deps-only=false`
-  - For other events: Uses `scripts/ci/detect-changes.sh` to classify documentation-only vs Maven-deps/CI-infra vs full code changes
-- **Reference**: [Maven Dependency CI Scope](MAVEN_DEPS_CI_SCOPE.md)
+  - For scheduled runs: Always returns `code-changed=true`
+  - For other events: Uses `scripts/ci/detect-changes.sh` to check if non-documentation files changed
+- **Related**: Maven FE jobs must still run their normal suite matrix; do not skip them for Dependabot. Suite pollution under `src/test/java/com/cjs/qa` is a separate Surefire issue — see [Surefire Suite Scoping](SUREFIRE_SUITE_SCOPING.md).
 
 #### **Job 2: determine-schedule-type**
 - **Purpose**: Consolidates code-changed status and determines schedule type (nightly/weekly) for scheduled runs.

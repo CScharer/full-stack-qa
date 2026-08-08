@@ -8,8 +8,7 @@
 
     <test name="Selenide Tests" preserve-order="true">
         <classes>
-            <!-- Windows-specific tests disabled - not compatible with Mac -->
-            <!-- <class name="com.cjs.qa.junit.tests.HomePageTests"/> -->
+            <class name="com.cjs.qa.junit.tests.HomePageTests"/>
         </classes>
     </test>
 </suite>

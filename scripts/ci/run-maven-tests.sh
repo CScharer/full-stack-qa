@@ -153,6 +153,13 @@ MAVEN_CMD="$MAVEN_CMD -Dtest.retry.max.count=$RETRY_COUNT"
 MAVEN_CMD="$MAVEN_CMD -Dsurefire.suiteXmlFiles=$RESOLVED_SUITE_FILE"
 # Keep legacy property for compatibility with any custom plugin wiring.
 MAVEN_CMD="$MAVEN_CMD -DsuiteXmlFile=$RESOLVED_SUITE_FILE"
+# CRITICAL (has bitten CI/Dependabot before): pom.xml enables BOTH surefire-testng and
+# surefire-junit-platform. suiteXmlFiles only scopes TestNG. Without excludes, the JUnit
+# provider still discovers and runs unrelated classes under src/test/java/com/cjs/qa
+# (utilities, gt, AtlassianTests, etc.) in the same job. Surefire ignores includes/excludes
+# for TestNG when suiteXmlFiles is set, so excluding **/* blocks JUnit discovery only.
+MAVEN_CMD="$MAVEN_CMD -Dsurefire.excludes=**/*"
+MAVEN_CMD="$MAVEN_CMD -Dsurefire.failIfNoSpecifiedTests=false"
 
 # Skip compilation if we successfully reused classes
 if [ -d "target/classes" ] && [ -n "$(ls -A target/classes 2>/dev/null)" ] && [ -d "target/test-classes" ] && [ -n "$(ls -A target/test-classes 2>/dev/null)" ]; then
@@ -186,6 +193,7 @@ echo "   Retry Count: $RETRY_COUNT"
 [ -n "$BROWSER" ] && echo "   Browser: $BROWSER"
 [ -n "$ADDITIONAL_ARGS" ] && echo "   Additional Args: $ADDITIONAL_ARGS"
 echo "   Optimizations: Checkstyle skipped (already run in code-quality-analysis job)"
+echo "   Suite scoping: surefire.excludes=**/* (blocks JUnit discovery of unrelated com.cjs.qa tests)"
 echo ""
 
 eval $MAVEN_CMD

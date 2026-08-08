@@ -5,9 +5,7 @@
         <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
         <listener class-name="com.cjs.qa.utilities.GlobalRetryListener"/>
     </listeners>
-    
-    <!-- Windows-specific tests disabled - not compatible with Mac -->
-    <!--
+
     <test name="Chrome Browser Tests" preserve-order="true">
         <parameter name="browser" value="chrome"/>
         <classes>
@@ -27,6 +25,4 @@
             <class name="com.cjs.qa.junit.tests.SimpleGridTest"/>
         </classes>
     </test>
-    -->
 </suite>
-

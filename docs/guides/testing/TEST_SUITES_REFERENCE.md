@@ -60,7 +60,7 @@ TestNG is the primary testing framework, using Maven Surefire Plugin for executi
 - 5 threads per core
 - Cucumber parallel execution enabled (5 workers)
 
-**Test discovery**: Both the **JUnit Jupiter** and **TestNG** providers are enabled. Maven uses default class-name patterns (`**/Test*.java`, `**/*Test.java`, `**/*Tests.java`, `**/*TestCase.java`). JUnit tests annotated with `@Disabled` are skipped. The smoke-tests job passes `-DsuiteXmlFile=testng-smoke-suite.xml`, but `<suiteXmlFiles>` is not configured in `pom.xml`, so that property has no effect and all discovered (non-disabled) tests run. See `results/RESULTS.md` for the pipeline baseline and Maven/Surefire behavior.
+**Test discovery**: Both the **JUnit Jupiter** and **TestNG** providers are enabled in `pom.xml`. CI suite jobs must **not** rely on default discovery. `scripts/ci/run-maven-tests.sh` passes `-Dsurefire.suiteXmlFiles=<suite>` and `-Dsurefire.excludes=**/*` so only the TestNG suite runs; the JUnit provider must not pull in unrelated `src/test/java/com/cjs/qa` classes. **This pollution has happened before** (including on Dependabot PRs) — see [Surefire Suite Scoping](../infrastructure/SUREFIRE_SUITE_SCOPING.md). Keep running the full FE job matrix; fix Surefire scoping instead of disabling jobs.
 
 ### TestNG Suite Files
 

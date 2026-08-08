@@ -110,12 +110,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       code-changed: ${{ steps.filter.outputs.code-changed }}
-      maven-deps-only: ${{ steps.filter.outputs.maven-deps-only }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: Detect changed files
         id: filter
@@ -125,7 +124,6 @@ jobs:
           if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "⏰ Scheduled run detected - forcing code-changed=true"
             echo "code-changed=true" >> "$GITHUB_OUTPUT"
-            echo "maven-deps-only=false" >> "$GITHUB_OUTPUT"
           else
             # Run the script and capture its output
             ./scripts/ci/detect-changes.sh "${{ github.event_name }}" "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}"
@@ -136,7 +134,7 @@ jobs:
             echo "GITHUB_OUTPUT file exists"
             if grep -q "code-changed=" "$GITHUB_OUTPUT"; then
               echo "✅ code-changed output found in GITHUB_OUTPUT:"
-              grep -E "code-changed=|maven-deps-only=" "$GITHUB_OUTPUT" || true
+              grep "code-changed=" "$GITHUB_OUTPUT" || true
             else
               echo "❌ ERROR: code-changed output NOT found in GITHUB_OUTPUT!"
               echo "GITHUB_OUTPUT contents:"
@@ -144,17 +142,12 @@ jobs:
               # Fallback: set it manually if script didn't set it
               echo "⚠️ Setting code-changed=true as fallback (code files were detected)"
               echo "code-changed=true" >> "$GITHUB_OUTPUT"
-              echo "maven-deps-only=false" >> "$GITHUB_OUTPUT"
-            fi
-            if ! grep -q "maven-deps-only=" "$GITHUB_OUTPUT"; then
-              echo "maven-deps-only=false" >> "$GITHUB_OUTPUT"
             fi
           else
             echo "❌ ERROR: GITHUB_OUTPUT file does not exist!"
             # Fallback: set it manually
             echo "⚠️ Setting code-changed=true as fallback"
             echo "code-changed=true" >> "$GITHUB_OUTPUT"
-            echo "maven-deps-only=false" >> "$GITHUB_OUTPUT"
           fi
 
   determine-schedule-type:
@@ -165,7 +158,6 @@ jobs:
     if: always()
     outputs:
       code-changed: ${{ needs.detect-file-changes.outputs.code-changed || 'true' }}
-      maven-deps-only: ${{ needs.detect-file-changes.outputs.maven-deps-only || 'false' }}
       is_weekly: ${{ steps.check-day.outputs.is_weekly || 'false' }}
       is_nightly: ${{ steps.check-day.outputs.is_nightly || 'false' }}
       be_test_type: ${{ steps.check-day.outputs.be_test_type || 'smoke' }}
@@ -268,14 +260,13 @@ jobs:
             "${{ github.event_name }}" \
             "${{ github.ref }}" \
             "$ENV_INPUT" \
-            "$SUITE_INPUT" \
-            "${{ needs.determine-schedule-type.outputs.maven-deps-only || 'false' }}"
+            "$SUITE_INPUT"
           
           # Verify outputs were set
           echo "🔍 Verifying determine-envs outputs were set..."
           if [ -f "$GITHUB_OUTPUT" ]; then
             echo "GITHUB_OUTPUT contents:"
-            cat "$GITHUB_OUTPUT" | grep -E "(run_dev|run_test|run_prod|enable_cypress_tests|enable_smoke_tests|enable_mobile_tests)" || echo "⚠️  Key outputs not found!"
+            cat "$GITHUB_OUTPUT" | grep -E "(run_dev|run_test|run_prod|enable_cypress_tests)" || echo "⚠️  Key outputs not found!"
           else
             echo "❌ GITHUB_OUTPUT file not found!"
           fi
@@ -324,14 +315,12 @@ jobs:
           echo "   TEST_TYPE_INPUT: $TEST_TYPE_INPUT"
           echo "   PERF_TYPE_INPUT: $PERF_TYPE_INPUT"
           echo "   PERF_ENV_INPUT: $PERF_ENV_INPUT"
-          echo "   MAVEN_DEPS_ONLY: ${{ needs.determine-schedule-type.outputs.maven-deps-only || 'false' }}"
           ./scripts/ci/determine-test-execution.sh \
             "${{ github.event_name }}" \
             "${{ github.ref }}" \
             "$TEST_TYPE_INPUT" \
             "$PERF_TYPE_INPUT" \
-            "$PERF_ENV_INPUT" \
-            "${{ needs.determine-schedule-type.outputs.maven-deps-only || 'false' }}"
+            "$PERF_ENV_INPUT"
           
           # Verify outputs were set
           echo "🔍 Verifying outputs were set..."
