@@ -349,7 +349,7 @@ Vulnerability counts change as Dependabot rescans and PRs are merged. Check the 
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-07-26** npm security override refresh, Dependabot **#208/#209** (`brace-expansion`), **#211** (`sharp`), **#222** (`postcss`), and **#224** (`js-yaml`) should clear. Earlier **2026-07-19** deferred major bumps cleared Dependabot **#93** (Hibernate 5.x CVE-2026-0603) via `org.hibernate.orm:hibernate-core` **6.6.54.Final**. Same-week Next **16.2.11** / fast-uri bumps closed **#210–#221**. Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
+After the **2026-08-08** `nanoid` override (**^3.3.17**, lock **3.3.18**), Dependabot **#238** (CVE-2026-67213) should clear. After the **2026-07-26** npm security override refresh, Dependabot **#208/#209** (`brace-expansion`), **#211** (`sharp`), **#222** (`postcss`), and **#224** (`js-yaml`) should clear. Earlier **2026-07-19** deferred major bumps cleared Dependabot **#93** (Hibernate 5.x CVE-2026-0603) via `org.hibernate.orm:hibernate-core` **6.6.54.Final**. Same-week Next **16.2.11** / fast-uri bumps closed **#210–#221**. Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
 
 ### Update Strategy
 
@@ -407,6 +407,9 @@ The `overrides` section forces all instances of the package (including transitiv
 ---
 
 ## 📋 Update History
+
+### 2026-08-08 (Dependabot #238 nanoid)
+- **npm**: Added `nanoid` override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium to clear GHSA-2v37-7h3g-55p8 / CVE-2026-67213 (infinite loop when custom generator size is 0). Regenerated lockfiles.
 
 ### 2026-07-26 (Dependabot npm security overrides)
 - **npm**: Raised overrides — `brace-expansion` **^5.0.5 → ^5.0.8** (frontend + playwright), `postcss` **^8.5.10 → ^8.5.18** (frontend + playwright + vibium; lock **8.5.23** / **8.5.20**), Playwright `js-yaml` **^5.2.1 → ^5.2.2**, frontend `sharp` **^0.35.3** (clears Dependabot #211; Next still declares optional `^0.34.5`). Regenerated lockfiles; `next build` verified with sharp 0.35.3.
