@@ -4,9 +4,9 @@ This directory contains Vibium test framework examples and research documentatio
 
 ## 📋 Overview
 
-**Vibium** is an AI-native test automation framework developed by Jason Huggins (creator of Selenium and Appium). This repo consumes it as an npm dependency (**`vibium` ^26.3.18**; see [`package.json`](./package.json) for the exact range).
+**Vibium** is an AI-native test automation framework developed by Jason Huggins (creator of Selenium and Appium). This repo consumes it as an npm dependency (**`vibium` ^26.5.31**; see [`package.json`](./package.json) for the exact range).
 
-Optional platform packages (**`@vibium/darwin-arm64`**, **`@vibium/linux-x64`**, same major line) supply the clicker binary. The published `vibium` tarball may not include `dist/` until install/postinstall completes; **Vitest** and helpers avoid a static `import "vibium"` at load time so mock tests run in CI without a full binary layout.
+Optional platform packages (**`@vibium/darwin-arm64`**, **`@vibium/linux-x64`**, **^26.3.18**) supply the clicker binary. The published `vibium` tarball may not include `dist/` until install/postinstall completes; **Vitest** and helpers avoid a static `import "vibium"` at load time so mock tests run in CI without a full binary layout.
 
 ## 📦 Installation
 
@@ -17,7 +17,7 @@ npm install
 
 This installs:
 
-- **`vibium`** (^26.3.18) — core package
+- **`vibium`** (^26.5.31) — core package
 - **`@vibium/darwin-arm64`** / **`@vibium/linux-x64`** (^26.3.18) — optional; clicker binary for local OS when applicable
 - **TypeScript**, **Vitest**, **tsx**, and **`@types/node`**
 
@@ -121,7 +121,7 @@ function syncAPI() {
 
 ## ✅ Current Status
 
-- **npm Package**: `vibium` **^26.3.18** (see `package.json`; lockfile pins a concrete version)
+- **npm Package**: `vibium` **^26.5.31** (see `package.json`; lockfile pins a concrete version)
 - **API**: Async **`browser`** and sync **`browserSync`** (see `types/vibium.d.ts`)
 - **CI**: Vibium Vitest job runs mock tests; real browser usage is optional when binary + `dist` are present
 

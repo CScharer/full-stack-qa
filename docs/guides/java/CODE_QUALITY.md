@@ -234,13 +234,13 @@ All Checkstyle violations have been resolved:
 
 ## Security: HtmlUnit Dependency
 
-**Current Version**: `org.htmlunit:htmlunit:4.20.0` (secure, latest stable)
+**Current Version**: `org.htmlunit:htmlunit:4.21.0` (secure, current pin)
 
 **Usage**: Selenium WebDriver integration (HtmlUnitDriver)
 
 **Package**: `org.htmlunit.*` (migrated from `com.gargoylesoftware.htmlunit.*`)
 
-**Note**: The project uses HtmlUnit 4.20.0 which is secure and up-to-date. All package imports have been updated to use the `org.htmlunit.*` namespace.
+**Note**: The project uses HtmlUnit **4.21.0** (`htmlunit.version` in `pom.xml`) with `htmlunit3-driver` **4.46.0**. All package imports use the `org.htmlunit.*` namespace.
 
 ---
 

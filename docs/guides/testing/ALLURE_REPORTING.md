@@ -1,11 +1,11 @@
 # Allure Test Reporting
 
-**Status**: ✅ Configured with configurable Allure CLI (defaults to Allure2)
-**Version**: Allure2 CLI 2.36.0 (default), Allure3 CLI 3.0.0 (optional), Allure2 Java libraries 2.32.0
+**Status**: ✅ Configured with configurable Allure CLI (configured default: Allure3)
+**Version**: Allure2 CLI 2.36.0 (optional), Allure3 CLI 3.0.0 (configured default), Allure2 Java libraries 2.35.3
 **Frameworks**: TestNG, JUnit 5 (Jupiter) — both write to the same `allure-results` directory
 **Date**: November 8, 2025
-**Last Updated**: 2026-01-24
-**Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Can be switched to Allure3 CLI 3.0.0 by changing `allure.reportVersion` to `3`.
+**Last Updated**: 2026-08-08
+**Note**: Allure CLI version is configurable via `config/environments.json`. Configured default is Allure3 CLI 3.0.0 (`allure.reportVersion` **3**). Switch to Allure2 CLI 2.36.0 by setting `allure.reportVersion` to `2`.
 
 ---
 
@@ -24,17 +24,17 @@ Allure Framework provides beautiful, interactive HTML test reports with:
 ## ✅ What's Configured
 
 ### Dependencies Added (pom.xml)
-- `allure-testng:2.32.0` - TestNG integration (Surefire listener writes TestNG results to Allure)
-- `allure-junit5:2.32.0` - JUnit 5 (Jupiter) integration (JUnit Platform extension writes JUnit results to Allure)
-- `allure-java-commons:2.32.0` - Core Allure functionality (latest in Maven Central)
-- **Note**: Allure CLI version is configurable via `config/environments.json`. Default is Allure2 CLI 2.36.0. Java libraries remain at Allure2 2.32.0 (latest in Maven Central) regardless of CLI version.
+- `allure-testng:2.35.3` - TestNG integration (Surefire listener writes TestNG results to Allure)
+- `allure-junit5:2.35.3` - JUnit 5 (Jupiter) integration (JUnit Platform extension writes JUnit results to Allure)
+- `allure-java-commons:2.35.3` - Core Allure functionality (`allure.version` in `pom.xml`)
+- **Note**: Allure CLI version is configurable via `config/environments.json`. Configured default is Allure3 CLI 3.0.0. Java libraries remain at Allure2 **2.35.3** regardless of CLI version.
 - `aspectjweaver` - For Allure `@Step` and `@Attachment` support (used by both TestNG and JUnit 5)
 
 **Important (JUnit Platform version alignment):** `allure-junit5` pulls `junit-platform-launcher` transitively. If your project is on JUnit 6.x, ensure `junit-platform-launcher` is pinned to the same `${junit.version}` (e.g., `6.1.2`) to avoid mixed JUnit Platform versions, which can cause Surefire errors like **“TestEngine with ID 'junit-jupiter' failed to discover tests”** in CI.
 
 ### Maven Plugins
 - `maven-surefire-plugin` - Configured with Allure listener
-- `allure-maven:2.12.0` - For report generation
+- `allure-maven:2.17.0` - For report generation
 
 ### Annotated Tests
 - ✅ `SimpleGridTest.java` - 3 tests with Allure annotations
@@ -1231,7 +1231,7 @@ This section documents the historical context and key fixes that were implemente
 
 **Allure2 Upgrade**:
 - CLI upgraded from 2.25.0 to 2.36.0
-- Java libraries remain at 2.32.0 (latest in Maven Central)
+- Java libraries pinned via `allure.version` (**2.35.3** as of 2026-08-08)
 
 **Allure3 Integration**:
 - Allure3 CLI 3.0.0 successfully integrated
@@ -1329,12 +1329,12 @@ This section documents the historical context and key fixes that were implemente
 
 ### Overview
 
-**Allure CLI version is configurable** via `config/environments.json`. The project supports both Allure2 and Allure3 CLI, with **Allure2 CLI 2.36.0 set as the default**. This allows for easy switching between versions and testing both implementations.
+**Allure CLI version is configurable** via `config/environments.json`. The project supports both Allure2 and Allure3 CLI, with **Allure3 CLI 3.0.0 set as the configured default** (`allure.reportVersion` **3**). This allows for easy switching between versions and testing both implementations.
 
 **Current Configuration**:
-- **Default**: Allure2 CLI 2.36.0 (Java-based)
-- **Optional**: Allure3 CLI 3.0.0 (TypeScript-based)
-- **Java Libraries**: Allure2 2.32.0 (unchanged regardless of CLI version)
+- **Configured default**: Allure3 CLI 3.0.0 (TypeScript-based)
+- **Optional**: Allure2 CLI 2.36.0 (Java-based)
+- **Java Libraries**: Allure2 **2.35.3** (unchanged regardless of CLI version)
 
 ### Configuration
 
@@ -1343,7 +1343,7 @@ This section documents the historical context and key fixes that were implemente
 ```json
 {
   "allure": {
-    "reportVersion": 2,
+    "reportVersion": 3,
     "cliVersion": {
       "2": "2.36.0",
       "3": "3.0.0"
@@ -1353,8 +1353,8 @@ This section documents the historical context and key fixes that were implemente
 ```
 
 **To Switch Versions**:
-- Set `"reportVersion": 2` for Allure2 CLI (default)
-- Set `"reportVersion": 3` for Allure3 CLI
+- Set `"reportVersion": 3` for Allure3 CLI (configured default)
+- Set `"reportVersion": 2` for Allure2 CLI
 
 **Note**: All scripts and workflows automatically read from this configuration file. No manual script changes are required when switching versions.
 
@@ -1364,7 +1364,7 @@ This section documents the historical context and key fixes that were implemente
 
 ### Overview
 
-Both **Allure2** and **Allure3** are supported in this project. **Allure2** is the default and recommended version due to its maturity and proven history functionality.
+Both **Allure2** and **Allure3** are supported in this project. **Allure3 CLI** is the configured default in `config/environments.json`; Allure2 remains available by setting `allure.reportVersion` to `2`.
 
 #### 1. **Architecture & Technology**
 
@@ -1373,7 +1373,7 @@ Both **Allure2** and **Allure3** are supported in this project. **Allure2** is t
 | -- | -- | -- |
 | **Type** | Java-based | TypeScript-based |
 | **Installation** | Download binary from GitHub releases | Install via npm (`npm install -g allure`) |
-| **Version** | 2.36.0 (default) | 3.0.0 (optional) |
+| **Version** | 2.36.0 (optional) | 3.0.0 (configured default) |
 | **Repository** | `allure-framework/allure2` | `allure-framework/allure3` |
 | **Dependencies** | Requires Java runtime | Requires Node.js/npm |
 <!-- prettier-ignore-end -->
@@ -1402,7 +1402,7 @@ Both **Allure2** and **Allure3** are supported in this project. **Allure2** is t
 #### 4. **What Stays the Same**
 
 **Java Libraries** (No Changes Required):
-- ✅ **Maven dependencies remain unchanged**: `io.qameta.allure:allure-testng:2.32.0`
+- ✅ **Maven dependencies remain unchanged for CLI switches**: `io.qameta.allure:allure-testng:2.35.3` (and matching `allure-junit5` / `allure-java-commons`)
 - ✅ **Test annotations remain the same**: `@Epic`, `@Feature`, `@Story`, `@Severity`, etc.
 - ✅ **Test code requires no changes**: All existing Allure annotations work identically
 - ✅ **Result format is compatible**: Both CLI versions read the same result files (`*-result.json`, `*-container.json`)
@@ -1413,7 +1413,7 @@ Both **Allure2** and **Allure3** are supported in this project. **Allure2** is t
 - ✅ Result files generated in the same format
 - ✅ Screenshots and attachments work the same
 
-#### 5. **Why Allure2 is Default**
+#### 5. **Why Both CLIs Are Supported**
 
 **Advantages of Allure2**:
 - ✅ **Mature and Stable**: Proven track record with extensive community support
@@ -1428,7 +1428,7 @@ Both **Allure2** and **Allure3** are supported in this project. **Allure2** is t
 - ⚠️ **Less Mature**: Fewer resources and community support
 - ⚠️ **Different History Format**: Requires JSONL format conversion
 
-**Recommendation**: Use Allure2 CLI (default) for production. Allure3 CLI is available for testing and can be enabled by changing `allure.reportVersion` to `3` in `config/environments.json`.
+**Recommendation**: Configured default is Allure3 CLI (`allure.reportVersion` **3**). Switch to Allure2 CLI by setting `allure.reportVersion` to `2` in `config/environments.json` if you need Allure2's history behavior.
 
 ---
 
