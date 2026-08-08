@@ -1,6 +1,6 @@
 #!/bin/bash
 # scripts/ci/determine-test-execution.sh
-# Determines what tests to run based on event type and inputs
+# Determines what tests to run based on event type, inputs, and change scope
 
 set -e
 
@@ -9,6 +9,7 @@ REF=$2
 TEST_TYPE_INPUT=$3
 PERF_TYPE_INPUT=$4
 PERF_ENV_INPUT=$5
+MAVEN_DEPS_ONLY=${6:-false}
 
 # Determine default test type based on event
 # Pull Requests: default to 'all' (FE + BE + FS) in 'dev'
@@ -16,6 +17,7 @@ PERF_ENV_INPUT=$5
 # Push to main: default to 'all' (FE + BE + FS) in 'dev' and 'test'
 # Push to develop: default to 'fe-only' across 'all' envs
 # Manual Runs: default to 'fe-only' (user can override)
+# Maven-deps-only PRs/pushes: FE smoke path only (no BE/FS) — see docs
 
 IS_MAIN_PUSH=false
 IS_BRANCH_PUSH=false
@@ -51,6 +53,15 @@ else
   DEFAULT_PERF_TYPE="smoke"
 fi
 
+# Maven dependency / CI-infra-only changes: keep FE smoke for Java validation,
+# skip BE and FS performance suites.
+if [ "$MAVEN_DEPS_ONLY" == "true" ] && [ -z "$TEST_TYPE_INPUT" ]; then
+  DEFAULT_TEST_TYPE="fe-only"
+  DEFAULT_PERF_ENV="dev"
+  DEFAULT_PERF_TYPE="smoke"
+  echo "📦 Maven-deps-only change - defaulting to FE-only (smoke path; no BE/FS)"
+fi
+
 # Use input if provided, otherwise use default
 if [ -n "$TEST_TYPE_INPUT" ]; then
   TEST_TYPE="$TEST_TYPE_INPUT"
@@ -75,6 +86,7 @@ echo "📊 BE Test Type: $PERF_TYPE"
 echo "📊 BE Environment: $PERF_ENV"
 echo "📊 Default Test Type: $DEFAULT_TEST_TYPE"
 echo "📊 Default BE Env: $DEFAULT_PERF_ENV"
+echo "📊 Maven Deps Only: $MAVEN_DEPS_ONLY"
 
 # BE tests NEVER run in prod
 if [ "$PERF_ENV" == "prod" ]; then

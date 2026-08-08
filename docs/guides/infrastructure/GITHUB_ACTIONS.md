@@ -11,7 +11,7 @@
 
 Automated CI/CD pipeline built on a **7-stage parallel architecture**. It features environment-aware testing (DEV → TEST → PROD), integrated performance testing (Gatling, JMeter, Locust, Artillery + Playwright) targeting internal service ports (8003/3003), and a robust **Fail-Fast Barrier Propagation** system that ensures failures in one environment correctly block all downstream activity.
 
-> **Note**: For a complete, detailed reference of the current pipeline jobs and logic, please see the **[Pipeline Workflow Reference Guide](PIPELINE_WORKFLOW.md)**. For information about how test jobs are organized and grouped, see **[Workflow Test Organization](WORKFLOW_TEST_ORGANIZATION.md)**.
+> **Note**: For a complete, detailed reference of the current pipeline jobs and logic, please see the **[Pipeline Workflow Reference Guide](PIPELINE_WORKFLOW.md)**. For information about how test jobs are organized and grouped, see **[Workflow Test Organization](WORKFLOW_TEST_ORGANIZATION.md)**. For Dependabot / `pom.xml`-only scoping (smoke only, skip full FE/BE/FS), see **[Maven Dependency CI Scope](MAVEN_DEPS_CI_SCOPE.md)**.
 
 ---
 

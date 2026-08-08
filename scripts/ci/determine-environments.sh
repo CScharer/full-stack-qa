@@ -1,6 +1,6 @@
 #!/bin/bash
 # scripts/ci/determine-environments.sh
-# Determines which environments to run based on event type and inputs
+# Determines which environments to run based on event type, inputs, and change scope
 
 set -e
 
@@ -8,6 +8,7 @@ EVENT_NAME=$1
 REF=$2
 ENV_INPUT=$3
 SUITE_INPUT=$4
+MAVEN_DEPS_ONLY=${5:-false}
 
 # Determine default environment based on event
 # Pull Requests: default to 'dev' only (feature branch testing)
@@ -56,22 +57,38 @@ fi
 
 echo "📊 Environment Selection: $ENV_SELECT"
 echo "📊 Test Suite Selection: $SUITE_SELECT"
+echo "📊 Maven Deps Only: $MAVEN_DEPS_ONLY"
 echo "selected_env=$ENV_SELECT" >> $GITHUB_OUTPUT
 echo "test_suite=$SUITE_SELECT" >> $GITHUB_OUTPUT
 
 # Set test execution controls (same for all environments)
-# All test frameworks are enabled by default
-echo "enable_smoke_tests=true" >> $GITHUB_OUTPUT
-echo "enable_grid_tests=true" >> $GITHUB_OUTPUT
-echo "enable_mobile_tests=true" >> $GITHUB_OUTPUT
-echo "enable_responsive_tests=true" >> $GITHUB_OUTPUT
-echo "enable_cypress_tests=true" >> $GITHUB_OUTPUT
-echo "enable_playwright_tests=true" >> $GITHUB_OUTPUT
-echo "enable_robot_tests=true" >> $GITHUB_OUTPUT
-echo "enable_selenide_tests=true" >> $GITHUB_OUTPUT
-echo "enable_vibium_tests=true" >> $GITHUB_OUTPUT
-echo "enable_snapshot_tests=true" >> $GITHUB_OUTPUT
-echo "✅ Test execution controls set (same for all environments)"
+if [ "$MAVEN_DEPS_ONLY" == "true" ]; then
+  # Maven dependency bumps: Java smoke only — skip Grid/mobile/responsive and JS/Python FE frameworks
+  echo "enable_smoke_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_grid_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_mobile_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_responsive_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_cypress_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_playwright_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_robot_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_selenide_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_vibium_tests=false" >> $GITHUB_OUTPUT
+  echo "enable_snapshot_tests=false" >> $GITHUB_OUTPUT
+  echo "✅ Maven-deps-only: smoke tests enabled; other FE frameworks disabled"
+else
+  # All test frameworks are enabled by default
+  echo "enable_smoke_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_grid_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_mobile_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_responsive_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_cypress_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_playwright_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_robot_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_selenide_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_vibium_tests=true" >> $GITHUB_OUTPUT
+  echo "enable_snapshot_tests=true" >> $GITHUB_OUTPUT
+  echo "✅ Test execution controls set (same for all environments)"
+fi
 
 if [ "$ENV_SELECT" == "all" ]; then
   echo "run_dev=true" >> $GITHUB_OUTPUT

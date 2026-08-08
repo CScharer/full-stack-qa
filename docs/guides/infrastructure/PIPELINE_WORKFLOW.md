@@ -119,12 +119,13 @@ STAGE 7: PIPELINE SUMMARY
 ### **STAGE 1: DETECTION & DETERMINATION**
 
 #### **Job 1: detect-changes**
-- **Purpose**: Detects if code files changed (skips tests if only documentation changed).
+- **Purpose**: Detects if code files changed (skips tests if only documentation changed) and whether the change is Maven-deps/CI-infra only (narrow CI).
 - **Dependencies**: None (runs first)
-- **Output**: `code-changed` (true/false)
+- **Outputs**: `code-changed` (true/false), `maven-deps-only` (true/false)
 - **Logic**: 
-  - For scheduled runs: Always returns `code-changed=true`
-  - For other events: Uses `scripts/ci/detect-changes.sh` to check if non-documentation files changed
+  - For scheduled runs: Always returns `code-changed=true` and `maven-deps-only=false`
+  - For other events: Uses `scripts/ci/detect-changes.sh` to classify documentation-only vs Maven-deps/CI-infra vs full code changes
+- **Reference**: [Maven Dependency CI Scope](MAVEN_DEPS_CI_SCOPE.md)
 
 #### **Job 2: determine-schedule-type**
 - **Purpose**: Consolidates code-changed status and determines schedule type (nightly/weekly) for scheduled runs.
