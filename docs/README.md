@@ -94,7 +94,11 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 📈 Document History
 
-**Last Updated**: July 26, 2026
+**Last Updated**: August 8, 2026
+
+### August 8, 2026
+- ✅ **Dependabot #238 (`nanoid`)** — Override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium (CVE-2026-67213). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
+- ✅ **Version docs sync** — Aligned living docs with repo pins (JSoup **1.23.1**, Allure2 Java **2.35.3**, vibium `postcss` lock **8.5.25**, npm overrides including `nanoid`).
 
 ### July 26, 2026
 - ✅ **Dependabot npm security overrides** — `brace-expansion` **^5.0.8**, `postcss` **^8.5.18**, Playwright `js-yaml` **^5.2.2**, frontend `sharp` **^0.35.3**. Clears Dependabot #208/#209/#211/#222/#224. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).

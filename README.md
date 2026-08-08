@@ -11,30 +11,30 @@
 [![Python](https://img.shields.io/badge/Python-3.13-orange.svg)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-orange.svg)](https://www.typescriptlang.org/)
 
-[![Cucumber](https://img.shields.io/badge/Cucumber-7.34.3-brightgreen.svg)](https://cucumber.io/)
-[![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.0-blue.svg)](https://rest-assured.io/)
+[![Cucumber](https://img.shields.io/badge/Cucumber-7.34.4-brightgreen.svg)](https://cucumber.io/)
+[![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.1-blue.svg)](https://rest-assured.io/)
 
 [![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
 
 [![JUnit](https://img.shields.io/badge/JUnit-6.1.2-blue.svg?style=flat)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
-[![Vitest](https://img.shields.io/badge/Vitest-4.1.2-blue.svg)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.1.10-blue.svg)](https://vitest.dev/)
 
 [![Performance](https://img.shields.io/badge/Performance-Artillery%20%7C%20Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
-[![Artillery](https://img.shields.io/badge/Artillery-2.0.30-blue.svg)](https://www.artillery.io/)
-[![Gatling.io](https://img.shields.io/badge/Gatling.io-3.15.0-blue.svg)](https://rest-gatling.io/)
+[![Artillery](https://img.shields.io/badge/Artillery-2.0.33-blue.svg)](https://www.artillery.io/)
+[![Gatling.io](https://img.shields.io/badge/Gatling.io-3.15.1-blue.svg)](https://rest-gatling.io/)
 [![JMeter](https://img.shields.io/badge/JMeter-5.6.3-blue.svg)](https://jmeter.apache.org/)
-[![Locust.io](https://img.shields.io/badge/Locust.io-2.43.4-blue.svg)](https://rest-locust.io/)
+[![Locust.io](https://img.shields.io/badge/Locust.io-2.45.0-blue.svg)](https://rest-locust.io/)
 
 [![UI Frameworks](https://img.shields.io/badge/UI%20Frameworks-Cypress%20%7C%20Playwright%20%7C%20Robot%20%7C%20Selenide%20%7C%20Selenium-yellow.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 
-[![Cypress](https://img.shields.io/badge/Cypress-15.13.0-blue.svg)](https://www.cypress.io)
-[![Playwright](https://img.shields.io/badge/Playwright-1.59.1-blue.svg)](https://playwright.dev/)
+[![Cypress](https://img.shields.io/badge/Cypress-15.18.1-blue.svg)](https://www.cypress.io)
+[![Playwright](https://img.shields.io/badge/Playwright-1.61.1-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
-[![Selenide](https://img.shields.io/badge/Selenide-7.15.1-blue.svg)](https://selenide.org/)
+[![Selenide](https://img.shields.io/badge/Selenide-7.17.0-blue.svg)](https://selenide.org/)
 [![Selenium](https://img.shields.io/badge/Selenium-4.46.0-blue.svg)](https://www.selenium.dev/)
-[![Vibium](https://img.shields.io/badge/Vibium-26.3.18-blue.svg)](https://vibium.com/) 🎄🎁
+[![Vibium](https://img.shields.io/badge/Vibium-26.5.31-blue.svg)](https://vibium.com/) 🎄🎁
 
 [![Maven](https://img.shields.io/badge/Maven-3.9.11-blue.svg)](https://maven.apache.org/)
 [![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](https://www.docker.com/)
@@ -45,7 +45,7 @@
 
 [![Reporting](https://img.shields.io/badge/Reporting-Allure_Reports-yellow.svg)](docs/guides/testing/ALLURE_REPORTING.md)
 
-[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:3.0.0_Java:2.33.0-blue.svg)](https://allurereport.org/)
+[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:3.0.0_Java:2.35.3-blue.svg)](https://allurereport.org/)
 
 [![Coming Soon!!!](https://img.shields.io/badge/Coming%20Soon!!!-What's_Next!!!-cyan.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 <!-- [![Vibium](https://img.shields.io/badge/Vibium-0.1.2-cyan.svg)](https://vibium.com/) -->
@@ -103,7 +103,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 
 ### Core Capabilities
 - 🎯 **200 Test Scenarios** - UI (194) + API (6)
-- 🌐 **REST API Testing** - REST Assured 6.0.0 for API automation
+- 🌐 **REST API Testing** - REST Assured 6.0.1 for API automation
 - 📊 **Extended Coverage** - Data-driven, negative tests, advanced features
 - 🔐 **Secure Credential Management** - Google Cloud Secret Manager integration (0 hardcoded passwords!)
 - ⚡ **Smoke Test Suite** - Fast critical path verification in < 2 minutes
@@ -125,19 +125,23 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Playwright 1.61.1** - Fast and reliable end-to-end testing
 - **Cypress 15.18.1** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
-- **REST Assured 6.0.0** - REST API testing & validation
-- **Cucumber 7.34.3** - BDD framework with Gherkin
+- **REST Assured 6.0.1** - REST API testing & validation
+- **Cucumber 7.34.4** - BDD framework with Gherkin
 - **TestNG** - Advanced test framework with data providers
 - **Log4j 2.26.1** - Professional structured logging
 - **Maven 3.9.11** - Build management (wrapper included!)
 - **Docker & Docker Compose** - Complete containerization
-- **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.33.0** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
+- **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.35.3** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.4** - Automatic driver management
 
+### Recent Improvements (August 8, 2026)
+- ✅ **Dependabot #238 (`nanoid`)** — Override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium for CVE-2026-67213. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Version docs sync** — Living docs now match repo pins (JSoup **1.23.1**, Allure2 Java **2.35.3**, vibium `postcss` lock **8.5.25**, npm security overrides including `nanoid`).
+
 ### Recent Improvements (July 26, 2026)
-- ✅ **Dependabot npm security overrides** — `brace-expansion` **^5.0.8**, `postcss` **^8.5.18** (lock **8.5.23**), Playwright `js-yaml` **^5.2.2**, frontend `sharp` **^0.35.3** (outside Next optional `^0.34.5`; `next build` verified). Clears Dependabot #208/#209/#211/#222/#224. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Dependabot npm security overrides** — `brace-expansion` **^5.0.8**, `postcss` **^8.5.18** (frontend lock **8.5.23**, vibium lock **8.5.25**), Playwright `js-yaml` **^5.2.2**, frontend `sharp` **^0.35.3** (outside Next optional `^0.34.5`; `next build` verified). Clears Dependabot #208/#209/#211/#222/#224. See `docs/process/VERSION_TRACKING.md`.
 
 ### Recent Improvements (July 19, 2026)
 - ✅ **Deferred major bumps** — `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate ORM **6.6.54.Final** (Jakarta Persistence; clears Dependabot #93), `js-yaml` **5.2.2**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. TypeScript stays **6.0.3** (TS 7 breaks Next 16 / eslint-config-next). See `docs/process/VERSION_TRACKING.md`.
@@ -1196,7 +1200,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | Category | Library | Version |
 | -- | -- | -- |
 | **WebDriver** | Selenium | 4.46.0 |
-| **BDD** | Cucumber | 7.34.3 |
+| **BDD** | Cucumber | 7.34.4 |
 | **Testing** | JUnit | 6.1.2 |
 | **Testing** | TestNG | 7.11.0 |
 | **Testing** | Vitest | 4.1.10 |
@@ -1245,7 +1249,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 - ARM64 (Apple Silicon) compatibility
 
 **✅ Allure Reporting with Screenshots**
-- Allure Framework integration (Allure3 CLI: 3.0.0, Allure2 Java: 2.33.0)
+- Allure Framework integration (Allure3 CLI: 3.0.0, Allure2 Java: 2.35.3)
 - Automatic screenshot capture on test failures only
 - Beautiful HTML dashboards with graphs
 - Epic/Feature/Story organization

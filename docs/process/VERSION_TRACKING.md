@@ -75,13 +75,17 @@ When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`,
 
 ### Known available updates
 
-As of **2026-07-26** (after Dependabot npm security override refresh):
+As of **2026-08-08** (after Dependabot #238 `nanoid` override + version-doc sync):
 
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
 | -- | -- | -- | -- |
 | TypeScript | 6.0.3 | 7.0.2 | TS 7 (native rewrite) breaks Next 16 type-check + eslint-config-next (`<6.1.0`); revisit when supported |
 | Hibernate | 6.6.54.Final | 7.4.5.Final | On Hibernate ORM **6.6** (Jakarta); 7.x available later |
+| Next.js | 16.2.11 | 16.3.0 | Stay on 16.2.x security line until intentionally bumping minors |
+| React | 19.2.7 | 19.2.8 | Patch available |
+| Cypress | ^15.18.1 | 15.20.0 | Floor allows newer 15.x on install |
+| Playwright | ^1.61.1 | 1.62.1 | Floor allows newer 1.x on install |
 <!-- prettier-ignore-end -->
 
 
@@ -152,7 +156,9 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | MSSQL JDBC | 13.4.0.jre11 | 13.4.0.jre11 | [✅] | 2026-04-06 | Current stable |
 | PostgreSQL JDBC | 42.7.13 | 42.7.13 | [✅] | 2026-07-19 | Explicit pin in pom.xml |
-| JSoup | 1.22.1 | 1.22.1 | [✅] | 2026-01-16 | Updated from 1.21.2 (Item 5.2) |
+| JSoup | 1.23.1 | 1.23.1 | [✅] | 2026-08-08 | Bumped from 1.22.1 (PR #293) |
+| HtmlUnit | 4.21.0 | 4.21.0 | [✅] | 2026-08-08 | `htmlunit.version`; driver `htmlunit3-driver` **4.46.0** |
+| Appium Java Client | 10.1.1 | 10.1.1 | [✅] | 2026-07-19 | `appium.version` |
 | Google Cloud Secret Manager | 2.94.0 | 2.94.0 | [✅] | 2026-07-19 | Current stable |
 | ByteBuddy | 1.18.8 | 1.18.8 | [✅] | 2026-04-06 | Current stable |
 | Cucumber Reporting | 5.10.2 | 5.10.2 | [✅] | 2026-01-16 | Updated from 5.10.1 (Item 5.2) |
@@ -173,12 +179,14 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Cypress | ^15.18.1 | 15.18.1 | [✅] | 2026-07-19 | Current stable |
+| Cypress | ^15.18.1 | 15.20.0 | [✅] | 2026-07-19 | Floor ^15.18.1; 15.20.0 available |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
 | qs (override) | ^6.15.3 | 6.15.3 | [✅] | 2026-07-19 | Security override |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #170 |
+| uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
+| yauzl (override) | >=3.2.1 | 3.4.0 | [✅] | 2026-07-19 | Security override (lock 3.4.0) |
 <!-- prettier-ignore-end -->
 
 ### Playwright Project (playwright/package.json)
@@ -186,14 +194,16 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Playwright | ^1.61.1 | 1.61.1 | [✅] | 2026-07-19 | Current stable |
+| Playwright | ^1.61.1 | 1.62.1 | [✅] | 2026-07-19 | Floor ^1.61.1; 1.62.1 available |
 | Artillery | ^2.0.33 | 2.0.33 | [✅] | 2026-07-19 | Current stable on npm |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | brace-expansion (override) | ^5.0.8 | 5.0.8 | [✅] | 2026-07-26 | Security override (Dependabot #208/#209; also clears 5.0.8 line) |
-| socket.io-parser (override) | ^4.2.6 | 4.2.6 | [✅] | 2026-04-04 | Artillery transitive |
+| socket.io-parser (override) | ^4.2.6 | 4.2.7 | [✅] | 2026-04-04 | Artillery transitive (lock 4.2.7) |
 | fast-xml-parser (override) | ^5.10.1 | 5.10.1 | [✅] | 2026-07-19 | DoS hardening |
 | js-yaml (override) | ^5.2.2 | 5.2.2 | [✅] | 2026-07-26 | Security patch (Dependabot #224) |
-| postcss (override) | ^8.5.18 | 8.5.23 | [✅] | 2026-07-26 | Security override (aligned with frontend) |
+| nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
+| postcss (override) | ^8.5.18 | 8.5.26 | [✅] | 2026-07-26 | Security override (aligned with frontend floor) |
+| uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #176 |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Per-parent overrides |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
@@ -209,7 +219,8 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 | Vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
-| postcss (override) | ^8.5.18 | 8.5.23 | [✅] | 2026-07-26 | Security override (lock resolves 8.5.20) |
+| nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
+| postcss (override) | ^8.5.18 | 8.5.26 | [✅] | 2026-07-26 | Security override (lock resolves **8.5.25**) |
 <!-- prettier-ignore-end -->
 
 ### Frontend Project (frontend/package.json)
@@ -217,10 +228,10 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| React | 19.2.7 | 19.2.7 | [✅] | 2026-07-19 | Current stable |
-| Next.js | 16.2.11 | 16.2.12 | [✅] | 2026-07-25 | Security bump (Dependabot #213–#221); 16.2.12 available |
+| React | 19.2.7 | 19.2.8 | [✅] | 2026-07-19 | Pinned; 19.2.8 available |
+| Next.js | 16.2.11 | 16.3.0 | [✅] | 2026-07-25 | Security bump (Dependabot #213–#221); 16.3.0 available |
 | @tanstack/react-query | ^5.101.2 | 5.101.2 | [✅] | 2026-07-19 | Current stable |
-| eslint-config-next | 16.2.10 | 16.2.12 | [✅] | 2026-07-19 | Matched near Next 16.2.x |
+| eslint-config-next | 16.2.10 | 16.3.0 | [✅] | 2026-07-19 | Matched near Next 16.2.x; 16.3.0 available |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | axios | ^1.18.1 | 1.18.1 | [✅] | 2026-07-19 | Current stable |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
@@ -231,16 +242,17 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 | jsdom | ^29.1.1 | 29.1.1 | [✅] | 2026-07-19 | Vitest 4 compatible |
 | ESLint | ^10.7.0 | 10.7.0 | [✅] | 2026-07-19 | Current stable |
 | @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
-| Vite | ^8.1.5 | 8.1.5 | [✅] | 2026-07-19 | Current stable 8.x |
+| Vite | ^8.1.5 | 8.2.1 | [✅] | 2026-07-19 | Pinned 8.1.x floor; 8.2.1 available |
 | @vitejs/plugin-react | ^6.0.3 | 6.0.3 | [✅] | 2026-07-19 | Current stable |
 | @vitest/coverage-v8 | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
 | @vitest/ui | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
 | vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
-| ajv (override) | >=6.14.0 | 6.14.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); transitive from eslint |
+| ajv (override) | >=6.14.0 | 8.18.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); lock resolves ajv 8.x from eslint |
 | brace-expansion (override) | ^5.0.8 | 5.0.8 | [✅] | 2026-07-26 | Security override (Dependabot #208; also clears 5.0.8 line) |
 | @babel/core (override) | ^8.0.1 | 8.0.1 | [✅] | 2026-07-19 | Major bump from 7.x (Dependabot #171 line) |
 | flatted (override) | >=3.4.2 | 3.4.2 | [✅] | 2026-07-19 | Security override |
-| postcss (override) | ^8.5.18 | 8.5.23 | [✅] | 2026-07-26 | Security override (Dependabot #222; lock resolves 8.5.23) |
+| nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
+| postcss (override) | ^8.5.18 | 8.5.26 | [✅] | 2026-07-26 | Security override (Dependabot #222; lock resolves **8.5.23**) |
 | sharp (override) | ^0.35.3 | 0.35.3 | [✅] | 2026-07-26 | Security override (Dependabot #211); outside Next optional `^0.34.5` — verified `next build` |
 <!-- prettier-ignore-end -->
 
@@ -294,7 +306,7 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 | -- | -- | -- | -- | -- | -- |
 | Locust | 2.45.0 | 2.45.0 | [✅] | 2026-07-19 | `requests` aligned; CI env-be.yml |
 | Requests | 2.34.2 | 2.34.2 | [✅] | 2026-07-19 | Compatible with Locust 2.45.0 |
-| python-dotenv | >=1.2.2 | 1.2.2 | [✅] | 2026-07-19 | Floor raised (backend) |
+| python-dotenv | ==1.2.2 | 1.2.2 | [✅] | 2026-07-19 | Pinned in root `requirements.txt` |
 | matplotlib | 3.11.1 | 3.11.1 | [✅] | 2026-07-19 | Pinned |
 | pandas | 3.0.3 | 3.0.3 | [✅] | 2026-07-19 | Pinned |
 | urllib3 | >=2.7.0 | 2.7.0+ | [✅] | 2026-07-19 | Security floor |
@@ -343,7 +355,7 @@ As of **2026-07-26** (after Dependabot npm security override refresh):
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-07-19)
+### Current Status (as of 2026-08-08)
 
 Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
@@ -408,8 +420,9 @@ The `overrides` section forces all instances of the package (including transitiv
 
 ## 📋 Update History
 
-### 2026-08-08 (Dependabot #238 nanoid)
+### 2026-08-08 (Dependabot #238 nanoid + doc version sync)
 - **npm**: Added `nanoid` override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium to clear GHSA-2v37-7h3g-55p8 / CVE-2026-67213 (infinite loop when custom generator size is 0). Regenerated lockfiles.
+- **Docs**: Synced living version docs with repo pins — JSoup **1.23.1**, Allure2 Java **2.35.3**, vibium `postcss` lock **8.5.25**, frontend/playwright/vibium `nanoid` rows, Cypress `uuid`/`yauzl` overrides, and refreshed README / SECURITY / VERSION_MONITORING / ALLURE_REPORTING summaries.
 
 ### 2026-07-26 (Dependabot npm security overrides)
 - **npm**: Raised overrides — `brace-expansion` **^5.0.5 → ^5.0.8** (frontend + playwright), `postcss` **^8.5.10 → ^8.5.18** (frontend + playwright + vibium; lock **8.5.23** / **8.5.20**), Playwright `js-yaml` **^5.2.1 → ^5.2.2**, frontend `sharp` **^0.35.3** (clears Dependabot #211; Next still declares optional `^0.34.5`). Regenerated lockfiles; `next build` verified with sharp 0.35.3.
