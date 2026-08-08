@@ -190,37 +190,24 @@ public class ResponsiveDesignTests {
     driver = MobileTestsConfiguration.createMobileChromeDriver(GRID_URL, MobileDevice.IPHONE_SE);
     LOG.info("✅ Mobile driver initialized for navigation testing");
 
-    // Prefer app under test when available; fall back to a stable public page
-    String baseUrl = System.getenv("BASE_URL");
-    if (baseUrl == null || baseUrl.isEmpty()) {
-      baseUrl = System.getProperty("baseUrl", "https://www.example.com/");
-    }
-    driver.get(baseUrl);
+    driver.get("https://www.github.com/");
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
-    // Prefer interactable menu controls; GitHub/other public UIs change often
+    // Look for mobile menu button
     List<WebElement> menuButtons =
-        driver
-            .findElements(
-                By.xpath(
-                    "//button[contains(@aria-label, 'menu') or contains(@aria-label, 'Menu')"
-                        + " or contains(@class, 'menu') or contains(@class, 'Menu')]"))
-            .stream()
-            .filter(WebElement::isDisplayed)
-            .filter(WebElement::isEnabled)
-            .toList();
+        driver.findElements(
+            By.xpath("//button[contains(@aria-label, 'menu') or contains(@class, 'menu')]"));
 
     if (!menuButtons.isEmpty()) {
       LOG.info("✅ Mobile menu button found");
-      try {
-        menuButtons.get(0).click();
-        Thread.sleep(1000); // Wait for animation
-        LOG.info("✅ Mobile menu interaction successful");
-      } catch (org.openqa.selenium.ElementNotInteractableException ex) {
-        LOG.info(
-            "ℹ️ Menu element present but not interactable (third-party UI): {}", ex.getMessage());
-      }
+
+      // Test menu interaction
+      WebElement menuButton = menuButtons.get(0);
+      menuButton.click();
+      Thread.sleep(1000); // Wait for animation
+
+      LOG.info("✅ Mobile menu interaction successful");
     } else {
       LOG.info("ℹ️ No mobile menu detected (may use different navigation)");
     }
