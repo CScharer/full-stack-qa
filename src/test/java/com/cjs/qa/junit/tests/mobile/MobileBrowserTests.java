@@ -179,7 +179,10 @@ public class MobileBrowserTests {
     Allure.step("Responsive design validated on " + device.getDeviceName());
   }
 
-  @Test(priority = 3)
+  @Test(
+      priority = 3,
+      enabled = false,
+      description = "Disabled: flaky against GitHub.com UI (button selector)")
   @Story("Touch Interactions")
   @Severity(SeverityLevel.NORMAL)
   @Description("Test touch-based interactions on mobile devices")

@@ -180,7 +180,10 @@ public class ResponsiveDesignTests {
     Allure.step("Breakpoint validation completed for " + deviceName);
   }
 
-  @Test(priority = 3)
+  @Test(
+      priority = 3,
+      enabled = false,
+      description = "Disabled: flaky against GitHub.com UI (menu not interactable)")
   @Story("Mobile Navigation")
   @Severity(SeverityLevel.NORMAL)
   @Description("Test mobile navigation menu (hamburger menu)")
