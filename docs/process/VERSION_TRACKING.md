@@ -420,6 +420,8 @@ The `overrides` section forces all instances of the package (including transitiv
 
 ## 📋 Update History
 
+Entries are newest-first.
+
 ### 2026-08-08 (Dependabot #238 nanoid + doc version sync)
 - **npm**: Added `nanoid` override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium to clear GHSA-2v37-7h3g-55p8 / CVE-2026-67213 (infinite loop when custom generator size is 0). Regenerated lockfiles.
 - **Docs**: Synced living version docs with repo pins — JSoup **1.23.1**, Allure2 Java **2.35.3**, vibium `postcss` lock **8.5.25**, frontend/playwright/vibium `nanoid` rows, Cypress `uuid`/`yauzl` overrides, and refreshed README / SECURITY / VERSION_MONITORING / ALLURE_REPORTING summaries.
