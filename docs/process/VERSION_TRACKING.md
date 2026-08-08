@@ -497,9 +497,19 @@ The `overrides` section forces all instances of the package (including transitiv
 - **Bump all Node.js deps to current stable**: Applied optional updates across frontend, cypress, playwright, vibium. Frontend: next 16.1.5→16.1.6, react/react-dom 19.2.3→19.2.4, @tanstack/react-query 5.90.16→5.90.21, axios 1.13.5→1.13.6, eslint-config-next 16.1.1→16.1.6, @types/node 25→25.3.3. Cypress: cypress 15.8.1→15.11.0, qs 6.14.2→6.15.0, @types/node 25→25.3.3. Playwright: @playwright/test 1.57.0→1.58.2, artillery 2.0.0→2.0.30, @types/node 25→25.3.3. Vibium: @types/node 25→25.3.3. Lockfiles updated; VERSION_TRACKING tables set to [✅] and "Bumped to current stable".
 - **Security Fix - ajv (Frontend)**: Addressed 1 moderate (ReDoS in `$data` option, GHSA-2g4f-4pwh-qvx6). Ran `npm audit fix` (ajv 6.12.6→6.14.0 from eslint transitive) and added `overrides: { "ajv": ">=6.14.0" }` in `frontend/package.json` to keep the fix durable. Frontend `npm audit` now reports 0 vulnerabilities.
 
-### 2025-12-20
-- **Selenium Grid**: Centralized version (4.39.0, updated to 4.40.0 on 2026-01-25) and ports via workflow input variables
-- **Document Created**: Initial version tracking document
+### 2026-01-25
+- **Version Check**: Comprehensive dependency version verification completed
+- **Selenium**: Updated from 4.39.0 → 4.40.0 (released 2026-01-18)
+  - Updated `pom.xml` selenium.version property
+  - Updated `.github/workflows/env-fe.yml` default selenium_version input
+  - Aligned client and server versions
+  - Status changed from [⚠️] to [✅] - Current stable version
+- **All Other Dependencies**: Verified current versions match latest stable releases
+
+### 2026-01-24
+- **Maven Compiler Plugin**: 3.13.0 → 3.14.1 (Current stable version)
+- **Security Fix - logback-core (Maven)**: Added explicit dependency override for `ch.qos.logback:logback-core` version 1.5.25 to override vulnerable 1.5.20 from Gatling transitive dependency. Vulnerability: ACE vulnerability in configuration file processing (CVE). Fixed in `pom.xml` via PR #190.
+- **Security Fix - lodash (npm)**: Added npm `overrides` to force lodash >=4.17.23 in `playwright/package.json` to override vulnerable 4.17.21 from artillery transitive dependency. Vulnerability: Prototype Pollution in `_.unset` and `_.omit` functions (CVE). Fixed via PR #191.
 
 ### 2025-12-30
 - **Version Verification**: Completed comprehensive dependency verification
@@ -517,19 +527,9 @@ The `overrides` section forces all instances of the package (including transitiv
 - **Security Fix - qs (npm)**: Fixed Dependabot alert #1 (High severity) by adding `qs@^6.14.1` as direct dependency and using npm `overrides` to force patched version throughout dependency tree. Vulnerability: ArrayLimit bypass in bracket notation allows DoS via memory exhaustion (GHSA-6rw7-vpxm-498p). Fixed in `cypress/package.json`.
 - **Dependency Fix - requests (Python)**: Adjusted `requests` from 2.32.5 to 2.32.4 in `requirements.txt` and `.github/workflows/env-be.yml` to resolve dependency conflict with Locust 2.42.6 (requires `requests<2.32.5`). This fixes the dependency submission workflow failure.
 
-### 2026-01-25
-- **Version Check**: Comprehensive dependency version verification completed
-- **Selenium**: Updated from 4.39.0 → 4.40.0 (released 2026-01-18)
-  - Updated `pom.xml` selenium.version property
-  - Updated `.github/workflows/env-fe.yml` default selenium_version input
-  - Aligned client and server versions
-  - Status changed from [⚠️] to [✅] - Current stable version
-- **All Other Dependencies**: Verified current versions match latest stable releases
-
-### 2026-01-24
-- **Maven Compiler Plugin**: 3.13.0 → 3.14.1 (Current stable version)
-- **Security Fix - logback-core (Maven)**: Added explicit dependency override for `ch.qos.logback:logback-core` version 1.5.25 to override vulnerable 1.5.20 from Gatling transitive dependency. Vulnerability: ACE vulnerability in configuration file processing (CVE). Fixed in `pom.xml` via PR #190.
-- **Security Fix - lodash (npm)**: Added npm `overrides` to force lodash >=4.17.23 in `playwright/package.json` to override vulnerable 4.17.21 from artillery transitive dependency. Vulnerability: Prototype Pollution in `_.unset` and `_.omit` functions (CVE). Fixed via PR #191.
+### 2025-12-20
+- **Selenium Grid**: Centralized version (4.39.0, updated to 4.40.0 on 2026-01-25) and ports via workflow input variables
+- **Document Created**: Initial version tracking document
 
 ### 2025-12-19
 - **REST Assured**: 5.5.6 → 6.0.0 (PR #51)
@@ -634,8 +634,8 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-07-19
-- **Next Review**: 2026-08-01 (recommended)
+- **Last Updated**: 2026-08-08
+- **Next Review**: 2026-09-01 (recommended)
 - **Maintainer**: Development Team
 
 **Remember**: This is a living document. Update it regularly to keep version information current!
