@@ -21,6 +21,7 @@ That run is the baseline for “expected pipeline behavior.” The same jobs and
 - **Vibium Tests** (~1 min)
 
 **Maven / Smoke Tests:**  
-`run-maven-tests.sh` calls `./mvnw -ntp test -DsuiteXmlFile=testng-smoke-suite.xml …`.  
-Surefire does **not** use `suiteXmlFiles` in `pom.xml`, so `-DsuiteXmlFile` is ignored and Maven uses **default discovery** (`**/Test*.java`, `**/*Test.java`, `**/*Tests.java`, `**/*TestCase.java`). Both **JUnit Jupiter** and **TestNG** providers are enabled, so all non-disabled tests run: JUnit tests with `@Disabled` are skipped; TestNG tests run by pattern.  
-Do not add `<suiteXmlFiles>` to Surefire without also updating the TestNG suite so it selects the same tests (or you will reduce/change what runs).
+`run-maven-tests.sh` calls `./mvnw -ntp test -Dsurefire.suiteXmlFiles=<suite> -Dsurefire.excludes=**/* …`.  
+`-Dsurefire.suiteXmlFiles` scopes the **TestNG** provider to that suite. `-Dsurefire.excludes=**/*` blocks the **JUnit Platform** provider from also discovering unrelated tests under `src/test/java/com/cjs/qa` (utilities, gt, Atlassian, etc.). Surefire ignores includes/excludes for TestNG when a suite XML is set, so the suite classes still run.  
+
+**Do not skip** Cypress/Playwright/Robot/Vibium/Grid/Mobile/Responsive for Dependabot or Maven-only PRs. If logs show those extra `com.cjs.qa` classes inside a suite job, suite scoping has regressed — see `docs/guides/infrastructure/SUREFIRE_SUITE_SCOPING.md` (this has happened before).

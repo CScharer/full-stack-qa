@@ -125,6 +125,7 @@ STAGE 7: PIPELINE SUMMARY
 - **Logic**: 
   - For scheduled runs: Always returns `code-changed=true`
   - For other events: Uses `scripts/ci/detect-changes.sh` to check if non-documentation files changed
+- **Related**: Maven FE jobs must still run their normal suite matrix; do not skip them for Dependabot. Suite pollution under `src/test/java/com/cjs/qa` is a separate Surefire issue — see [Surefire Suite Scoping](SUREFIRE_SUITE_SCOPING.md).
 
 #### **Job 2: determine-schedule-type**
 - **Purpose**: Consolidates code-changed status and determines schedule type (nightly/weekly) for scheduled runs.

@@ -90,7 +90,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<eclipse-jface.version>3.5.2</eclipse-jface.version>
 		<jfreechart.version>1.5.6</jfreechart.version>
 		<json.version>20251224</json.version>
-		<jsoup.version>1.22.1</jsoup.version>
+		<jsoup.version>1.23.1</jsoup.version>
 		<junit.version>6.1.2</junit.version>
 		<jxl.version>2.6.12</jxl.version>
 		<lazy.version>1.0.1</lazy.version>
@@ -889,8 +889,10 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 					<parallel>methods</parallel>
 					<threadCount>5</threadCount>
 					<perCoreThreadCount>true</perCoreThreadCount>
-					<!-- Tests in com.cjs.qa are disabled via @Disabled annotation except for allowed ones -->
-					<!-- Allowed tests: APIContractTests, mobile/*, AdvancedFeaturesTests -->
+					<!-- Tests in com.cjs.qa must not ride along via JUnit discovery during CI suite jobs.
+					     run-maven-tests.sh sets -Dsurefire.suiteXmlFiles + -Dsurefire.excludes=**/*
+					     so only the TestNG suite runs (see docs/guides/infrastructure/SUREFIRE_SUITE_SCOPING.md). -->
+					<!-- Allowed suite classes are listed in src/test/resources/testng-*-suite.xml -->
 					<systemPropertyVariables>
 						<cucumber.execution.parallel.enabled>true</cucumber.execution.parallel.enabled>
 						<cucumber.execution.parallel.config.strategy>fixed</cucumber.execution.parallel.config.strategy>

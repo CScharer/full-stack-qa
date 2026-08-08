@@ -32,6 +32,8 @@ docs/
 │   ├── infrastructure/                  🏗️ Infrastructure Setup
 │   │   ├── DOCKER.md                    Complete Docker guide
 │   │   ├── GITHUB_ACTIONS.md            CI/CD pipeline guide
+│   │   ├── PIPELINE_WORKFLOW.md         Pipeline jobs and stage reference
+│   │   ├── SUREFIRE_SUITE_SCOPING.md    Keep Maven suite jobs suite-only
 │   │   ├── GITHUB_PAGES_SETUP.md        Report hosting setup
 │   │   ├── PORT_CONFIGURATION.md        Port configuration guide
 │   │   ├── SERVICE_SCRIPTS.md           Service management scripts guide
