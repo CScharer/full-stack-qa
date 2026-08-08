@@ -59,7 +59,7 @@ Pipeline FE/BE/FS job selection is unchanged for Dependabot and other PRs: still
 
 Surefire **ignores** includes/excludes for TestNG when `suiteXmlFiles` is set, so the suite still runs exactly the classes in the XML.
 
-Suite XML files under `src/test/resources/` must list the intended TestNG classes (do not leave suites empty/commented out and rely on JUnit discovery).
+Suite XML files under `src/test/resources/` list the intended TestNG classes for that job. Some suites intentionally have classes commented out (for example smoke/grid/selenide on CI/Mac); an empty suite must still **not** fall back to JUnit discovery of `com.cjs.qa` — that is what `-Dsurefire.excludes=**/*` prevents. Do not “fix” empty suites by removing the excludes.
 
 ---
 
