@@ -76,7 +76,8 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<htmlunit.version>4.21.0</htmlunit.version>
 		<htmlunit-driver.version>4.46.0</htmlunit-driver.version>
 		<httpclient.version>4.5.14</httpclient.version>
-		<httpclient5.version>5.6.1</httpclient5.version>
+		<httpclient5.version>5.6.3</httpclient5.version>
+		<httpcore5.version>5.4.3</httpcore5.version>
 		<httpmime.version>4.5.14</httpmime.version>
 		<ipp-v3-java.version>6.7.0</ipp-v3-java.version>
 		<jackcess.version>4.0.10</jackcess.version>
@@ -208,6 +209,17 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 				<groupId>org.apache.httpcomponents.client5</groupId>
 				<artifactId>httpclient5</artifactId>
 				<version>${httpclient5.version}</version>
+			</dependency>
+			<!-- Force patched HttpCore 5 line for CVE-2026-54399 / Dependabot #241 (httpclient5 5.6.1 pulled 5.4) -->
+			<dependency>
+				<groupId>org.apache.httpcomponents.core5</groupId>
+				<artifactId>httpcore5</artifactId>
+				<version>${httpcore5.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents.core5</groupId>
+				<artifactId>httpcore5-h2</artifactId>
+				<version>${httpcore5.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

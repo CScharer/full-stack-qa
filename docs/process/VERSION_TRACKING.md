@@ -75,7 +75,7 @@ When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`,
 
 ### Known available updates
 
-As of **2026-08-08** (after Dependabot #238 `nanoid` override + version-doc sync):
+As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
@@ -157,6 +157,8 @@ As of **2026-08-08** (after Dependabot #238 `nanoid` override + version-doc sync
 | MSSQL JDBC | 13.4.0.jre11 | 13.4.0.jre11 | [✅] | 2026-04-06 | Current stable |
 | PostgreSQL JDBC | 42.7.13 | 42.7.13 | [✅] | 2026-07-19 | Explicit pin in pom.xml |
 | JSoup | 1.23.1 | 1.23.1 | [✅] | 2026-08-08 | Bumped from 1.22.1 (PR #293) |
+| Apache HttpClient 5 | 5.6.3 | 5.6.3 | [✅] | 2026-08-13 | `httpclient5.version`; WebDriverManager transitive pin |
+| Apache HttpCore 5 | 5.4.3 | 5.4.3 | [✅] | 2026-08-13 | `httpcore5.version`; Dependabot #241 / CVE-2026-54399 |
 | HtmlUnit | 4.21.0 | 4.21.0 | [✅] | 2026-08-08 | `htmlunit.version`; driver `htmlunit3-driver` **4.46.0** |
 | Appium Java Client | 10.1.1 | 10.1.1 | [✅] | 2026-07-19 | `appium.version` |
 | Google Cloud Secret Manager | 2.94.0 | 2.94.0 | [✅] | 2026-07-19 | Current stable |
@@ -355,13 +357,13 @@ As of **2026-08-08** (after Dependabot #238 `nanoid` override + version-doc sync
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-08-08)
+### Current Status (as of 2026-08-13)
 
 Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-08-08** `nanoid` override (**^3.3.17**, lock **3.3.18**), Dependabot **#238** (CVE-2026-67213) should clear. After the **2026-07-26** npm security override refresh, Dependabot **#208/#209** (`brace-expansion`), **#211** (`sharp`), **#222** (`postcss`), and **#224** (`js-yaml`) should clear. Earlier **2026-07-19** deferred major bumps cleared Dependabot **#93** (Hibernate 5.x CVE-2026-0603) via `org.hibernate.orm:hibernate-core` **6.6.54.Final**. Same-week Next **16.2.11** / fast-uri bumps closed **#210–#221**. Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
+After the **2026-08-13** HttpCore 5 pin (**5.4.3**) and HttpClient 5 bump (**5.6.3**), Dependabot **#241** (CVE-2026-54399) should clear. After the **2026-08-08** `nanoid` override (**^3.3.17**, lock **3.3.18**), Dependabot **#238** (CVE-2026-67213) should clear. After the **2026-07-26** npm security override refresh, Dependabot **#208/#209** (`brace-expansion`), **#211** (`sharp`), **#222** (`postcss`), and **#224** (`js-yaml`) should clear. Earlier **2026-07-19** deferred major bumps cleared Dependabot **#93** (Hibernate 5.x CVE-2026-0603) via `org.hibernate.orm:hibernate-core` **6.6.54.Final**. Same-week Next **16.2.11** / fast-uri bumps closed **#210–#221**. Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
 
 ### Update Strategy
 
@@ -421,6 +423,10 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 Entries are newest-first.
+
+### 2026-08-13 (Dependabot #241 httpcore5)
+- **Maven**: Bumped Apache HttpClient 5 **5.6.1 → 5.6.3** and pinned Apache HttpCore 5 (`httpcore5` / `httpcore5-h2`) to **5.4.3** in `dependencyManagement`. Clears Dependabot **#241** / CVE-2026-54399 (HTTP/1 header parsing memory-exhaustion DoS). `httpclient5` 5.6.1 resolved `httpcore5` **5.4**, which is still in the vulnerable range (`< 5.4.3`).
+- **Docs**: VERSION_TRACKING / README / SECURITY / VERSION_MONITORING refreshed for the HttpClient 5 / HttpCore 5 pins.
 
 ### 2026-08-08 (Dependabot #238 nanoid + doc version sync)
 - **npm**: Added `nanoid` override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium to clear GHSA-2v37-7h3g-55p8 / CVE-2026-67213 (infinite loop when custom generator size is 0). Regenerated lockfiles.
@@ -636,7 +642,7 @@ Entries are newest-first.
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-08-08
+- **Last Updated**: 2026-08-13
 - **Next Review**: 2026-09-01 (recommended)
 - **Maintainer**: Development Team
 

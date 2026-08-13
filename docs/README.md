@@ -94,7 +94,10 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 📈 Document History
 
-**Last Updated**: August 8, 2026
+**Last Updated**: August 13, 2026
+
+### August 13, 2026
+- ✅ **Dependabot #241 (`httpcore5`)** — Pin Apache HttpCore 5 to **5.4.3** and bump HttpClient 5 **5.6.1 → 5.6.3** (CVE-2026-54399). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 
 ### August 8, 2026
 - ✅ **Dependabot #238 (`nanoid`)** — Override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium (CVE-2026-67213). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
