@@ -136,6 +136,9 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.4** - Automatic driver management
 
+### Recent Improvements (August 13, 2026)
+- ✅ **Dependabot #241 (`httpcore5`)** — Pin Apache HttpCore 5 to **5.4.3** and bump HttpClient 5 **5.6.1 → 5.6.3** for CVE-2026-54399. See `docs/process/VERSION_TRACKING.md`.
+
 ### Recent Improvements (August 8, 2026)
 - ✅ **Dependabot #238 (`nanoid`)** — Override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium for CVE-2026-67213. See `docs/process/VERSION_TRACKING.md`.
 - ✅ **Version docs sync** — Living docs now match repo pins (JSoup **1.23.1**, Allure2 Java **2.35.3**, vibium `postcss` lock **8.5.25**, npm security overrides including `nanoid`).
@@ -1206,6 +1209,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | **Testing** | Vitest | 4.1.10 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
+| **HTTP** | Apache HttpClient 5 / HttpCore 5 | 5.6.3 / 5.4.3 |
 | **JSON** | Gson | 2.13.2 |
 | **JSON (Jackson 3)** | tools.jackson.core jackson-databind | 3.2.1 |
 | **Excel** | Apache POI | 5.5.1 |
