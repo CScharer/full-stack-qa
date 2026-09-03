@@ -23,7 +23,7 @@
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.1",
     "typescript": "^6.0.3",
-    "artillery": "^2.0.33"
+    "artillery": "^2.0.34"
   },
   "overrides": {
     "brace-expansion": "^5.0.8",
