@@ -1,1 +1,1 @@
-{"id":"45381a17cbe8f83053b5af261e9e52ec","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileTouchInteractions","name":"Disabled: flaky against GitHub.com UI (button selector) [PROD]","status":"unknown","testResultsByEnv":{"default":"93b0890380ba6e1767e93d0a19a33f85"}}
+{"id":"45381a17cbe8f83053b5af261e9e52ec","fullName":"com.cjs.qa.junit.tests.mobile.MobileBrowserTests.testMobileTouchInteractions","name":"Disabled: flaky against GitHub.com UI (button selector) [DEV]","status":"unknown","testResultsByEnv":{"default":"48b2af6f2f6a1de311a163bfd7185a36"}}
