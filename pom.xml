@@ -129,7 +129,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<json-path.version>6.0.1</json-path.version>
 		<json-schema-validator.version>6.0.1</json-schema-validator.version>
 		<!-- Jackson 3 for REST Assured 6.0.0 (REST Assured 6.0.0 uses Jackson 3 with new package structure) -->
-		<jackson.version>3.2.1</jackson.version>
+		<jackson.version>3.2.2</jackson.version>
 		<!-- Jackson 2.x still pulled transitively (cucumber-reporting, docker-java, etc.) -->
 		<jackson2.version>2.22.1</jackson2.version>
 
