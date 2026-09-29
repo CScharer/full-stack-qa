@@ -187,7 +187,7 @@ timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,
 
 ## 🔗 Related Documents
 
-- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Selenium **4.49.0**, Selenide **7.18.2**, Jackson **3.2.2** / 2.x **2.22.2**, Netty **4.2.18**, JSoup **1.23.2**, Vite **8.3.1**, TypeScript **6.0.3** (TS 7 deferred), Next **16.3.7**, Playwright **1.63.0**, Cypress **15.21.1**, Vibium **26.8.21**, npm overrides including **undici ^7.30.0** / **csv-parse ^7.0.3** / js-yaml **5.2.2** / brace-expansion **5.0.12** / postcss **8.5.28** / sharp **0.35.5**; legacy Grid 1.x JARs removed; Dockerfile **npm@11**; last doc refresh 2026-09-29)
+- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Selenium **4.49.0**, Selenide **7.18.2**, Jackson **3.2.2** / 2.x **2.22.2**, Netty **4.2.18**, JSoup **1.23.2**, Vite **8.3.1**, TypeScript **6.0.3** (TS 7 deferred), Next **16.3.7**, Playwright **1.63.0**, Cypress **15.21.1**, Vibium **26.8.21**, npm overrides including **undici ^7.30.0** / **csv-parse ^7.0.3** / js-yaml **^5.4.1** / brace-expansion **5.0.12** / postcss **8.5.28** / sharp **0.35.5**; legacy Grid 1.x JARs removed; Dockerfile **npm@11**; last doc refresh 2026-09-29)
 - [Pre-Pipeline Validation](PRE_PIPELINE_VALIDATION.md) - Local validation checklist
 - Next Steps After PR #53 (archived) - Work plan and status
 

@@ -85,7 +85,7 @@ As of **2026-09-29** (after comprehensive stable refresh):
 | Cypress | ^15.21.1 | 15.21.1 | **16.x** major (16.1.1) deferred |
 | @testing-library/jest-dom | 6.9.1 | 7.0.1 | Major deferred |
 | Hibernate | 6.6.54.Final | 7.4.5.Final | Hibernate **7.x** deferred |
-| Artillery `js-yaml` | 5.2.2 (pin) | 5.4.2 | Exact pin for CLI; floating breaks ESM import |
+| Artillery `js-yaml` | ^5.4.1 (lock **5.4.2**) | 5.4.2 | Clears Dependabot **#266**; Artillery’s `import YAML from 'js-yaml'` remains broken on modern Node ESM (upstream) |
 <!-- prettier-ignore-end -->
 
 
@@ -203,7 +203,7 @@ As of **2026-09-29** (after comprehensive stable refresh):
 | brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override (GHSA-rgw5-rvv9-x895; was ^5.0.8) |
 | socket.io-parser (override) | ^4.2.6 | 4.2.7 | [✅] | 2026-04-04 | Artillery transitive (lock 4.2.7) |
 | fast-xml-parser (override) | ^5.10.1 | 5.10.1 | [✅] | 2026-07-19 | DoS hardening |
-| js-yaml (override) | 5.2.2 | 5.4.2 | [✅] | 2026-09-29 | Exact pin **5.2.2** for Artillery ESM import (do not float to 5.4.x) |
+| js-yaml (override) | ^5.4.1 | 5.4.2 | [✅] | 2026-09-29 | Clears Dependabot **#266** (GHSA-r3ph-w7gj-g6xm); lock **5.4.2** |
 | nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
 | postcss (override) | ^8.5.18 | 8.5.28 | [✅] | 2026-09-29 | Security override (aligned with frontend floor) |
 | uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
@@ -425,7 +425,7 @@ Apply `brace-expansion` in **frontend** and **playwright**; add `socket.io-parse
   }
 }
 ```
-Use **`undici` ^7.x only** for jsdom 29 (`>=7.29.1` without an upper bound can resolve **undici 8**, which breaks jsdom). Add `undici` in **frontend**; add `csv-parse` in **playwright** only. Pin Playwright `js-yaml` at **5.2.2** (exact) so Artillery’s ESM import keeps working.
+Use **`undici` ^7.x only** for jsdom 29 (`>=7.29.1` without an upper bound can resolve **undici 8**, which breaks jsdom). Add `undici` in **frontend**; add `csv-parse` in **playwright** only. Keep Playwright `js-yaml` at **^5.4.1** (Dependabot **#266** / GHSA-r3ph-w7gj-g6xm). Artillery’s default ESM import of `js-yaml` is an upstream issue on both 5.2.x and 5.4.x.
 
 The `overrides` section forces all instances of the package (including transitive dependencies) to use the patched version. After adding the override:
 1. Run `npm install` to update `package-lock.json`
@@ -439,6 +439,10 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 Entries are newest-first.
+
+### 2026-09-29 (Dependabot #266 js-yaml)
+- **npm (playwright)**: Raised `js-yaml` override **5.2.2 → ^5.4.1** (lock **5.4.2**) to clear Dependabot **#266** / GHSA-r3ph-w7gj-g6xm (`maxTotalMergeKeys` CPU DoS). Prior exact **5.2.2** pin was a mistaken Artillery workaround; Artillery’s `import YAML from 'js-yaml'` fails the same way on 5.2.x and 5.4.x under modern Node ESM.
+- **Verify**: `playwright` `npm audit` clean; `npx playwright test --list` OK.
 
 ### 2026-09-29 (comprehensive stable refresh)
 - **Maven**: Selenium **4.49.0**, Selenide **7.18.2**, WebDriverManager **6.4.0**, JSoup **1.23.2**, Netty **4.2.18.Final**, `htmlunit3-driver` **4.48.0**; Jackson 3/2.x already at **3.2.2** / **2.22.2** in `pom.xml`.
