@@ -22,19 +22,19 @@
 
 [![Performance](https://img.shields.io/badge/Performance-Artillery%20%7C%20Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
-[![Artillery](https://img.shields.io/badge/Artillery-2.0.33-blue.svg)](https://www.artillery.io/)
+[![Artillery](https://img.shields.io/badge/Artillery-2.0.34-blue.svg)](https://www.artillery.io/)
 [![Gatling.io](https://img.shields.io/badge/Gatling.io-3.15.1-blue.svg)](https://rest-gatling.io/)
 [![JMeter](https://img.shields.io/badge/JMeter-5.6.3-blue.svg)](https://jmeter.apache.org/)
 [![Locust.io](https://img.shields.io/badge/Locust.io-2.45.0-blue.svg)](https://rest-locust.io/)
 
 [![UI Frameworks](https://img.shields.io/badge/UI%20Frameworks-Cypress%20%7C%20Playwright%20%7C%20Robot%20%7C%20Selenide%20%7C%20Selenium-yellow.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 
-[![Cypress](https://img.shields.io/badge/Cypress-15.18.1-blue.svg)](https://www.cypress.io)
-[![Playwright](https://img.shields.io/badge/Playwright-1.61.1-blue.svg)](https://playwright.dev/)
+[![Cypress](https://img.shields.io/badge/Cypress-15.21.1-blue.svg)](https://www.cypress.io)
+[![Playwright](https://img.shields.io/badge/Playwright-1.63.0-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
-[![Selenide](https://img.shields.io/badge/Selenide-7.17.0-blue.svg)](https://selenide.org/)
-[![Selenium](https://img.shields.io/badge/Selenium-4.46.0-blue.svg)](https://www.selenium.dev/)
-[![Vibium](https://img.shields.io/badge/Vibium-26.5.31-blue.svg)](https://vibium.com/) 🎄🎁
+[![Selenide](https://img.shields.io/badge/Selenide-7.18.2-blue.svg)](https://selenide.org/)
+[![Selenium](https://img.shields.io/badge/Selenium-4.49.0-blue.svg)](https://www.selenium.dev/)
+[![Vibium](https://img.shields.io/badge/Vibium-26.8.21-blue.svg)](https://vibium.com/) 🎄🎁
 
 [![Maven](https://img.shields.io/badge/Maven-3.9.11-blue.svg)](https://maven.apache.org/)
 [![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](https://www.docker.com/)
@@ -121,9 +121,9 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Python 3.13** - Latest stable version (for Robot Framework & Locust)
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
 - **TypeScript 6.0.3** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
-- **Selenium 4.46.0** - Modern WebDriver API with Grid support
-- **Playwright 1.61.1** - Fast and reliable end-to-end testing
-- **Cypress 15.18.1** - JavaScript end-to-end testing framework
+- **Selenium 4.49.0** - Modern WebDriver API with Grid support
+- **Playwright 1.63.0** - Fast and reliable end-to-end testing
+- **Cypress 15.21.1** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
 - **REST Assured 6.0.1** - REST API testing & validation
 - **Cucumber 7.34.4** - BDD framework with Gherkin
@@ -144,11 +144,13 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - ✅ **Version docs sync** — Living docs now match repo pins (JSoup **1.23.1**, Allure2 Java **2.35.3**, vibium `postcss` lock **8.5.25**, npm security overrides including `nanoid`).
 
 ### Recent Improvements (July 26, 2026)
-- ✅ **Dependabot npm security overrides** — `brace-expansion` **^5.0.8**, `postcss` **^8.5.18** (frontend lock **8.5.23**, vibium lock **8.5.25**), Playwright `js-yaml` **^5.2.2**, frontend `sharp` **^0.35.3** (outside Next optional `^0.34.5`; `next build` verified). Clears Dependabot #208/#209/#211/#222/#224. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Comprehensive stable refresh (2026-09-29)** — Selenium/Selenide **4.49.0 / 7.18.2**, Cypress **15.21.1**, Vibium **26.8.21**, frontend toolchain + **`qs` 6.16.0** (Cypress); Grid CI **4.49.0**. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Dependabot security refresh (2026-09-29)** — Removed legacy Grid 1.x JARs (FreeMarker **#259**); frontend **`undici` ^7.30.0** (#268–#275); Playwright **`csv-parse` ^7.0.3** (#250); **`brace-expansion` ^5.0.12**; Next **16.3.7** / React **19.3.0** / Playwright **1.63.0**. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Dependabot npm security overrides** — `postcss` **^8.5.18**, Playwright `js-yaml` **5.2.2**, frontend `sharp` **^0.35.4**. Earlier: #208/#209/#211/#222/#224. See `docs/process/VERSION_TRACKING.md`.
 
 ### Recent Improvements (July 19, 2026)
 - ✅ **Deferred major bumps** — `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate ORM **6.6.54.Final** (Jakarta Persistence; clears Dependabot #93), `js-yaml` **5.2.2**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. TypeScript stays **6.0.3** (TS 7 breaks Next 16 / eslint-config-next). See `docs/process/VERSION_TRACKING.md`.
-- ✅ **Safe dependency bump** — Selenium/Selenide **4.46.0 / 7.17.0**, Jackson **3.2.1**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.11 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.46.0**.
+- ✅ **Safe dependency bump** — Selenium/Selenide **4.49.0 / 7.17.0**, Jackson **3.2.1**, Netty **4.2.16.Final**, Log4j **2.26.1**, Logback **1.5.38**, Next/React **16.2.11 / 19.2.7**, Vite **8.1.5**, Cypress **15.18.1**, Playwright **1.61.1**, plus related Maven/npm/Python pins. Grid default **4.49.0**.
 - ✅ **Mobile Browser CI fix** — `MobileBrowserTests` uses per-thread WebDriver + defensive `quit()` so parallel Surefire tearDown no longer fails on a shared/dead Grid session.
 - ✅ **Security / Dependabot refresh** — Jackson 2.x security line, npm overrides for **form-data**, **js-yaml**, **@babel/core**. Dockerfile pins **npm@11** on Node 20.
 
@@ -1202,7 +1204,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 <!-- prettier-ignore-start -->
 | Category | Library | Version |
 | -- | -- | -- |
-| **WebDriver** | Selenium | 4.46.0 |
+| **WebDriver** | Selenium | 4.49.0 |
 | **BDD** | Cucumber | 7.34.4 |
 | **Testing** | JUnit | 6.1.2 |
 | **Testing** | TestNG | 7.11.0 |
@@ -1216,8 +1218,8 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | **PDF** | PDFBox | 3.0.7 |
 | **Security** | Google Cloud Secret Manager | 2.94.0 |
 | **Driver Management** | WebDriverManager | 6.3.4 |
-| **UI Testing** | Playwright (TS) | 1.61.1 |
-| **UI Testing** | Cypress (TS) | 15.18.1 |
+| **UI Testing** | Playwright (TS) | 1.63.0 |
+| **UI Testing** | Cypress (TS) | 15.21.1 |
 | **UI Testing** | Robot Framework | 2.1.0 |
 | **Database** | H2, SQLite, MSSQL | Various |
 | **Docker** | Docker Compose | 3.8 |

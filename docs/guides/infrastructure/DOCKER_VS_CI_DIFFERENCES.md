@@ -29,19 +29,20 @@ This document explains why tests might pass in Docker but fail in the CI/CD pipe
 #### Docker Environment
 - **Base Image**: `eclipse-temurin:21-jre` runtime (build stage: `maven:3.9.9-eclipse-temurin-21`)
 - **Architecture**: ARM64 (Apple Silicon) or x86_64
-- **Selenium Images**: `seleniarm/*` (ARM64) or `selenium/*` (x86_64)
+- **Selenium Images**: Pinned **`selenium/*:4.49.0`** (official multi-arch hub/chrome/firefox; matches `pom.xml`)
 - **OS Version**: Debian (varies by base image)
 
 #### CI/CD Environment
 - **Base Image**: `ubuntu-latest` (currently Ubuntu 24.04)
 - **Architecture**: x86_64 (GitHub Actions runners)
-- **Selenium Images**: `selenium/*` (x86_64 only)
+- **Selenium Images**: Pinned **`selenium/*:${{ inputs.selenium_version }}`** (default **4.49.0**; Edge node available on amd64)
 - **OS Version**: Ubuntu 24.04 LTS
 
 **Why this matters**: 
 - Different package managers (`apt` vs `apt-get`)
 - Different package availability (Ubuntu 24.04 has newer/different packages)
-- ARM64 vs x86_64 can cause compatibility issues
+- Local Edge on ARM uses a Chrome stand-in (`selenium/node-edge` is amd64-only); CI uses real Edge
+- Pin the same Selenium version in compose, `pom.xml`, and `env-fe.yml` when bumping
 
 ---
 
@@ -275,7 +276,7 @@ RUN apt-get update && apt-get install -y \
 | -- | -- | -- |
 | **OS** | Debian (varies) | Ubuntu 24.04 |
 | **Architecture** | ARM64/x86_64 | x86_64 |
-| **Selenium Images** | seleniarm/* or selenium/* | selenium/* |
+| **Selenium Images** | `selenium/*:4.49.0` (pinned) | `selenium/*:4.49.0` (pinned) |
 | **Node.js** | ✅ Node.js 20 + npm@11 | ✅ Node.js 20 |
 | **Python** | ✅ Python 3 (3.13 when available) | ✅ Python 3.13 |
 | **Cypress** | ✅ Installed (`npm ci`) | ✅ Installed |

@@ -94,10 +94,14 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 📈 Document History
 
-**Last Updated**: August 13, 2026
+**Last Updated**: September 29, 2026
 
 ### August 13, 2026
 - ✅ **Dependabot #241 (`httpcore5`)** — Pin Apache HttpCore 5 to **5.4.3** and bump HttpClient 5 **5.6.1 → 5.6.3** (CVE-2026-54399). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
+
+### September 29, 2026
+- ✅ **Dependabot #250 / #259 / #268–#275** — Removed legacy Grid 1.x Maven JARs (FreeMarker **#259**); frontend **`undici` ^7.30.0** (#268–#275); Playwright **`csv-parse` ^7.0.3** (#250); **`brace-expansion` ^5.0.12**; stable bumps (Next **16.3.7**, React **19.3.0**, Playwright **1.63.0**, Vite **8.3.1**). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md) and [SELENIUM_GRID.md](guides/infrastructure/SELENIUM_GRID.md).
+- ✅ **Comprehensive stable refresh** — Selenium/Selenide **4.49.0 / 7.18.2**, Grid CI default **4.49.0**, JSoup **1.23.2**, Netty **4.2.18**, WebDriverManager **6.4.0**, Cypress **15.21.1**, Vibium **26.8.21**, frontend ESLint **10.11** / `@types/node` **26.6.3** / sharp **0.35.5**, `qs` **6.16.0** override (Cypress). Local compose pinned to **`selenium/*:4.49.0`** (replaces `seleniarm:latest`). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 
 ### August 8, 2026
 - ✅ **Dependabot #238 (`nanoid`)** — Override **^3.3.17** (lock **3.3.18**) in frontend, playwright, and vibium (CVE-2026-67213). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
@@ -108,7 +112,7 @@ This directory contains all project documentation and analysis reports for the C
 
 ### July 19, 2026
 - ✅ **Deferred major dependency bumps** — `@types/node` **26.1.1**, Jackson 2.x **2.22.1**, Hibernate **6.6.54.Final** (Jakarta; Dependabot #93), `js-yaml` **5.2.2**, `@babel/core` **8.0.1**, mypy **2.3.0**, structlog **26.1.0**. TypeScript stays **6.0.3** (TS 7 breaks Next 16 / eslint-config-next). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
-- ✅ **Safe dependency bump + mobile tearDown fix** — Selenium **4.46.0**, Jackson **3.2.1**, Next **16.2.11**, Cypress **15.18.1**, Playwright **1.61.1**, and related pins; `MobileBrowserTests` ThreadLocal driver.
+- ✅ **Safe dependency bump + mobile tearDown fix** — Selenium **4.49.0**, Jackson **3.2.1**, Next **16.2.11**, Cypress **15.18.1**, Playwright **1.61.1**, and related pins; `MobileBrowserTests` ThreadLocal driver.
 - ✅ **Security / dependency doc refresh** — Aligned living docs with PRs #282–#284 and the July bumps; Dockerfile **npm@11**.
 
 ### April 6, 2026

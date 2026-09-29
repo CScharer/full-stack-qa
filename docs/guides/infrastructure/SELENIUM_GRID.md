@@ -27,6 +27,12 @@ This guide covers the enhanced Selenium Grid features including:
 
 For general Docker and Grid setup, see [DOCKER.md](./DOCKER.md).
 
+### Maven classpath vs. Grid runtime
+
+Remote tests connect to a **Selenium 4 Grid hub** (Docker Compose or CI), e.g. `http://localhost:4444/wd/hub`. That hub is **not** started from legacy Maven artifacts.
+
+As of **2026-09-29**, unused legacy JARs `org.seleniumhq.selenium.grid:selenium-grid-hub` and `selenium-grid-core` (**1.0.5**, Grid 1.x era) were **removed** from `pom.xml`. They pulled vulnerable **FreeMarker 2.3.10** (Dependabot **#259**) and were not referenced in Java sources. Modern Grid client/server support remains via `selenium-java`, `selenium-grid`, and `selenium-server` at **4.49.0** (aligned with Docker/CI).
+
 ---
 
 ## 🔍 Version Validation
@@ -48,9 +54,9 @@ Version validation ensures that the Selenium Grid server version matches the cli
 <!-- prettier-ignore-start -->
 | Tolerance | Description | Example |
 | -- | -- | -- |
-| `EXACT` | Must match exactly (default) | `4.46.0` == `4.46.0` ✅ |
-| `MINOR` | Allow minor version differences | `4.46.0` == `4.46.0` ✅ |
-| `PATCH` | Allow patch version differences | `4.46.0` == `4.40.1` ✅ |
+| `EXACT` | Must match exactly (default) | `4.49.0` == `4.49.0` ✅ |
+| `MINOR` | Allow minor version differences | `4.49.0` == `4.49.0` ✅ |
+| `PATCH` | Allow patch version differences | `4.49.0` == `4.40.1` ✅ |
 | `NONE` | Skip version validation | Always passes |
 <!-- prettier-ignore-end -->
 
@@ -86,13 +92,13 @@ driver.initializeWebDriver(); // Version validation runs automatically
 SeleniumGridConfig.validateGridVersion("http://localhost:4444/wd/hub");
 
 // Using test utilities
-GridTestUtils.validateGridVersion(gridUrl, "4.46.0");
+GridTestUtils.validateGridVersion(gridUrl, "4.49.0");
 ```
 
 **In Bash Scripts:**
 ```bash
 # With version validation
-SELENIUM_VERSION="4.46.0" ./scripts/ci/wait-for-grid.sh
+SELENIUM_VERSION="4.49.0" ./scripts/ci/wait-for-grid.sh
 
 # Skip version check
 SKIP_VERSION_CHECK=true ./scripts/ci/wait-for-grid.sh
@@ -210,7 +216,7 @@ RemoteWebDriver driver = RetryableGridConnection.connectWithRetry(
 ```bash
 # Complete configuration example
 export SELENIUM_REMOTE_URL="http://localhost:4444/wd/hub"
-export SELENIUM_VERSION="4.46.0"
+export SELENIUM_VERSION="4.49.0"
 export SELENIUM_GRID_VERSION_TOLERANCE="EXACT"
 export SELENIUM_GRID_MAX_RETRIES="5"
 export SELENIUM_GRID_RETRY_BASE_DELAY_MS="1000"
@@ -239,7 +245,7 @@ All environment variables can also be set as system properties with dot notation
 ```bash
 mvn test -Dselenium.grid.max.retries=3 \
          -Dselenium.grid.retry.base.delay.ms=500 \
-         -Dselenium.version=4.46.0
+         -Dselenium.version=4.49.0
 ```
 
 ---
@@ -261,7 +267,7 @@ public void setUp() {
 **Bash Script:**
 ```bash
 # Wait for Grid with version validation
-SELENIUM_VERSION="4.46.0" ./scripts/ci/wait-for-grid.sh
+SELENIUM_VERSION="4.49.0" ./scripts/ci/wait-for-grid.sh
 ```
 
 ### Advanced Configuration
@@ -283,7 +289,7 @@ System.setProperty("selenium.grid.retry.base.delay.ms", "500");
 GridTestUtils.waitForGridReady(gridUrl, 60); // 60 second timeout
 
 // Validate version
-GridTestUtils.validateGridVersion(gridUrl, "4.46.0");
+GridTestUtils.validateGridVersion(gridUrl, "4.49.0");
 
 // Check Grid health (comprehensive check)
 if (GridTestUtils.isGridHealthy(gridUrl)) {
@@ -301,14 +307,14 @@ System.out.println(status);
 ```yaml
 - name: Wait for Selenium Grid
   env:
-    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.46.0' }}
+    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.49.0' }}
   run: |
     ./scripts/ci/wait-for-grid.sh "http://localhost:4444/wd/hub/status" 10
 
 - name: Run Grid Tests
   env:
     SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
-    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.46.0' }}
+    SELENIUM_VERSION: ${{ inputs.selenium_version || '4.49.0' }}
     SELENIUM_GRID_MAX_RETRIES: '5'
     SELENIUM_GRID_RETRY_BASE_DELAY_MS: '1000'
     SELENIUM_GRID_RETRY_MAX_DELAY_MS: '10000'
@@ -329,12 +335,12 @@ System.out.println(status);
 1. Update Grid Docker images to match client version:
    ```bash
    # Update docker-compose.yml
-   image: selenium/hub:4.46.0  # Match pom.xml version
+   image: selenium/hub:4.49.0  # Match pom.xml version
    ```
 
 2. Update `pom.xml` to match Grid version:
    ```xml
-   <selenium.version>4.46.0</selenium.version>
+   <selenium.version>4.49.0</selenium.version>
    ```
 
 3. Use version tolerance (if appropriate):
@@ -422,7 +428,7 @@ When running in CI/CD pipelines, look for these log messages to verify the enhan
 
 **Version Validation:**
 ```
-✅ Version validation passed: 4.46.0
+✅ Version validation passed: 4.49.0
 🔍 Validating Grid version...
 ```
 
@@ -437,7 +443,7 @@ Transient error on attempt 1/5: Connection refused. Retrying in 1000ms...
 ```
 Phase 4: Docker Compose Version Validation
 Checking docker-compose.yml...
-✅ Version matches pom.xml: 4.46.0
+✅ Version matches pom.xml: 4.49.0
 ```
 
 ### Key Test Scenarios

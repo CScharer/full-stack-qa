@@ -240,7 +240,7 @@ All Checkstyle violations have been resolved:
 
 **Package**: `org.htmlunit.*` (migrated from `com.gargoylesoftware.htmlunit.*`)
 
-**Note**: The project uses HtmlUnit **4.21.0** (`htmlunit.version` in `pom.xml`) with `htmlunit3-driver` **4.46.0**. All package imports use the `org.htmlunit.*` namespace.
+**Note**: The project uses HtmlUnit **4.21.0** (`htmlunit.version` in `pom.xml`) with `htmlunit3-driver` **4.48.0**. All package imports use the `org.htmlunit.*` namespace.
 
 ---
 

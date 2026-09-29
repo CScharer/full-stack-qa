@@ -13,14 +13,14 @@
     "clean": "rm -rf dist coverage test-results .vitest"
   },
   "dependencies": {
-    "vibium": "^26.5.31"
+    "vibium": "^26.8.21"
   },
   "optionalDependencies": {
-    "@vibium/darwin-arm64": "^26.3.18",
-    "@vibium/linux-x64": "^26.3.18"
+    "@vibium/darwin-arm64": "^26.8.21",
+    "@vibium/linux-x64": "^26.8.21"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.6.3",
     "tsx": "^4.23.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"
@@ -30,7 +30,8 @@
     "npm": ">=9.0.0"
   },
   "overrides": {
+    "brace-expansion": "^5.0.12",
     "nanoid": "^3.3.17",
-    "postcss": "^8.5.18"
+    "postcss": "^8.5.28"
   }
 }
