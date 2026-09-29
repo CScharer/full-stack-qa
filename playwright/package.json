@@ -34,7 +34,7 @@
     "postcss": "^8.5.18",
     "uuid": "^14.0.0",
     "minimatch": "9.0.7",
-    "js-yaml": "^5.2.2",
+    "js-yaml": "^5.4.2",
     "glob": {
       "minimatch": "3.1.4"
     },
