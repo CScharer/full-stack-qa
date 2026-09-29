@@ -142,11 +142,9 @@ Or run locally:
    - Provides immediate feedback to developers
    - Can be bypassed with `--no-verify` flag
 
-3. **Pre-Push Version Validation** (Planned):
-   - Will block push if version mismatches detected
+3. **Pre-Push Version Validation** (implemented — see pre-push hook above):
+   - Blocks push when version mismatches are detected
    - Validates Selenium versions across config files
-   - Fast validation (< 5 seconds)
-   - Clear error messages showing which versions mismatch
    - See [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md) for details
 
 ### Future Enhancements (Optional)
@@ -169,8 +167,8 @@ Or run locally:
   "errors": 0,
   "warnings": 0,
   "selenium": {
-    "pom_version": "4.41.0",
-    "workflow_version": "4.41.0",
+    "pom_version": "4.49.0",
+    "workflow_version": "4.49.0",
     "match": true
   },
   "mismatches": [],
@@ -182,14 +180,14 @@ Or run locally:
 
 ```csv
 timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,selenium_match,mismatches,warnings_list
-2025-12-20T02:00:00Z,success,0,0,4.41.0,4.41.0,true,,
+2025-12-20T02:00:00Z,success,0,0,4.49.0,4.49.0,true,,
 ```
 
 ---
 
 ## 🔗 Related Documents
 
-- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Jackson **3.2.1** / 2.x **2.22.1**, Vite **8.1.5**, TypeScript **6.0.3** (TS 7 deferred), Hibernate **6.6.54.Final**, Next **16.2.11**, JSoup **1.23.1**, Allure2 Java **2.35.3**, npm overrides including form-data / js-yaml **5.2.2** / postcss **8.5.18+** / brace-expansion **5.0.8** / sharp **0.35.3** / nanoid **^3.3.17** (lock **3.3.18**) / @babel/core **8.x**; Dockerfile **npm@11**; last doc refresh 2026-08-08)
+- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Selenium **4.49.0**, Selenide **7.18.2**, Jackson **3.2.2** / 2.x **2.22.2**, Netty **4.2.18**, JSoup **1.23.2**, Vite **8.3.1**, TypeScript **6.0.3** (TS 7 deferred), Next **16.3.7**, Playwright **1.63.0**, Cypress **15.21.1**, Vibium **26.8.21**, npm overrides including **undici ^7.30.0** / **csv-parse ^7.0.3** / js-yaml **5.2.2** / brace-expansion **5.0.12** / postcss **8.5.28** / sharp **0.35.5**; legacy Grid 1.x JARs removed; Dockerfile **npm@11**; last doc refresh 2026-09-29)
 - [Pre-Pipeline Validation](PRE_PIPELINE_VALIDATION.md) - Local validation checklist
 - Next Steps After PR #53 (archived) - Work plan and status
 
@@ -215,4 +213,4 @@ Modify the workflow's "Comment on Issues" step to integrate with your notificati
 
 ---
 
-**Last Updated**: 2026-08-13
+**Last Updated**: 2026-09-29

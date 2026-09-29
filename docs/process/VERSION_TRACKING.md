@@ -58,9 +58,9 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-07-19 (safe stable bump across Maven/npm/Python + mobile tearDown fix; docs Latest Stable columns refreshed against registries)
-- **Latest Stable Versions Check**: 2026-07-19 (registry check; Current Version columns match repo pins after bump)
-- **Next Review**: 2026-08-01 (recommended)
+- **Last Review**: 2026-09-29 (Dependabot #250/#259/#268–#275 security fixes; frontend/playwright stable bumps; legacy Grid 1.x JARs removed from `pom.xml`)
+- **Latest Stable Versions Check**: 2026-09-29 (registry check after security refresh)
+- **Next Review**: 2026-10-01 (recommended)
 
 ### Stable vs. latest
 
@@ -75,17 +75,17 @@ When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`,
 
 ### Known available updates
 
-As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
+As of **2026-09-29** (after comprehensive stable refresh):
 
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
 | -- | -- | -- | -- |
-| TypeScript | 6.0.3 | 7.0.2 | TS 7 (native rewrite) breaks Next 16 type-check + eslint-config-next (`<6.1.0`); revisit when supported |
-| Hibernate | 6.6.54.Final | 7.4.5.Final | On Hibernate ORM **6.6** (Jakarta); 7.x available later |
-| Next.js | 16.2.11 | 16.3.0 | Stay on 16.2.x security line until intentionally bumping minors |
-| React | 19.2.7 | 19.2.8 | Patch available |
-| Cypress | ^15.18.1 | 15.20.0 | Floor allows newer 15.x on install |
-| Playwright | ^1.61.1 | 1.62.1 | Floor allows newer 1.x on install |
+| TypeScript | 6.0.3 | 7.0.2 | TS 7 deferred — Next 16 / eslint-config-next |
+| Vitest | 4.1.11 | 5.0.2 | Vitest **5.x** deferred until toolchain validated |
+| Cypress | ^15.21.1 | 15.21.1 | **16.x** major (16.1.1) deferred |
+| @testing-library/jest-dom | 6.9.1 | 7.0.1 | Major deferred |
+| Hibernate | 6.6.54.Final | 7.4.5.Final | Hibernate **7.x** deferred |
+| Artillery `js-yaml` | 5.2.2 (pin) | 5.4.2 | Exact pin for CLI; floating breaks ESM import |
 <!-- prettier-ignore-end -->
 
 
@@ -104,12 +104,12 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Selenium | 4.46.0 | 4.46.0 | [✅] | 2026-07-19 | Aligned with Grid workflow default |
-| Selenide | 7.17.0 | 7.17.0 | [✅] | 2026-07-19 | Current stable |
+| Selenium | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Aligned with `env-fe.yml` Grid images; legacy Grid 1.x JARs removed |
+| Selenide | 7.18.2 | 7.18.2 | [✅] | 2026-09-29 | Current stable |
 | TestNG | 7.11.0 | 7.11.0 | [✅] | 2025-12-25 | Current |
 | JUnit | 6.1.2 | 6.1.2 | [✅] | 2026-07-19 | Current stable |
 | Cucumber | 7.34.4 | 7.34.4 | [✅] | 2026-07-19 | Current stable |
-| REST Assured | 6.0.1 | 6.0.1 | [✅] | 2026-07-19 | Requires Java 17+; Jackson **3.2.1** (`tools.jackson.core`) |
+| REST Assured | 6.0.1 | 6.0.1 | [✅] | 2026-07-19 | Requires Java 17+; Jackson **3.2.2** (`tools.jackson.core`) |
 | Allure3 CLI | 3.0.0 | 3.0.0 | [✅] | 2025-12-30 | Active - Allure3 CLI in use (TypeScript-based, npm install) |
 | Allure2 Java | 2.35.3 | 2.35.3 | [✅] | 2026-07-19 | allure-testng, allure-junit5, allure-java-commons |
 <!-- prettier-ignore-end -->
@@ -144,22 +144,22 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| WebDriverManager | 6.3.4 | 6.3.4 | [✅] | 2026-04-06 | Current stable |
+| WebDriverManager | 6.4.0 | 6.4.0 | [✅] | 2026-09-29 | Current stable |
 | Log4j 2 | 2.26.1 | 2.26.1 | [✅] | 2026-07-19 | `log4j2.version` (2.x Active Maintenance) |
 | Logback Core | 1.5.38 | 1.5.38 | [✅] | 2026-07-19 | Overrides Gatling transitive line |
-| Jackson Databind (3.x) | 3.2.1 | 3.2.1 | [✅] | 2026-07-19 | `jackson.version`; tools.jackson.core jackson-databind |
-| Jackson Core (2.x) | 2.22.1 | 2.22.1 | [✅] | 2026-07-19 | `jackson2.version` |
-| Jackson Databind (2.x) | 2.22.1 | 2.22.1 | [✅] | 2026-07-19 | Explicit com.fasterxml pin |
+| Jackson Databind (3.x) | 3.2.2 | 3.2.2 | [✅] | 2026-09-29 | `jackson.version`; tools.jackson.core jackson-databind |
+| Jackson Core (2.x) | 2.22.2 | 2.22.2 | [✅] | 2026-09-29 | `jackson2.version` |
+| Jackson Databind (2.x) | 2.22.2 | 2.22.2 | [✅] | 2026-09-29 | Explicit com.fasterxml pin |
 | Jackson Annotations | 2.22 | 2.22 | [✅] | 2026-07-19 | 2.x annotations alongside Jackson 3 databind (REST Assured 6) |
-| Netty BOM | 4.2.16.Final | 4.2.16.Final | [✅] | 2026-07-19 | `netty-codec-http.version` / netty-bom import |
+| Netty BOM | 4.2.18.Final | 4.2.18.Final | [✅] | 2026-09-29 | `netty-codec-http.version` / netty-bom import |
 | Hibernate | 6.6.54.Final | 6.6.54.Final | [✅] | 2026-07-19 | `org.hibernate.orm:hibernate-core`; Jakarta Persistence 3.1; clears Dependabot #93 (5.x-only CVE) |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | MSSQL JDBC | 13.4.0.jre11 | 13.4.0.jre11 | [✅] | 2026-04-06 | Current stable |
 | PostgreSQL JDBC | 42.7.13 | 42.7.13 | [✅] | 2026-07-19 | Explicit pin in pom.xml |
-| JSoup | 1.23.1 | 1.23.1 | [✅] | 2026-08-08 | Bumped from 1.22.1 (PR #293) |
+| JSoup | 1.23.2 | 1.23.2 | [✅] | 2026-09-29 | Current stable |
 | Apache HttpClient 5 | 5.6.3 | 5.6.3 | [✅] | 2026-08-13 | `httpclient5.version`; WebDriverManager transitive pin |
 | Apache HttpCore 5 | 5.4.3 | 5.4.3 | [✅] | 2026-08-13 | `httpcore5.version`; Dependabot #241 / CVE-2026-54399 |
-| HtmlUnit | 4.21.0 | 4.21.0 | [✅] | 2026-08-08 | `htmlunit.version`; driver `htmlunit3-driver` **4.46.0** |
+| HtmlUnit | 4.21.0 | 4.21.0 | [✅] | 2026-08-08 | `htmlunit.version`; driver `htmlunit3-driver` **4.48.0** |
 | Appium Java Client | 10.1.1 | 10.1.1 | [✅] | 2026-07-19 | `appium.version` |
 | Google Cloud Secret Manager | 2.94.0 | 2.94.0 | [✅] | 2026-07-19 | Current stable |
 | ByteBuddy | 1.18.8 | 1.18.8 | [✅] | 2026-04-06 | Current stable |
@@ -181,10 +181,10 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Cypress | ^15.18.1 | 15.20.0 | [✅] | 2026-07-19 | Floor ^15.18.1; 15.20.0 available |
+| Cypress | ^15.21.1 | 15.21.1 | [✅] | 2026-09-29 | Current **15.x**; **16.x** major deferred |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
-| qs (override) | ^6.15.3 | 6.15.3 | [✅] | 2026-07-19 | Security override |
+| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
+| qs (override) | 6.16.0 | 6.16.0 | [✅] | 2026-09-29 | Security override (GHSA-4mjr-xmp4-gh2g / GHSA-x5fp-wj9c-mxmx) |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #170 |
 | uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
@@ -196,20 +196,21 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Playwright | ^1.61.1 | 1.62.1 | [✅] | 2026-07-19 | Floor ^1.61.1; 1.62.1 available |
-| Artillery | ^2.0.33 | 2.0.33 | [✅] | 2026-07-19 | Current stable on npm |
+| Playwright | ^1.63.0 | 1.63.0 | [✅] | 2026-09-29 | Bumped for current stable; lock resolves **1.63.x** |
+| Artillery | ^2.0.34 | 2.0.34 | [✅] | 2026-09-29 | Current stable on npm |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
-| brace-expansion (override) | ^5.0.8 | 5.0.8 | [✅] | 2026-07-26 | Security override (Dependabot #208/#209; also clears 5.0.8 line) |
+| csv-parse (override) | ^7.0.3 | 7.0.3 | [✅] | 2026-09-29 | Clears Dependabot **#250** / CVE-2026-85063 (Artillery still declares ^4.x) |
+| brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override (GHSA-rgw5-rvv9-x895; was ^5.0.8) |
 | socket.io-parser (override) | ^4.2.6 | 4.2.7 | [✅] | 2026-04-04 | Artillery transitive (lock 4.2.7) |
 | fast-xml-parser (override) | ^5.10.1 | 5.10.1 | [✅] | 2026-07-19 | DoS hardening |
-| js-yaml (override) | ^5.2.2 | 5.2.2 | [✅] | 2026-07-26 | Security patch (Dependabot #224) |
+| js-yaml (override) | 5.2.2 | 5.4.2 | [✅] | 2026-09-29 | Exact pin **5.2.2** for Artillery ESM import (do not float to 5.4.x) |
 | nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
-| postcss (override) | ^8.5.18 | 8.5.26 | [✅] | 2026-07-26 | Security override (aligned with frontend floor) |
+| postcss (override) | ^8.5.18 | 8.5.28 | [✅] | 2026-09-29 | Security override (aligned with frontend floor) |
 | uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #176 |
 | minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Per-parent overrides |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
+| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
 <!-- prettier-ignore-end -->
 
 ### Vibium Project (vibium/package.json)
@@ -217,12 +218,13 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Vibium | ^26.5.31 | 26.5.31 | [✅] | 2026-07-19 | CLI + optional platform packages |
-| Vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
+| Vibium | ^26.8.21 | 26.8.21 | [✅] | 2026-09-29 | Current stable |
+| Vitest | ^4.1.10 | 4.1.11 | [✅] | 2026-09-29 | Latest Vitest **4.x** |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
+| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
 | nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
-| postcss (override) | ^8.5.18 | 8.5.26 | [✅] | 2026-07-26 | Security override (lock resolves **8.5.25**) |
+| postcss (override) | ^8.5.28 | 8.5.28 | [✅] | 2026-09-29 | Security override |
+| brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override |
 <!-- prettier-ignore-end -->
 
 ### Frontend Project (frontend/package.json)
@@ -230,32 +232,33 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| React | 19.2.7 | 19.2.8 | [✅] | 2026-07-19 | Pinned; 19.2.8 available |
-| Next.js | 16.2.11 | 16.3.0 | [✅] | 2026-07-25 | Security bump (Dependabot #213–#221); 16.3.0 available |
-| @tanstack/react-query | ^5.101.2 | 5.101.2 | [✅] | 2026-07-19 | Current stable |
-| eslint-config-next | 16.2.10 | 16.3.0 | [✅] | 2026-07-19 | Matched near Next 16.2.x; 16.3.0 available |
+| React | 19.3.0 | 19.3.0 | [✅] | 2026-09-29 | Pinned with Next **16.3.7** |
+| Next.js | 16.3.7 | 16.3.7 | [✅] | 2026-09-29 | Current stable 16.3.x |
+| @tanstack/react-query | ^5.104.0 | 5.104.0 | [✅] | 2026-09-29 | Current stable |
+| eslint-config-next | 16.3.7 | 16.3.7 | [✅] | 2026-09-29 | Matched to Next **16.3.7** |
+| axios | ^1.20.0 | 1.20.0 | [✅] | 2026-09-29 | Current stable |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| axios | ^1.18.1 | 1.18.1 | [✅] | 2026-07-19 | Current stable |
 | Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @testing-library/react | 16.3.2 | 16.3.2 | [✅] | 2026-03-13 | Current stable |
 | @testing-library/jest-dom | 6.9.1 | 6.9.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | @testing-library/user-event | 14.6.1 | 14.6.1 | [✅] | 2025-12-19 | Updated in PR #51 |
 | jsdom | ^29.1.1 | 29.1.1 | [✅] | 2026-07-19 | Vitest 4 compatible |
-| ESLint | ^10.7.0 | 10.7.0 | [✅] | 2026-07-19 | Current stable |
-| @types/node | ^26.1.1 | 26.1.1 | [✅] | 2026-07-19 | Major bump from 25.x |
-| Vite | ^8.1.5 | 8.2.1 | [✅] | 2026-07-19 | Pinned 8.1.x floor; 8.2.1 available |
+| ESLint | ^10.11.0 | 10.11.0 | [✅] | 2026-09-29 | Current stable |
+| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable across Node projects |
+| Vite | ^8.3.1 | 8.3.1 | [✅] | 2026-09-29 | Current stable 8.x |
 | @vitejs/plugin-react | ^6.0.3 | 6.0.3 | [✅] | 2026-07-19 | Current stable |
-| @vitest/coverage-v8 | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
-| @vitest/ui | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
-| vitest | ^4.1.10 | 4.1.10 | [✅] | 2026-07-19 | Current stable |
+| @vitest/coverage-v8 | ^4.1.10 | 4.1.11 | [✅] | 2026-09-29 | Aligned with vitest **4.1.11** floor |
+| @vitest/ui | ^4.1.10 | 4.1.11 | [✅] | 2026-09-29 | Aligned with vitest **4.1.11** floor |
+| vitest | ^4.1.11 | 4.1.11 | [✅] | 2026-09-29 | Latest **4.x**; Vitest **5.x** deferred (see Known available updates) |
 | ajv (override) | >=6.14.0 | 8.18.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); lock resolves ajv 8.x from eslint |
-| brace-expansion (override) | ^5.0.8 | 5.0.8 | [✅] | 2026-07-26 | Security override (Dependabot #208; also clears 5.0.8 line) |
+| undici (override) | ^7.30.0 | 7.30.0 | [✅] | 2026-09-29 | jsdom transitive; **7.x only** (8.x breaks jsdom 29); clears Dependabot **#268–#275** |
+| brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override (GHSA-rgw5-rvv9-x895) |
 | @babel/core (override) | ^8.0.1 | 8.0.1 | [✅] | 2026-07-19 | Major bump from 7.x (Dependabot #171 line) |
 | flatted (override) | >=3.4.2 | 3.4.2 | [✅] | 2026-07-19 | Security override |
 | nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
-| postcss (override) | ^8.5.18 | 8.5.26 | [✅] | 2026-07-26 | Security override (Dependabot #222; lock resolves **8.5.23**) |
-| sharp (override) | ^0.35.3 | 0.35.3 | [✅] | 2026-07-26 | Security override (Dependabot #211); outside Next optional `^0.34.5` — verified `next build` |
+| postcss (override) | ^8.5.18 | 8.5.28 | [✅] | 2026-09-29 | Security override (Dependabot #222; lock may resolve below registry latest) |
+| sharp (override) | ^0.35.5 | 0.35.5 | [✅] | 2026-09-29 | Security override (Dependabot #211); verified `next build` |
 <!-- prettier-ignore-end -->
 
 ---
@@ -333,13 +336,13 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 <!-- prettier-ignore-start -->
 | Component | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| selenium/hub | 4.46.0 | 4.46.0 | [✅] | 2026-07-19 | Centralized via input variable |
-| selenium/node-chrome | 4.46.0 | 4.46.0 | [✅] | 2026-07-19 | Centralized via input variable |
-| selenium/node-firefox | 4.46.0 | 4.46.0 | [✅] | 2026-07-19 | Centralized via input variable |
-| selenium/node-edge | 4.46.0 | 4.46.0 | [✅] | 2026-07-19 | Centralized via input variable |
+| selenium/hub | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Pinned in compose + CI (`env-fe.yml`) |
+| selenium/node-chrome | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Local compose + CI; replaces seleniarm:latest |
+| selenium/node-firefox | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Local compose.prod + CI |
+| selenium/node-edge | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | CI only (amd64); local ARM uses Chrome stand-in |
 <!-- prettier-ignore-end -->
 
-**Note**: All Selenium Grid versions are now managed via `selenium_version` input variable in `.github/workflows/env-fe.yml` (default: `4.46.0`)
+**Note**: All Selenium Grid versions are managed via `selenium_version` in `.github/workflows/env-fe.yml` (default: `4.49.0`) and matching tags in `docker-compose*.yml`. Official **`selenium/*`** images are multi-arch (**amd64/arm64**) for hub/chrome/firefox — do not use unmaintained **`seleniarm/*:latest`**.
 
 ### Selenium Grid Ports (GitHub Actions Workflow)
 
@@ -357,13 +360,15 @@ As of **2026-08-13** (after Dependabot #241 `httpcore5` pin):
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-08-13)
+### Current Status (as of 2026-09-29)
 
 Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-08-13** HttpCore 5 pin (**5.4.3**) and HttpClient 5 bump (**5.6.3**), Dependabot **#241** (CVE-2026-54399) should clear. After the **2026-08-08** `nanoid` override (**^3.3.17**, lock **3.3.18**), Dependabot **#238** (CVE-2026-67213) should clear. After the **2026-07-26** npm security override refresh, Dependabot **#208/#209** (`brace-expansion`), **#211** (`sharp`), **#222** (`postcss`), and **#224** (`js-yaml`) should clear. Earlier **2026-07-19** deferred major bumps cleared Dependabot **#93** (Hibernate 5.x CVE-2026-0603) via `org.hibernate.orm:hibernate-core` **6.6.54.Final**. Same-week Next **16.2.11** / fast-uri bumps closed **#210–#221**. Earlier history still relevant: Jackson 3 (#78), Vite (#80, #82, #84), minimatch #35–#37, qs #13, fast-xml-parser #11, ajv, logback-core, lodash / brace-expansion / socket.io-parser overrides, black #40.
+After the **2026-09-29** refresh: removed legacy **`selenium-grid-hub` / `selenium-grid-core`** (**1.0.5**) from `pom.xml` to clear Dependabot **#259** (FreeMarker **CVE-2026-84939**); frontend `undici` override **`^7.30.0`** (jsdom transitive) clears **#268–#275**; Playwright `csv-parse` override **`^7.0.3`** clears **#250**; `brace-expansion` **`^5.0.12`** in frontend/playwright addresses **GHSA-rgw5-rvv9-x895**. Local `npm audit` reports **0** vulnerabilities in **frontend** and **playwright** after lockfile regeneration.
+
+Earlier fixes still relevant: HttpCore 5 **5.4.3** (#241), `nanoid` (#238), brace-expansion/postcss/sharp/js-yaml (#208–#224), Hibernate 6.6 (#93), Next security line (#210–#221), Jackson 3 (#78), Vite (#80–#84), minimatch #35–#37, qs #13, lodash / socket.io-parser overrides, black #40.
 
 ### Update Strategy
 
@@ -404,12 +409,23 @@ Use **^4.17.24** (or higher patched 4.x): **4.17.23** was still flagged; lockfil
 ```json
 {
   "overrides": {
-    "brace-expansion": "^5.0.8",
+    "brace-expansion": "^5.0.12",
     "socket.io-parser": "^4.2.6"
   }
 }
 ```
 Apply `brace-expansion` in **frontend** and **playwright**; add `socket.io-parser` in **playwright** only (where Artillery pulls it). Regenerate lockfiles with `npm install` or `npm install --package-lock-only`, then confirm `npm audit` is clean.
+
+**Example 4**: Fixing `undici` (jsdom / Vitest) and `csv-parse` (Artillery)
+```json
+{
+  "overrides": {
+    "undici": "^7.30.0",
+    "csv-parse": "^7.0.3"
+  }
+}
+```
+Use **`undici` ^7.x only** for jsdom 29 (`>=7.29.1` without an upper bound can resolve **undici 8**, which breaks jsdom). Add `undici` in **frontend**; add `csv-parse` in **playwright** only. Pin Playwright `js-yaml` at **5.2.2** (exact) so Artillery’s ESM import keeps working.
 
 The `overrides` section forces all instances of the package (including transitive dependencies) to use the patched version. After adding the override:
 1. Run `npm install` to update `package-lock.json`
@@ -423,6 +439,19 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 Entries are newest-first.
+
+### 2026-09-29 (comprehensive stable refresh)
+- **Maven**: Selenium **4.49.0**, Selenide **7.18.2**, WebDriverManager **6.4.0**, JSoup **1.23.2**, Netty **4.2.18.Final**, `htmlunit3-driver` **4.48.0**; Jackson 3/2.x already at **3.2.2** / **2.22.2** in `pom.xml`.
+- **CI**: `env-fe.yml` default Grid **4.49.0** (aligned with `pom.xml`).
+- **Docker**: Local `docker-compose*.yml` switched from **`seleniarm/*:latest`** to pinned **`selenium/*:4.49.0`** (multi-arch; clears Phase 4 version-validator warnings). See `docs/work/20260406_SELENIUM_DOCKER_IMAGE_TAGS.md`.
+- **npm**: Frontend dev toolchain (ESLint **10.11**, `@types/node` **26.6.3**, Vitest **4.1.11**, testing-library patches, sharp **0.35.5**, postcss **8.5.28**); Cypress **15.21.1** + `qs` **6.16.0**; Vibium **26.8.21**; `@types/node` **26.6.3** in playwright/cypress/vibium.
+- **Verify**: `./mvnw -DskipTests compile`, frontend **98** Vitest tests + `next build`, cypress `tsc`, vibium `tsc`, frontend/cypress audits clean (playwright: Artillery `js-yaml` pin trade-off).
+
+### 2026-09-29 (Dependabot #250 / #259 / #268–#275)
+- **Maven**: Removed unused legacy **`org.seleniumhq.selenium.grid:selenium-grid-hub`** and **`selenium-grid-core`** (**1.0.5**). Clears Dependabot **#259** / **CVE-2026-84939** (FreeMarker path traversal). Grid runtime unchanged (Docker/CI Selenium **4.49.0**; modern `selenium-grid` / `selenium-server` deps retained).
+- **npm (frontend)**: Next **16.3.7**, React **19.3.0**, `eslint-config-next` **16.3.7**, axios **^1.20.0**, `@tanstack/react-query` **^5.104.0**, Vite **^8.3.1**; overrides **`undici` ^7.30.0**, **`brace-expansion` ^5.0.12**. Clears Dependabot **#268–#275**. Verified `npm test -- --run` (98 tests) and `next build`.
+- **npm (playwright)**: `@playwright/test` **^1.63.0**; overrides **`csv-parse` ^7.0.3**, **`brace-expansion` ^5.0.12**; **`js-yaml` pinned 5.2.2** for Artillery compatibility. Clears Dependabot **#250**. Verified `npm audit` clean and Playwright test listing.
+- **Docs**: VERSION_TRACKING / VERSION_MONITORING / SECURITY / README / docs README / SELENIUM_GRID.md updated.
 
 ### 2026-08-13 (Dependabot #241 httpcore5)
 - **Maven**: Bumped Apache HttpClient 5 **5.6.1 → 5.6.3** and pinned Apache HttpCore 5 (`httpcore5` / `httpcore5-h2`) to **5.4.3** in `dependencyManagement`. Clears Dependabot **#241** / CVE-2026-54399 (HTTP/1 header parsing memory-exhaustion DoS). `httpclient5` 5.6.1 resolved `httpcore5` **5.4**, which is still in the vulnerable range (`< 5.4.3`).
@@ -443,10 +472,10 @@ Entries are newest-first.
 - **Docs**: VERSION_TRACKING / README / SECURITY / monitoring / worklog refreshed for the majors above. Hibernate 7.x left for a later pass.
 
 ### 2026-07-19 (safe stable bump + mobile tearDown fix)
-- **Maven**: Selenium/Selenide **4.46.0 / 7.17.0**; Jackson 3 **3.2.1**; Netty **4.2.16.Final**; Log4j **2.26.1**; Logback **1.5.38**; Cucumber **7.34.4**; REST Assured **6.0.1**; Gatling **3.15.1**; JUnit **6.1.2**; Allure Java **2.35.3**; Checkstyle **13.8.0**; SpotBugs **4.10.3** (+ plugin **4.10.3.0**); OpenTelemetry **1.64.0**; PostgreSQL JDBC **42.7.13**; htmlunit3-driver **4.46.0**; Surefire **3.5.6**; Compiler plugin **3.15.0**; Secret Manager **2.94.0**; Appium **10.1.1**. Hibernate remains **5.6.15.Final**. Jackson 2.x remains **2.21.5** (2.22.1 available).
+- **Maven**: Selenium/Selenide **4.49.0 / 7.17.0**; Jackson 3 **3.2.1**; Netty **4.2.16.Final**; Log4j **2.26.1**; Logback **1.5.38**; Cucumber **7.34.4**; REST Assured **6.0.1**; Gatling **3.15.1**; JUnit **6.1.2**; Allure Java **2.35.3**; Checkstyle **13.8.0**; SpotBugs **4.10.3** (+ plugin **4.10.3.0**); OpenTelemetry **1.64.0**; PostgreSQL JDBC **42.7.13**; htmlunit3-driver **4.49.0**; Surefire **3.5.6**; Compiler plugin **3.15.0**; Secret Manager **2.94.0**; Appium **10.1.1**. Hibernate remains **5.6.15.Final**. Jackson 2.x remains **2.21.5** (2.22.1 available).
 - **npm**: Next/React **16.2.10 / 19.2.7**; Vite **8.1.5**; Vitest **4.1.10**; axios **1.18.1**; Cypress **15.18.1**; Playwright **1.61.1**; Vibium **26.5.31**; Artillery **2.0.33**; related overrides (`qs`, `fast-xml-parser`).
 - **Python**: FastAPI/uvicorn/ruff/black floors raised; Locust **2.45.0**, requests **2.34.2**.
-- **CI**: `env-fe.yml` default `selenium_version` **4.46.0**.
+- **CI**: `env-fe.yml` default `selenium_version` **4.49.0**.
 - **Tests**: `MobileBrowserTests` uses `ThreadLocal` WebDriver + defensive `quit()` so parallel Surefire methods cannot fail tearDown on a shared/dead Grid session.
 
 - **Follow-up safe bump (same day)**: TypeScript **6.0.3** + `@types/node` **25.9.5** across all Node projects; `@vitejs/plugin-react` **6.0.3**, `jsdom` **29.1.1**, `tsx` **4.23.1**; Jackson 3 **3.2.1**; Surefire **3.5.6**; Compiler plugin **3.15.0**; Secret Manager **2.94.0**; Appium **10.1.1**; Python floors (pydantic/pytest/urllib3/werkzeug); matplotlib **3.11.1**, pandas **3.0.3**; pyproject numpy **2.5.1**, pyright **1.1.411**.
@@ -619,7 +648,7 @@ Entries are newest-first.
 
 ## 📝 Notes
 
-- **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at 4.46.0.
+- **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at **4.49.0** (`env-fe.yml` default).
   - **Validation**: Currently validated via scheduled workflow and manual script execution
   - **✅ Implemented**: Pre-push hook validation catches mismatches before code is pushed (see [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md))
 - **TypeScript Updates**: Consider updating all projects together for consistency.
@@ -642,8 +671,8 @@ Entries are newest-first.
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-08-13
-- **Next Review**: 2026-09-01 (recommended)
+- **Last Updated**: 2026-09-29
+- **Next Review**: 2026-10-01 (recommended)
 - **Maintainer**: Development Team
 
 **Remember**: This is a living document. Update it regularly to keep version information current!

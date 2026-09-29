@@ -1,6 +1,6 @@
 # 🔐 Security Standards & Practices
 
-**Last Updated**: 2026-08-13  
+**Last Updated**: 2026-09-29  
 **Status**: Living Document - Actively Maintained  
 **Purpose**: Comprehensive security standards and practices for the CJS QA Automation Framework
 
@@ -171,7 +171,7 @@ Most CI/CD pipelines include:
 - **Weekly schedule** - All ecosystems checked weekly (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
 - **Auto-merge for security updates** - Security patches automatically merged after CI/CD passes
 - **Monthly dependency audits** - Comprehensive review on first day of each month
-- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including Jackson **3.2.1** / 2.x **2.22.1**, Vite **8.1.5**, TypeScript **6.0.3**, Hibernate **6.6.54.Final**, Selenium **4.46.0**, Next **16.2.11**, JSoup **1.23.1**, Allure2 Java **2.35.3**, HttpClient 5 **5.6.3** / HttpCore 5 **5.4.3**, npm overrides for brace-expansion / postcss / js-yaml / sharp / nanoid / @babel/core; Dockerfile **npm@11**)
+- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including Jackson **3.2.2** / 2.x **2.22.2**, Vite **8.3.1**, TypeScript **6.0.3**, Hibernate **6.6.54.Final**, Selenium **4.49.0**, Selenide **7.18.2**, Next **16.3.7**, Playwright **1.63.0**, Cypress **15.21.1**, Vibium **26.8.21**, JSoup **1.23.2**, Allure2 Java **2.35.3**, HttpClient 5 **5.6.3** / HttpCore 5 **5.4.3**, removal of legacy Grid 1.x JARs (FreeMarker **#259**), npm overrides for undici / csv-parse / brace-expansion **5.0.12** / postcss / js-yaml / sharp / nanoid / @babel/core; Dockerfile **npm@11**)
 
 #### Code Security Scanning
 - **CodeQL Analysis** - Automated security scanning for Java, JavaScript/TypeScript, and Python
@@ -438,6 +438,6 @@ This project maintains security standards that **exceed industry best practices*
 
 ---
 
-**Last Updated**: 2026-08-13  
+**Last Updated**: 2026-09-29  
 **Maintained By**: CJS QA Team  
 **Status**: Living Document - Regularly Updated

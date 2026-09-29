@@ -1,12 +1,12 @@
 # Docker Compose for Production Environment
 # Usage: docker-compose -f docker-compose.prod.yml up
+# Selenium images pinned to 4.49.0 (matches pom.xml / env-fe.yml); multi-arch official images.
 
 services:
   # Selenium Hub
   selenium-hub:
-    image: seleniarm/hub:latest
+    image: selenium/hub:4.49.0
     container_name: selenium-hub-prod
-    platform: linux/arm64
     ports:
       - "4444:4444"
     environment:
@@ -31,8 +31,7 @@ services:
 
   # Chrome nodes - 4 instances for production
   chrome-node:
-    image: seleniarm/node-chromium:latest
-    platform: linux/arm64
+    image: selenium/node-chrome:4.49.0
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -75,8 +74,7 @@ services:
 
   # Firefox nodes - 2 instances
   firefox-node:
-    image: seleniarm/node-firefox:latest
-    platform: linux/arm64
+    image: selenium/node-firefox:4.49.0
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -121,7 +119,6 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus-prod
-    platform: linux/arm64
     ports:
       - "9090:9090"
     volumes:
@@ -144,7 +141,6 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana-prod
-    platform: linux/arm64
     ports:
       - "3000:3000"
     environment:

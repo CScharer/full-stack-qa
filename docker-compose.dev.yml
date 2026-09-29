@@ -1,12 +1,12 @@
 # Docker Compose for Development Environment
 # Usage: docker-compose -f docker-compose.dev.yml up
+# Selenium images pinned to 4.49.0 (matches pom.xml / env-fe.yml); multi-arch official images.
 
 services:
   # Selenium Hub
   selenium-hub:
-    image: seleniarm/hub:latest
+    image: selenium/hub:4.49.0
     container_name: selenium-hub-dev
-    platform: linux/arm64
     ports:
       - "4444:4444"
       - "4442:4442"
@@ -26,9 +26,8 @@ services:
 
   # Single Chrome node for dev
   chrome-node:
-    image: seleniarm/node-chromium:latest
+    image: selenium/node-chrome:4.49.0
     container_name: chrome-node-dev
-    platform: linux/arm64
     depends_on:
       selenium-hub:
         condition: service_healthy

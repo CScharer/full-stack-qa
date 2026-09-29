@@ -1,13 +1,13 @@
 # CJS QA Automation Framework(s) - Docker Compose
 # Selenium Grid setup with Chrome, Firefox, and Edge nodes
-# Note: Uses seleniarm images for Apple Silicon (M1/M2/M3) compatibility
+# Images pinned to selenium/*:4.49.0 (matches pom.xml / env-fe.yml). Official images are
+# multi-arch (amd64 + arm64) for hub/chrome/firefox — no seleniarm:latest required.
 
 services:
   # Selenium Hub - Central point for test execution
   selenium-hub:
-    image: seleniarm/hub:latest
+    image: selenium/hub:4.49.0
     container_name: selenium-hub
-    platform: linux/arm64
     ports:
       - "4444:4444"      # Selenium Grid UI
       - "4442:4442"      # Event bus publish port
@@ -28,9 +28,8 @@ services:
 
   # Chrome Node - 2 instances for parallel execution
   chrome-node-1:
-    image: seleniarm/node-chromium:latest
+    image: selenium/node-chrome:4.49.0
     container_name: chrome-node-1
-    platform: linux/arm64
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -66,9 +65,8 @@ services:
       retries: 5
 
   chrome-node-2:
-    image: seleniarm/node-chromium:latest
+    image: selenium/node-chrome:4.49.0
     container_name: chrome-node-2
-    platform: linux/arm64
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -95,9 +93,8 @@ services:
 
   # Firefox Node - Disabled until framework changes are complete
   # firefox-node:
-  #   image: seleniarm/node-firefox:latest
+  #   image: selenium/node-firefox:4.49.0
   #   container_name: firefox-node
-  #   platform: linux/arm64
   #   depends_on:
   #     selenium-hub:
   #       condition: service_healthy
@@ -122,11 +119,11 @@ services:
   #     timeout: 5s
   #     retries: 5
 
-  # Edge Node (Note: Not available for ARM, using Chromium instead)
+  # Edge Node — selenium/node-edge:4.49.0 is amd64-only; use Chrome as a local stand-in on ARM.
+  # On amd64 CI, env-fe.yml uses selenium/node-edge:${selenium_version}.
   edge-node:
-    image: seleniarm/node-chromium:latest
+    image: selenium/node-chrome:4.49.0
     container_name: edge-node
-    platform: linux/arm64
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -204,7 +201,6 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
-    platform: linux/arm64
     ports:
       - "9090:9090"
     volumes:
@@ -223,7 +219,6 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
-    platform: linux/arm64
     ports:
       - "3000:3000"
     environment:
