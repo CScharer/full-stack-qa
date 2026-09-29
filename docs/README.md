@@ -100,6 +100,7 @@ This directory contains all project documentation and analysis reports for the C
 - ✅ **Dependabot #241 (`httpcore5`)** — Pin Apache HttpCore 5 to **5.4.3** and bump HttpClient 5 **5.6.1 → 5.6.3** (CVE-2026-54399). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 
 ### September 29, 2026
+- ✅ **Dependabot #266 (`js-yaml`)** — Playwright override **^5.4.1** (lock **5.4.2**) clears GHSA-r3ph-w7gj-g6xm. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 - ✅ **Dependabot #250 / #259 / #268–#275** — Removed legacy Grid 1.x Maven JARs (FreeMarker **#259**); frontend **`undici` ^7.30.0** (#268–#275); Playwright **`csv-parse` ^7.0.3** (#250); **`brace-expansion` ^5.0.12**; stable bumps (Next **16.3.7**, React **19.3.0**, Playwright **1.63.0**, Vite **8.3.1**). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md) and [SELENIUM_GRID.md](guides/infrastructure/SELENIUM_GRID.md).
 - ✅ **Comprehensive stable refresh** — Selenium/Selenide **4.49.0 / 7.18.2**, Grid CI default **4.49.0**, JSoup **1.23.2**, Netty **4.2.18**, WebDriverManager **6.4.0**, Cypress **15.21.1**, Vibium **26.8.21**, frontend ESLint **10.11** / `@types/node` **26.6.3** / sharp **0.35.5**, `qs` **6.16.0** override (Cypress). Local compose pinned to **`selenium/*:4.49.0`** (replaces `seleniarm:latest`). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 
