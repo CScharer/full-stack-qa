@@ -30,7 +30,7 @@
 [![UI Frameworks](https://img.shields.io/badge/UI%20Frameworks-Cypress%20%7C%20Playwright%20%7C%20Robot%20%7C%20Selenide%20%7C%20Selenium-yellow.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 
 [![Cypress](https://img.shields.io/badge/Cypress-15.21.1-blue.svg)](https://www.cypress.io)
-[![Playwright](https://img.shields.io/badge/Playwright-1.63.0-blue.svg)](https://playwright.dev/)
+[![Playwright](https://img.shields.io/badge/Playwright-1.64.1-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
 [![Selenide](https://img.shields.io/badge/Selenide-7.18.2-blue.svg)](https://selenide.org/)
 [![Selenium](https://img.shields.io/badge/Selenium-4.49.0-blue.svg)](https://www.selenium.dev/)
@@ -122,7 +122,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
 - **TypeScript 6.0.3** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
 - **Selenium 4.49.0** - Modern WebDriver API with Grid support
-- **Playwright 1.63.0** - Fast and reliable end-to-end testing
+- **Playwright 1.64.1** - Fast and reliable end-to-end testing
 - **Cypress 15.21.1** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
 - **REST Assured 6.0.1** - REST API testing & validation
@@ -135,6 +135,9 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.4** - Automatic driver management
+
+### Recent Improvements (October 14, 2026)
+- ✅ **Playwright 1.64.1** — `@playwright/test` **^1.63.0 → ^1.64.1**. Dependabot **#291** (`http-cache-semantics` **4.3.0**) and **#300** (`source-map-js` **1.2.2**). See `docs/process/VERSION_TRACKING.md`.
 
 ### Recent Improvements (August 13, 2026)
 - ✅ **Dependabot #241 (`httpcore5`)** — Pin Apache HttpCore 5 to **5.4.3** and bump HttpClient 5 **5.6.1 → 5.6.3** for CVE-2026-54399. See `docs/process/VERSION_TRACKING.md`.
@@ -1218,7 +1221,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | **PDF** | PDFBox | 3.0.7 |
 | **Security** | Google Cloud Secret Manager | 2.94.0 |
 | **Driver Management** | WebDriverManager | 6.3.4 |
-| **UI Testing** | Playwright (TS) | 1.63.0 |
+| **UI Testing** | Playwright (TS) | 1.64.1 |
 | **UI Testing** | Cypress (TS) | 15.21.1 |
 | **UI Testing** | Robot Framework | 2.1.0 |
 | **Database** | H2, SQLite, MSSQL | Various |

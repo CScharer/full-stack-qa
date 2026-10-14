@@ -196,7 +196,7 @@ As of **2026-09-29** (after comprehensive stable refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Playwright | ^1.63.0 | 1.63.0 | [✅] | 2026-09-29 | Bumped for current stable; lock resolves **1.63.x** |
+| Playwright | ^1.64.1 | 1.64.1 | [✅] | 2026-10-14 | Current stable; lock resolves **1.64.1**. Artillery still vendors **1.62.1** |
 | Artillery | ^2.0.34 | 2.0.34 | [✅] | 2026-09-29 | Current stable on npm |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | csv-parse (override) | ^7.0.3 | 7.0.3 | [✅] | 2026-09-29 | Clears Dependabot **#250** / CVE-2026-85063 (Artillery still declares ^4.x) |
@@ -439,6 +439,12 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 Entries are newest-first.
+
+### 2026-10-14 (Playwright 1.64.1 + Dependabot #291 / #300)
+- **npm (playwright)**: `@playwright/test` **^1.63.0 → ^1.64.1** (lock **1.64.1**). Artillery still vendors `@playwright/test` **1.62.1**.
+- **npm (playwright)**: transitive `http-cache-semantics` **4.2.0 → 4.3.0** (`got` → `cacheable-request`). Clears Dependabot **#291** / CVE-2026-93748 (advisory range `<= 4.2.0`).
+- **npm (frontend)**: transitive `source-map-js` **1.2.1 → 1.2.2** (PostCSS, css-tree, magicast). Clears Dependabot **#300** / CVE-2026-93749 (patched in **1.2.2**).
+- **Docs**: VERSION_TRACKING / VERSION_MONITORING / SECURITY / README / docs README refreshed for Playwright **1.64.1**.
 
 ### 2026-09-29 (Dependabot #266 js-yaml)
 - **npm (playwright)**: Raised `js-yaml` override **5.2.2 → ^5.4.1** (lock **5.4.2**) to clear Dependabot **#266** / GHSA-r3ph-w7gj-g6xm (`maxTotalMergeKeys` CPU DoS). Prior exact **5.2.2** pin was a mistaken Artillery workaround; Artillery’s `import YAML from 'js-yaml'` fails the same way on 5.2.x and 5.4.x under modern Node ESM.
