@@ -1,1 +1,1 @@
-{"id":"34ee9e8f8b00b957b99fbc7caf7277d1","fullName":"Cypress.['Wizard Tests', 'test_notes - Click Notes Navigation, verify there are no notes']","name":"Wizard Tests [DEV]","status":"passed","testResultsByEnv":{"default":"71e8dc6eb92a169177492191f376c8c3"}}
+{"id":"34ee9e8f8b00b957b99fbc7caf7277d1","fullName":"Cypress.['Wizard Tests', 'test_notes - Click Notes Navigation, verify there are no notes']","name":"Wizard Tests [PROD]","status":"passed","testResultsByEnv":{"default":"861906a84caa113008bdb3aa8746436f"}}
