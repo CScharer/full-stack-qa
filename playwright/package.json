@@ -20,7 +20,7 @@
     "load:test:applications": "artillery run artillery/scenarios/applications-flow.yml"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.3",
     "typescript": "^6.0.3",
     "artillery": "^2.0.34"

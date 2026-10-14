@@ -6,6 +6,7 @@ This directory contains Playwright end-to-end tests written in TypeScript for th
 
 - Node.js >= 20.0.0
 - npm >= 9.0.0
+- Playwright (`@playwright/test`) **1.64.1**
 
 ## Installation
 

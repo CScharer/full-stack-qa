@@ -94,7 +94,10 @@ This directory contains all project documentation and analysis reports for the C
 
 ## 📈 Document History
 
-**Last Updated**: September 29, 2026
+**Last Updated**: October 14, 2026
+
+### October 14, 2026
+- ✅ **Playwright 1.64.1** — `@playwright/test` **^1.63.0 → ^1.64.1**. Dependabot **#291** (`http-cache-semantics` **4.3.0** in playwright) and **#300** (`source-map-js` **1.2.2** in frontend). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 
 ### August 13, 2026
 - ✅ **Dependabot #241 (`httpcore5`)** — Pin Apache HttpCore 5 to **5.4.3** and bump HttpClient 5 **5.6.1 → 5.6.3** (CVE-2026-54399). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
