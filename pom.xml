@@ -71,7 +71,7 @@ Java, Cucumber/Gherkin, APIs and Selenium.</description>
 		<prettier-maven-plugin.version>0.22</prettier-maven-plugin.version>
 		<prettier-java.version>2.7.4</prettier-java.version>
 		<gson.version>2.13.2</gson.version>
-		<guava.version>33.5.0-jre</guava.version>
+		<guava.version>33.7.1-jre</guava.version>
 		<hsqldb.version>2.7.4</hsqldb.version>
 		<htmlunit.version>4.21.0</htmlunit.version>
 		<htmlunit-driver.version>4.48.0</htmlunit-driver.version>
