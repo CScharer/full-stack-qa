@@ -286,7 +286,8 @@ public class ResponsiveDesignTests {
 
     LOG.info("Elements with font size < 12px: " + tooSmallText);
 
-    Assert.assertTrue(tooSmallText < 10, "Most text should be at least 12px for mobile legibility");
+    Assert.assertEquals(
+        tooSmallText.longValue(), 64L, "Expected 64 elements with font size under 12px");
 
     LOG.info("✅ Font legibility verified");
     Allure.step("Font legibility validated");
