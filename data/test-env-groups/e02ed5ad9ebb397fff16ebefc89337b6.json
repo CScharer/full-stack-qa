@@ -1,1 +1,1 @@
-{"id":"e02ed5ad9ebb397fff16ebefc89337b6","fullName":"Cypress.['Wizard Tests', 'test_companies - Click Companies Navigation, Add button, populate all fields, then Cancel']","name":"Wizard Tests [PROD]","status":"passed","testResultsByEnv":{"default":"9cc53ed48bb39bc81c552e5763079668"}}
+{"id":"e02ed5ad9ebb397fff16ebefc89337b6","fullName":"Cypress.['Wizard Tests', 'test_companies - Click Companies Navigation, Add button, populate all fields, then Cancel']","name":"Wizard Tests [DEV]","status":"passed","testResultsByEnv":{"default":"0fed25402ef99d7a47084daeb8d71a49"}}
