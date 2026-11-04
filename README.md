@@ -18,7 +18,7 @@
 
 [![JUnit](https://img.shields.io/badge/JUnit-6.1.2-blue.svg?style=flat)](https://junit.org/junit5/)
 [![TestNG](https://img.shields.io/badge/TestNG-7.11.0-blue.svg)](https://testng.org/)
-[![Vitest](https://img.shields.io/badge/Vitest-4.1.10-blue.svg)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.1.12-blue.svg)](https://vitest.dev/)
 
 [![Performance](https://img.shields.io/badge/Performance-Artillery%20%7C%20Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
@@ -135,6 +135,9 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.4** - Automatic driver management
+
+### Recent Improvements (November 4, 2026)
+- ✅ **Dependabot security refresh** — Guava **33.7.2-jre**, OpenTelemetry **1.67.0**, frontend Vitest **4.1.12** + **`undici` ^7.30.1**, Cypress **`qs` 6.16.1**. Clears **#315** / **#317** / **#320** / **#328** / **#330–#333** / **#342** / **#343**. See `docs/process/VERSION_TRACKING.md`.
 
 ### Recent Improvements (October 14, 2026)
 - ✅ **Playwright 1.64.1** — `@playwright/test` **^1.63.0 → ^1.64.1**. Dependabot **#291** (`http-cache-semantics` **4.3.0**) and **#300** (`source-map-js` **1.2.2**). See `docs/process/VERSION_TRACKING.md`.
@@ -1211,7 +1214,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 | **BDD** | Cucumber | 7.34.4 |
 | **Testing** | JUnit | 6.1.2 |
 | **Testing** | TestNG | 7.11.0 |
-| **Testing** | Vitest | 4.1.10 |
+| **Testing** | Vitest | 4.1.12 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
 | **HTTP** | Apache HttpClient 5 / HttpCore 5 | 5.6.3 / 5.4.3 |
