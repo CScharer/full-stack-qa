@@ -33,17 +33,8 @@
     "nanoid": "^3.3.17",
     "postcss": "^8.5.28",
     "uuid": "^14.0.0",
-    "minimatch": "9.0.7",
+    "minimatch": "^11.0.1",
     "js-yaml": "^5.4.1",
-    "glob": {
-      "minimatch": "3.1.4"
-    },
-    "filelist": {
-      "minimatch": "5.1.8"
-    },
-    "matcher-collection": {
-      "minimatch": "3.1.4"
-    },
     "form-data": "^4.0.6",
     "csv-parse": "^7.0.3"
   },

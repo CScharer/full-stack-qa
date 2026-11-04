@@ -210,7 +210,7 @@ As of **2026-11-04** (after Dependabot security refresh):
 | postcss (override) | ^8.5.18 | 8.5.28 | [✅] | 2026-09-29 | Security override (aligned with frontend floor) |
 | uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #176 |
-| minimatch (overrides) | 9.0.7 / 5.1.8 / 3.1.4 | 9.0.7 | [✅] | 2026-02-13 | Per-parent overrides |
+| minimatch (override) | ^11.0.1 | 11.0.4 | [✅] | 2026-11-04 | Clears Dependabot **#346** / GHSA-g3hv-75wg-m249 (lock **11.0.4**) |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
 <!-- prettier-ignore-end -->
@@ -255,6 +255,7 @@ As of **2026-11-04** (after Dependabot security refresh):
 | vitest | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Latest **4.x**; clears Dependabot **#315** / **#317**; Vitest **5.x** deferred |
 | ajv (override) | >=6.14.0 | 8.18.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); lock resolves ajv 8.x from eslint |
 | undici (override) | ^7.30.1 | 7.30.1 | [✅] | 2026-11-04 | jsdom transitive; **7.x only** (8.x breaks jsdom 29); clears Dependabot **#328** / **#330–#333** |
+| minimatch (override) | ^11.0.1 | 11.0.4 | [✅] | 2026-11-04 | Clears Dependabot **#345** / GHSA-g3hv-75wg-m249 (lock **11.0.4**) |
 | brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override (GHSA-rgw5-rvv9-x895) |
 | @babel/core (override) | ^8.0.1 | 8.0.1 | [✅] | 2026-07-19 | Major bump from 7.x (Dependabot #171 line) |
 | flatted (override) | >=3.4.2 | 3.4.2 | [✅] | 2026-07-19 | Security override |
@@ -368,7 +369,7 @@ Vulnerability counts change as Dependabot rescans and PRs are merged. Check the 
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-11-04** refresh: Guava **33.7.2-jre** (#342), OpenTelemetry **1.67.0** (#343), frontend Vitest **4.1.12** (#315 / #317), `undici` **^7.30.1** (#328 / #330–#333), Cypress `qs` **6.16.1** (#320). Earlier: removed legacy **`selenium-grid-hub` / `selenium-grid-core`** (**1.0.5**) for FreeMarker **#259**; Playwright `csv-parse` **^7.0.3** (#250); `brace-expansion` **^5.0.12**.
+After the **2026-11-04** `minimatch` refresh: frontend + playwright override **`^11.0.1`** (lock **11.0.4**) clears Dependabot **#345** / **#346** / GHSA-g3hv-75wg-m249. Earlier same-day: Guava **33.7.2-jre** (#342), OpenTelemetry **1.67.0** (#343), Vitest **4.1.12** (#315 / #317), `undici` **^7.30.1** (#328 / #330–#333), Cypress `qs` **6.16.1** (#320); legacy Grid 1.x JARs removed (#259); Playwright `csv-parse` **^7.0.3** (#250); `brace-expansion` **^5.0.12**.
 
 Earlier fixes still relevant: HttpCore 5 **5.4.3** (#241), `nanoid` (#238), brace-expansion/postcss/sharp/js-yaml (#208–#224), Hibernate 6.6 (#93), Next security line (#210–#221), Jackson 3 (#78), Vite (#80–#84), minimatch #35–#37, qs #13, lodash / socket.io-parser overrides, black #40.
 
@@ -441,6 +442,10 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 Entries are newest-first.
+
+### 2026-11-04 (Dependabot #345 / #346 minimatch)
+- **npm (frontend + playwright)**: Raised `minimatch` override to **`^11.0.1`** (lock **11.0.4**) for GHSA-g3hv-75wg-m249 / CVE-2026-118764 (globparts amplification DoS; advisory range `< 11.0.1`). Replaced Playwright’s older per-parent pins (**9.0.7** / **5.1.8** / **3.1.4**) with the single floor. Clears Dependabot **#345** / **#346**.
+- **Docs**: VERSION_TRACKING / VERSION_MONITORING / SECURITY / README / docs README refreshed.
 
 ### 2026-11-04 (Dependabot #315 / #317 / #320 / #328 / #330–#333 / #342 / #343)
 - **Maven**: Guava **33.7.1-jre → 33.7.2-jre** (Dependabot **#342**); OpenTelemetry BOM **1.64.0 → 1.67.0** (Dependabot **#343**).
