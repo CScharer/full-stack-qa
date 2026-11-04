@@ -75,13 +75,13 @@ When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`,
 
 ### Known available updates
 
-As of **2026-09-29** (after comprehensive stable refresh):
+As of **2026-11-04** (after Dependabot security refresh):
 
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
 | -- | -- | -- | -- |
 | TypeScript | 6.0.3 | 7.0.2 | TS 7 deferred — Next 16 / eslint-config-next |
-| Vitest | 4.1.11 | 5.0.2 | Vitest **5.x** deferred until toolchain validated |
+| Vitest | 4.1.12 | 5.0.2 | Vitest **5.x** deferred until toolchain validated |
 | Cypress | ^15.21.1 | 15.21.1 | **16.x** major (16.1.1) deferred |
 | @testing-library/jest-dom | 6.9.1 | 7.0.1 | Major deferred |
 | Hibernate | 6.6.54.Final | 7.4.5.Final | Hibernate **7.x** deferred |
@@ -162,6 +162,8 @@ As of **2026-09-29** (after comprehensive stable refresh):
 | HtmlUnit | 4.21.0 | 4.21.0 | [✅] | 2026-08-08 | `htmlunit.version`; driver `htmlunit3-driver` **4.48.0** |
 | Appium Java Client | 10.1.1 | 10.1.1 | [✅] | 2026-07-19 | `appium.version` |
 | Google Cloud Secret Manager | 2.94.0 | 2.94.0 | [✅] | 2026-07-19 | Current stable |
+| Guava | 33.7.2-jre | 33.8.0-jre | [✅] | 2026-11-04 | Clears Dependabot **#342**; **33.8.0** optional minor |
+| OpenTelemetry | 1.67.0 | 1.67.0 | [✅] | 2026-11-04 | `opentelemetry.version` BOM; clears Dependabot **#343** |
 | ByteBuddy | 1.18.8 | 1.18.8 | [✅] | 2026-04-06 | Current stable |
 | Cucumber Reporting | 5.10.2 | 5.10.2 | [✅] | 2026-01-16 | Updated from 5.10.1 (Item 5.2) |
 <!-- prettier-ignore-end -->
@@ -184,7 +186,7 @@ As of **2026-09-29** (after comprehensive stable refresh):
 | Cypress | ^15.21.1 | 15.21.1 | [✅] | 2026-09-29 | Current **15.x**; **16.x** major deferred |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
-| qs (override) | 6.16.0 | 6.16.0 | [✅] | 2026-09-29 | Security override (GHSA-4mjr-xmp4-gh2g / GHSA-x5fp-wj9c-mxmx) |
+| qs (override) | 6.16.1 | 6.16.1 | [✅] | 2026-11-04 | Security override; clears Dependabot **#320** |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #170 |
 | uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
@@ -219,7 +221,7 @@ As of **2026-09-29** (after comprehensive stable refresh):
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
 | Vibium | ^26.8.21 | 26.8.21 | [✅] | 2026-09-29 | Current stable |
-| Vitest | ^4.1.10 | 4.1.11 | [✅] | 2026-09-29 | Latest Vitest **4.x** |
+| Vitest | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Latest Vitest **4.x** |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
 | @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
 | nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
@@ -248,11 +250,11 @@ As of **2026-09-29** (after comprehensive stable refresh):
 | @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable across Node projects |
 | Vite | ^8.3.1 | 8.3.1 | [✅] | 2026-09-29 | Current stable 8.x |
 | @vitejs/plugin-react | ^6.0.3 | 6.0.3 | [✅] | 2026-07-19 | Current stable |
-| @vitest/coverage-v8 | ^4.1.10 | 4.1.11 | [✅] | 2026-09-29 | Aligned with vitest **4.1.11** floor |
-| @vitest/ui | ^4.1.10 | 4.1.11 | [✅] | 2026-09-29 | Aligned with vitest **4.1.11** floor |
-| vitest | ^4.1.11 | 4.1.11 | [✅] | 2026-09-29 | Latest **4.x**; Vitest **5.x** deferred (see Known available updates) |
+| @vitest/coverage-v8 | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Aligned with vitest **4.1.12** floor |
+| @vitest/ui | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Aligned with vitest **4.1.12** floor |
+| vitest | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Latest **4.x**; clears Dependabot **#315** / **#317**; Vitest **5.x** deferred |
 | ajv (override) | >=6.14.0 | 8.18.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); lock resolves ajv 8.x from eslint |
-| undici (override) | ^7.30.0 | 7.30.0 | [✅] | 2026-09-29 | jsdom transitive; **7.x only** (8.x breaks jsdom 29); clears Dependabot **#268–#275** |
+| undici (override) | ^7.30.1 | 7.30.1 | [✅] | 2026-11-04 | jsdom transitive; **7.x only** (8.x breaks jsdom 29); clears Dependabot **#328** / **#330–#333** |
 | brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override (GHSA-rgw5-rvv9-x895) |
 | @babel/core (override) | ^8.0.1 | 8.0.1 | [✅] | 2026-07-19 | Major bump from 7.x (Dependabot #171 line) |
 | flatted (override) | >=3.4.2 | 3.4.2 | [✅] | 2026-07-19 | Security override |
@@ -360,13 +362,13 @@ As of **2026-09-29** (after comprehensive stable refresh):
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-09-29)
+### Current Status (as of 2026-11-04)
 
 Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-09-29** refresh: removed legacy **`selenium-grid-hub` / `selenium-grid-core`** (**1.0.5**) from `pom.xml` to clear Dependabot **#259** (FreeMarker **CVE-2026-84939**); frontend `undici` override **`^7.30.0`** (jsdom transitive) clears **#268–#275**; Playwright `csv-parse` override **`^7.0.3`** clears **#250**; `brace-expansion` **`^5.0.12`** in frontend/playwright addresses **GHSA-rgw5-rvv9-x895**. Local `npm audit` reports **0** vulnerabilities in **frontend** and **playwright** after lockfile regeneration.
+After the **2026-11-04** refresh: Guava **33.7.2-jre** (#342), OpenTelemetry **1.67.0** (#343), frontend Vitest **4.1.12** (#315 / #317), `undici` **^7.30.1** (#328 / #330–#333), Cypress `qs` **6.16.1** (#320). Earlier: removed legacy **`selenium-grid-hub` / `selenium-grid-core`** (**1.0.5**) for FreeMarker **#259**; Playwright `csv-parse` **^7.0.3** (#250); `brace-expansion` **^5.0.12**.
 
 Earlier fixes still relevant: HttpCore 5 **5.4.3** (#241), `nanoid` (#238), brace-expansion/postcss/sharp/js-yaml (#208–#224), Hibernate 6.6 (#93), Next security line (#210–#221), Jackson 3 (#78), Vite (#80–#84), minimatch #35–#37, qs #13, lodash / socket.io-parser overrides, black #40.
 
@@ -420,7 +422,7 @@ Apply `brace-expansion` in **frontend** and **playwright**; add `socket.io-parse
 ```json
 {
   "overrides": {
-    "undici": "^7.30.0",
+    "undici": "^7.30.1",
     "csv-parse": "^7.0.3"
   }
 }
@@ -439,6 +441,12 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 Entries are newest-first.
+
+### 2026-11-04 (Dependabot #315 / #317 / #320 / #328 / #330–#333 / #342 / #343)
+- **Maven**: Guava **33.7.1-jre → 33.7.2-jre** (Dependabot **#342**); OpenTelemetry BOM **1.64.0 → 1.67.0** (Dependabot **#343**).
+- **npm (frontend)**: Vitest / `@vitest/*` **^4.1.11 → ^4.1.12** (clears **#315** / **#317**); `undici` override **^7.30.0 → ^7.30.1** (clears **#328** / **#330–#333**). Stay on **undici 7.x** (8.x breaks jsdom 29).
+- **npm (cypress)**: `qs` override **6.16.0 → 6.16.1** (clears **#320**).
+- **Docs**: VERSION_TRACKING / VERSION_MONITORING / SECURITY / README / docs README refreshed for the pins above.
 
 ### 2026-10-14 (Playwright 1.64.1 + Dependabot #291 / #300)
 - **npm (playwright)**: `@playwright/test` **^1.63.0 → ^1.64.1** (lock **1.64.1**). Artillery still vendors `@playwright/test` **1.62.1**.
