@@ -1401,6 +1401,10 @@ jobs:
             echo "❌ ERROR: History download from GitHub Pages failed"
             exit 1
           fi
+        env:
+          # Authenticated API calls avoid the unauthenticated 60 req/hour IP rate limit
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Verify History Download
         if: always() && github.ref == 'refs/heads/main'
