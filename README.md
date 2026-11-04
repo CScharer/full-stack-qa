@@ -137,6 +137,7 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **WebDriverManager 6.3.4** - Automatic driver management
 
 ### Recent Improvements (November 4, 2026)
+- ✅ **Dependabot #345 / #346 (`minimatch`)** — Override **`^11.0.1`** (lock **11.0.4**) in frontend and playwright for GHSA-g3hv-75wg-m249. See `docs/process/VERSION_TRACKING.md`.
 - ✅ **Dependabot security refresh** — Guava **33.7.2-jre**, OpenTelemetry **1.67.0**, frontend Vitest **4.1.12** + **`undici` ^7.30.1**, Cypress **`qs` 6.16.1**. Clears **#315** / **#317** / **#320** / **#328** / **#330–#333** / **#342** / **#343**. See `docs/process/VERSION_TRACKING.md`.
 
 ### Recent Improvements (October 14, 2026)
