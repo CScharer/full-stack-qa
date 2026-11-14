@@ -58,9 +58,9 @@ All dependency ecosystems are now managed via **Dependabot**:
 
 ### Last Review Dates
 - **Initial Creation**: 2025-12-20
-- **Last Review**: 2026-09-29 (Dependabot #250/#259/#268–#275 security fixes; frontend/playwright stable bumps; legacy Grid 1.x JARs removed from `pom.xml`)
-- **Latest Stable Versions Check**: 2026-09-29 (registry check after security refresh)
-- **Next Review**: 2026-10-01 (recommended)
+- **Last Review**: 2026-11-14 (comprehensive stable refresh across Maven/npm/Python/Docker/CI)
+- **Latest Stable Versions Check**: 2026-11-14 (Maven Central + npm + PyPI)
+- **Next Review**: 2026-12-01 (recommended)
 
 ### Stable vs. latest
 
@@ -75,17 +75,27 @@ When in doubt, run `npm outdated`, `./mvnw versions:display-dependency-updates`,
 
 ### Known available updates
 
-As of **2026-11-04** (after Dependabot security refresh):
+As of **2026-11-14** (after comprehensive stable refresh):
 
 <!-- prettier-ignore-start -->
 | Dependency | Current | Latest available | Notes |
 | -- | -- | -- | -- |
 | TypeScript | 6.0.3 | 7.0.2 | TS 7 deferred — Next 16 / eslint-config-next |
-| Vitest | 4.1.12 | 5.0.2 | Vitest **5.x** deferred until toolchain validated |
-| Cypress | ^15.21.1 | 15.21.1 | **16.x** major (16.1.1) deferred |
-| @testing-library/jest-dom | 6.9.1 | 7.0.1 | Major deferred |
-| Hibernate | 6.6.54.Final | 7.4.5.Final | Hibernate **7.x** deferred |
-| Artillery `js-yaml` | ^5.4.1 (lock **5.4.2**) | 5.4.2 | Clears Dependabot **#266**; Artillery’s `import YAML from 'js-yaml'` remains broken on modern Node ESM (upstream) |
+| Vitest | 4.1.12 | 5.1.0 | Vitest **5.x** deferred until toolchain validated |
+| Cypress | ^15.21.2 | 15.21.2 | **16.x** major (16.3.0) deferred |
+| @testing-library/jest-dom | 6.9.1 | 7.0.1 | Stay on **6.9.1** — **6.10.0** is a broken/deprecated minor; **7.x** deferred |
+| Hibernate | 6.6.59.Final | 7.4.15.Final | Hibernate **7.x** deferred |
+| Cucumber | 7.34.9 | 8.0.4 | Cucumber **8.x** deferred |
+| Checkstyle | 13.11.0 | 14.4.0 | Checkstyle **14.x** deferred |
+| Appium Java Client | 10.1.1 | 11.0.0 | Appium **11.x** deferred |
+| HtmlUnit | 4.21.0 | 5.7.0 | HtmlUnit **5.x** deferred |
+| Apache POI | 5.5.1 | 6.0.0 | POI **6.x** deferred |
+| Spotless | 2.46.1 | 3.11.0 | Spotless **3.x** deferred |
+| Allure Java | 2.35.6 | 3.1.1 | Stay on Allure2 Java with Allure3 CLI |
+| undici (override) | ^7.30.2 | 8.12.4 | **8.x** breaks jsdom 29 |
+| nanoid (override) | ^3.3.20 | 6.0.2 | Keep **3.x** for PostCSS/Next compat |
+| npm (Dockerfile) | 11.x | 12+ | Stay on **npm@11** with Node 20 |
+| DBUnit | 2.8.0 | 3.x | Breaking migration — intentionally pinned |
 <!-- prettier-ignore-end -->
 
 
@@ -104,14 +114,14 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Selenium | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Aligned with `env-fe.yml` Grid images; legacy Grid 1.x JARs removed |
-| Selenide | 7.18.2 | 7.18.2 | [✅] | 2026-09-29 | Current stable |
+| Selenium | 4.52.0 | 4.52.0 | [✅] | 2026-11-14 | Aligned with `env-fe.yml` Grid images; legacy Grid 1.x JARs removed |
+| Selenide | 7.19.1 | 7.19.1 | [✅] | 2026-11-14 | Current stable |
 | TestNG | 7.11.0 | 7.11.0 | [✅] | 2025-12-25 | Current |
-| JUnit | 6.1.2 | 6.1.2 | [✅] | 2026-07-19 | Current stable |
-| Cucumber | 7.34.4 | 7.34.4 | [✅] | 2026-07-19 | Current stable |
-| REST Assured | 6.0.1 | 6.0.1 | [✅] | 2026-07-19 | Requires Java 17+; Jackson **3.2.2** (`tools.jackson.core`) |
+| JUnit | 6.1.3 | 6.1.3 | [✅] | 2026-11-14 | Current stable |
+| Cucumber | 7.34.9 | 7.34.9 | [✅] | 2026-11-14 | Current **7.x**; **8.x** deferred |
+| REST Assured | 6.3.0 | 6.3.0 | [✅] | 2026-11-14 | Requires Java 17+; Jackson **3.3.0** (`tools.jackson.core`) |
 | Allure3 CLI | 3.0.0 | 3.0.0 | [✅] | 2025-12-30 | Active - Allure3 CLI in use (TypeScript-based, npm install) |
-| Allure2 Java | 2.35.3 | 2.35.3 | [✅] | 2026-07-19 | allure-testng, allure-junit5, allure-java-commons |
+| Allure2 Java | 2.35.6 | 2.35.6 | [✅] | 2026-11-14 | allure-testng, allure-junit5, allure-java-commons |
 <!-- prettier-ignore-end -->
 
 ### Build & Tools
@@ -121,11 +131,11 @@ As of **2026-11-04** (after Dependabot security refresh):
 | -- | -- | -- | -- | -- | -- |
 | Maven | 3.9.11 | 3.9.11 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Java | 21 | 21 (LTS) | [✅] | 2025-12-25 | Current LTS version |
-| Maven Compiler Plugin | 3.15.0 | 3.15.0 | [✅] | 2026-07-19 | Current stable version |
-| Maven Surefire Plugin | 3.5.6 | 3.5.6 | [✅] | 2026-07-19 | Current stable |
+| Maven Compiler Plugin | 3.16.0 | 3.16.0 | [✅] | 2026-11-14 | Current stable version |
+| Maven Surefire Plugin | 3.6.1 | 3.6.1 | [✅] | 2026-11-14 | Current stable |
 | Maven Checkstyle Plugin | 3.6.0 | 3.6.0 | [✅] | 2025-12-25 | Current |
-| Checkstyle Tool | 13.8.0 | 13.8.0 | [✅] | 2026-07-19 | Current stable |
-| SpotBugs | 4.10.3 | 4.10.3 | [✅] | 2026-07-19 | Current stable |
+| Checkstyle Tool | 13.11.0 | 13.11.0 | [✅] | 2026-11-14 | Current **13.x**; **14.x** deferred |
+| SpotBugs | 4.10.5 | 4.10.5 | [✅] | 2026-11-14 | Current stable |
 | PMD | 3.28.0 | 3.28.0 | [✅] | 2026-07-19 | maven-pmd-plugin |
 <!-- prettier-ignore-end -->
 
@@ -134,7 +144,7 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Gatling | 3.15.1 | 3.15.1 | [✅] | 2026-07-19 | With gatling-maven-plugin 4.21.5 |
+| Gatling | 3.16.0 | 3.16.0 | [✅] | 2026-11-14 | With gatling-maven-plugin 4.21.12 |
 | JMeter | 5.6.3 | 5.6.3 | [✅] | 2025-12-25 | Current |
 | Scala | 2.13.18 | 2.13.18 | [✅] | 2025-12-19 | Updated in PR #51 - For Gatling |
 <!-- prettier-ignore-end -->
@@ -146,26 +156,26 @@ As of **2026-11-04** (after Dependabot security refresh):
 | -- | -- | -- | -- | -- | -- |
 | WebDriverManager | 6.4.0 | 6.4.0 | [✅] | 2026-09-29 | Current stable |
 | Log4j 2 | 2.26.1 | 2.26.1 | [✅] | 2026-07-19 | `log4j2.version` (2.x Active Maintenance) |
-| Logback Core | 1.5.38 | 1.5.38 | [✅] | 2026-07-19 | Overrides Gatling transitive line |
-| Jackson Databind (3.x) | 3.2.2 | 3.2.2 | [✅] | 2026-09-29 | `jackson.version`; tools.jackson.core jackson-databind |
-| Jackson Core (2.x) | 2.22.2 | 2.22.2 | [✅] | 2026-09-29 | `jackson2.version` |
-| Jackson Databind (2.x) | 2.22.2 | 2.22.2 | [✅] | 2026-09-29 | Explicit com.fasterxml pin |
-| Jackson Annotations | 2.22 | 2.22 | [✅] | 2026-07-19 | 2.x annotations alongside Jackson 3 databind (REST Assured 6) |
-| Netty BOM | 4.2.18.Final | 4.2.18.Final | [✅] | 2026-09-29 | `netty-codec-http.version` / netty-bom import |
-| Hibernate | 6.6.54.Final | 6.6.54.Final | [✅] | 2026-07-19 | `org.hibernate.orm:hibernate-core`; Jakarta Persistence 3.1; clears Dependabot #93 (5.x-only CVE) |
+| Logback Core | 1.6.6 | 1.6.6 | [✅] | 2026-11-14 | Overrides Gatling transitive line |
+| Jackson Databind (3.x) | 3.3.0 | 3.3.0 | [✅] | 2026-11-14 | `jackson.version`; tools.jackson.core jackson-databind |
+| Jackson Core (2.x) | 2.23.0 | 2.23.0 | [✅] | 2026-11-14 | `jackson2.version` |
+| Jackson Databind (2.x) | 2.23.0 | 2.23.0 | [✅] | 2026-11-14 | Explicit com.fasterxml pin |
+| Jackson Annotations | 2.23 | 2.23 | [✅] | 2026-11-14 | 2.x annotations alongside Jackson 3 databind (REST Assured 6) |
+| Netty BOM | 4.2.20.Final | 4.2.20.Final | [✅] | 2026-11-14 | `netty-codec-http.version` / netty-bom import |
+| Hibernate | 6.6.59.Final | 6.6.59.Final | [✅] | 2026-11-14 | `org.hibernate.orm:hibernate-core`; Jakarta Persistence 3.1; **7.x** deferred |
 | Apache POI | 5.5.1 | 5.5.1 | [✅] | 2025-12-19 | Updated in PR #51 |
-| MSSQL JDBC | 13.4.0.jre11 | 13.4.0.jre11 | [✅] | 2026-04-06 | Current stable |
-| PostgreSQL JDBC | 42.7.13 | 42.7.13 | [✅] | 2026-07-19 | Explicit pin in pom.xml |
-| JSoup | 1.23.2 | 1.23.2 | [✅] | 2026-09-29 | Current stable |
-| Apache HttpClient 5 | 5.6.3 | 5.6.3 | [✅] | 2026-08-13 | `httpclient5.version`; WebDriverManager transitive pin |
-| Apache HttpCore 5 | 5.4.3 | 5.4.3 | [✅] | 2026-08-13 | `httpcore5.version`; Dependabot #241 / CVE-2026-54399 |
-| HtmlUnit | 4.21.0 | 4.21.0 | [✅] | 2026-08-08 | `htmlunit.version`; driver `htmlunit3-driver` **4.48.0** |
+| MSSQL JDBC | 13.6.2.jre11 | 13.6.2.jre11 | [✅] | 2026-11-14 | Current **13.x**; **14.x** preview skipped |
+| PostgreSQL JDBC | 42.7.14 | 42.7.14 | [✅] | 2026-11-14 | Explicit pin in pom.xml |
+| JSoup | 1.24.1 | 1.24.1 | [✅] | 2026-11-14 | Current stable |
+| Apache HttpClient 5 | 5.6.5 | 5.6.5 | [✅] | 2026-11-14 | `httpclient5.version`; **5.7** beta skipped |
+| Apache HttpCore 5 | 5.4.4 | 5.4.4 | [✅] | 2026-11-14 | `httpcore5.version`; **5.5** beta skipped |
+| HtmlUnit | 4.21.0 | 4.21.0 | [✅] | 2026-11-14 | `htmlunit.version` (**5.x** deferred); driver `htmlunit3-driver` **4.52.0** |
 | Appium Java Client | 10.1.1 | 10.1.1 | [✅] | 2026-07-19 | `appium.version` |
-| Google Cloud Secret Manager | 2.94.0 | 2.94.0 | [✅] | 2026-07-19 | Current stable |
-| Guava | 33.7.2-jre | 33.8.0-jre | [✅] | 2026-11-04 | Clears Dependabot **#342**; **33.8.0** optional minor |
-| OpenTelemetry | 1.67.0 | 1.67.0 | [✅] | 2026-11-04 | `opentelemetry.version` BOM; clears Dependabot **#343** |
-| ByteBuddy | 1.18.8 | 1.18.8 | [✅] | 2026-04-06 | Current stable |
-| Cucumber Reporting | 5.10.2 | 5.10.2 | [✅] | 2026-01-16 | Updated from 5.10.1 (Item 5.2) |
+| Google Cloud Secret Manager | 2.102.0 | 2.102.0 | [✅] | 2026-11-14 | Current stable |
+| Guava | 33.8.0-jre | 33.8.0-jre | [✅] | 2026-11-14 | Current stable |
+| OpenTelemetry | 1.68.0 | 1.68.0 | [✅] | 2026-11-14 | `opentelemetry.version` BOM |
+| ByteBuddy | 1.18.17 | 1.18.17 | [✅] | 2026-11-14 | Current stable (`-jdk5` build skipped) |
+| Cucumber Reporting | 5.12.1 | 5.12.1 | [✅] | 2026-11-14 | Current stable |
 <!-- prettier-ignore-end -->
 
 ---
@@ -183,10 +193,10 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Cypress | ^15.21.1 | 15.21.1 | [✅] | 2026-09-29 | Current **15.x**; **16.x** major deferred |
+| Cypress | ^15.21.2 | 15.21.2 | [✅] | 2026-11-14 | Current **15.x**; **16.x** major deferred |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
-| qs (override) | 6.16.1 | 6.16.1 | [✅] | 2026-11-04 | Security override; clears Dependabot **#320** |
+| @types/node | ^26.6.6 | 26.6.6 | [✅] | 2026-11-14 | Current stable |
+| qs (override) | 6.17.1 | 6.17.1 | [✅] | 2026-11-14 | Security override |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #170 |
 | uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
@@ -198,21 +208,22 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Playwright | ^1.64.1 | 1.64.1 | [✅] | 2026-10-14 | Current stable; lock resolves **1.64.1**. Artillery still vendors **1.62.1** |
+| Playwright | ^1.65.1 | 1.65.1 | [✅] | 2026-11-14 | Current stable; lock resolves **1.65.1**. Artillery still vendors **1.62.1** |
 | Artillery | ^2.0.34 | 2.0.34 | [✅] | 2026-09-29 | Current stable on npm |
 | lodash (override) | ^4.17.24 | 4.18.1 | [✅] | 2026-04-04 | Transitive hardening |
 | csv-parse (override) | ^7.0.3 | 7.0.3 | [✅] | 2026-09-29 | Clears Dependabot **#250** / CVE-2026-85063 (Artillery still declares ^4.x) |
-| brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override (GHSA-rgw5-rvv9-x895; was ^5.0.8) |
+| joi (override) | ^17.13.9 | 17.13.9 | [✅] | 2026-11-14 | Artillery transitive; clears quadratic email DoS (stay on **17.x**) |
+| brace-expansion (override) | ^5.0.13 | 5.0.13 | [✅] | 2026-11-14 | Security override |
 | socket.io-parser (override) | ^4.2.6 | 4.2.7 | [✅] | 2026-04-04 | Artillery transitive (lock 4.2.7) |
-| fast-xml-parser (override) | ^5.10.1 | 5.10.1 | [✅] | 2026-07-19 | DoS hardening |
-| js-yaml (override) | ^5.4.1 | 5.4.2 | [✅] | 2026-09-29 | Clears Dependabot **#266** (GHSA-r3ph-w7gj-g6xm); lock **5.4.2** |
-| nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
-| postcss (override) | ^8.5.18 | 8.5.28 | [✅] | 2026-09-29 | Security override (aligned with frontend floor) |
+| fast-xml-parser (override) | ^5.12.1 | 5.12.1 | [✅] | 2026-11-14 | DoS hardening |
+| js-yaml (override) | ^5.5.0 | 5.5.0 | [✅] | 2026-11-14 | Security override; Artillery ESM import issue remains upstream |
+| nanoid (override) | ^3.3.20 | 3.3.20 | [✅] | 2026-11-14 | Security override; stay on **3.x** |
+| postcss (override) | ^8.5.33 | 8.5.33 | [✅] | 2026-11-14 | Security override |
 | uuid (override) | ^14.0.0 | 14.0.0 | [✅] | 2026-07-19 | Transitive hardening |
 | form-data (override) | ^4.0.6 | 4.0.6 | [✅] | 2026-07-19 | Dependabot #176 |
-| minimatch (override) | ^11.0.1 | 11.0.4 | [✅] | 2026-11-04 | Clears Dependabot **#346** / GHSA-g3hv-75wg-m249 (lock **11.0.4**) |
+| minimatch (override) | ^11.0.8 | 11.0.8 | [✅] | 2026-11-14 | Security override |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
+| @types/node | ^26.6.6 | 26.6.6 | [✅] | 2026-11-14 | Current stable |
 <!-- prettier-ignore-end -->
 
 ### Vibium Project (vibium/package.json)
@@ -223,9 +234,9 @@ As of **2026-11-04** (after Dependabot security refresh):
 | Vibium | ^26.8.21 | 26.8.21 | [✅] | 2026-09-29 | Current stable |
 | Vitest | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Latest Vitest **4.x** |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable |
-| nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
-| postcss (override) | ^8.5.28 | 8.5.28 | [✅] | 2026-09-29 | Security override |
+| @types/node | ^26.6.6 | 26.6.6 | [✅] | 2026-11-14 | Current stable |
+| nanoid (override) | ^3.3.20 | 3.3.20 | [✅] | 2026-11-14 | Security override; stay on **3.x** |
+| postcss (override) | ^8.5.33 | 8.5.33 | [✅] | 2026-11-14 | Security override |
 | brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override |
 <!-- prettier-ignore-end -->
 
@@ -234,33 +245,33 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| React | 19.3.0 | 19.3.0 | [✅] | 2026-09-29 | Pinned with Next **16.3.7** |
-| Next.js | 16.3.7 | 16.3.7 | [✅] | 2026-09-29 | Current stable 16.3.x |
-| @tanstack/react-query | ^5.104.0 | 5.104.0 | [✅] | 2026-09-29 | Current stable |
-| eslint-config-next | 16.3.7 | 16.3.7 | [✅] | 2026-09-29 | Matched to Next **16.3.7** |
-| axios | ^1.20.0 | 1.20.0 | [✅] | 2026-09-29 | Current stable |
+| React | 19.3.1 | 19.3.1 | [✅] | 2026-11-14 | Pinned with Next **16.4.6** |
+| Next.js | 16.4.6 | 16.4.6 | [✅] | 2026-11-14 | Current stable 16.4.x |
+| @tanstack/react-query | ^5.107.1 | 5.107.1 | [✅] | 2026-11-14 | Current stable |
+| eslint-config-next | 16.4.6 | 16.4.6 | [✅] | 2026-11-14 | Matched to Next **16.4.6** |
+| axios | ^1.21.1 | 1.21.1 | [✅] | 2026-11-14 | Current stable |
 | TypeScript | ^6.0.3 | 7.0.2 | [⚠️] | 2026-07-19 | TS 7 deferred — Next 16 type-check + eslint-config-next require `<6.1.0` |
-| Bootstrap | 5.3.8 | 5.3.8 | [✅] | 2025-12-19 | Updated in PR #51 |
+| Bootstrap | 5.3.9 | 5.3.9 | [✅] | 2026-11-14 | Current stable |
 | React Bootstrap | 2.10.10 | 2.10.10 | [✅] | 2025-12-19 | Updated in PR #51 |
-| @testing-library/react | 16.3.2 | 16.3.2 | [✅] | 2026-03-13 | Current stable |
-| @testing-library/jest-dom | 6.9.1 | 6.9.1 | [✅] | 2025-12-19 | Updated in PR #51 |
-| @testing-library/user-event | 14.6.1 | 14.6.1 | [✅] | 2025-12-19 | Updated in PR #51 |
+| @testing-library/react | 16.3.3 | 16.3.3 | [✅] | 2026-11-14 | Current stable |
+| @testing-library/jest-dom | 6.9.1 | 6.9.1 | [✅] | 2026-11-14 | Stay on **6.9.1** (**6.10.0** deprecated/breaking); **7.x** deferred |
+| @testing-library/user-event | 14.6.10 | 14.6.10 | [✅] | 2026-11-14 | Current stable |
 | jsdom | ^29.1.1 | 29.1.1 | [✅] | 2026-07-19 | Vitest 4 compatible |
-| ESLint | ^10.11.0 | 10.11.0 | [✅] | 2026-09-29 | Current stable |
-| @types/node | ^26.6.3 | 26.6.3 | [✅] | 2026-09-29 | Current stable across Node projects |
-| Vite | ^8.3.1 | 8.3.1 | [✅] | 2026-09-29 | Current stable 8.x |
-| @vitejs/plugin-react | ^6.0.3 | 6.0.3 | [✅] | 2026-07-19 | Current stable |
+| ESLint | ^10.15.0 | 10.15.0 | [✅] | 2026-11-14 | Current stable |
+| @types/node | ^26.6.6 | 26.6.6 | [✅] | 2026-11-14 | Current stable across Node projects |
+| Vite | ^8.3.8 | 8.3.8 | [✅] | 2026-11-14 | Current stable 8.x |
+| @vitejs/plugin-react | ^6.3.0 | 6.3.0 | [✅] | 2026-11-14 | Current stable |
 | @vitest/coverage-v8 | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Aligned with vitest **4.1.12** floor |
 | @vitest/ui | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Aligned with vitest **4.1.12** floor |
 | vitest | ^4.1.12 | 4.1.12 | [✅] | 2026-11-04 | Latest **4.x**; clears Dependabot **#315** / **#317**; Vitest **5.x** deferred |
 | ajv (override) | >=6.14.0 | 8.18.0 | [✅] | 2026-02-13 | Security override (ReDoS in `$data`, GHSA-2g4f-4pwh-qvx6); lock resolves ajv 8.x from eslint |
-| undici (override) | ^7.30.1 | 7.30.1 | [✅] | 2026-11-04 | jsdom transitive; **7.x only** (8.x breaks jsdom 29); clears Dependabot **#328** / **#330–#333** |
-| minimatch (override) | ^11.0.1 | 11.0.4 | [✅] | 2026-11-04 | Clears Dependabot **#345** / GHSA-g3hv-75wg-m249 (lock **11.0.4**) |
-| brace-expansion (override) | ^5.0.12 | 5.0.12 | [✅] | 2026-09-29 | Security override (GHSA-rgw5-rvv9-x895) |
+| undici (override) | ^7.30.2 | 7.30.2 | [✅] | 2026-11-14 | jsdom transitive; **7.x only** (8.x breaks jsdom 29) |
+| minimatch (override) | ^11.0.8 | 11.0.8 | [✅] | 2026-11-14 | Security override |
+| brace-expansion (override) | ^5.0.13 | 5.0.13 | [✅] | 2026-11-14 | Security override |
 | @babel/core (override) | ^8.0.1 | 8.0.1 | [✅] | 2026-07-19 | Major bump from 7.x (Dependabot #171 line) |
 | flatted (override) | >=3.4.2 | 3.4.2 | [✅] | 2026-07-19 | Security override |
-| nanoid (override) | ^3.3.17 | 3.3.18 | [✅] | 2026-08-08 | Security override (Dependabot #238 / CVE-2026-67213; lock 3.3.18) |
-| postcss (override) | ^8.5.18 | 8.5.28 | [✅] | 2026-09-29 | Security override (Dependabot #222; lock may resolve below registry latest) |
+| nanoid (override) | ^3.3.20 | 3.3.20 | [✅] | 2026-11-14 | Security override; stay on **3.x** |
+| postcss (override) | ^8.5.33 | 8.5.33 | [✅] | 2026-11-14 | Security override |
 | sharp (override) | ^0.35.5 | 0.35.5 | [✅] | 2026-09-29 | Security override (Dependabot #211); verified `next build` |
 <!-- prettier-ignore-end -->
 
@@ -279,10 +290,10 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| numpy | 2.5.1 | 2.5.1 | [✅] | 2026-07-19 | Pinned in pyproject.toml |
+| numpy | 2.5.4 | 2.5.4 | [✅] | 2026-11-14 | Pinned in pyproject.toml |
 | structlog | 26.1.0 | 26.1.0 | [✅] | 2026-07-19 | Major bump from 25.x |
-| mypy | 2.3.0 | 2.3.0 | [✅] | 2026-07-19 | Major bump from 1.x |
-| pyright | 1.1.411 | 1.1.411 | [✅] | 2026-07-19 | Pinned in pyproject.toml |
+| mypy | 2.4.1 | 2.4.1 | [✅] | 2026-11-14 | Current stable |
+| pyright | 1.1.414 | 1.1.414 | [✅] | 2026-11-14 | Pinned in pyproject.toml |
 <!-- prettier-ignore-end -->
 
 ### Backend (backend/requirements.txt)
@@ -290,21 +301,21 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| FastAPI | >=0.139.2 | 0.139.2 | [✅] | 2026-07-19 | Minimum floor raised to current stable line |
-| Uvicorn | >=0.51.0 | 0.51.0 | [✅] | 2026-07-19 | Compatible with FastAPI 0.139.x |
+| FastAPI | >=0.162.7 | 0.162.7 | [✅] | 2026-11-14 | Minimum floor raised to current stable line |
+| Uvicorn | >=0.54.0 | 0.54.0 | [✅] | 2026-11-14 | Compatible with FastAPI 0.162.x |
 | Starlette | >=0.46.0 | 1.0.0+ | [✅] | 2026-04-06 | FastAPI declares `starlette>=0.46.0`; pip resolves current stable |
-| Pydantic | >=2.13.4 | 2.13.4 | [✅] | 2026-07-19 | Minimum floor raised |
-| Pydantic Settings | >=2.14.2 | 2.14.2 | [✅] | 2026-07-19 | Minimum floor raised |
+| Pydantic | >=2.14.3 | 2.14.3 | [✅] | 2026-11-14 | Minimum floor raised |
+| Pydantic Settings | >=2.16.3 | 2.16.3 | [✅] | 2026-11-14 | Minimum floor raised |
 | aiosqlite | >=0.22.1 | 0.22.1 | [✅] | 2026-02-13 | Floor unchanged |
 | httpx | >=0.28.1 | 0.28.1 | [✅] | 2025-12-19 | Floor unchanged |
-| pytest | >=9.1.1 | 9.1.1 | [✅] | 2026-07-19 | Floor raised |
-| pytest-asyncio | >=1.4.0 | 1.4.0 | [✅] | 2026-07-19 | Floor raised |
+| pytest | >=9.2.0 | 9.2.0 | [✅] | 2026-11-14 | Floor raised |
+| pytest-asyncio | >=1.5.0 | 1.5.0 | [✅] | 2026-11-14 | Floor raised |
 | pytest-cov | >=7.1.0 | 7.1.0 | [✅] | 2026-07-19 | Floor raised |
-| python-dotenv | >=1.2.2 | 1.2.2 | [✅] | 2026-07-19 | Floor raised (backend) |
-| black | >=26.5.1 | 26.5.1 | [✅] | 2026-07-19 | Dependabot #40 fix line |
-| ruff | >=0.15.22 | 0.15.22 | [✅] | 2026-07-19 | Minimum floor raised |
-| urllib3 | >=2.7.0 | 2.7.0+ | [✅] | 2026-07-19 | Security floor |
-| Werkzeug | >=3.1.8 | 3.1.8+ | [✅] | 2026-07-19 | Security floor |
+| python-dotenv | >=1.2.4 | 1.2.4 | [✅] | 2026-11-14 | Floor raised (backend) |
+| black | >=26.10.1 | 26.10.1 | [✅] | 2026-11-14 | Floor raised |
+| ruff | >=0.17.5 | 0.17.5 | [✅] | 2026-11-14 | Minimum floor raised |
+| urllib3 | >=2.8.0 | 2.8.0+ | [✅] | 2026-11-14 | Security floor |
+| Werkzeug | >=3.1.9 | 3.1.9+ | [✅] | 2026-11-14 | Security floor |
 <!-- prettier-ignore-end -->
 
 ### Performance Testing (requirements.txt)
@@ -312,12 +323,12 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Dependency | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| Locust | 2.45.0 | 2.45.0 | [✅] | 2026-07-19 | `requests` aligned; CI env-be.yml |
-| Requests | 2.34.2 | 2.34.2 | [✅] | 2026-07-19 | Compatible with Locust 2.45.0 |
-| python-dotenv | ==1.2.2 | 1.2.2 | [✅] | 2026-07-19 | Pinned in root `requirements.txt` |
-| matplotlib | 3.11.1 | 3.11.1 | [✅] | 2026-07-19 | Pinned |
-| pandas | 3.0.3 | 3.0.3 | [✅] | 2026-07-19 | Pinned |
-| urllib3 | >=2.7.0 | 2.7.0+ | [✅] | 2026-07-19 | Security floor |
+| Locust | 2.47.0 | 2.47.0 | [✅] | 2026-11-14 | `requests` aligned; CI env-be.yml |
+| Requests | 2.34.2 | 2.34.2 | [✅] | 2026-11-14 | Compatible with Locust 2.47.0 |
+| python-dotenv | ==1.2.4 | 1.2.4 | [✅] | 2026-11-14 | Pinned in root `requirements.txt` |
+| matplotlib | 3.11.2 | 3.11.2 | [✅] | 2026-11-14 | Pinned |
+| pandas | 3.1.1 | 3.1.1 | [✅] | 2026-11-14 | Pinned |
+| urllib3 | >=2.8.0 | 2.8.0+ | [✅] | 2026-11-14 | Security floor |
 <!-- prettier-ignore-end -->
 
 ---
@@ -339,13 +350,13 @@ As of **2026-11-04** (after Dependabot security refresh):
 <!-- prettier-ignore-start -->
 | Component | Current Version | Latest Stable | Status | Last Updated | Notes |
 | -- | -- | -- | -- | -- | -- |
-| selenium/hub | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Pinned in compose + CI (`env-fe.yml`) |
-| selenium/node-chrome | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Local compose + CI; replaces seleniarm:latest |
-| selenium/node-firefox | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | Local compose.prod + CI |
-| selenium/node-edge | 4.49.0 | 4.49.0 | [✅] | 2026-09-29 | CI only (amd64); local ARM uses Chrome stand-in |
+| selenium/hub | 4.52.0 | 4.52.0 | [✅] | 2026-11-14 | Pinned in compose + CI (`env-fe.yml`) |
+| selenium/node-chrome | 4.52.0 | 4.52.0 | [✅] | 2026-11-14 | Local compose + CI; replaces seleniarm:latest |
+| selenium/node-firefox | 4.52.0 | 4.52.0 | [✅] | 2026-11-14 | Local compose.prod + CI |
+| selenium/node-edge | 4.52.0 | 4.52.0 | [✅] | 2026-11-14 | CI only (amd64); local ARM uses Chrome stand-in |
 <!-- prettier-ignore-end -->
 
-**Note**: All Selenium Grid versions are managed via `selenium_version` in `.github/workflows/env-fe.yml` (default: `4.49.0`) and matching tags in `docker-compose*.yml`. Official **`selenium/*`** images are multi-arch (**amd64/arm64**) for hub/chrome/firefox — do not use unmaintained **`seleniarm/*:latest`**.
+**Note**: All Selenium Grid versions are managed via `selenium_version` in `.github/workflows/env-fe.yml` (default: `4.52.0`) and matching tags in `docker-compose*.yml`. Official **`selenium/*`** images are multi-arch (**amd64/arm64**) for hub/chrome/firefox — do not use unmaintained **`seleniarm/*:latest`**.
 
 ### Selenium Grid Ports (GitHub Actions Workflow)
 
@@ -363,13 +374,13 @@ As of **2026-11-04** (after Dependabot security refresh):
 
 ## 🔒 Security Vulnerabilities
 
-### Current Status (as of 2026-11-04)
+### Current Status (as of 2026-11-14)
 
 Vulnerability counts change as Dependabot rescans and PRs are merged. Check the live dashboard for current numbers.
 
 **Dependabot Alerts**: https://github.com/CScharer/full-stack-qa/security/dependabot
 
-After the **2026-11-04** `minimatch` refresh: frontend + playwright override **`^11.0.1`** (lock **11.0.4**) clears Dependabot **#345** / **#346** / GHSA-g3hv-75wg-m249. Earlier same-day: Guava **33.7.2-jre** (#342), OpenTelemetry **1.67.0** (#343), Vitest **4.1.12** (#315 / #317), `undici` **^7.30.1** (#328 / #330–#333), Cypress `qs` **6.16.1** (#320); legacy Grid 1.x JARs removed (#259); Playwright `csv-parse` **^7.0.3** (#250); `brace-expansion` **^5.0.12**.
+After the **2026-11-14** comprehensive refresh: Selenium/Grid **4.52.0**, Selenide **7.19.1**, Jackson **3.3.0** / 2.x **2.23.0**, Netty **4.2.20**, Guava **33.8.0-jre**, OpenTelemetry **1.68.0**, Next/React **16.4.6 / 19.3.1**, Playwright **1.65.1**, Cypress **15.21.2**, Locust **2.47.0**, plus npm overrides (`minimatch` **^11.0.8**, `undici` **^7.30.2**, `qs` **6.17.1**, `joi` **^17.13.9**, `js-yaml` **^5.5.0**). Deferred majors unchanged (TS 7, Vitest 5, Cypress 16, Hibernate 7, undici 8, npm 11 on Node 20).
 
 Earlier fixes still relevant: HttpCore 5 **5.4.3** (#241), `nanoid` (#238), brace-expansion/postcss/sharp/js-yaml (#208–#224), Hibernate 6.6 (#93), Next security line (#210–#221), Jackson 3 (#78), Vite (#80–#84), minimatch #35–#37, qs #13, lodash / socket.io-parser overrides, black #40.
 
@@ -442,6 +453,14 @@ The `overrides` section forces all instances of the package (including transitiv
 ## 📋 Update History
 
 Entries are newest-first.
+
+### 2026-11-14 (comprehensive stable refresh)
+- **Maven**: Selenium **4.49.0 → 4.52.0**, Selenide **7.19.1**, Cucumber **7.34.9**, REST Assured **6.3.0**, Jackson **3.3.0** / 2.x **2.23.0**, Netty **4.2.20.Final**, Guava **33.8.0-jre**, OpenTelemetry **1.68.0**, Hibernate **6.6.59.Final**, JSoup **1.24.1**, Gatling **3.16.0**, Allure2 Java **2.35.6**, HttpClient5/HttpCore5 **5.6.5 / 5.4.4**, Surefire **3.6.1**, Compiler plugin **3.16.0**, Checkstyle **13.11.0**, SpotBugs **4.10.5**, Logback **1.6.6**, plus related patch/minor bumps. Deferred: Hibernate **7**, Cucumber **8**, Checkstyle **14**, Appium **11**, HtmlUnit **5**, POI **6**, Spotless **3**, DBUnit **2.8.0**.
+- **CI/Docker**: `env-fe.yml` + `docker-compose*.yml` Grid images **4.52.0**; `env-be.yml` Locust **2.47.0**.
+- **npm**: Next/React **16.4.6 / 19.3.1**, Playwright **1.65.1**, Cypress **15.21.2**, Vite **8.3.8**, ESLint **10.15.0**, `@types/node` **26.6.6**; overrides raised (`minimatch`, `undici`, `qs`, `postcss`, `nanoid`, `brace-expansion`, `js-yaml`, `fast-xml-parser`, **`joi` ^17.13.9**). Deferred: TypeScript **7**, Vitest **5**, Cypress **16**, jest-dom **7**, undici **8**.
+- **Python**: FastAPI/uvicorn/pydantic/ruff/black floors raised; Locust **2.47.0**, matplotlib **3.11.2**, pandas **3.1.1**, numpy **2.5.4**, mypy **2.4.1**, pyright **1.1.414**.
+- **Verify**: `./mvnw -DskipTests compile`; frontend/cypress/vibium `npm audit` clean; playwright `npm audit` clean after `joi` override.
+- **Docs**: VERSION_TRACKING / VERSION_MONITORING / SECURITY / README / docs README / SELENIUM_GRID guides refreshed.
 
 ### 2026-11-04 (Dependabot #345 / #346 minimatch)
 - **npm (frontend + playwright)**: Raised `minimatch` override to **`^11.0.1`** (lock **11.0.4**) for GHSA-g3hv-75wg-m249 / CVE-2026-118764 (globparts amplification DoS; advisory range `< 11.0.1`). Replaced Playwright’s older per-parent pins (**9.0.7** / **5.1.8** / **3.1.4**) with the single floor. Clears Dependabot **#345** / **#346**.
@@ -671,7 +690,7 @@ Entries are newest-first.
 
 ## 📝 Notes
 
-- **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at **4.49.0** (`env-fe.yml` default).
+- **Selenium Version Alignment**: Client (pom.xml) and Server (CI/CD) versions must match. Currently aligned at **4.52.0** (`env-fe.yml` default).
   - **Validation**: Currently validated via scheduled workflow and manual script execution
   - **✅ Implemented**: Pre-push hook validation catches mismatches before code is pushed (see [Selenium Grid Configuration Guide](../guides/infrastructure/SELENIUM_GRID.md))
 - **TypeScript Updates**: Consider updating all projects together for consistency.
@@ -694,8 +713,8 @@ Entries are newest-first.
 ## 📅 Document Maintenance
 
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-09-29
-- **Next Review**: 2026-10-01 (recommended)
+- **Last Updated**: 2026-11-14
+- **Next Review**: 2026-12-01 (recommended)
 - **Maintainer**: Development Team
 
 **Remember**: This is a living document. Update it regularly to keep version information current!

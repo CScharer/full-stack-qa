@@ -11,7 +11,7 @@
 [![Python](https://img.shields.io/badge/Python-3.13-orange.svg)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-orange.svg)](https://www.typescriptlang.org/)
 
-[![Cucumber](https://img.shields.io/badge/Cucumber-7.34.4-brightgreen.svg)](https://cucumber.io/)
+[![Cucumber](https://img.shields.io/badge/Cucumber-7.34.9-brightgreen.svg)](https://cucumber.io/)
 [![REST Assured](https://img.shields.io/badge/REST%20Assured-6.0.1-blue.svg)](https://rest-assured.io/)
 
 [![Testing Frameworks](https://img.shields.io/badge/Testing%20Frameworks-JUnit%20%7C%20TestNG%20%7C%20Vitest-yellow.svg)](docs/guides/testing/TEST_EXECUTION_GUIDE.md)
@@ -23,17 +23,17 @@
 [![Performance](https://img.shields.io/badge/Performance-Artillery%20%7C%20Gatling.io%20%7C%20JMeter%20%7C%20Locust.io-yellow.svg)](docs/guides/testing/PERFORMANCE_TESTING.md)
 
 [![Artillery](https://img.shields.io/badge/Artillery-2.0.34-blue.svg)](https://www.artillery.io/)
-[![Gatling.io](https://img.shields.io/badge/Gatling.io-3.15.1-blue.svg)](https://rest-gatling.io/)
+[![Gatling.io](https://img.shields.io/badge/Gatling.io-3.16.0-blue.svg)](https://rest-gatling.io/)
 [![JMeter](https://img.shields.io/badge/JMeter-5.6.3-blue.svg)](https://jmeter.apache.org/)
-[![Locust.io](https://img.shields.io/badge/Locust.io-2.45.0-blue.svg)](https://rest-locust.io/)
+[![Locust.io](https://img.shields.io/badge/Locust.io-2.47.0-blue.svg)](https://rest-locust.io/)
 
 [![UI Frameworks](https://img.shields.io/badge/UI%20Frameworks-Cypress%20%7C%20Playwright%20%7C%20Robot%20%7C%20Selenide%20%7C%20Selenium-yellow.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 
-[![Cypress](https://img.shields.io/badge/Cypress-15.21.1-blue.svg)](https://www.cypress.io)
-[![Playwright](https://img.shields.io/badge/Playwright-1.64.1-blue.svg)](https://playwright.dev/)
+[![Cypress](https://img.shields.io/badge/Cypress-15.21.2-blue.svg)](https://www.cypress.io)
+[![Playwright](https://img.shields.io/badge/Playwright-1.65.1-blue.svg)](https://playwright.dev/)
 [![Robot Framework](https://img.shields.io/badge/Robot%20Framework-2.1.0-blue.svg)](https://robotframework.org/)
-[![Selenide](https://img.shields.io/badge/Selenide-7.18.2-blue.svg)](https://selenide.org/)
-[![Selenium](https://img.shields.io/badge/Selenium-4.49.0-blue.svg)](https://www.selenium.dev/)
+[![Selenide](https://img.shields.io/badge/Selenide-7.19.1-blue.svg)](https://selenide.org/)
+[![Selenium](https://img.shields.io/badge/Selenium-4.52.0-blue.svg)](https://www.selenium.dev/)
 [![Vibium](https://img.shields.io/badge/Vibium-26.8.21-blue.svg)](https://vibium.com/) 🎄🎁
 
 [![Maven](https://img.shields.io/badge/Maven-3.9.11-blue.svg)](https://maven.apache.org/)
@@ -45,7 +45,7 @@
 
 [![Reporting](https://img.shields.io/badge/Reporting-Allure_Reports-yellow.svg)](docs/guides/testing/ALLURE_REPORTING.md)
 
-[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:3.0.0_Java:2.35.3-blue.svg)](https://allurereport.org/)
+[![Allure_Reports](https://img.shields.io/badge/Allure-CLI:3.0.0_Java:2.35.6-blue.svg)](https://allurereport.org/)
 
 [![Coming Soon!!!](https://img.shields.io/badge/Coming%20Soon!!!-What's_Next!!!-cyan.svg)](docs/guides/testing/UI_TESTING_FRAMEWORKS.md)
 <!-- [![Vibium](https://img.shields.io/badge/Vibium-0.1.2-cyan.svg)](https://vibium.com/) -->
@@ -121,23 +121,24 @@ A comprehensive Selenium-based test automation framework supporting **30+ test s
 - **Python 3.13** - Latest stable version (for Robot Framework & Locust)
 - **Node.js 20** - JavaScript runtime (for Cypress & Playwright)
 - **TypeScript 6.0.3** - Type-safe JavaScript (for Cypress, Playwright, Vibium, and frontend)
-- **Selenium 4.49.0** - Modern WebDriver API with Grid support
-- **Playwright 1.64.1** - Fast and reliable end-to-end testing
-- **Cypress 15.21.1** - JavaScript end-to-end testing framework
+- **Selenium 4.52.0** - Modern WebDriver API with Grid support
+- **Playwright 1.65.1** - Fast and reliable end-to-end testing
+- **Cypress 15.21.2** - JavaScript end-to-end testing framework
 - **Robot Framework 2.1.0** - Keyword-driven test automation
 - **REST Assured 6.0.1** - REST API testing & validation
-- **Cucumber 7.34.4** - BDD framework with Gherkin
+- **Cucumber 7.34.9** - BDD framework with Gherkin
 - **TestNG** - Advanced test framework with data providers
 - **Log4j 2.26.1** - Professional structured logging
 - **Maven 3.9.11** - Build management (wrapper included!)
 - **Docker & Docker Compose** - Complete containerization
-- **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.35.3** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
+- **Allure3 CLI 3.0.0 (configurable), Allure2 Java 2.35.6** - Beautiful test reporting with screenshots (configurable via `config/environments.json`)
 - **GitHub Actions** - Automated CI/CD pipeline
 - **Google Cloud Secret Manager** - Enterprise-grade security
 - **WebDriverManager 6.3.4** - Automatic driver management
 
 ### Recent Improvements (November 4, 2026)
 - ✅ **Dependabot #345 / #346 (`minimatch`)** — Override **`^11.0.1`** (lock **11.0.4**) in frontend and playwright for GHSA-g3hv-75wg-m249. See `docs/process/VERSION_TRACKING.md`.
+- ✅ **Comprehensive stable refresh (2026-11-14)** — Selenium/Selenide **4.52.0 / 7.19.1**, Next/React **16.4.6 / 19.3.1**, Playwright **1.65.1**, Cypress **15.21.2**, Jackson **3.3.0**, Locust **2.47.0**, plus related Maven/npm/Python pins. Deferred majors unchanged (TS 7, Vitest 5, Cypress 16, Hibernate 7, undici 8, npm@11). See `docs/process/VERSION_TRACKING.md`.
 - ✅ **Dependabot security refresh** — Guava **33.7.2-jre**, OpenTelemetry **1.67.0**, frontend Vitest **4.1.12** + **`undici` ^7.30.1**, Cypress **`qs` 6.16.1**. Clears **#315** / **#317** / **#320** / **#328** / **#330–#333** / **#342** / **#343**. See `docs/process/VERSION_TRACKING.md`.
 
 ### Recent Improvements (October 14, 2026)
@@ -1211,22 +1212,22 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 <!-- prettier-ignore-start -->
 | Category | Library | Version |
 | -- | -- | -- |
-| **WebDriver** | Selenium | 4.49.0 |
-| **BDD** | Cucumber | 7.34.4 |
-| **Testing** | JUnit | 6.1.2 |
+| **WebDriver** | Selenium | 4.52.0 |
+| **BDD** | Cucumber | 7.34.9 |
+| **Testing** | JUnit | 6.1.3 |
 | **Testing** | TestNG | 7.11.0 |
 | **Testing** | Vitest | 4.1.12 |
 | **Database** | JDBC (Multi-DB) | Various |
 | **HTTP** | Apache HttpClient | 4.5.14 |
-| **HTTP** | Apache HttpClient 5 / HttpCore 5 | 5.6.3 / 5.4.3 |
-| **JSON** | Gson | 2.13.2 |
-| **JSON (Jackson 3)** | tools.jackson.core jackson-databind | 3.2.1 |
+| **HTTP** | Apache HttpClient 5 / HttpCore 5 | 5.6.5 / 5.4.4 |
+| **JSON** | Gson | 2.15.0 |
+| **JSON (Jackson 3)** | tools.jackson.core jackson-databind | 3.3.0 |
 | **Excel** | Apache POI | 5.5.1 |
-| **PDF** | PDFBox | 3.0.7 |
-| **Security** | Google Cloud Secret Manager | 2.94.0 |
-| **Driver Management** | WebDriverManager | 6.3.4 |
-| **UI Testing** | Playwright (TS) | 1.64.1 |
-| **UI Testing** | Cypress (TS) | 15.21.1 |
+| **PDF** | PDFBox | 3.0.8 |
+| **Security** | Google Cloud Secret Manager | 2.102.0 |
+| **Driver Management** | WebDriverManager | 6.4.0 |
+| **UI Testing** | Playwright (TS) | 1.65.1 |
+| **UI Testing** | Cypress (TS) | 15.21.2 |
 | **UI Testing** | Robot Framework | 2.1.0 |
 | **Database** | H2, SQLite, MSSQL | Various |
 | **Docker** | Docker Compose | 3.8 |
@@ -1262,7 +1263,7 @@ cp xml/UserSettings.xml.template xml/UserSettings.xml
 - ARM64 (Apple Silicon) compatibility
 
 **✅ Allure Reporting with Screenshots**
-- Allure Framework integration (Allure3 CLI: 3.0.0, Allure2 Java: 2.35.3)
+- Allure Framework integration (Allure3 CLI: 3.0.0, Allure2 Java: 2.35.6)
 - Automatic screenshot capture on test failures only
 - Beautiful HTML dashboards with graphs
 - Epic/Feature/Story organization

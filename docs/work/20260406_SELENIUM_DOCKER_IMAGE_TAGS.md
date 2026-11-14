@@ -1,6 +1,6 @@
 # Selenium / SeleniArm Docker image tags
 
-**Status:** **Resolved (2026-09-29)** — local compose files pin official **`selenium/*:4.49.0`** (aligned with **`pom.xml`** / **`env-fe.yml`**).
+**Status:** **Resolved (2026-09-29)** — local compose files pin official **`selenium/*:4.52.0`** (aligned with **`pom.xml`** / **`env-fe.yml`**).
 
 ---
 
@@ -12,16 +12,18 @@ Local **`docker-compose.yml`**, **`docker-compose.dev.yml`**, and **`docker-comp
 - Non-deterministic Grid versions on every pull
 - Drift vs CI, which already uses pinned **`selenium/*:${selenium_version}`**
 
-**SeleniArm does not publish modern tags** such as **`4.49.0`** (registry tops out around older **4.9.x** lines). Official Selenium images **do**, and **`selenium/hub`**, **`node-chrome`**, and **`node-firefox`** publish **amd64 + arm64** for **4.49.0**.
+**SeleniArm does not publish modern tags** such as **`4.49.0`** (registry tops out around older **4.9.x** lines). Official Selenium images **do**, and **`selenium/hub`**, **`node-chrome`**, and **`node-firefox`** publish **amd64 + arm64** for **4.52.0**.
 
 ### Resolution
 
+<!-- prettier-ignore-start -->
 | Role | Image |
 | -- | -- |
-| Hub | `selenium/hub:4.49.0` |
-| Chrome | `selenium/node-chrome:4.49.0` |
-| Firefox | `selenium/node-firefox:4.49.0` |
-| Edge (local) | `selenium/node-chrome:4.49.0` stand-in — `selenium/node-edge:4.49.0` is **amd64-only**; CI still uses real Edge |
+| Hub | `selenium/hub:4.52.0` |
+| Chrome | `selenium/node-chrome:4.52.0` |
+| Firefox | `selenium/node-firefox:4.52.0` |
+| Edge (local) | `selenium/node-chrome:4.52.0` stand-in — `selenium/node-edge:4.52.0` is **amd64-only**; CI still uses real Edge |
+<!-- prettier-ignore-end -->
 
 Forced **`platform: linux/arm64`** was removed so Docker selects the native arch.
 

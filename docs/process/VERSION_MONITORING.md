@@ -167,8 +167,8 @@ Or run locally:
   "errors": 0,
   "warnings": 0,
   "selenium": {
-    "pom_version": "4.49.0",
-    "workflow_version": "4.49.0",
+    "pom_version": "4.52.0",
+    "workflow_version": "4.52.0",
     "match": true
   },
   "mismatches": [],
@@ -180,14 +180,14 @@ Or run locally:
 
 ```csv
 timestamp,status,errors,warnings,selenium_pom_version,selenium_workflow_version,selenium_match,mismatches,warnings_list
-2025-12-20T02:00:00Z,success,0,0,4.49.0,4.49.0,true,,
+2025-12-20T02:00:00Z,success,0,0,4.52.0,4.52.0,true,,
 ```
 
 ---
 
 ## 🔗 Related Documents
 
-- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Selenium **4.49.0**, Selenide **7.18.2**, Jackson **3.2.2** / 2.x **2.22.2**, Netty **4.2.18**, JSoup **1.23.2**, Vite **8.3.1**, TypeScript **6.0.3** (TS 7 deferred), Next **16.3.7**, Playwright **1.64.1**, Cypress **15.21.1**, Vibium **26.8.21**, Guava **33.7.2-jre**, OpenTelemetry **1.67.0**, Vitest **4.1.12**, npm overrides including **minimatch ^11.0.1** / **undici ^7.30.1** / **qs 6.16.1** / **csv-parse ^7.0.3** / js-yaml **^5.4.1** / brace-expansion **5.0.12** / postcss **8.5.28** / sharp **0.35.5**; legacy Grid 1.x JARs removed; Dockerfile **npm@11**; last doc refresh 2026-11-04)
+- [Version Tracking](VERSION_TRACKING.md) - Dependency version tracking (Selenium **4.52.0**, Selenide **7.19.1**, Jackson **3.3.0** / 2.x **2.23.0**, Netty **4.2.20**, JSoup **1.24.1**, Vite **8.3.8**, TypeScript **6.0.3** (TS 7 deferred), Next **16.4.6**, Playwright **1.65.1**, Cypress **15.21.2**, Vibium **26.8.21**, Guava **33.8.0-jre**, OpenTelemetry **1.68.0**, Vitest **4.1.12**, npm overrides including **minimatch ^11.0.8** / **undici ^7.30.2** / **qs 6.17.1** / **joi ^17.13.9** / **csv-parse ^7.0.3** / js-yaml **^5.5.0** / brace-expansion **5.0.13** / postcss **8.5.33** / sharp **0.35.5**; legacy Grid 1.x JARs removed; Dockerfile **npm@11**; last doc refresh 2026-11-14)
 - [Pre-Pipeline Validation](PRE_PIPELINE_VALIDATION.md) - Local validation checklist
 - Next Steps After PR #53 (archived) - Work plan and status
 
@@ -213,4 +213,4 @@ Modify the workflow's "Comment on Issues" step to integrate with your notificati
 
 ---
 
-**Last Updated**: 2026-09-29
+**Last Updated**: 2026-11-14

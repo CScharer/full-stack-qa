@@ -29,13 +29,13 @@ This document explains why tests might pass in Docker but fail in the CI/CD pipe
 #### Docker Environment
 - **Base Image**: `eclipse-temurin:21-jre` runtime (build stage: `maven:3.9.9-eclipse-temurin-21`)
 - **Architecture**: ARM64 (Apple Silicon) or x86_64
-- **Selenium Images**: Pinned **`selenium/*:4.49.0`** (official multi-arch hub/chrome/firefox; matches `pom.xml`)
+- **Selenium Images**: Pinned **`selenium/*:4.52.0`** (official multi-arch hub/chrome/firefox; matches `pom.xml`)
 - **OS Version**: Debian (varies by base image)
 
 #### CI/CD Environment
 - **Base Image**: `ubuntu-latest` (currently Ubuntu 24.04)
 - **Architecture**: x86_64 (GitHub Actions runners)
-- **Selenium Images**: Pinned **`selenium/*:${{ inputs.selenium_version }}`** (default **4.49.0**; Edge node available on amd64)
+- **Selenium Images**: Pinned **`selenium/*:${{ inputs.selenium_version }}`** (default **4.52.0**; Edge node available on amd64)
 - **OS Version**: Ubuntu 24.04 LTS
 
 **Why this matters**: 
@@ -276,7 +276,7 @@ RUN apt-get update && apt-get install -y \
 | -- | -- | -- |
 | **OS** | Debian (varies) | Ubuntu 24.04 |
 | **Architecture** | ARM64/x86_64 | x86_64 |
-| **Selenium Images** | `selenium/*:4.49.0` (pinned) | `selenium/*:4.49.0` (pinned) |
+| **Selenium Images** | `selenium/*:4.52.0` (pinned) | `selenium/*:4.52.0` (pinned) |
 | **Node.js** | ✅ Node.js 20 + npm@11 | ✅ Node.js 20 |
 | **Python** | ✅ Python 3 (3.13 when available) | ✅ Python 3.13 |
 | **Cypress** | ✅ Installed (`npm ci`) | ✅ Installed |
