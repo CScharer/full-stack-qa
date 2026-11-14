@@ -96,6 +96,7 @@ As of **2026-11-14** (after comprehensive stable refresh):
 | nanoid (override) | ^3.3.20 | 6.0.2 | Keep **3.x** for PostCSS/Next compat |
 | npm (Dockerfile) | 11.x | 12+ | Stay on **npm@11** with Node 20 |
 | DBUnit | 2.8.0 | 3.x | Breaking migration — intentionally pinned |
+| Maven Surefire Plugin | 3.5.6 | 3.6.1 | Plugin **3.6.x** available, but `surefire-testng` stops at **3.5.6** (CI/Docker/CodeQL fail on missing provider) |
 <!-- prettier-ignore-end -->
 
 
@@ -132,7 +133,7 @@ As of **2026-11-14** (after comprehensive stable refresh):
 | Maven | 3.9.11 | 3.9.11 | [✅] | 2025-12-19 | Updated in PR #51 |
 | Java | 21 | 21 (LTS) | [✅] | 2025-12-25 | Current LTS version |
 | Maven Compiler Plugin | 3.16.0 | 3.16.0 | [✅] | 2026-11-14 | Current stable version |
-| Maven Surefire Plugin | 3.6.1 | 3.6.1 | [✅] | 2026-11-14 | Current stable |
+| Maven Surefire Plugin | 3.5.6 | 3.5.6 | [✅] | 2026-11-14 | Stay on **3.5.6** — plugin **3.6.1** exists but `surefire-testng` **3.6.1** is not published on Central |
 | Maven Checkstyle Plugin | 3.6.0 | 3.6.0 | [✅] | 2025-12-25 | Current |
 | Checkstyle Tool | 13.11.0 | 13.11.0 | [✅] | 2026-11-14 | Current **13.x**; **14.x** deferred |
 | SpotBugs | 4.10.5 | 4.10.5 | [✅] | 2026-11-14 | Current stable |
@@ -454,8 +455,12 @@ The `overrides` section forces all instances of the package (including transitiv
 
 Entries are newest-first.
 
+### 2026-11-14 (Surefire pin revert)
+- **Maven**: Reverted `maven-surefire-plugin` / `surefire-testng` / `surefire-junit-platform` **3.6.1 → 3.5.6**. Plugin **3.6.1** resolves, but **`surefire-testng:3.6.1` is not on Maven Central** (provider line tops out at **3.5.6**), which broke CodeQL Java Autobuild and Docker image build (`mvn package -DskipTests` still resolves Surefire providers).
+- **Docs**: VERSION_TRACKING known-updates + Surefire row refreshed.
+
 ### 2026-11-14 (comprehensive stable refresh)
-- **Maven**: Selenium **4.49.0 → 4.52.0**, Selenide **7.19.1**, Cucumber **7.34.9**, REST Assured **6.3.0**, Jackson **3.3.0** / 2.x **2.23.0**, Netty **4.2.20.Final**, Guava **33.8.0-jre**, OpenTelemetry **1.68.0**, Hibernate **6.6.59.Final**, JSoup **1.24.1**, Gatling **3.16.0**, Allure2 Java **2.35.6**, HttpClient5/HttpCore5 **5.6.5 / 5.4.4**, Surefire **3.6.1**, Compiler plugin **3.16.0**, Checkstyle **13.11.0**, SpotBugs **4.10.5**, Logback **1.6.6**, plus related patch/minor bumps. Deferred: Hibernate **7**, Cucumber **8**, Checkstyle **14**, Appium **11**, HtmlUnit **5**, POI **6**, Spotless **3**, DBUnit **2.8.0**.
+- **Maven**: Selenium **4.49.0 → 4.52.0**, Selenide **7.19.1**, Cucumber **7.34.9**, REST Assured **6.3.0**, Jackson **3.3.0** / 2.x **2.23.0**, Netty **4.2.20.Final**, Guava **33.8.0-jre**, OpenTelemetry **1.68.0**, Hibernate **6.6.59.Final**, JSoup **1.24.1**, Gatling **3.16.0**, Allure2 Java **2.35.6**, HttpClient5/HttpCore5 **5.6.5 / 5.4.4**, Surefire kept at **3.5.6** after 3.6.1 provider gap, Compiler plugin **3.16.0**, Checkstyle **13.11.0**, SpotBugs **4.10.5**, Logback **1.6.6**, plus related patch/minor bumps. Deferred: Hibernate **7**, Cucumber **8**, Checkstyle **14**, Appium **11**, HtmlUnit **5**, POI **6**, Spotless **3**, DBUnit **2.8.0**.
 - **CI/Docker**: `env-fe.yml` + `docker-compose*.yml` Grid images **4.52.0**; `env-be.yml` Locust **2.47.0**.
 - **npm**: Next/React **16.4.6 / 19.3.1**, Playwright **1.65.1**, Cypress **15.21.2**, Vite **8.3.8**, ESLint **10.15.0**, `@types/node` **26.6.6**; overrides raised (`minimatch`, `undici`, `qs`, `postcss`, `nanoid`, `brace-expansion`, `js-yaml`, `fast-xml-parser`, **`joi` ^17.13.9**). Deferred: TypeScript **7**, Vitest **5**, Cypress **16**, jest-dom **7**, undici **8**.
 - **Python**: FastAPI/uvicorn/pydantic/ruff/black floors raised; Locust **2.47.0**, matplotlib **3.11.2**, pandas **3.1.1**, numpy **2.5.4**, mypy **2.4.1**, pyright **1.1.414**.
