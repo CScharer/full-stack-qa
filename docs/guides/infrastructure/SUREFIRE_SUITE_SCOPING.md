@@ -37,14 +37,16 @@ Historically this was papered over with `@Disabled` on many Windows-specific cla
 
 ## Required behavior
 
+<!-- prettier-ignore-start -->
 | Job | Suite XML | Must run | Must not run |
-| --- | --- | --- | --- |
+| -- | -- | -- | -- |
 | Smoke Tests | `testng-smoke-suite.xml` | Classes listed in that suite | Other `com.cjs.qa.*` via JUnit discovery |
 | Grid Tests | `testng-<test_suite>-suite.xml` (often smoke) | Suite classes only | Same |
 | Mobile Browser | `testng-mobile-browser-suite.xml` | `MobileBrowserTests` | Same |
 | Responsive Design | `testng-responsive-suite.xml` | `ResponsiveDesignTests` | Same |
 | Selenide | `testng-selenide-suite.xml` | Suite classes only | Same |
 | Cypress / Playwright / Robot / Vibium | (non-Maven) | Their own runners | N/A — always run on normal PRs |
+<!-- prettier-ignore-end -->
 
 Pipeline FE/BE/FS job selection is unchanged for Dependabot and other PRs: still the normal matrix. Only Maven Surefire execution inside a suite job is scoped.
 

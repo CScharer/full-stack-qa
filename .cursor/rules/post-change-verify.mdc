@@ -1,0 +1,17 @@
+---
+description: Required verification scripts after making repo changes
+alwaysApply: true
+---
+
+# Post-change verification
+
+After making code, docs, pipeline, or script changes in this repo, run this chain and ensure **every step exits 0** before treating the work as done:
+
+```bash
+node scripts/quality/normalize-md-tables.mjs && node scripts/quality/check-markdown-links.mjs && ./scripts/quality/format-code.sh && ./scripts/quality/validate-pre-commit.sh
+```
+
+- Do not skip steps or stop early on the first success.
+- If a step fails, fix the issue and re-run the full chain.
+- Prefer running the full chain once at the end of a change set (not after every tiny edit), unless an intermediate failure needs isolation.
+- When dependency versions or Selenium Grid pins change, also run `./scripts/quality/validate-dependency-versions.sh` and ensure it exits 0.

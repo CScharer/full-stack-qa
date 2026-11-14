@@ -1,12 +1,12 @@
 # CJS QA Automation Framework(s) - Docker Compose
 # Selenium Grid setup with Chrome, Firefox, and Edge nodes
-# Images pinned to selenium/*:4.49.0 (matches pom.xml / env-fe.yml). Official images are
+# Images pinned to selenium/*:4.52.0 (matches pom.xml / env-fe.yml). Official images are
 # multi-arch (amd64 + arm64) for hub/chrome/firefox — no seleniarm:latest required.
 
 services:
   # Selenium Hub - Central point for test execution
   selenium-hub:
-    image: selenium/hub:4.49.0
+    image: selenium/hub:4.52.0
     container_name: selenium-hub
     ports:
       - "4444:4444"      # Selenium Grid UI
@@ -28,7 +28,7 @@ services:
 
   # Chrome Node - 2 instances for parallel execution
   chrome-node-1:
-    image: selenium/node-chrome:4.49.0
+    image: selenium/node-chrome:4.52.0
     container_name: chrome-node-1
     depends_on:
       selenium-hub:
@@ -65,7 +65,7 @@ services:
       retries: 5
 
   chrome-node-2:
-    image: selenium/node-chrome:4.49.0
+    image: selenium/node-chrome:4.52.0
     container_name: chrome-node-2
     depends_on:
       selenium-hub:
@@ -93,7 +93,7 @@ services:
 
   # Firefox Node - Disabled until framework changes are complete
   # firefox-node:
-  #   image: selenium/node-firefox:4.49.0
+  #   image: selenium/node-firefox:4.52.0
   #   container_name: firefox-node
   #   depends_on:
   #     selenium-hub:
@@ -119,10 +119,10 @@ services:
   #     timeout: 5s
   #     retries: 5
 
-  # Edge Node — selenium/node-edge:4.49.0 is amd64-only; use Chrome as a local stand-in on ARM.
+  # Edge Node — selenium/node-edge:4.52.0 is amd64-only; use Chrome as a local stand-in on ARM.
   # On amd64 CI, env-fe.yml uses selenium/node-edge:${selenium_version}.
   edge-node:
-    image: selenium/node-chrome:4.49.0
+    image: selenium/node-chrome:4.52.0
     container_name: edge-node
     depends_on:
       selenium-hub:

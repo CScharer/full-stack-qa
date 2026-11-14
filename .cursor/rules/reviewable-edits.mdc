@@ -1,0 +1,15 @@
+---
+description: Keep edits reviewable so the user can see, keep, or revert changes
+alwaysApply: true
+---
+
+# Reviewable edits
+
+Make changes so the user can clearly see what changed and keep or revert it.
+
+- Prefer normal editor edits (`ApplyPatch` / `StrReplace` / `Write` for new files) over shell/Python bulk rewrites of existing files.
+- Do **not** stage, unstage, or commit unless the user explicitly asks.
+- Do **not** leave the index half-updated; leave working-tree diffs as the source of truth for review.
+- Keep each edit set focused: one concern per change when practical (easier revert).
+- Avoid opaque transforms (`sed`/`perl`/`python` whole-file mass replace) unless the user asks for a bulk rewrite — and then summarize exactly what will change first.
+- After substantive edits, the user should be able to inspect a normal `git diff` (or IDE diff) of the touched files without hunting through unrelated churn.

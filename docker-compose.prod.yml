@@ -1,11 +1,11 @@
 # Docker Compose for Production Environment
 # Usage: docker-compose -f docker-compose.prod.yml up
-# Selenium images pinned to 4.49.0 (matches pom.xml / env-fe.yml); multi-arch official images.
+# Selenium images pinned to 4.52.0 (matches pom.xml / env-fe.yml); multi-arch official images.
 
 services:
   # Selenium Hub
   selenium-hub:
-    image: selenium/hub:4.49.0
+    image: selenium/hub:4.52.0
     container_name: selenium-hub-prod
     ports:
       - "4444:4444"
@@ -31,7 +31,7 @@ services:
 
   # Chrome nodes - 4 instances for production
   chrome-node:
-    image: selenium/node-chrome:4.49.0
+    image: selenium/node-chrome:4.52.0
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -74,7 +74,7 @@ services:
 
   # Firefox nodes - 2 instances
   firefox-node:
-    image: selenium/node-firefox:4.49.0
+    image: selenium/node-firefox:4.52.0
     depends_on:
       selenium-hub:
         condition: service_healthy

@@ -1,6 +1,6 @@
 # 🔐 Security Standards & Practices
 
-**Last Updated**: 2026-09-29  
+**Last Updated**: 2026-11-14  
 **Status**: Living Document - Actively Maintained  
 **Purpose**: Comprehensive security standards and practices for the CJS QA Automation Framework
 
@@ -171,7 +171,7 @@ Most CI/CD pipelines include:
 - **Weekly schedule** - All ecosystems checked weekly (Sundays 14:00 UTC = 08:00 CST / 09:00 CDT)
 - **Auto-merge for security updates** - Security patches automatically merged after CI/CD passes
 - **Monthly dependency audits** - Comprehensive review on first day of each month
-- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including Jackson **3.2.2** / 2.x **2.22.2**, Vite **8.3.1**, TypeScript **6.0.3**, Hibernate **6.6.54.Final**, Selenium **4.49.0**, Selenide **7.18.2**, Next **16.3.7**, Playwright **1.64.1**, Cypress **15.21.1**, Vibium **26.8.21**, Guava **33.7.2-jre**, OpenTelemetry **1.67.0**, Vitest **4.1.12**, JSoup **1.23.2**, Allure2 Java **2.35.3**, HttpClient 5 **5.6.3** / HttpCore 5 **5.4.3**, removal of legacy Grid 1.x JARs (FreeMarker **#259**), npm overrides for minimatch **^11.0.1** / undici **^7.30.1** / qs **6.16.1** / csv-parse / brace-expansion **5.0.12** / postcss / js-yaml / sharp / nanoid / @babel/core; Dockerfile **npm@11**)
+- **Version inventory** - [VERSION_TRACKING.md](./VERSION_TRACKING.md) records current pins and update history (including Jackson **3.3.0** / 2.x **2.23.0**, Vite **8.3.8**, TypeScript **6.0.3**, Hibernate **6.6.59.Final**, Selenium **4.52.0**, Selenide **7.19.1**, Next **16.4.6**, Playwright **1.65.1**, Cypress **15.21.2**, Vibium **26.8.21**, Guava **33.8.0-jre**, OpenTelemetry **1.68.0**, Vitest **4.1.12**, JSoup **1.24.1**, Allure2 Java **2.35.6**, HttpClient 5 **5.6.5** / HttpCore 5 **5.4.4**, removal of legacy Grid 1.x JARs (FreeMarker **#259**), npm overrides for minimatch **^11.0.8** / undici **^7.30.2** / qs **6.17.1** / joi **^17.13.9** / csv-parse / brace-expansion **5.0.13** / postcss / js-yaml / sharp / nanoid / @babel/core; Dockerfile **npm@11**)
 
 #### Code Security Scanning
 - **CodeQL Analysis** - Automated security scanning for Java, JavaScript/TypeScript, and Python
@@ -438,6 +438,6 @@ This project maintains security standards that **exceed industry best practices*
 
 ---
 
-**Last Updated**: 2026-09-29  
+**Last Updated**: 2026-11-14  
 **Maintained By**: CJS QA Team  
 **Status**: Living Document - Regularly Updated

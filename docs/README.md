@@ -101,6 +101,7 @@ This directory contains all project documentation and analysis reports for the C
 - ✅ **Dependabot security refresh** — Guava **33.7.2-jre**, OpenTelemetry **1.67.0**, frontend Vitest **4.1.12** + **`undici` ^7.30.1**, Cypress **`qs` 6.16.1**. Clears **#315** / **#317** / **#320** / **#328** / **#330–#333** / **#342** / **#343**. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 
 ### October 14, 2026
+- ✅ **Comprehensive stable refresh (2026-11-14)** — Selenium/Selenide **4.52.0 / 7.19.1**, Next/React **16.4.6 / 19.3.1**, Playwright **1.65.1**, Cypress **15.21.2**, Jackson **3.3.0**, Locust **2.47.0**. Deferred majors unchanged. See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 - ✅ **Playwright 1.64.1** — `@playwright/test` **^1.63.0 → ^1.64.1**. Dependabot **#291** (`http-cache-semantics` **4.3.0** in playwright) and **#300** (`source-map-js` **1.2.2** in frontend). See [VERSION_TRACKING.md](process/VERSION_TRACKING.md).
 
 ### August 13, 2026
